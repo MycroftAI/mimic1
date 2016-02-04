@@ -1,12 +1,15 @@
+Mimic is currently being developed and maintained by Mycroft AI, Inc.
+Mycroft AI is the company behind the Mycroft artificial intelligence
+and voice assistant platform, more info here: https://mycroft.ai
 
-The initial development of flite was primarily done by awb while
-travelling, perhaps the name is doubly appropriate as a substantial
-amount of the coding was done over 30,000ft).  During most of that
-time awb was funded by the Language Technonologies Institute at
-Carnegie Mellon University.
+The initial development of Mimic was primarily done by awb through
+the Flite project while he was traveling, perhaps the name is
+doubly appropriate as a substantial amount of the coding was
+done over 30,000ft).  During most of that time awb was funded
+by the Language Technologies Institute at Carnegie Mellon University.
 
 Kevin A. Lenzo was involved in the design, conversion techniques and
-representions for the voice distributed with flite (as well as being
+representations for the voice distributed with Flite (as well as being
 the actual kal voice itself).
 
 Other contributions are:
@@ -15,7 +18,7 @@ Henry Spencer
    For the regex code
 University of Edinburgh
    for releasing Festival for free, making a companion runtime synthesizer
-   a practical project, much of the design of flite relies on the 
+   a practical project, much of the design of flite relies on the
    architecture decisions made in the Festival Speech Synthesis Systems and
    the Edinburgh Speech Tools.
    The duration cart tree and intonation (accent and F0) models were
@@ -34,7 +37,7 @@ Marcela Charfuelan (DFKI)
    For the mixed-excitation techniques.  These originally came from NITECH
    but we understood the technqiues from Marcela's Open Mary Java code and
    implemented them in our optimized version of MLSA.
-David Huggins-Daines (dhd@cepstral.com) 
+David Huggins-Daines (dhd@cepstral.com)
    much of the clunits code, porting to multiple platforms, substantial
    code tidy up and configure/autoconf guidance.
 Cepstral, LLC (http://cepstral.com)
@@ -55,7 +58,7 @@ Mario Lang:
 Eric House (fixin@peak.org)
    who provided examples of how to do 68K Call Backs for system functions
 Greg Parker gparker@sealiesoftware.com
-   peal, the binding glue and shared library foo for getting the arm 
+   peal, the binding glue and shared library foo for getting the arm
    version doing something reasonable under PalmOS
 Lukas Loehrer <loehrerl@gmx.net> Feb 2006
    alsa support (default if available)
