@@ -1,5 +1,4 @@
-
-#Mimic, the Mycroft TTS Engine
+Mimic, the Mycroft TTS Engine
 ==========
 
 Mimic is a lightweight run-time speech synthesis engine, based on
@@ -8,7 +7,6 @@ here: http://www.festvox.org/flite/ - further information can be found
 in the ACKNOWLEDGEMENTS file in the Mimic repo.
 
 ###Requirements:
-==========
 
 - A good C compiler, some of these files are quite large and some C
   compilers might choke on these, gcc is fine.  Sun CC 3.01 has been
@@ -28,14 +26,10 @@ We have successfully compiled and run on
 - Android
 
 ###Compilation
-==========
-
-In general
 
     TODO: update this to reflect compilation
 
 ###Usage:
-==========
 
     TODO: Shorten and update this to reflect current process,
     update relevant filenames.
@@ -120,7 +114,6 @@ want to load voices from the current directory you need to prefix them
 with "./".
 
 ###Voices
-==========
 
 TODO: Explain where to find voices, and how to obtain new ones.
 
