@@ -266,7 +266,7 @@ static void get_token_sub_part(cst_tokenstream *ts,
     (*buffer)[p] = '\0';
 }
 
-inline int ts_utf8_sequence_length(char c0)
+static inline int ts_utf8_sequence_length(char c0)
 {
     // Get the expected length of UTF8 sequence given its most
     // significant byte

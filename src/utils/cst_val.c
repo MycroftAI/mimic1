@@ -475,7 +475,7 @@ int val_dec_refcount(const cst_val *b)
     }
 }
 
-inline int utf8_sequence_length(char c0)
+static inline int utf8_sequence_length(char c0)
 {
     // Get the expected length of UTF8 sequence given its most
     // significant byte
