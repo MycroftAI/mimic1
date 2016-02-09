@@ -101,10 +101,13 @@ debugging.  Some typical examples are
 
 `./bin/flite --sets join_type=simple_join doc/intro.txt`
      Use simple concatenation of diphones without prosodic modification
+
 `./bin/flite -pw doc/alice`
      Print sentences as they are said
+
 `./bin/flite --setf duration_stretch=1.5 doc/alice`
      Make it speak slower
+
 `./bin/flite --setf int_f0_target_mean=145 doc/alice`
      Make it speak higher
 
@@ -118,13 +121,17 @@ under Unix you can call it
 
 `./bin/flite -voice rms -f doc/alice`
     Speak with the US male rms voice
+
 `./bin/flite -voice awb -f doc/alice`
     Speak with the "Scottish" male awb voice
+
 `./bin/flite -voice slt -f doc/alice`
     Speak with the US female slt voice
 
+
 `./bin/flite -voice http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_ksp.flitevox -f doc/alice`
     Speak with KSP voice, download on the fly from festvox.org
+
 `./bin/flite -voice voices/cmu_us_ahw.flitevox -f doc/alice`
     Speak with AHW voice loaded from the local file.
 
