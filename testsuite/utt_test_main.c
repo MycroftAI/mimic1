@@ -101,7 +101,7 @@ static int WordSylSeg(cst_utterance *u)
     {
 	printf("word: %s\n",item_feat_string(word,"name"));
 	ssword = relation_append(sylstructure,word);
-	phones = lex_lookup((cst_lexicon *)&cmu_lex,item_feat_string(word,"name"),0);
+	phones = lex_lookup((cst_lexicon *)&cmu_lex,item_feat_string(word,"name"),0,NULL);
 	for (p=phones; p; p=val_cdr(p))
 	{
 	    segitem = relation_append(seg,NULL);
@@ -122,7 +122,7 @@ static int bbb_relation_load(cst_relation *r,const char *filename)
     cst_item *item;
     cst_tokenstream *fd;
 
-    fd = ts_open(filename);
+    fd = ts_open(filename, "", "", "", "");
     if (fd == 0)
 	return 0;
 

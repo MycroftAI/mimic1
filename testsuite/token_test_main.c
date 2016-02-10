@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     cst_tokenstream *fd;
     const char *token;
 
-    fd = ts_open("data.one");
+    fd = ts_open("data.one", " \n\t", NULL, "\"!", NULL);
 
     while (!ts_eof(fd))
     {

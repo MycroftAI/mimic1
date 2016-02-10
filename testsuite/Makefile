@@ -76,13 +76,13 @@ $(MAIN_O) : %_main.o : %_main.c
 $(ALL) : %$(EXEEXT) : %_main.o $(FLITELIBS)
 	$(CC) $(CFLAGS) -o $@ $@_main.o $($(@:=_LIBS)) $(FLITELIBFLAGS) $(LDFLAGS)
 
-multi_thread_test: multi_thread_main.c
-	gcc -fopenmp -o multi_thread_test multi_thread_main.c \
+multi_thread: multi_thread_main.c
+	gcc -fopenmp -o multi_thread multi_thread_main.c \
 		$(CFLAGS) -I$(TOP)/include $(FLITELIBFLAGS) $(LDFLAGS) \
 		-l flite_cmu_us_slt -lflite_cmulex -lflite_usenglish \
 		-lflite -lm -lasound -lgomp
-do_thread_test: multi_thread_test
+do_thread_test: multi_thread
 #	This shouldn't segfault
-	export OMP_NUM_THREADS=100 && ./multi_thread_test
+	export OMP_NUM_THREADS=100 && ./multi_thread
 
 

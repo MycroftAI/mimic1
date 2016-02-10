@@ -48,7 +48,7 @@ static void lookup_and_print(cst_lexicon *l,const char *word,const char *feats)
     cst_val *p;
 
     printf("Lookup: %s %s\n",word,feats);
-    p = lex_lookup(l,word,feats);
+    p = lex_lookup(l,word, feats, NULL);
     val_print(stdout,p);
     printf("\n");
     delete_val(p);
