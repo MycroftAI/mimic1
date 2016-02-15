@@ -32,7 +32,7 @@
 ###########################################################################
 ##                                                                       ##
 ##    Fast efficient small run-time speech synthesis system              ##
-##    http://cmumimic.org                                                ##
+##    http://cmuflite.org                                                ##
 ##                                                                       ##
 ##       Authors:  Alan W Black (awb@cs.cmu.edu)                         ##
 ##                 Kevin A. Lenzo (lenzo@cs.cmu.edu)                     ##

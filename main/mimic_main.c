@@ -58,7 +58,7 @@ cst_lexicon *cmu_lex_init(void);
 static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
-    printf("  version: %s-%s-%s %s (http://cmumimic.org)\n",
+    printf("  version: %s-%s-%s %s (http://cmuflite.org)\n",
 	   MIMIC_PROJECT_PREFIX,
 	   MIMIC_PROJECT_VERSION,
 	   MIMIC_PROJECT_STATE,

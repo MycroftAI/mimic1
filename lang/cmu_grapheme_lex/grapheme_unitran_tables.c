@@ -3,7 +3,7 @@
 /* http://www.apache.org/licenses/LICENSE-2.0                               */
 /* Original table developed by Richard Sproat and Kyoung-young Kim          */
 /* Ported for Festvox by Gopala Anumachipalli gopalakr@cs.cmu.edu Sep 2012  */
-/* Then converted to C for CMU Mimic (cmumimic.org)                         */
+/* Then converted to C for CMU Mimic (cmuflite.org)                         */
 #include <mimic.h>
 const int num_unicode_sampa_mapping = 16673;
 const char * const unicode_sampa_mapping[16674][5] =
