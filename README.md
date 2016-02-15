@@ -130,7 +130,7 @@ under Unix you can call it
 
 
 `./bin/mimic -voice http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_ksp.flitevox -f doc/alice`
-    Speak with KSP voice, download on the fly from festvox.org
+    Speak with KSP voice, download on the fly from festvox.org (no longer works with mimic)
 
 `./bin/mimic -voice voices/cmu_us_ahw.mimicvox -f doc/alice`
     Speak with AHW voice loaded from the local file.
@@ -144,8 +144,11 @@ with "`./`".
 
 TODO: Explain where to find voices, and how to obtain new ones.
 
-You can find existing Flite voices here:
+The `voices/` directory contains several mimicvox voices.
+
+You can also find existing Flite voices here: 
   `http://www.festvox.org/flite/packed/flite-2.0/voices/`
+  (note: these voices will not work with mimic at the moment unless they are converted)
 
 ###Debugging:
 
