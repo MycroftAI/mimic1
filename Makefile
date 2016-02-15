@@ -32,7 +32,7 @@
 ###########################################################################
 ##                                                                       ##
 ##    Fast efficient small run-time speech synthesis system              ##
-##    http://cmuflite.org                                                ##
+##    http://cmumimic.org                                                ##
 ##                                                                       ##
 ##       Authors:  Alan W Black (awb@cs.cmu.edu)                         ##
 ##                 Kevin A. Lenzo (lenzo@cs.cmu.edu)                     ##
@@ -49,7 +49,7 @@ ALL_DIRS=config $(BUILD_DIRS) testsuite \
          tools main 
 CONFIG=configure configure.in config.sub config.guess \
        missing install-sh mkinstalldirs
-WINDOWS = Exports.def flite.sln fliteDll.vcproj
+WINDOWS = Exports.def mimic.sln mimicDll.vcproj
 FILES = Makefile README ACKNOWLEDGEMENTS COPYING $(CONFIG) $(WINDOWS)
 DIST_CLEAN = .time-stamp $(TOP)/build/ \
                 config.cache config.log config.status \
@@ -118,11 +118,11 @@ time-stamp :
 	@ date >>.time-stamp
 
 # Convinience command, to generate cg dumped voices
-voices: ./bin/flite_cmu_us_awb ./bin/flite_cmu_us_rms ./bin/flite_cmu_us_rms
+voices: ./bin/mimic_cmu_us_awb ./bin/mimic_cmu_us_rms ./bin/mimic_cmu_us_rms
 	mkdir -p voices
-	./bin/flite_cmu_us_awb -voicedump voices/cmu_us_awb.flitevox
-	./bin/flite_cmu_us_rms -voicedump voices/cmu_us_rms.flitevox
-	./bin/flite_cmu_us_slt -voicedump voices/cmu_us_slt.flitevox
+	./bin/mimic_cmu_us_awb -voicedump voices/cmu_us_awb.mimicvox
+	./bin/mimic_cmu_us_rms -voicedump voices/cmu_us_rms.mimicvox
+	./bin/mimic_cmu_us_slt -voicedump voices/cmu_us_slt.mimicvox
 
 test:
 	@ $(MAKE) --no-print-directory -C testsuite test

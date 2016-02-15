@@ -2,7 +2,7 @@
 /*                                                                       */
 /*                  Language Technologies Institute                      */
 /*                     Carnegie Mellon University                        */
-/*                         Copyright (c) 2014                            */
+/*                        Copyright (c) 2001                             */
 /*                        All Rights Reserved.                           */
 /*                                                                       */
 /*  Permission is hereby granted, free of charge, to use and distribute  */
@@ -31,78 +31,72 @@
 /*                                                                       */
 /*************************************************************************/
 /*             Author:  Alan W Black (awb@cs.cmu.edu)                    */
-/*               Date:  November 2014                                     */
+/*               Date:  August 2002                                      */
 /*************************************************************************/
 /*                                                                       */
-/*  For setting and viewing features in a .flitevox clustergen file      */
+/*  Unix sort is different in non-obvious ways so we use the actual      */
+/*  strcmp function that will be used to index the units to do the sort  */
 /*                                                                       */
 /*************************************************************************/
-
 #include <stdio.h>
-#include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include "cst_val.h"
+#include "cst_tokenstream.h"
 
-#include "cst_args.h"
-#include "flite.h"
+int mimic_strcmp(const void *a, const void *b)
+{
+    const cst_val **v1;
+    const cst_val **v2;
 
-void *flite_set_lang_list(void);
+    v1 = (const cst_val **)a;
+    v2 = (const cst_val **)b;
+    return strcmp(val_string(val_car(*v1)),val_string(val_car(*v2)));
+}
 
 int main(int argc, char **argv)
 {
-    cst_features *args=new_features();
-    cst_voice *v;
-    const char *voice_name, *feat;
+    cst_tokenstream *ts;
+    cst_val *f,*g;
+    const cst_val *ff;
+    const char *token;
+    int s,i;
+    const cst_val **ll;
 
-    (void)cst_args(argv,argc,
-                 "usage: flitevox_info [OPTIONS]\n"
-                 "-voice <string> Pathname to flitevox file\n"
-                 "-set <string>  Set given feature name\n"
-                 "-get <string>  Get given feature name\n"
-                 "-val <string>  Value to set\n"
-                 "-info          Output general info on voice\n"
-                 "set/get features in a flitevox voice.",
-                 args);
+    ts = ts_open("-",NULL,"()","","");
 
-    flite_init();
-    flite_set_lang_list();
-
-    if (!feat_present(args,"-voice"))
+    f = NULL;
+    s = 0;
+    while (!ts_eof(ts))
     {
-	fprintf(stderr,"no voice specified\n");
-	exit(-1);
+	g = NULL;	
+	for(token = ts_get(ts);
+	    !cst_streq(token,")");
+	    token = ts_get(ts))
+	{
+	    g = cons_val(string_val(token),g);
+	    if (ts_eof(ts))
+		break;
+	}
+	if (!ts_eof(ts))
+	{
+	    g = cons_val(string_val(")"),g);
+	    f = cons_val(val_reverse(g),f);
+	    s++;
+	}
     }
-    voice_name = feat_string(args,"-voice");
-    v = flite_voice_load(voice_name);
-    if (v == NULL)
-    {
-	fprintf(stderr,"can't load voice %s\n",voice_name);
-	exit(-1);
-    }
 
-    if (feat_present(args,"-info"))
-    {
-        cst_feat_print(stdout,v->features);
-    } else if (feat_present(args,"-set"))
-    {
-        feat = get_param_string(args,"-set","feat");
-        if (!feat_present(args,"-val"))
-        {
-            fprintf(stderr,"no feat val given for %s\n",feat);
-            exit(-1);
-        }
-        /* set the feature */
-        feat_set_string(v->features,feat,feat_string(args,"-val"));
+    ll = cst_alloc(const cst_val *,s);
+    for (i=0,ff=f; ff; ff=val_cdr(ff),i+=1)
+	ll[i] = val_car(ff);
 
-        /* save the voice back out again */
-        flite_voice_dump(v,voice_name);
-    }
-    else if (feat_present(args,"-get"))
+    qsort(ll,s,sizeof(cst_val *),mimic_strcmp);
+
+    for (i=0; i < s; i++)
     {
-        feat = get_param_string(args,"-get","feat");
-        printf("%s \"%s\"\n",feat,feat_string(v->features,feat));
+	for (ff=ll[i]; ff; ff=val_cdr(ff))
+	    printf("%s ",val_string(val_car(ff)));
+	printf("\n");
     }
 
     return 0;
-
 }

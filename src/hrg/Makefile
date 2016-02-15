@@ -43,7 +43,7 @@ SRCS = cst_utterance.c cst_relation.c cst_item.c cst_ffeature.c \
        cst_rel_io.c
 OBJS = $(SRCS:.c=.o)
 FILES = Makefile $(H) $(SRCS)
-LIBNAME = flite
+LIBNAME = mimic
 
 ALL = 
 

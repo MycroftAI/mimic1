@@ -664,7 +664,7 @@ static const cst_val *syl_break(const cst_item *syl)
 
 static const cst_val *cg_break(const cst_item *syl)
 {
-    /* phrase prediction is so different between flite and festival */
+    /* phrase prediction is so different between mimic and festival */
     /* we go with this more robust technique */
     cst_item *ss;
 

@@ -50,7 +50,7 @@ OBJS = $(SRCS:.c=.o)
 WINDOWS = Exports.def cmu_us_rms.vcproj cmu_us_rms_voice.cpp stdafx.h
 
 FILES = Makefile $(SCM) $(SRCS) $(H) $(WINDOWS)
-LIBNAME = flite_cmu_us_$(VOXNAME)
+LIBNAME = mimic_cmu_us_$(VOXNAME)
 LOCAL_INCLUDES = -I$(TOP)/lang/usenglish -I$(TOP)/lang/cmulex $(VOXDEFS)
 
 ALL = 

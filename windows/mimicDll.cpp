@@ -1,4 +1,4 @@
-// fliteDll.cpp : Defines the entry point for the DLL application.
+// mimicDll.cpp : Defines the entry point for the DLL application.
 //
 
 #include "stdafx.h"

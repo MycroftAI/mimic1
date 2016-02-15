@@ -39,7 +39,7 @@
 /*************************************************************************/
 
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 #include "cst_clunits.h"
 #include "usenglish.h"
 #include "cmulex.h"

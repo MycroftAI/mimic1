@@ -1,6 +1,6 @@
 /* THIS IS A MODIFIED VERSION.  It was modified by David
    Huggins-Daines <dhd@cepstral.com> in December 2001 for use in the
-   Flite speech synthesis systems. */
+   Mimic speech synthesis systems. */
 
 /*
  *

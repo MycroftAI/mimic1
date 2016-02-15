@@ -43,11 +43,11 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "flite.h"
-#include "flite_version.h"
+#include "mimic.h"
+#include "mimic_version.h"
 
-cst_val *flite_set_voice_list(const char *voxdir);
-void *flite_set_lang_list(void);
+cst_val *mimic_set_voice_list(const char *voxdir);
+void *mimic_set_lang_list(void);
 
 void cst_alloc_debug_summary();
 
@@ -55,21 +55,21 @@ void cst_alloc_debug_summary();
 void usenglish_init(cst_voice *v);
 cst_lexicon *cmu_lex_init(void);
 
-static void flite_version()
+static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
-    printf("  version: %s-%s-%s %s (http://cmuflite.org)\n",
-	   FLITE_PROJECT_PREFIX,
-	   FLITE_PROJECT_VERSION,
-	   FLITE_PROJECT_STATE,
-	   FLITE_PROJECT_DATE);
+    printf("  version: %s-%s-%s %s (http://cmumimic.org)\n",
+	   MIMIC_PROJECT_PREFIX,
+	   MIMIC_PROJECT_VERSION,
+	   MIMIC_PROJECT_STATE,
+	   MIMIC_PROJECT_DATE);
 }
 
-static void flite_usage()
+static void mimic_usage()
 {
-    printf("flite: a small simple speech synthesizer\n");
-    flite_version();
-    printf("usage: flite TEXT/FILE [WAVEFILE]\n"
+    printf("mimic: a small simple speech synthesizer\n");
+    mimic_version();
+    printf("usage: mimic TEXT/FILE [WAVEFILE]\n"
            "  Converts text in TEXTFILE to a waveform in WAVEFILE\n"
            "  If text contains a space the it is treated as a literal\n"
            "  textstring and spoken, and not as a file name\n"
@@ -77,7 +77,7 @@ static void flite_usage()
            "  played on the current systems audio device.  If WAVEFILE\n"
            "  is \"none\" the waveform is discarded (good for benchmarking)\n"
            "  Other options must appear before these options\n"
-           "  --version   Output flite version number\n"
+           "  --version   Output mimic version number\n"
            "  --help      Output usage string\n"
            "  -o WAVEFILE Explicitly set output filename\n"
            "  -f TEXTFILE Explicitly set input filename\n"
@@ -104,13 +104,13 @@ static void flite_usage()
     exit(0);
 }
 
-static void flite_voice_list_print(void)
+static void mimic_voice_list_print(void)
 {
     cst_voice *voice;
     const cst_val *v;
 
     printf("Voices available: ");
-    for (v=flite_voice_list; v; v=val_cdr(v))
+    for (v=mimic_voice_list; v; v=val_cdr(v))
     {
         voice = val_voice(val_car(v));
         printf("%s ",voice->name);
@@ -164,7 +164,7 @@ static void ef_set(cst_features *f,const char *fv,const char *type)
     if ((val = strchr(fv,'=')) == 0)
     {
 	fprintf(stderr,
-		"flite: can't find '=' in featval \"%s\", ignoring it\n",
+		"mimic: can't find '=' in featval \"%s\", ignoring it\n",
 		fv);
     }
     else
@@ -196,7 +196,7 @@ int main(int argc, char **argv)
     int i;
     float durs;
     double time_start, time_end;
-    int flite_verbose, flite_loop, flite_bench;
+    int mimic_verbose, mimic_loop, mimic_bench;
     int explicit_filename, explicit_text, explicit_phones, ssml_mode;
 #define ITER_MAX 3
     int bench_iter = 0;
@@ -207,41 +207,41 @@ int main(int argc, char **argv)
 
     filename = 0;
     outtype = "play";   /* default is to play */
-    flite_verbose = FALSE;
-    flite_loop = FALSE;
-    flite_bench = FALSE;
+    mimic_verbose = FALSE;
+    mimic_loop = FALSE;
+    mimic_bench = FALSE;
     explicit_text = explicit_filename = explicit_phones = FALSE;
     ssml_mode = FALSE;
     extra_feats = new_features();
 
-    flite_init();
-    flite_set_lang_list(); /* defined at compilation time */
+    mimic_init();
+    mimic_set_lang_list(); /* defined at compilation time */
 
     for (i=1; i<argc; i++)
     {
 	if (cst_streq(argv[i],"--version"))
 	{
-	    flite_version();
+	    mimic_version();
 	    return 1;
 	}
 	else if (cst_streq(argv[i],"-h") ||
 		 cst_streq(argv[i],"--help") ||
 		 cst_streq(argv[i],"-?"))
-	    flite_usage();
+	    mimic_usage();
 	else if (cst_streq(argv[i],"-v"))
-	    flite_verbose = TRUE;
+	    mimic_verbose = TRUE;
 	else if (cst_streq(argv[i],"-lv"))
         {
-            if (flite_voice_list == NULL)
-                flite_set_voice_list(voicedir);
-            flite_voice_list_print();
+            if (mimic_voice_list == NULL)
+                mimic_set_voice_list(voicedir);
+            mimic_voice_list_print();
             exit(0);
         }
 	else if (cst_streq(argv[i],"-l"))
-	    flite_loop = TRUE;
+	    mimic_loop = TRUE;
 	else if (cst_streq(argv[i],"-b"))
 	{
-	    flite_bench = TRUE;
+	    mimic_bench = TRUE;
 	    break; /* ignore other arguments */
 	}
 	else if ((cst_streq(argv[i],"-o")) && (i+1 < argc))
@@ -251,16 +251,16 @@ int main(int argc, char **argv)
 	}
 	else if ((cst_streq(argv[i],"-voice")) && (i+1 < argc))
 	{
-            if (flite_voice_list == NULL)
-                flite_set_voice_list(voicedir);
-            desired_voice = flite_voice_select(argv[i+1]);
+            if (mimic_voice_list == NULL)
+                mimic_set_voice_list(voicedir);
+            desired_voice = mimic_voice_select(argv[i+1]);
 	    i++;
 	}
 	else if ((cst_streq(argv[i],"-voicedir")) && (i+1 < argc))
 	{
             voicedir = argv[i+1];
-            if (flite_voice_list == NULL)
-                flite_set_voice_list(voicedir);
+            if (mimic_voice_list == NULL)
+                mimic_set_voice_list(voicedir);
 	    i++;
 	}
 	else if ((cst_streq(argv[i],"-add_lex")) && (i+1 < argc))
@@ -350,10 +350,10 @@ int main(int argc, char **argv)
     }
 
     if (filename == NULL) filename = "-";  /* stdin */
-    if (flite_voice_list == NULL)
-        flite_set_voice_list(voicedir);
+    if (mimic_voice_list == NULL)
+        mimic_set_voice_list(voicedir);
     if (desired_voice == 0)
-        desired_voice = flite_voice_select(NULL);
+        desired_voice = mimic_voice_select(NULL);
 
     v = desired_voice;
     feat_copy_into(extra_feats,v->features);
@@ -361,12 +361,12 @@ int main(int argc, char **argv)
 
     if (voicedumpfile != NULL)
     {
-        flite_voice_dump(v,voicedumpfile);
+        mimic_voice_dump(v,voicedumpfile);
         exit(0);
     }
 
     if (lex_addenda_file)
-        flite_voice_add_lex_addenda(v,lex_addenda_file);
+        mimic_voice_add_lex_addenda(v,lex_addenda_file);
 
     if (cst_streq("stream",outtype))
     {
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
         feat_set(v->features,"streaming_info",audio_streaming_info_val(asi));
     }
 
-    if (flite_bench)
+    if (mimic_bench)
     {
 	outtype = "none";
 	filename = "A whole joy was reaping, but they've gone south, you should fetch azure mike.";
@@ -387,36 +387,36 @@ loop:
     time_start = (double)(tv.tv_sec)+(((double)tv.tv_usec)/1000000.0);
 
     if (explicit_phones)
-	durs = flite_phones_to_speech(filename,v,outtype);
+	durs = mimic_phones_to_speech(filename,v,outtype);
     else if ((strchr(filename,' ') && !explicit_filename) || explicit_text)
     {
         if (ssml_mode)
-            durs = flite_ssml_text_to_speech(filename,v,outtype);
+            durs = mimic_ssml_text_to_speech(filename,v,outtype);
         else
-            durs = flite_text_to_speech(filename,v,outtype);
+            durs = mimic_text_to_speech(filename,v,outtype);
     }
     else
     {
         if (ssml_mode)
-            durs = flite_ssml_file_to_speech(filename,v,outtype);
+            durs = mimic_ssml_file_to_speech(filename,v,outtype);
         else
-            durs = flite_file_to_speech(filename,v,outtype);
+            durs = mimic_file_to_speech(filename,v,outtype);
     }
 
     gettimeofday(&tv,NULL);
     time_end = ((double)(tv.tv_sec))+((double)tv.tv_usec/1000000.0);
 
-    if (flite_verbose || (flite_bench && bench_iter == ITER_MAX))
+    if (mimic_verbose || (mimic_bench && bench_iter == ITER_MAX))
 	printf("times faster than real-time: %f\n(%f seconds of speech synthesized in %f)\n",
 	       durs/(float)(time_end-time_start),
 	       durs,
 	       (float)(time_end-time_start));
 
-    if (flite_loop || (flite_bench && bench_iter++ < ITER_MAX))
+    if (mimic_loop || (mimic_bench && bench_iter++ < ITER_MAX))
 	    goto loop;
 
     delete_features(extra_feats);
-    delete_val(flite_voice_list); flite_voice_list=0;
+    delete_val(mimic_voice_list); mimic_voice_list=0;
     /*    cst_alloc_debug_summary(); */
 
     return 0;

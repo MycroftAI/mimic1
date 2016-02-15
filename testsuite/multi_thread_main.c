@@ -42,29 +42,29 @@
 #include <stdio.h>
 #include <omp.h>
 
-#include <flite.h>
+#include <mimic.h>
 
 cst_voice *voice;
 
 cst_voice *register_cmu_us_slt(const char *voxdir);
 
-cst_val *flite_set_voice_list(const char *voxdir)
+cst_val *mimic_set_voice_list(const char *voxdir)
 {
-    flite_voice_list = cons_val(voice_val(register_cmu_us_slt(voxdir)),flite_voice_list);
-    flite_voice_list = val_reverse(flite_voice_list);
-    return flite_voice_list;
+    mimic_voice_list = cons_val(voice_val(register_cmu_us_slt(voxdir)),mimic_voice_list);
+    mimic_voice_list = val_reverse(mimic_voice_list);
+    return mimic_voice_list;
 }
 
 void init() {
-  flite_init();
-  flite_set_voice_list(NULL);
-  voice = flite_voice_select("cmu_us_slt");
+  mimic_init();
+  mimic_set_voice_list(NULL);
+  voice = mimic_voice_select("cmu_us_slt");
   
 }
 
 float synth_text(char* text) {
   float dur;
-  dur = flite_text_to_speech(text, voice, "none");
+  dur = mimic_text_to_speech(text, voice, "none");
   return dur;
 }
 

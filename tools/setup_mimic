@@ -33,7 +33,7 @@
 ##                                                                       ##
 ###########################################################################
 ##                                                                       ##
-##  Setup the current directory for building a FLITE voice from a        ##
+##  Setup the current directory for building a MIMIC voice from a        ##
 ##  a festvox voice                                                      ##
 ##                                                                       ##
 ###########################################################################
@@ -48,13 +48,13 @@ then
    exit 1
 fi
 
-if [ ! "$FLITEDIR" ]
+if [ ! "$MIMICDIR" ]
 then
-   echo "environment variable FLITEDIR is unset"
+   echo "environment variable MIMICDIR is unset"
    echo "set it to your local festvox directory e.g."
-   echo '   bash$ export FLITEDIR=/home/awb/projects/flite/'
+   echo '   bash$ export MIMICDIR=/home/awb/projects/mimic/'
    echo or
-   echo '   csh% setenv FLITEDIR /home/awb/projects/flite/'
+   echo '   csh% setenv MIMICDIR /home/awb/projects/mimic/'
    exit 1
 fi
 
@@ -76,24 +76,24 @@ if [ ! -f etc/voice.defs ]
 then
    echo "Can't find etc/voice.defs file"
    echo "don't know what voice to convert"
-   echo "Setup for conversion of $1 to flite FAILED"
+   echo "Setup for conversion of $1 to mimic FAILED"
    exit 1
 fi
 
-mkdir -p flite
+mkdir -p mimic
 
 . ./etc/voice.defs
 
 if [ "$FV_LANG" = "us" ]
 then
    # I showed have been more consistent
-   FV_FLITE_LANG=usenglish
-   FV_FLITE_LEX=cmu_lex
-   FV_FLITE_LEX_DIR=cmulex
+   FV_MIMIC_LANG=usenglish
+   FV_MIMIC_LEX=cmu_lex
+   FV_MIMIC_LEX_DIR=cmulex
 else
-   FV_FLITE_LANG=cmu_${FV_LANG}_lang
-   FV_FLITE_LEX=cmu_${FV_LANG}_lex
-   FV_FLITE_LEX_DIR=${FV_FLITE_LEX}
+   FV_MIMIC_LANG=cmu_${FV_LANG}_lang
+   FV_MIMIC_LEX=cmu_${FV_LANG}_lex
+   FV_MIMIC_LEX_DIR=${FV_MIMIC_LEX}
 fi
 
 if [ $# = 1 ]
@@ -101,62 +101,62 @@ then
    FV_TYPE=$1
 fi
 
-cat $FLITEDIR/tools/Makefile.flite |
-  sed 's%__FLITEDIR__%'$FLITEDIR'%' $i |
+cat $MIMICDIR/tools/Makefile.mimic |
+  sed 's%__MIMICDIR__%'$MIMICDIR'%' $i |
   sed 's%__VOICETYPE__%'$FV_TYPE'%' |
-  sed 's%__FLITELANG__%'$FV_FLITE_LANG'%' |
-  sed 's%__FLITELEX__%'$FV_FLITE_LEX_DIR'%' |
+  sed 's%__MIMICLANG__%'$FV_MIMIC_LANG'%' |
+  sed 's%__MIMICLEX__%'$FV_MIMIC_LEX_DIR'%' |
   sed 's%__VOICETYPE__%'$FV_TYPE'%' |
-  sed 's%__VOICENAME__%'$FV_VOICENAME'%' >flite/Makefile
+  sed 's%__VOICENAME__%'$FV_VOICENAME'%' >mimic/Makefile
 
-cat $FLITEDIR/tools/build_flite |
-  sed 's%__FLITEDIR__%'$FLITEDIR'%' >bin/build_flite
-chmod +x bin/build_flite
+cat $MIMICDIR/tools/build_mimic |
+  sed 's%__MIMICDIR__%'$MIMICDIR'%' >bin/build_mimic
+chmod +x bin/build_mimic
 
-if [ -f flite/$FV_VOICENAME.c ]
+if [ -f mimic/$FV_VOICENAME.c ]
 then
-   echo flite/$FV_VOICENAME.c already exists
+   echo mimic/$FV_VOICENAME.c already exists
    echo not overwriting it with a new copy
 else
    if [ "$FV_TYPE" = "diphone" ]
    then
-      cat $FLITEDIR/tools/VOICE_diphone.c |
+      cat $MIMICDIR/tools/VOICE_diphone.c |
         sed 's%__NICKNAME__%'$FV_NAME'%' |
-        sed 's%__FLITELANG__%'$FV_FLITE_LANG'%' |
-        sed 's%__FLITELEX__%'$FV_FLITE_LEX'%' |
-        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >flite/$FV_VOICENAME.c
+        sed 's%__MIMICLANG__%'$FV_MIMIC_LANG'%' |
+        sed 's%__MIMICLEX__%'$FV_MIMIC_LEX'%' |
+        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >mimic/$FV_VOICENAME.c
    elif [ "$FV_TYPE" = "ldom" ]
    then
-      cat $FLITEDIR/tools/VOICE_ldom.c |
+      cat $MIMICDIR/tools/VOICE_ldom.c |
         sed 's%__NICKNAME__%'$FV_NAME'%' |
-        sed 's%__FLITELANG__%'$FV_FLITE_LANG'%' |
-        sed 's%__FLITELEX__%'$FV_FLITE_LEX'%' |
-        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >flite/$FV_VOICENAME.c
+        sed 's%__MIMICLANG__%'$FV_MIMIC_LANG'%' |
+        sed 's%__MIMICLEX__%'$FV_MIMIC_LEX'%' |
+        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >mimic/$FV_VOICENAME.c
    elif [ "$FV_TYPE" = "cg" ]
    then
-      cat $FLITEDIR/tools/VOICE_cg.c |
+      cat $MIMICDIR/tools/VOICE_cg.c |
         sed 's%__NICKNAME__%'$FV_NAME'%' |
-        sed 's%__FLITELANG__%'$FV_FLITE_LANG'%' |
-        sed 's%__FLITELEX__%'$FV_FLITE_LEX'%' |
-        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >flite/$FV_VOICENAME.c
+        sed 's%__MIMICLANG__%'$FV_MIMIC_LANG'%' |
+        sed 's%__MIMICLEX__%'$FV_MIMIC_LEX'%' |
+        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >mimic/$FV_VOICENAME.c
    else
-      cat $FLITEDIR/tools/VOICE_clunits.c |
+      cat $MIMICDIR/tools/VOICE_clunits.c |
         sed 's%__NICKNAME__%'$FV_NAME'%' |
-        sed 's%__FLITELANG__%'$FV_FLITE_LANG'%' |
-        sed 's%__FLITELEX__%'$FV_FLITE_LEX'%' |
-        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >flite/$FV_VOICENAME.c
+        sed 's%__MIMICLANG__%'$FV_MIMIC_LANG'%' |
+        sed 's%__MIMICLEX__%'$FV_MIMIC_LEX'%' |
+        sed 's%__VOICENAME__%'$FV_VOICENAME'%g' >mimic/$FV_VOICENAME.c
    fi
 fi
 
-cp -p $FLITEDIR/main/flite_main.c flite/flite_main.c
+cp -p $MIMICDIR/main/mimic_main.c mimic/mimic_main.c
 
-echo "#define VOXNAME" $FV_VOICENAME >flite/voxdefs.h
-echo "#define REGISTER_VOX register_"$FV_VOICENAME >>flite/voxdefs.h
-echo "#define UNREGISTER_VOX unregister_"$FV_VOICENAME >>flite/voxdefs.h
-echo "#define VOXHUMAN \"$FV_NAME\"" >>flite/voxdefs.h
-echo "#define VOXGENDER \"unknown\"" >>flite/voxdefs.h
-echo "#define VOXVERSION 1.0" >>flite/voxdefs.h
+echo "#define VOXNAME" $FV_VOICENAME >mimic/voxdefs.h
+echo "#define REGISTER_VOX register_"$FV_VOICENAME >>mimic/voxdefs.h
+echo "#define UNREGISTER_VOX unregister_"$FV_VOICENAME >>mimic/voxdefs.h
+echo "#define VOXHUMAN \"$FV_NAME\"" >>mimic/voxdefs.h
+echo "#define VOXGENDER \"unknown\"" >>mimic/voxdefs.h
+echo "#define VOXVERSION 1.0" >>mimic/voxdefs.h
 
-echo "Setup flite build for "$FV_VOICENAME" "$FV_TYPE" complete"
+echo "Setup mimic build for "$FV_VOICENAME" "$FV_TYPE" complete"
 
 exit 0

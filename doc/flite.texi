@@ -834,11 +834,11 @@ int main(int argc, char **argv)
 
 @}
 @end example
-Assuming the shell variable FLITEDIR is set to the flite directory
+Assuming the shell variable MIMICDIR is set to the flite directory
 the following will compile the system (with appropriate changes for
 your platform if necessary).
 @example
-gcc -Wall -g -o flite_test flite_test.c -I$FLITEDIR/include -L$FLITEDIR/lib 
+gcc -Wall -g -o flite_test flite_test.c -I$MIMICDIR/include -L$MIMICDIR/lib 
     -lflite_cmu_us_kal -lflite_usenglish -lflite_cmulex -lflite -lm
 @end example
 
@@ -1012,10 +1012,10 @@ The following basic stages are required:
 @item Compile the generated C code
 @end itemize
 
-The conversion assumes the environment variable @code{FLITEDIR}
+The conversion assumes the environment variable @code{MIMICDIR}
 is set, for example
 @example
-   export FLITEDIR=/home/awb/projects/flite/
+   export MIMICDIR=/home/awb/projects/flite/
 @end example
 The basic flite conversion takes place within a FestVox voice directory.
 Thus all of the conversion scripts expect that the standard files are
@@ -1024,7 +1024,7 @@ the build scripts.  The scripts are copied rather than linked from the
 Flite directories as you may need to change these for your particular
 voices.
 @example
-   $FLITEDIR/tools/setup_flite
+   $MIMICDIR/tools/setup_flite
 @end example
 This will read @file{etc/voice.defs}, which should have been created by
 the FestVox build process (except in very old versions of FestVox).
@@ -1173,15 +1173,15 @@ are typically much smaller than unit selection voices.
 @section Statistical Voice Building (Clustergen)
 
 The process of building from a clustergen (cg) voice is also
-supported.  It is assumed the environment variable @code{FLITEDIR} is
+supported.  It is assumed the environment variable @code{MIMICDIR} is
 set
 @example
-   export FLITEDIR=/home/awb/projects/flite/
+   export MIMICDIR=/home/awb/projects/flite/
 @end example
 After you build the clustergen voice you can convert by first setting
 up the skeleton files in the @file{flite/} directory
 @example
-   $FLITEDIR/tools/setup_flite
+   $MIMICDIR/tools/setup_flite
 @end example
 Assuming @file{etc/voice.defs} properly identifies the voice the cg
 templates will be compied in.
@@ -1269,7 +1269,7 @@ This will create language and lex template files in
 
 Then in firectory @file{lang/cmu_pashto_lang/} type
 @example
-    festival $FLITEDIR/tools/make_phoneset.scm
+    festival $MIMICDIR/tools/make_phoneset.scm
     ...
     festival> (phonesettoC "cmu_pashto" (car (load "PATHTO/cmu_pashto_transtac_phoneset.scm" t)) "pau" ".")
 @end example
@@ -1282,7 +1282,7 @@ the lexicon and letter to sound rules.  The core script is in
 @example
     mkdir lex
     cd lex
-    cp -p $FLITEDIR/tooks/build_lex .
+    cp -p $MIMICDIR/tooks/build_lex .
 @end example
 Edit build_lex to give it the name of your lexicon name, and compiled
 lexicon from your voice.

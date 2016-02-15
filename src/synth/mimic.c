@@ -39,57 +39,57 @@
 /*************************************************************************/
 
 #include "cst_tokenstream.h"
-#include "flite.h"
+#include "mimic.h"
 #include "cst_alloc.h"
 #include "cst_clunits.h"
 #include "cst_cg.h"
 
 /* This is a global, which isn't ideal, this may change */
-/* It is set when flite_set_voice_list() is called which happens in */
-/* flite_main() */
-cst_val *flite_voice_list = 0;
-cst_lang flite_lang_list[20];
-int flite_lang_list_length = 0;
+/* It is set when mimic_set_voice_list() is called which happens in */
+/* mimic_main() */
+cst_val *mimic_voice_list = 0;
+cst_lang mimic_lang_list[20];
+int mimic_lang_list_length = 0;
 
-int flite_init()
+int mimic_init()
 {
     cst_regex_init();
 
     return 0;
 }
 
-int flite_voice_dump(cst_voice *voice, const char *filename)
+int mimic_voice_dump(cst_voice *voice, const char *filename)
 {
     return cst_cg_dump_voice(voice,filename);
 }
 
-cst_voice *flite_voice_load(const char *filename)
+cst_voice *mimic_voice_load(const char *filename)
 {
     /* Currently only supported for CG voices */
     /* filename make be a local pathname or a url (http:/file:) */
     cst_voice *v = NULL;
 
-    v = cst_cg_load_voice(filename,flite_lang_list);
+    v = cst_cg_load_voice(filename,mimic_lang_list);
 
     return v;
 }
 
-int flite_add_voice(cst_voice *voice)
+int mimic_add_voice(cst_voice *voice)
 {
     const cst_val *x;
     if (voice)
     {
         /* add to second place -- first is default voice */
         /* This is thread unsafe */
-        if (flite_voice_list)
+        if (mimic_voice_list)
         {   /* Other voices -- first is default, add this second */
             x = cons_val(voice_val(voice),
-                         val_cdr(flite_voice_list));
-            set_cdr((cst_val *)(void *)flite_voice_list,x);
+                         val_cdr(mimic_voice_list));
+            set_cdr((cst_val *)(void *)mimic_voice_list,x);
         }
         else
         {   /* Only voice so goes on front */
-            flite_voice_list = cons_val(voice_val(voice),flite_voice_list);
+            mimic_voice_list = cons_val(voice_val(voice),mimic_voice_list);
         }
         
         return TRUE;
@@ -99,34 +99,34 @@ int flite_add_voice(cst_voice *voice)
 
 }
 
-int flite_add_lang(const char *langname,
+int mimic_add_lang(const char *langname,
                    void (*lang_init)(cst_voice *vox),
                    cst_lexicon *(*lex_init)())
 {
-    if (flite_lang_list_length < 19)
+    if (mimic_lang_list_length < 19)
     {
-        flite_lang_list[flite_lang_list_length].lang = langname;
-        flite_lang_list[flite_lang_list_length].lang_init = lang_init;
-        flite_lang_list[flite_lang_list_length].lex_init = lex_init;
-        flite_lang_list_length++;
-        flite_lang_list[flite_lang_list_length].lang = NULL;
+        mimic_lang_list[mimic_lang_list_length].lang = langname;
+        mimic_lang_list[mimic_lang_list_length].lang_init = lang_init;
+        mimic_lang_list[mimic_lang_list_length].lex_init = lex_init;
+        mimic_lang_list_length++;
+        mimic_lang_list[mimic_lang_list_length].lang = NULL;
     }
 
     return TRUE;
 }
 
 
-cst_voice *flite_voice_select(const char *name)
+cst_voice *mimic_voice_select(const char *name)
 {
     const cst_val *v;
     cst_voice *voice;
 
-    if (flite_voice_list == NULL)
+    if (mimic_voice_list == NULL)
         return NULL;  /* oops, not good */
     if (name == NULL)
-        return val_voice(val_car(flite_voice_list));
+        return val_voice(val_car(mimic_voice_list));
 
-    for (v=flite_voice_list; v; v=val_cdr(v))
+    for (v=mimic_voice_list; v; v=val_cdr(v))
     {
         voice = val_voice(val_car(v));
         if (cst_streq(name,voice->name))  /* short name */
@@ -142,17 +142,17 @@ cst_voice *flite_voice_select(const char *name)
     if (cst_urlp(name) || /* naive check if its a url */
         cst_strchr(name,'/'))
     {
-        voice = flite_voice_load(name);
+        voice = mimic_voice_load(name);
         if (!voice)
-            cst_errmsg("Error load voice: failed to load voice from %s\n",name);        flite_add_voice(voice);
+            cst_errmsg("Error load voice: failed to load voice from %s\n",name);        mimic_add_voice(voice);
         return voice;
     }
 
-    return flite_voice_select(NULL);
+    return mimic_voice_select(NULL);
 
 }
 
-int flite_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile)
+int mimic_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile)
 {
     /* Add addenda in lexfile to current voice */
     cst_lexicon *lex;
@@ -178,7 +178,7 @@ int flite_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile)
     return 0;
 }
 
-cst_utterance *flite_do_synth(cst_utterance *u,
+cst_utterance *mimic_do_synth(cst_utterance *u,
                                      cst_voice *voice,
                                      cst_uttfunc synth)
 {		       
@@ -192,30 +192,30 @@ cst_utterance *flite_do_synth(cst_utterance *u,
 	return u;
 }
 
-cst_utterance *flite_synth_text(const char *text, cst_voice *voice)
+cst_utterance *mimic_synth_text(const char *text, cst_voice *voice)
 {
     cst_utterance *u;
 
     u = new_utterance();
     utt_set_input_text(u,text);
-    return flite_do_synth(u, voice, utt_synth);
+    return mimic_do_synth(u, voice, utt_synth);
 }
 
-cst_utterance *flite_synth_phones(const char *text, cst_voice *voice)
+cst_utterance *mimic_synth_phones(const char *text, cst_voice *voice)
 {
     cst_utterance *u;
 
     u = new_utterance();
     utt_set_input_text(u,text);
-    return flite_do_synth(u, voice, utt_synth_phones);
+    return mimic_do_synth(u, voice, utt_synth_phones);
 }
 
-cst_wave *flite_text_to_wave(const char *text, cst_voice *voice)
+cst_wave *mimic_text_to_wave(const char *text, cst_voice *voice)
 {
     cst_utterance *u;
     cst_wave *w;
 
-    if ((u = flite_synth_text(text,voice)) == NULL)
+    if ((u = mimic_synth_text(text,voice)) == NULL)
 	return NULL;
 
     w = copy_wave(utt_wave(u));
@@ -223,7 +223,7 @@ cst_wave *flite_text_to_wave(const char *text, cst_voice *voice)
     return w;
 }
 
-float flite_file_to_speech(const char *filename, 
+float mimic_file_to_speech(const char *filename, 
 			   cst_voice *voice,
 			   const char *outtype)
 {
@@ -240,11 +240,11 @@ float flite_file_to_speech(const char *filename,
 		   filename);
 	return 1;
     }
-    return flite_ts_to_speech(ts,voice,outtype);
+    return mimic_ts_to_speech(ts,voice,outtype);
 }
 
 
-float flite_ts_to_speech(cst_tokenstream *ts,
+float mimic_ts_to_speech(cst_tokenstream *ts,
                          cst_voice *voice,
                          const char *outtype)
 {
@@ -298,13 +298,13 @@ float flite_ts_to_speech(cst_tokenstream *ts,
 
             if (utt)
             {
-                utt = flite_do_synth(utt,voice,utt_synth_tokens);
+                utt = mimic_do_synth(utt,voice,utt_synth_tokens);
                 if (feat_present(utt->features,"Interrupted"))
                 {
                     delete_utterance(utt); utt = NULL;
                     break;
                 }
-                durs += flite_process_output(utt,outtype,TRUE);
+                durs += mimic_process_output(utt,outtype,TRUE);
                 delete_utterance(utt); utt = NULL;
             }
             else 
@@ -336,35 +336,35 @@ float flite_ts_to_speech(cst_tokenstream *ts,
     return durs;
 }
 
-float flite_text_to_speech(const char *text,
+float mimic_text_to_speech(const char *text,
 			   cst_voice *voice,
 			   const char *outtype)
 {
     cst_utterance *u;
     float dur;
 
-    u = flite_synth_text(text,voice);
-    dur = flite_process_output(u,outtype,FALSE);
+    u = mimic_synth_text(text,voice);
+    dur = mimic_process_output(u,outtype,FALSE);
     delete_utterance(u);
 
     return dur;
 }
 
-float flite_phones_to_speech(const char *text,
+float mimic_phones_to_speech(const char *text,
 			     cst_voice *voice,
 			     const char *outtype)
 {
     cst_utterance *u;
     float dur;
 
-    u = flite_synth_phones(text,voice);
-    dur = flite_process_output(u,outtype,FALSE);
+    u = mimic_synth_phones(text,voice);
+    dur = mimic_process_output(u,outtype,FALSE);
     delete_utterance(u);
 
     return dur;
 }
 
-float flite_process_output(cst_utterance *u, const char *outtype,
+float mimic_process_output(cst_utterance *u, const char *outtype,
                            int append)
 {
     /* Play or save (append) output to output file */
@@ -395,67 +395,67 @@ float flite_process_output(cst_utterance *u, const char *outtype,
     return dur;
 }
 
-int flite_get_param_int(const cst_features *f, const char *name,int def)
+int mimic_get_param_int(const cst_features *f, const char *name,int def)
 {
     return get_param_int(f,name,def);
 }
-float flite_get_param_float(const cst_features *f, const char *name, float def)
+float mimic_get_param_float(const cst_features *f, const char *name, float def)
 {
     return get_param_float(f,name,def);
 }
-const char *flite_get_param_string(const cst_features *f, const char *name, const char *def)
+const char *mimic_get_param_string(const cst_features *f, const char *name, const char *def)
 {
     return get_param_string(f,name,def);
 }
-const cst_val *flite_get_param_val(const cst_features *f, const char *name, cst_val *def)
+const cst_val *mimic_get_param_val(const cst_features *f, const char *name, cst_val *def)
 {
     return get_param_val(f,name,def);
 }
 
-void flite_feat_set_int(cst_features *f, const char *name, int v)
+void mimic_feat_set_int(cst_features *f, const char *name, int v)
 {
     feat_set_int(f,name,v);
 }
-void flite_feat_set_float(cst_features *f, const char *name, float v)
+void mimic_feat_set_float(cst_features *f, const char *name, float v)
 {
     feat_set_float(f,name,v);
 }
-void flite_feat_set_string(cst_features *f, const char *name, const char *v)
+void mimic_feat_set_string(cst_features *f, const char *name, const char *v)
 {
     feat_set_string(f,name,v);
 }
-void flite_feat_set(cst_features *f, const char *name,const cst_val *v)
+void mimic_feat_set(cst_features *f, const char *name,const cst_val *v)
 {
     feat_set(f,name,v);
 }
-int flite_feat_remove(cst_features *f, const char *name)
+int mimic_feat_remove(cst_features *f, const char *name)
 {
     return feat_remove(f,name);
 }
 
-const char *flite_ffeature_string(const cst_item *item,const char *featpath)
+const char *mimic_ffeature_string(const cst_item *item,const char *featpath)
 {
     return ffeature_string(item,featpath);
 }
-int flite_ffeature_int(const cst_item *item,const char *featpath)
+int mimic_ffeature_int(const cst_item *item,const char *featpath)
 {
     return ffeature_int(item,featpath);
 }
-float flite_ffeature_float(const cst_item *item,const char *featpath)
+float mimic_ffeature_float(const cst_item *item,const char *featpath)
 {
     return ffeature_float(item,featpath);
 }
-const cst_val *flite_ffeature(const cst_item *item,const char *featpath)
+const cst_val *mimic_ffeature(const cst_item *item,const char *featpath)
 {
     return ffeature(item,featpath);
 }
 
-cst_item* flite_path_to_item(const cst_item *item,const char *featpath)
+cst_item* mimic_path_to_item(const cst_item *item,const char *featpath)
 {
     return path_to_item(item,featpath);
 }
 
-int flite_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice)
+int mimic_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice)
 {   
     /* Map clunit_db in voice data for giveb voice */
     char *path;
@@ -472,15 +472,15 @@ int flite_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice)
 
     vd = cst_mmap_file(path);
     
-    flite_feat_set_string(voice->features,"voxdir",path);
+    mimic_feat_set_string(voice->features,"voxdir",path);
     cst_free(path);
 
     if (vd == NULL)
         return -1;
 
     x = (const char *)vd->mem;
-    if (!cst_streq("CMUFLITE",x))
-    {   /* Not a Flite voice data file */
+    if (!cst_streq("CMUMIMIC",x))
+    {   /* Not a Mimic voice data file */
         cst_munmap_file(vd);
         return -1;
     }
@@ -496,7 +496,7 @@ int flite_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice)
     }
 
     /* This uses a hack to put in a void pointer to the cst_filemap */
-    flite_feat_set(voice->features,"voxdata",userdata_val(vd));
+    mimic_feat_set(voice->features,"voxdata",userdata_val(vd));
     indexes = (int *)&x[64];
     
     clunit_db = val_clunit_db(feat_val(voice->features,"clunit_db"));
@@ -515,7 +515,7 @@ int flite_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice)
     return 0;
 }
 
-int flite_munmap_clunit_voxdata(cst_voice *voice)
+int mimic_munmap_clunit_voxdata(cst_voice *voice)
 {
 
     cst_filemap *vd;
@@ -523,8 +523,8 @@ int flite_munmap_clunit_voxdata(cst_voice *voice)
     const cst_val *val_clunit_database;
     cst_clunit_db *clunit_db;
 
-    val_vd = flite_get_param_val(voice->features,"voxdata",NULL);
-    val_clunit_database = flite_get_param_val(voice->features,"clunit_db",NULL);
+    val_vd = mimic_get_param_val(voice->features,"voxdata",NULL);
+    val_clunit_database = mimic_get_param_val(voice->features,"clunit_db",NULL);
 
     if (val_vd && val_clunit_database)
     {    

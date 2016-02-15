@@ -47,7 +47,7 @@ SRCS = cst_regex.c regexp.c regsub.c
 SCRIPTS = make_cst_regexes
 OBJS = $(SRCS:.c=.o)
 FILES = Makefile $(H) $(SRCS)
-LIBNAME = flite
+LIBNAME = mimic
 
 LOCAL_INCLUDES = -I.
 

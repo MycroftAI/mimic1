@@ -33,9 +33,9 @@
 ##                                                                       ##
 ##  Windows Mobile support for Flite                                     ##
 ##                                                                       ##
-##  Builds a usable flite library for Windows Mobile (WinCE)             ##
+##  Builds a usable mimic library for Windows Mobile (WinCE)             ##
 ##                                                                       ##
-##  FLOWM: flite on windows mobile                                       ##
+##  FLOWM: mimic on windows mobile                                       ##
 ##         Basic file reader for files                                   ##
 ##                                                                       ##
 ##  Note this uses the cegcc compilation suite (Linux/CYGWIN) rather     ##
@@ -54,19 +54,19 @@ BUILD_DIRS =
 ALL_DIRS = $(BUILD_DIRS) 
 H = flowm.h
 RC = flowm.rc
-SRCS = flowm_main.c flowm_flite.c
+SRCS = flowm_main.c flowm_mimic.c
 OBJS = $(SRCS:.c=.o)
 IMGS = flowm.bmp flowm.ico
 OTHER = _setup.xml
 FILES = Makefile flowm.notes $(SRCS) $(H) $(RC) $(IMGS) $(OTHER)
 FLOWM_VERSION=0.8
 
-flite_LIBS = flite_$(FL_LANG) flite_$(FL_LEX) flite
-flite_LIBS_flags = -L$(LIBDIR) $(flite_LIBS:%=-l%)
-flite_LIBS_deps = $(flite_LIBS:%=$(LIBDIR)/lib%.a)
+mimic_LIBS = mimic_$(FL_LANG) mimic_$(FL_LEX) mimic
+mimic_LIBS_flags = -L$(LIBDIR) $(mimic_LIBS:%=-l%)
+mimic_LIBS_deps = $(mimic_LIBS:%=$(LIBDIR)/lib%.a)
 
 # If you only want one voice, it should be kal -- its fast and small enough
-voice_LIBS_flags = -lflite_cmu_us_kal 
+voice_LIBS_flags = -lmimic_cmu_us_kal 
 EXTRA_CC_FLAGS = -Dcmu_us_kal
 
 # OR you can try these specially built voices for WM
@@ -82,8 +82,8 @@ ALL = flowm.exe
 
 include $(TOP)/config/common_make_rules
 
-flowm.exe: $(OBJS) $(H) flowm.rsc $(FLITELIBS) $(flite_LIBS_deps)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) flowm.rsc $(voice_LIBS_flags) $(flite_LIBS_flags) $(LDFLAGS) $(wince_LIBS)
+flowm.exe: $(OBJS) $(H) flowm.rsc $(MIMICLIBS) $(mimic_LIBS_deps)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) flowm.rsc $(voice_LIBS_flags) $(mimic_LIBS_flags) $(LDFLAGS) $(wince_LIBS)
 	$(STRIP) flowm.exe
 	$(SIZE) flowm.exe
 

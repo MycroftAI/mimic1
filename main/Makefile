@@ -38,47 +38,47 @@ TOP=..
 DIRNAME=main
 BUILD_DIRS = 
 ALL_DIRS= 
-SRCS = flite_main.c flite_time_main.c t2p_main.c compile_regexes.c \
-       flitevox_info_main.c
-OBJS = $(SRCS:.c=.o) flite_voice_list.o 
+SRCS = mimic_main.c mimic_time_main.c t2p_main.c compile_regexes.c \
+       mimicvox_info_main.c
+OBJS = $(SRCS:.c=.o) mimic_voice_list.o 
 FILES = Makefile $(SRCS)
 LOCAL_INCLUDES = 
 
 ALL = shared_libs \
-      $(BINDIR)/flite$(EXEEXT) \
+      $(BINDIR)/mimic$(EXEEXT) \
       $(BINDIR)/t2p$(EXEEXT) $(BINDIR)/compile_regexes$(EXEEXT) \
-      $(BINDIR)/flitevox_info$(EXEEXT) \
-      flite_voice_list.c each $(EXTRABINS)
+      $(BINDIR)/mimicvox_info$(EXEEXT) \
+      mimic_voice_list.c each $(EXTRABINS)
 
 VOICES=$(VOXES)
-VOICELIBS=$(VOICES:%=flite_%)
+VOICELIBS=$(VOICES:%=mimic_%)
 
-flite_LIBS = $(VOICELIBS) $(LANGS:%=flite_%) $(LEXES:%=flite_%) flite
+mimic_LIBS = $(VOICELIBS) $(LANGS:%=mimic_%) $(LEXES:%=mimic_%) mimic
 
-flite_LIBS_flags = -L$(LIBDIR) $(flite_LIBS:%=-l%)
-flite_LIBS_deps = $(flite_LIBS:%=$(LIBDIR)/lib%.a)
+mimic_LIBS_flags = -L$(LIBDIR) $(mimic_LIBS:%=-l%)
+mimic_LIBS_deps = $(mimic_LIBS:%=$(LIBDIR)/lib%.a)
 
 include $(TOP)/config/common_make_rules
 
 # We need to set these vars, even if we're not going to build them
 # so make clean can remove them
-SHAREDARLIBS= $(flite_LIBS:%=$(LIBDIR)/lib%.shared.a)
+SHAREDARLIBS= $(mimic_LIBS:%=$(LIBDIR)/lib%.shared.a)
 SHAREDLIBS = $(SHAREDARLIBS:%.shared.a=%.so)
 VERSIONSHAREDLIBS = $(SHAREDLIBS:%=%.${PROJECT_VERSION}) \
                     $(SHAREDLIBS:%=%.${PROJECT_SHLIB_VERSION})
 
-flite_time_LIBS = flite_cmu_time_awb flite_usenglish flite_cmulex
-flite_time_LIBS_flags = -L$(LIBDIR) $(flite_time_LIBS:%=-l%)
-flite_time_LIBS_deps = $(flite_time_LIBS:%=$(LIBDIR)/lib%.a)
+mimic_time_LIBS = mimic_cmu_time_awb mimic_usenglish mimic_cmulex
+mimic_time_LIBS_flags = -L$(LIBDIR) $(mimic_time_LIBS:%=-l%)
+mimic_time_LIBS_deps = $(mimic_time_LIBS:%=$(LIBDIR)/lib%.a)
 
-LOCAL_CLEAN = $(BINDIR)/flite$(EXEEXT) $(BINDIR)/flite_time$(EXEEXT) \
+LOCAL_CLEAN = $(BINDIR)/mimic$(EXEEXT) $(BINDIR)/mimic_time$(EXEEXT) \
               $(BINDIR)/t2p$(EXEEXT) \
               $(SHAREDARLIBS) $(SHAREDLIBS) $(VERSIONSHAREDLIBS) \
-              $(flite_LIBS_deps) $(VOICES:%=$(BINDIR)/flite_%) \
-              flite_voice_list.c
+              $(mimic_LIBS_deps) $(VOICES:%=$(BINDIR)/mimic_%) \
+              mimic_voice_list.c
 
 ifdef SHFLAGS
-flite_LIBS_flags += -Wl,-rpath $(LIBDIR) 
+mimic_LIBS_flags += -Wl,-rpath $(LIBDIR) 
 shared_libs: $(SHAREDLIBS)
 else
 shared_libs: nothing
@@ -86,54 +86,54 @@ endif
 
 .NOTPARALLEL: $(ALL)
 
-flite_lang_list: 
-	rm -f flite_lang_list.c
+mimic_lang_list: 
+	rm -f mimic_lang_list.c
 	$(TOP)/tools/make_lang_list $(LANGS) $(LEXES)
-	$(MAKE) flite_lang_list.o
+	$(MAKE) mimic_lang_list.o
 
-$(BINDIR)/flite$(EXEEXT): flite_main.o flite_lang_list $(flite_LIBS_deps)
+$(BINDIR)/mimic$(EXEEXT): mimic_main.o mimic_lang_list $(mimic_LIBS_deps)
 	$(TOP)/tools/make_voice_list $(VOICES)
-	rm -f flite_voice_list.o
-	$(MAKE) flite_voice_list.o
-	$(CC) $(CFLAGS) -o $@ flite_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_flags) $(LDFLAGS)
+	rm -f mimic_voice_list.o
+	$(MAKE) mimic_voice_list.o
+	$(CC) $(CFLAGS) -o $@ mimic_main.o mimic_voice_list.o mimic_lang_list.o $(mimic_LIBS_flags) $(LDFLAGS)
 
-$(BINDIR)/flitevox_info$(EXEEXT): flitevox_info_main.o flite_lang_list $(flite_LIBS_deps)
+$(BINDIR)/mimicvox_info$(EXEEXT): mimicvox_info_main.o mimic_lang_list $(mimic_LIBS_deps)
 	$(TOP)/tools/make_voice_list $(VOICES)
-	rm -f flite_voice_list.o
-	$(MAKE) flite_voice_list.o
-	$(CC) $(CFLAGS) -o $@ flitevox_info_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_flags) $(LDFLAGS)
+	rm -f mimic_voice_list.o
+	$(MAKE) mimic_voice_list.o
+	$(CC) $(CFLAGS) -o $@ mimicvox_info_main.o mimic_voice_list.o mimic_lang_list.o $(mimic_LIBS_flags) $(LDFLAGS)
 
-$(BINDIR)/flite_time$(EXEEXT): flite_time_main.o $(flite_time_LIBS_deps)
-	$(CC) $(CFLAGS) -o $@ flite_time_main.o $(flite_time_LIBS_flags) $(FLITELIBFLAGS) $(LDFLAGS) 
+$(BINDIR)/mimic_time$(EXEEXT): mimic_time_main.o $(mimic_time_LIBS_deps)
+	$(CC) $(CFLAGS) -o $@ mimic_time_main.o $(mimic_time_LIBS_flags) $(MIMICLIBFLAGS) $(LDFLAGS) 
 
-$(BINDIR)/t2p$(EXEEXT): t2p_main.o $(flite_LIBS_deps)
-	$(CC) $(CFLAGS) -o $@ t2p_main.o $(flite_LIBS_flags) $(LDFLAGS)
+$(BINDIR)/t2p$(EXEEXT): t2p_main.o $(mimic_LIBS_deps)
+	$(CC) $(CFLAGS) -o $@ t2p_main.o $(mimic_LIBS_flags) $(LDFLAGS)
 
-$(BINDIR)/compile_regexes$(EXEEXT): compile_regexes.o $(FLITELIBS)
-	$(CC) $(CFLAGS) -o $@ compile_regexes.o $(FLITELIBFLAGS) $(LDFLAGS)
+$(BINDIR)/compile_regexes$(EXEEXT): compile_regexes.o $(MIMICLIBS)
+	$(CC) $(CFLAGS) -o $@ compile_regexes.o $(MIMICLIBFLAGS) $(LDFLAGS)
 
 each:
 	@ for i in $(VOICES) ; \
 	do \
-	   $(MAKE) VOICE=$$i $(BINDIR)/flite_$$i ; \
+	   $(MAKE) VOICE=$$i $(BINDIR)/mimic_$$i ; \
 	done
 
-$(BINDIR)/flite_${VOICE}: flite_main.o flite_lang_list $(flite_LIBS_deps)
+$(BINDIR)/mimic_${VOICE}: mimic_main.o mimic_lang_list $(mimic_LIBS_deps)
 	$(TOP)/tools/make_voice_list $(VOICE)
-	rm -f flite_voice_list.o
-	$(MAKE) flite_voice_list.o
-	$(CC) $(CFLAGS) -o $@ flite_main.o flite_voice_list.o flite_lang_list.o $(flite_LIBS_flags) $(LDFLAGS)
+	rm -f mimic_voice_list.o
+	$(MAKE) mimic_voice_list.o
+	$(CC) $(CFLAGS) -o $@ mimic_main.o mimic_voice_list.o mimic_lang_list.o $(mimic_LIBS_flags) $(LDFLAGS)
 
 install:
 #       The basic binaries
-	@ $(INSTALL) -m 755 $(BINDIR)/flite $(DESTDIR)$(INSTALLBINDIR)
+	@ $(INSTALL) -m 755 $(BINDIR)/mimic $(DESTDIR)$(INSTALLBINDIR)
 	@ for i in $(VOICES) ; \
 	do \
-	   $(INSTALL) $(BINDIR)/flite_$$i $(DESTDIR)$(INSTALLBINDIR); \
+	   $(INSTALL) $(BINDIR)/mimic_$$i $(DESTDIR)$(INSTALLBINDIR); \
 	done
-	$(INSTALL) -m 755 $(BINDIR)/flite_time $(DESTDIR)$(INSTALLBINDIR)
+	$(INSTALL) -m 755 $(BINDIR)/mimic_time $(DESTDIR)$(INSTALLBINDIR)
 #       The libraries: static and shared (if built)
-	cp -pd $(flite_LIBS_deps) $(DESTDIR)$(INSTALLLIBDIR)
+	cp -pd $(mimic_LIBS_deps) $(DESTDIR)$(INSTALLLIBDIR)
 ifdef SHFLAGS
 	cp -pd $(SHAREDLIBS) $(VERSIONSHAREDLIBS) $(DESTDIR)$(INSTALLLIBDIR)
 endif

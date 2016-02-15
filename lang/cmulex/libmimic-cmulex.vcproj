@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="libflite-usenglish"
-	ProjectGUID="{95BB879F-9B63-488D-B8D7-B16FE92203E9}"
-	RootNamespace="libflite-usenglish"
+	Name="libmimic-cmulex"
+	ProjectGUID="{78B2092A-F5B1-456F-BAB1-A172AF5D84E4}"
+	RootNamespace="libmimic-cmulex"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\lib"
-			IntermediateDirectory="..\..\windows\build\Debug\usenglish"
+			IntermediateDirectory="..\..\windows\build\Debug\cmulex"
 			ConfigurationType="4"
 			>
 			<Tool
@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;NO_UNION_INITIALIZATION"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -81,7 +81,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\lib"
-			IntermediateDirectory="..\..\windows\build\Release\usenglish"
+			IntermediateDirectory="..\..\windows\build\Release\cmulex"
 			ConfigurationType="4"
 			>
 			<Tool
@@ -102,7 +102,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;NO_UNION_INITIALIZATION"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -148,47 +148,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\us_durz_cart.h"
+				RelativePath=".\cmu_lex.h"
 				>
 			</File>
 			<File
-				RelativePath=".\us_f0.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_ffeatures.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_int_accent_cart.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_int_tone_cart.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_nums_cart.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_phrasing_cart.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_pos_cart.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_regexes.h"
-				>
-			</File>
-			<File
-				RelativePath=".\us_text.h"
-				>
-			</File>
-			<File
-				RelativePath=".\usenglish.h"
+				RelativePath=".\cmu_lts_model.h"
 				>
 			</File>
 		</Filter>
@@ -204,67 +168,43 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\us_aswd.c"
+				RelativePath=".\cmu_lex.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_dur_stats.c"
+				RelativePath=".\cmu_lex_data.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_durz_cart.c"
+				RelativePath=".\cmu_lex_data_raw.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_expand.c"
+				RelativePath=".\cmu_lex_entries.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_f0_model.c"
+				RelativePath=".\cmu_lex_entries_huff_table.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_f0lr.c"
+				RelativePath=".\cmu_lex_num_bytes.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_ffeatures.c"
+				RelativePath=".\cmu_lex_phones_huff_table.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_gpos.c"
+				RelativePath=".\cmu_lts_model.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_int_accent_cart.c"
+				RelativePath=".\cmu_lts_rules.c"
 				>
 			</File>
 			<File
-				RelativePath=".\us_int_tone_cart.c"
-				>
-			</File>
-			<File
-				RelativePath=".\us_nums_cart.c"
-				>
-			</File>
-			<File
-				RelativePath=".\us_phoneset.c"
-				>
-			</File>
-			<File
-				RelativePath=".\us_phrasing_cart.c"
-				>
-			</File>
-			<File
-				RelativePath=".\us_pos_cart.c"
-				>
-			</File>
-			<File
-				RelativePath=".\us_text.c"
-				>
-			</File>
-			<File
-				RelativePath=".\usenglish.c"
+				RelativePath=".\cmu_postlex.c"
 				>
 			</File>
 		</Filter>

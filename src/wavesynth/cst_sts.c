@@ -35,8 +35,8 @@
 /*************************************************************************/
 /*                                                                       */
 /*  Removed the Cepstral copyrighted version (which was also free) and   */
-/*  reverted to the flite-1.0-beta version, the other code had support   */
-/*  for things not in flite and the original is sufficient               */
+/*  reverted to the mimic-1.0-beta version, the other code had support   */
+/*  for things not in mimic and the original is sufficient               */
 /*                                                                       */
 /*************************************************************************/
 

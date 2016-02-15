@@ -44,7 +44,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "flite.h"
+#include "mimic.h"
 #include "cst_clunits.h"
 #include "cst_regex.h"
 #include "cst_units.h"
@@ -69,14 +69,14 @@ int main(int argc, char **argv)
 
     if (argc != 2)
     {
-	fprintf(stderr,"usage: flite_time HH:MM\n");
+	fprintf(stderr,"usage: mimic_time HH:MM\n");
 	exit(-1);
     }
     timex =  new_cst_regex("[012][0-9]:[0-5][0-9]");
     if (!cst_regex_match(timex,argv[1]))
     {
 	fprintf(stderr,"not a valid time\n");
-	fprintf(stderr,"usage: flite_time HH:MM\n");
+	fprintf(stderr,"usage: mimic_time HH:MM\n");
 	exit(-1);
     }
     delete_cst_regex(timex);
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
     b[1] = argv[1][4];
     min = atoi(b);
 
-    flite_init();
+    mimic_init();
 
     v = register_cmu_time_awb(NULL);
 
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	    time_tod(hour,min));
 
     printf("%s\n",thetime);
-    flite_text_to_speech(thetime,v,output);
+    mimic_text_to_speech(thetime,v,output);
 
     return 0;
 }

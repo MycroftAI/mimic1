@@ -38,4 +38,4 @@
 
 cat $FESTVOXDIR/src/grapheme/sampa.top $FESTVOXDIR/src/grapheme/sampa.table $FESTVOXDIR/src/grapheme/sampa.bottom >cmu_grapheme_all_phoneset.scm
 
-$ESTDIR/../festival/bin/festival -b $FLITEDIR/tools/make_phoneset.scm '(phonesettoC "cmu_grapheme" (car (load "cmu_grapheme_all_phoneset.scm" t)) "pau" ".")'
+$ESTDIR/../festival/bin/festival -b $MIMICDIR/tools/make_phoneset.scm '(phonesettoC "cmu_grapheme" (car (load "cmu_grapheme_all_phoneset.scm" t)) "pau" ".")'

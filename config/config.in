@@ -52,4 +52,4 @@ exec_prefix   = @exec_prefix@
 EXEEXT	      = @EXEEXT@
 INSTALLBINDIR = @bindir@
 INSTALLLIBDIR = @libdir@
-INSTALLINCDIR = @includedir@/flite
+INSTALLINCDIR = @includedir@/mimic

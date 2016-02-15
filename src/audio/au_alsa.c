@@ -182,7 +182,7 @@ cst_audiodev *audio_open_alsa(unsigned int sps, int channels, cst_audiofmt fmt)
 
   /* snd_pcm_hw_params_free(hwparams); */
 
-  /* Write hardware parameters to flite audio device data structure */
+  /* Write hardware parameters to mimic audio device data structure */
   ad = cst_alloc(cst_audiodev, 1);
   assert(ad != NULL);
   ad->real_sps = ad->sps = sps;

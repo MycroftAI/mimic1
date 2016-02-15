@@ -37,11 +37,11 @@
 ;;; Convert the LTS cart trees to regular grammars and build wfsts
 ;;;
 ;;; Technique described in the Flite paper
-;;;  http://www.cs.cmu.edu/~awb/papers/ISCA01/flite/flite.html
+;;;  http://www.cs.cmu.edu/~awb/papers/ISCA01/mimic/mimic.html
 ;;;
 ;;;
 ;;; call as:
-;;;  festival $FLITEDIR/tools/make_lts_wfst.scm cmulex_lts_rules.scm \
+;;;  festival $MIMICDIR/tools/make_lts_wfst.scm cmulex_lts_rules.scm \
 ;;;     '(lts_to_rg_to_wfst cmulex_lts_rules ".")'
 ;;;
 ;;; will make a bunch of *.tree.wfst files in "."

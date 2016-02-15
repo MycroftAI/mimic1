@@ -99,6 +99,6 @@ awk '{if (l != $1)
      }
      END {printf(")\n");}' >${UNITS_USED}.sorted
 
-$ESTDIR/../festival/bin/festival --heap 10000000 -b $FLITEDIR/tools/make_clunits.scm \
+$ESTDIR/../festival/bin/festival --heap 10000000 -b $MIMICDIR/tools/make_clunits.scm \
     '(clunits_prune "'$UNIT_TREES'" "'${UNITS_USED}.sorted'" "'${UNIT_TREES}.pruned'")'
 

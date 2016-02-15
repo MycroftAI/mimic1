@@ -32,14 +32,14 @@
 ##                                                                       ##
 ###########################################################################
 ##                                                                       ##
-##  Generate a bunch of sentences with the given flite binary            ##
+##  Generate a bunch of sentences with the given mimic binary            ##
 ##                                                                       ##
 ###########################################################################
 
 
 if [ $# = 0 ]
 then
-    echo flite_test FLITEBINARY TXT.DATA ODIR
+    echo mimic_test MIMICBINARY TXT.DATA ODIR
     exit
 fi
 

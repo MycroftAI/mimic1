@@ -30,16 +30,16 @@
 ##  THIS SOFTWARE.                                                       ##
 ##                                                                       ##
 ###########################################################################
-FLITEDIR=__FLITEDIR__
-TOP=$(FLITEDIR)
-DIRNAME=flite
+MIMICDIR=__MIMICDIR__
+TOP=$(MIMICDIR)
+DIRNAME=mimic
 VOICENAME=__VOICENAME__
 VOICETYPE=__VOICETYPE__
 
-FLITE_LANG=__FLITELANG__
-FLITE_LEX=__FLITELEX__
-LOCAL_INCLUDES = -I$(TOP)/lang/$(FLITE_LANG) -I$(TOP)/lang/$(FLITE_LEX)
-LOCAL_LANGLEX_LIBS = -lflite_$(FLITE_LANG) -lflite_$(FLITE_LEX)
+MIMIC_LANG=__MIMICLANG__
+MIMIC_LEX=__MIMICLEX__
+LOCAL_INCLUDES = -I$(TOP)/lang/$(MIMIC_LANG) -I$(TOP)/lang/$(MIMIC_LEX)
+LOCAL_LANGLEX_LIBS = -lmimic_$(MIMIC_LANG) -lmimic_$(MIMIC_LEX)
 LOCAL_LIBS = -L . -l$(VOICENAME) 
 H = 
 
@@ -85,9 +85,9 @@ endif
 
 OBJS = $(CSRCS:.c=.o) $(LPCOBJS) $(MCEPOBJS) $(RESOBJS) 
 
-ALL = lib$(VOICENAME).a flite_$(VOICENAME)
+ALL = lib$(VOICENAME).a mimic_$(VOICENAME)
 
-include $(FLITEDIR)/config/common_make_rules
+include $(MIMICDIR)/config/common_make_rules
 
 LIBDIR=.
 ifdef SHFLAGS
@@ -95,26 +95,26 @@ ALL += lib$(VOICENAME).so
 endif
 
 $(VOICENAME)_lpc.o: $(VOICENAME)_lpc.c
-	$(CC) $(CFLAGS) -I. -I$(FLITEDIR)/include -c -o $@ $<
+	$(CC) $(CFLAGS) -I. -I$(MIMICDIR)/include -c -o $@ $<
 
 $(VOICENAME)_mcep.o: $(VOICENAME)_mcep.c
-	$(CC) $(CFLAGS) -I. -I$(FLITEDIR)/include -c -o $@ $<
+	$(CC) $(CFLAGS) -I. -I$(MIMICDIR)/include -c -o $@ $<
 
-flite_$(VOICENAME): flite_main.o flite_voice_list.o flite_lang_list.o $(FLITELIBS) lib$(VOICENAME).a
-	$(CC) $(CFLAGS) -o $@ flite_main.o flite_voice_list.o flite_lang_list.o $(LOCAL_LIBS)  $(LOCAL_LANGLEX_LIBS) $(FLITELIBFLAGS) $(LDFLAGS)
+mimic_$(VOICENAME): mimic_main.o mimic_voice_list.o mimic_lang_list.o $(MIMICLIBS) lib$(VOICENAME).a
+	$(CC) $(CFLAGS) -o $@ mimic_main.o mimic_voice_list.o mimic_lang_list.o $(LOCAL_LIBS)  $(LOCAL_LANGLEX_LIBS) $(MIMICLIBFLAGS) $(LDFLAGS)
 
 lib$(VOICENAME).a: $(OBJS)
 	@ $(AR) cruv lib$(VOICENAME).a $(OBJS)
 	@ $(RANLIB) lib$(VOICENAME).a
 	@ touch .build_lib
 
-flite_voice_list.c:
+mimic_voice_list.c:
 	$(TOP)/tools/make_voice_list $(VOICES)
 
-flite_lang_list.c:
-	$(TOP)/tools/make_lang_list $(FLITE_LANG) $(FLITE_LEX)
+mimic_lang_list.c:
+	$(TOP)/tools/make_lang_list $(MIMIC_LANG) $(MIMIC_LEX)
 
 # Dump cg voice as single file
-voicedump : flite_$(VOICENAME)
-	./flite_$(VOICENAME) -voicedump $(VOICENAME).flitevox
+voicedump : mimic_$(VOICENAME)
+	./mimic_$(VOICENAME) -voicedump $(VOICENAME).mimicvox
 

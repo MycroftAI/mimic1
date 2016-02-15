@@ -44,7 +44,7 @@ SCRIPTS = make_grapheme_phoneset
 OBJS = $(SRCS:.c=.o)
 SCM=
 FILES = Makefile $(SCM) $(SRCS) $(H) $(SCRIPTS)
-LIBNAME = flite_cmu_grapheme_lang
+LIBNAME = mimic_cmu_grapheme_lang
 LOCAL_INCLUDES = 
 
 ALL = 

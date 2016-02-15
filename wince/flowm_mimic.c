@@ -34,7 +34,7 @@
 /*               Date:  January 2009                                     */
 /*************************************************************************/
 /*                                                                       */
-/*  flowm functions for flite access                                     */
+/*  flowm functions for mimic access                                     */
 /*                                                                       */
 /*************************************************************************/
 
@@ -43,7 +43,7 @@
 #include <aygshell.h>
 
 #include "cst_wchar.h"
-#include "flite.h"
+#include "mimic.h"
 #include "flowm.h"
 
 /* For debugging its sometimes good to switch off the actual synthesis */
@@ -104,7 +104,7 @@ float flowm_find_file_percentage()
 
 TCHAR *flowm_voice_name(int i)
 {
-    /* In order not to have flite things in flowm_main, we provide an */
+    /* In order not to have mimic things in flowm_main, we provide an */
     /* interface to the voice list */
     return VoxDefs[i].name;
 }
@@ -115,7 +115,7 @@ void flowm_init()
     int i;
     cst_audio_streaming_info *asi;
 
-    flite_init();        /* Initialize flite interface */
+    mimic_init();        /* Initialize mimic interface */
 
     for (i=0; VoxDefs[i].name; i++)
     {
@@ -206,7 +206,7 @@ int flowm_say_text(TCHAR *text)
         feat_set_string(v->features, "print_info_relation", "Segment");
 
     /* Do the synthesis */
-    previous_wave = flite_text_to_wave(s,v);
+    previous_wave = mimic_text_to_wave(s,v);
 
     ns = cst_wave_num_samples(previous_wave);
 
@@ -394,7 +394,7 @@ int flowm_say_file(TCHAR *tfilename)
     feat_remove(v->features,"print_info_relation");
 
     filename = cst_wstr2cstr(tfilename);
-    rc = flite_file_to_speech(filename, v, "stream");
+    rc = mimic_file_to_speech(filename, v, "stream");
     cst_free(filename);
 
     audio_flush(fl_ad);

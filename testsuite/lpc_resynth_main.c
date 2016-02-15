@@ -37,7 +37,7 @@
 /*  Resynthesize lpc with various techniques                             */
 /*************************************************************************/
 #include <stdio.h>
-#include "flite.h"
+#include "mimic.h"
 #include "cst_track.h"
 #include "cst_wave.h"
 #include "cst_tokenstream.h"
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
     f2 = val_string(val_car(val_cdr(files)));
     t1 = new_track();
 
-    lpc_start = flite_get_param_int(args,"-lpc_start",1);
+    lpc_start = mimic_get_param_int(args,"-lpc_start",1);
     if (feat_present(args,"-rfc"))
         rfc = 1;
     if (feat_present(args,"-str"))
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
     if (feat_present(args,"-me_filters"))
     {
         me_filters = new_track();
-        if (cst_track_load_est(me_filters,flite_get_param_string(args,"-me_filters","me_filters.track")) != CST_OK_FORMAT)
+        if (cst_track_load_est(me_filters,mimic_get_param_string(args,"-me_filters","me_filters.track")) != CST_OK_FORMAT)
         {
             fprintf(stderr,
                     "lpc_resynth: can't read file or wrong format \"%s\"\n",
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
     if (feat_present(args,"-res"))
     {
         res = new_wave();
-        resfn = flite_get_param_string(args,"-res","res.wav");
+        resfn = mimic_get_param_string(args,"-res","res.wav");
 	if (cst_wave_load_riff(res,resfn) != CST_OK_FORMAT)
 	{
 	    fprintf(stderr,
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     }
     w2 = copy_wave(w1);
 
-    order = flite_get_param_int(args,"-order",16);
+    order = mimic_get_param_int(args,"-order",16);
     lpcs = cst_alloc(float,order);
     s = order;
     residual = NULL;

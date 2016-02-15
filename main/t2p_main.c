@@ -44,7 +44,7 @@
 #include <unistd.h>
 
 #include "cst_args.h"
-#include "flite.h"
+#include "mimic.h"
 
 #include "../lang/usenglish/usenglish.h"
 #include "../lang/cmulex/cmu_lex.h"
@@ -111,10 +111,10 @@ int main(int argc, char **argv)
 	exit(-1);
     }
     
-    flite_init();
+    mimic_init();
     v = register_cmu_us_no_wave(NULL);
 
-    u = flite_synth_text(text,v);
+    u = mimic_synth_text(text,v);
 
     for (s=relation_head(utt_relation(u,"Segment"));
 	 s;

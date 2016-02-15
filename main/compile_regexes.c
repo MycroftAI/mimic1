@@ -46,7 +46,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "flite.h"
+#include "mimic.h"
 
 static void compregex_usage()
 {

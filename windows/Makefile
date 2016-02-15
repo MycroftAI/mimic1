@@ -33,7 +33,7 @@
 ##                                                                       ##
 ##  Windows Mobile support for Flite                                     ##
 ##                                                                       ##
-##  Builds a usable flite, language and voice .dlls with mingw           ##
+##  Builds a usable mimic, language and voice .dlls with mingw           ##
 ##                                                                       ##
 ##     http://www.mingw.org                                              ##
 ##                                                                       ##
@@ -52,31 +52,31 @@ H =
 RC = 
 SRCS = 
 OBJS = $(SRCS:.c=.o)
-WINDOWS = fliteDll.cpp stdafx.h
+WINDOWS = mimicDll.cpp stdafx.h
 FILES = Makefile $(SRCS) $(H) $(RC) $(WINDOWS)
 
-flite_LIBS = flite_$(FL_VOX) flite_$(FL_LANG) flite_$(FL_LEX) 
-flite_LIBS_flags = -L$(LIBDIR) $(flite_LIBS:%=-l%)
-flite_LIBS_deps = $(flite_LIBS:%=$(LIBDIR)/lib%.a)
+mimic_LIBS = mimic_$(FL_VOX) mimic_$(FL_LANG) mimic_$(FL_LEX) 
+mimic_LIBS_flags = -L$(LIBDIR) $(mimic_LIBS:%=-l%)
+mimic_LIBS_deps = $(mimic_LIBS:%=$(LIBDIR)/lib%.a)
 
-LOCAL_CLEAN = flite.dll flite.lib flite.def
+LOCAL_CLEAN = mimic.dll mimic.lib mimic.def
 
 ALL = 
 
 include $(TOP)/config/common_make_rules
 
-flite.def: $(LIBDIR)/libflite.a
-	echo "LIBRARY FLITE.DLL" >flite.def
-	echo "EXPORTS" >>flite.def
-	$(NM) $(LIBDIR)/libflite.a | \
-	grep "^0" | awk '{if ($$2 == "T") print $$3}' | sed 's/_//' >>flite.def
+mimic.def: $(LIBDIR)/libmimic.a
+	echo "LIBRARY MIMIC.DLL" >mimic.def
+	echo "EXPORTS" >>mimic.def
+	$(NM) $(LIBDIR)/libmimic.a | \
+	grep "^0" | awk '{if ($$2 == "T") print $$3}' | sed 's/_//' >>mimic.def
 
-flite.dll: $(LIBDIR)/libflite.a
-	rm -rf flitedll
-	mkdir flitedll
-	(cd flitedll && ar x ../$(LIBDIR)/libflite.a)
-	$(DLLWRAP) -def flite.def flitedll/*.o --output-lib flite.lib -o flite.dll
-	rm -rf flitedll
+mimic.dll: $(LIBDIR)/libmimic.a
+	rm -rf mimicdll
+	mkdir mimicdll
+	(cd mimicdll && ar x ../$(LIBDIR)/libmimic.a)
+	$(DLLWRAP) -def mimic.def mimicdll/*.o --output-lib mimic.lib -o mimic.dll
+	rm -rf mimicdll
 
 
 

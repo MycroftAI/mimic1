@@ -47,7 +47,7 @@ SRCS = cmu_us_kal16_diphone.c cmu_us_kal16.c \
 OBJS = $(SRCS:.c=.o)
 SCM=
 FILES = Makefile $(SCM) $(SRCS) $(H)
-LIBNAME = flite_cmu_us_kal16
+LIBNAME = mimic_cmu_us_kal16
 LOCAL_INCLUDES = -I$(TOP)/lang/usenglish  -I$(TOP)/lang/cmulex
 
 ALL = 
