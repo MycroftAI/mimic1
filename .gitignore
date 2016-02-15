@@ -20,8 +20,14 @@
 *.out
 *.app
 
-# Vim Swap File
+# vim Swap File
 .*.swp
+
+# ctags file
+tags
+
+# gdb files
+.gdb_history
 
 # Configure Generated Files/Directories 
 config.log
