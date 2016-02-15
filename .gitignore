@@ -32,9 +32,9 @@ config/system.mak
 # Building Process Files/Directories
 build/
 bin/
-include/flite_version.h
-main/flite_lang_list.c
-main/flite_voice_list.c
+include/mimic_version.h
+main/mimic_lang_list.c
+main/mimic_voice_list.c
 
 # Test suite executables
 testsuite/hrg_test

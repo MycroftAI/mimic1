@@ -1,6 +1,0 @@
-#define MIMIC_PROJECT_NAME "Festival Lite"
-#define MIMIC_PROJECT_PREFIX "mimic"
-#define MIMIC_PROJECT_VERSION "2.0.0"
-#define MIMIC_PROJECT_DATE "Dec 2014"
-#define MIMIC_PROJECT_STATE "release"
-#define MIMIC_PROJECT_SHLIB_VERSION "1"
