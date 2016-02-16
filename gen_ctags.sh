@@ -1,5 +1,9 @@
 #! /bin/bash
 
-find -name '*.c' -exec ctags {} +
-find -name '*.cpp' -exec ctags {} +
-find -name '*.h' -exec ctags {} +
+#clear the file
+> tags
+
+#append to tags file
+find -name '*.c' -exec ctags --append {} +
+find -name '*.cpp' -exec ctags --append {} +
+find -name '*.h' -exec ctags --append {} +
