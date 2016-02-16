@@ -43,16 +43,11 @@ main/mimic_lang_list.c
 main/mimic_voice_list.c
 
 # Test suite executables
-testsuite/hrg_test
-testsuite/lex_test
-testsuite/nums_test
 testsuite/play_client
 testsuite/play_server
 testsuite/play_sync
 testsuite/play_wave
 testsuite/record_wave
-testsuite/regex_test
-testsuite/token_test
 testsuite/asciiS2U
 testsuite/asciiU2S
 testsuite/bin2ascii
@@ -60,10 +55,17 @@ testsuite/combine_waves
 testsuite/compare_wave
 testsuite/lex_lookup
 testsuite/lpc_resynth
-testsuite/lpc_test
-testsuite/lpc_test2
 testsuite/record_in_noise
 testsuite/rfc
-testsuite/utt_test
 testsuite/by_word
 testsuite/multi_thread
+
+# unittests
+unittests/utt_test
+unittests/regex_test
+unittests/token_test
+unittests/hrg_test
+unittests/lex_test
+unittests/nums_test
+unittests/lpc_test
+unittests/lpc_test2

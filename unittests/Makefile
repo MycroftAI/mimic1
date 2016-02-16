@@ -35,17 +35,16 @@
 ##                                                                       ##
 ###########################################################################
 TOP=..
-DIRNAME=testsuite
+DIRNAME=unittests
 BUILD_DIRS = 
 ALL_DIRS=
 DATAFILES=data.one
-SRCS = play_wave_main.c record_wave_main.c \
-       play_sync_main.c play_server_main.c play_client_main.c \
-       lex_lookup_main.c asciiS2U_main.c asciiU2S_main.c \
-       combine_waves_main.c bin2ascii_main.c record_in_noise_main.c \
-       compare_wave_main.c rfc_main.c lpc_resynth_main.c \
-       by_word_main.c multi_thread_main.c
-OTHERS=
+SRCS = token_test_main.c hrg_test_main.c \
+       regex_test_main.c nums_test_main.c \
+       lex_test_main.c utt_test_main.c lpc_test_main.c \
+       lpc_test2_main.c
+
+OTHERS = kal_test_main.c
 
 FILES = Makefile $(SRCS) $(DATAFILES) $(OTHERS)
 
@@ -71,14 +70,4 @@ $(MAIN_O) : %_main.o : %_main.c
 	$(CC) $(CFLAGS) -o $@ $< 
 $(ALL) : %$(EXEEXT) : %_main.o $(MIMICLIBS)
 	$(CC) $(CFLAGS) -o $@ $@_main.o $($(@:=_LIBS)) $(MIMICLIBFLAGS) $(LDFLAGS)
-
-multi_thread: multi_thread_main.c
-	gcc -fopenmp -o multi_thread multi_thread_main.c \
-		$(CFLAGS) -I$(TOP)/include $(MIMICLIBFLAGS) $(LDFLAGS) \
-		-l mimic_cmu_us_slt -lmimic_cmulex -lmimic_usenglish \
-		-lmimic -lm -lasound -lgomp
-do_thread_test: multi_thread
-#	This shouldn't segfault
-	export OMP_NUM_THREADS=100 && ./multi_thread
-
 
