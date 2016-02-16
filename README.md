@@ -144,7 +144,7 @@ with "`./`".
 
 TODO: Explain where to find voices, and how to obtain new ones.
 
-The `voices/` directory contains several mimicvox voices.
+The `voices/` directory contains several flitevox voices.
 
 You can also find existing Flite voices here: 
   `http://www.festvox.org/flite/packed/flite-2.0/voices/`
