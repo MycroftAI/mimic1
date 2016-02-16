@@ -40,7 +40,7 @@
 #include "cst_string.h"
 #include "cst_cg_map.h"
 
-const char * const cg_voice_header_string = "CMU_MIMIC_CG_VOXDATA-v2.0";
+const char * const cg_voice_header_string = "CMU_FLITE_CG_VOXDATA-v2.0";
 
 int cst_cg_read_header(cst_file fd)
 {
