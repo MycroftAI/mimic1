@@ -37,49 +37,85 @@
 /*  Text expander test (nums etc)                                        */
 /*                                                                       */
 /*************************************************************************/
-#include <stdio.h>
+#include <string.h>
+
 #include "mimic.h"
 #include "usenglish.h"
 #include "us_text.h"
 
-static void print_and_delete(cst_val *p)
+#include "cutest.h"
+
+void digits(const char *input, const char *expected)
 {
-    val_print(stdout,p);
-    printf("\n");
-    delete_val(p);
+    int mismatches = 0;
+    const cst_val *p, *v;
+    char *tok;
+    char * expected_str = malloc(strlen(expected) + 1);
+    v = en_exp_digits(input);
+    strcpy(expected_str, expected);
+    tok = strtok(expected_str, " ");
+    for (p=v; p; )
+    {
+        mismatches += strcmp(val_string(val_car(p)), tok);
+        p=val_cdr(p);
+        if (p)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
+    }
+    TEST_CHECK_(mismatches == 0, "%s != %s", input, expected);
 }
 
-static void nums(const char *w)
+void nums(const char *input, const char *expected)
 {
-    printf("Number: %s\n",w);
-    print_and_delete(en_exp_number(w));
+    int mismatches = 0;
+    const cst_val *p, *v;
+    char *tok;
+    char * expected_str = malloc(strlen(expected) + 1);
+    v = en_exp_number(input);
+    strcpy(expected_str, expected);
+    tok = strtok(expected_str, " ");
+    for (p=v; p; )
+    {
+        mismatches += strcmp(val_string(val_car(p)), tok);
+        p=val_cdr(p);
+        if (p)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+        {
+            mismatches++;
+            break;
+        }
+    }
+    TEST_CHECK_(mismatches == 0, "%s != %s", input, expected);
 }
 
-static void digits(const char *w)
+
+
+   
+void test_nums(void)
 {
-    printf("Digits: %s\n",w);
-    print_and_delete(en_exp_digits(w));
+    nums("13", "thirteen");
+    nums("1986", "one thousand nine hundred eighty six");
+    nums("1234567890", "one billion two hundred thirty four million five hundred sixty seven thousand eight hundred ninety");
+    nums("100", "one hundred");
+    nums("10001", "ten thousand one");
+    nums("10101", "ten thousand one hundred one");
+    nums("432567", "four hundred thirty two thousand five hundred sixty seven");
+    nums("432500", "four hundred thirty two thousand five hundred");
+    nums("1000523", "one million five hundred twenty three");
+    nums("1111111111111", "one one one one one one one one one one one one one");
+}
+void test_digits(void)
+{
+
+    digits("123", "one two three");
+    digits("1", "one");
+    digits("1234567809", "one two three four five six seven eight nine zero");
 }
 
-int main(int argc, char **argv)
-{
-    (void)argc;
-    (void)argv;
-
-    nums("13");
-    nums("1986");
-    nums("1234567890");
-    nums("100");
-    nums("10001");
-    nums("10101");
-    nums("432567");
-    nums("432500");
-    nums("1000523");
-    nums("1111111111111");
-
-    digits("123");
-    digits("1");
-    digits("1234567809");
-
-    return 0;
-}
+TEST_LIST = {
+    { "numbers", test_nums },
+    { "digits", test_digits },
+    {0}
+};
