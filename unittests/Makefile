@@ -42,7 +42,7 @@ DATAFILES=data.one
 SRCS = token_test_main.c hrg_test_main.c \
        regex_test_main.c nums_test_main.c \
        lex_test_main.c utt_test_main.c lpc_test_main.c \
-       lpc_test2_main.c
+       lpc_test2_main.c voice_select_test_main.c
 
 OTHERS = kal_test_main.c
 
@@ -57,6 +57,7 @@ utt_test_LIBS = -lmimic_cmulex
 lex_lookup_LIBS = -lmimic_cmulex
 ldom_time_LIBS = -L/home/awb/data/ldom/time_mimic/mimic/lib -lcmu_time_awb -lmimic_usenglish -lmimic_cmulex
 by_word_LIBS = -lmimic_cmu_us_kal -lmimic_usenglish -lmimic_cmulex
+voice_select_test_LIBS = ../main/mimic_voice_list.o -lmimic_cmu_us_slt -lmimic_usenglish -lmimic_cmulex -I../include
 #kal_test_LIBS = -lmimic_cmu_us_kal -lmimic_usenglish -lmimic_cmulex \
 #	          /home/awb/src/malloc/gmalloc.o
 
