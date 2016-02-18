@@ -1,6 +1,6 @@
 /* This is an altered version.  It was originally altered for use in
    the Edinburgh Speech Tools by Richard Caley and others.  It was
-   later altered for use in Flite by Alan W Black.  It was then
+   later altered for use in Mimic by Alan W Black.  It was then
    further altered by David Huggins-Daines.  Identifiers and
    structures have been changed, but the basic structure of the code
    is intact. */

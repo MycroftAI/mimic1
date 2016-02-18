@@ -56,13 +56,13 @@ FILES = Makefile $(SRCS) $(DATAFILES) $(OTHERS)
 LOCAL_INCLUDES = -I$(TOP)/lang/usenglish
 
 MAIN_EXECS = $(SRCS:_main.c=$(EXEEXT))
-lex_test_LIBS = -lflite_cmulex
-nums_test_LIBS = -lflite_usenglish
-utt_test_LIBS = -lflite_cmulex
-lex_lookup_LIBS = -lflite_cmulex
-ldom_time_LIBS = -L/home/awb/data/ldom/time_flite/flite/lib -lcmu_time_awb -lflite_usenglish -lflite_cmulex
-by_word_LIBS = -lflite_cmu_us_kal -lflite_usenglish -lflite_cmulex
-#kal_test_LIBS = -lflite_cmu_us_kal -lflite_usenglish -lflite_cmulex \
+lex_test_LIBS = -lmimic_cmulex
+nums_test_LIBS = -lmimic_usenglish
+utt_test_LIBS = -lmimic_cmulex
+lex_lookup_LIBS = -lmimic_cmulex
+ldom_time_LIBS = -L/home/awb/data/ldom/time_mimic/mimic/lib -lcmu_time_awb -lmimic_usenglish -lmimic_cmulex
+by_word_LIBS = -lmimic_cmu_us_kal -lmimic_usenglish -lmimic_cmulex
+#kal_test_LIBS = -lmimic_cmu_us_kal -lmimic_usenglish -lmimic_cmulex \
 #	          /home/awb/src/malloc/gmalloc.o
 
 ALL = $(MAIN_EXECS)
@@ -73,14 +73,14 @@ include $(TOP)/config/common_make_rules
 MAIN_O = $(SRCS:%=%_main.o)
 $(MAIN_O) : %_main.o : %_main.c
 	$(CC) $(CFLAGS) -o $@ $< 
-$(ALL) : %$(EXEEXT) : %_main.o $(FLITELIBS)
-	$(CC) $(CFLAGS) -o $@ $@_main.o $($(@:=_LIBS)) $(FLITELIBFLAGS) $(LDFLAGS)
+$(ALL) : %$(EXEEXT) : %_main.o $(MIMICLIBS)
+	$(CC) $(CFLAGS) -o $@ $@_main.o $($(@:=_LIBS)) $(MIMICLIBFLAGS) $(LDFLAGS)
 
 multi_thread: multi_thread_main.c
 	gcc -fopenmp -o multi_thread multi_thread_main.c \
-		$(CFLAGS) -I$(TOP)/include $(FLITELIBFLAGS) $(LDFLAGS) \
-		-l flite_cmu_us_slt -lflite_cmulex -lflite_usenglish \
-		-lflite -lm -lasound -lgomp
+		$(CFLAGS) -I$(TOP)/include $(MIMICLIBFLAGS) $(LDFLAGS) \
+		-l mimic_cmu_us_slt -lmimic_cmulex -lmimic_usenglish \
+		-lmimic -lm -lasound -lgomp
 do_thread_test: multi_thread
 #	This shouldn't segfault
 	export OMP_NUM_THREADS=100 && ./multi_thread

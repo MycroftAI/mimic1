@@ -198,12 +198,12 @@ void lexicon_register(cst_lexicon *lex)
     cst_lexicon **old_lexs;
     int i;
     
-    old_lexs = flite_lexicons;
-    flite_num_lexicons++;
-    flite_lexicons = cst_alloc(cst_lexicon *,flite_num_lexicons);
-    for (i=0; i<flite_num_lexicons-1; i++)
-	flite_lexicons[i] = old_lexs[i];
-    flite_lexicons[i] = lex;
+    old_lexs = mimic_lexicons;
+    mimic_num_lexicons++;
+    mimic_lexicons = cst_alloc(cst_lexicon *,mimic_num_lexicons);
+    for (i=0; i<mimic_num_lexicons-1; i++)
+	mimic_lexicons[i] = old_lexs[i];
+    mimic_lexicons[i] = lex;
     cst_free(old_lexs);
 }
 
@@ -211,9 +211,9 @@ cst_lexicon *lexicon_select(const char *name)
 {
     int i;
 
-    for (i=0; i < flite_num_lexicons; i++)
-	if (cst_streq(name,flite_lexicons[i]->name))
-	    return flite_lexicons[i];
+    for (i=0; i < mimic_num_lexicons; i++)
+	if (cst_streq(name,mimic_lexicons[i]->name))
+	    return mimic_lexicons[i];
     return NULL;
 }
 #endif

@@ -38,7 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include "flite.h"
+#include "mimic.h"
 #include "cst_cg.h"
 #include "cst_cg_map.h"
 
@@ -83,7 +83,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
         else
         {
             xname = feat_own_string(vox->features,fname);
-            flite_feat_set_string(vox->features,xname, fval);
+            mimic_feat_set_string(vox->features,xname, fval);
         }
         cst_free(fname);
         cst_free(fval);
@@ -99,7 +99,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
     }
 
     /* Use the language feature to initialize the correct voice */
-    language = flite_get_param_string(vox->features, "language", "");
+    language = mimic_get_param_string(vox->features, "language", "");
 
     /* Search Lang table for lang_init() and lex_init(); */
     for (i=0; lang_table[i].lang; i++)
@@ -122,21 +122,21 @@ cst_voice *cst_cg_load_voice(const char *filename,
     
     /* Things that weren't filled in already. */
     vox->name = cg_db->name;
-    flite_feat_set_string(vox->features,"name",cg_db->name);
-    flite_feat_set_string(vox->features,"pathname",filename);
+    mimic_feat_set_string(vox->features,"name",cg_db->name);
+    mimic_feat_set_string(vox->features,"pathname",filename);
     
-    flite_feat_set(vox->features,"lexicon",lexicon_val(lex));
-    flite_feat_set(vox->features,"postlex_func",uttfunc_val(lex->postlex));
+    mimic_feat_set(vox->features,"lexicon",lexicon_val(lex));
+    mimic_feat_set(vox->features,"postlex_func",uttfunc_val(lex->postlex));
 
     /* No standard segment durations are needed as its done at the */
     /* HMM state level */
-    flite_feat_set_string(vox->features,"no_segment_duration_model","1");
-    flite_feat_set_string(vox->features,"no_f0_target_model","1");
+    mimic_feat_set_string(vox->features,"no_segment_duration_model","1");
+    mimic_feat_set_string(vox->features,"no_f0_target_model","1");
 
     /* Waveform synthesis */
-    flite_feat_set(vox->features,"wave_synth_func",uttfunc_val(&cg_synth));
-    flite_feat_set(vox->features,"cg_db",cg_db_val(cg_db));
-    flite_feat_set_int(vox->features,"sample_rate",cg_db->sample_rate);
+    mimic_feat_set(vox->features,"wave_synth_func",uttfunc_val(&cg_synth));
+    mimic_feat_set(vox->features,"cg_db",cg_db_val(cg_db));
+    mimic_feat_set_int(vox->features,"sample_rate",cg_db->sample_rate);
 
     cst_fclose(vd);
     return vox;

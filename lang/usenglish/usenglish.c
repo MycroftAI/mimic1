@@ -36,7 +36,7 @@
 /*  Generic models for US English                                        */
 /*************************************************************************/
 
-#include "flite.h"
+#include "mimic.h"
 #include "usenglish.h"
 #include "us_f0.h"
 #include "us_text.h"

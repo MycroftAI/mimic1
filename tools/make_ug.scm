@@ -73,7 +73,7 @@ Assoc list to ordered struction mapping a symbol to n other symbols."
   (format ofd "/* Original table developed by Richard Sproat and Kyoung-young Kim          */\n")
   (format ofd "/* Ported for Festvox by Gopala Anumachipalli gopalakr@cs.cmu.edu Sep 2012  */\n")
   (format ofd "/* Then converted to C for CMU Flite (cmuflite.org)                         */\n")
-  (format ofd "#include <flite.h>\n")
+  (format ofd "#include <mimic.h>\n")
  
   (xtol "unicode_sampa_mapping" unicode_sampa_mapping ofd)
 

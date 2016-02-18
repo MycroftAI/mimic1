@@ -49,9 +49,9 @@ SRCS = us_int_accent_cart.c us_int_tone_cart.c us_f0_model.c \
 SCRIPTS = make_us_regexes us_pos.tree
 OBJS = $(SRCS:.c=.o)
 SCM=
-WINDOWS = libflite-usenglish.vcproj
+WINDOWS = libmimic-usenglish.vcproj
 FILES = Makefile $(SCM) $(SRCS) $(H) $(SCRIPTS) $(WINDOWS)
-LIBNAME = flite_usenglish
+LIBNAME = mimic_usenglish
 LOCAL_INCLUDES = 
 
 ALL = 
@@ -62,5 +62,5 @@ regexes:
 	./make_us_regexes $(BINDIR) >us_regexes.h
 
 us_pos_cart.c: 
-	$(ESTDIR)/../festival/bin/festival -b $(FLITEDIR)/tools/make_cart.scm $(FLITEDIR)/tools/make_pos.scm 
+	$(ESTDIR)/../festival/bin/festival -b $(MIMICDIR)/tools/make_cart.scm $(MIMICDIR)/tools/make_pos.scm 
 

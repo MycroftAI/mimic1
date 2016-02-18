@@ -36,7 +36,7 @@
 /*  Moved the CMU lexicon specific postlexical rules into cmulex itself  */
 /*************************************************************************/
 
-#include "flite.h"
+#include "mimic.h"
 
 static void apostrophe_s(cst_utterance *u)
 {

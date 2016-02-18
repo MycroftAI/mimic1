@@ -59,7 +59,7 @@ void longjmp(register jmp_buf env, register int value);
 
 # define cst_error() (cst_errjmp ? longjmp(*cst_errjmp,1) : 0)
 #else  /* m68K */
-/* I've never tested this or even compiled it (Flite is ARM compiled) */
+/* I've never tested this or even compiled it (Mimic is ARM compiled) */
 #  define cst_error() ErrFatalDisplayIf(-1, "cst_error")
 #endif
 #else /* not palmos */

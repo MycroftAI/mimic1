@@ -82,7 +82,7 @@ then
    # Normalize the string to be compressed
    cat $infile | awk '{printf("\"%s\"\n",$1)}' |
    cat >huff.entries.corpus
-   $ESTDIR/../festival/bin/festival -b $FLITEDIR/tools/make_lex.scm '(utf8entries "huff.entries.corpus" "huff.tmp.corpus")' 
+   $ESTDIR/../festival/bin/festival -b $MIMICDIR/tools/make_lex.scm '(utf8entries "huff.entries.corpus" "huff.tmp.corpus")' 
 fi
 
 if [ $1 = "phones" ]

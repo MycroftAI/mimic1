@@ -103,7 +103,7 @@ cst_utterance *get_diphone_units(cst_utterance *utt)
 
 	if (unit_entry == -1)
 	{
-	    cst_errmsg("flite: udb failed to find entry for: %s\n",
+	    cst_errmsg("mimic: udb failed to find entry for: %s\n",
 		       diphone_name);
 	    unit_entry = 0;
 	}

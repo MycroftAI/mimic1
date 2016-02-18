@@ -35,7 +35,7 @@
 ##                                                                       ##
 ###########################################################################
 PROJECT_NAME = Festival Lite
-PROJECT_PREFIX = flite
+PROJECT_PREFIX = mimic
 PROJECT_VERSION = 2.0.0
 PROJECT_DATE = Dec 2014
 PROJECT_STATE = release

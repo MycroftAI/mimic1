@@ -41,7 +41,7 @@ ALL_DIRS=
 SRCS = cst_lexicon.c cst_lts.c cst_lts_rewrites.c
 OBJS = $(SRCS:.c=.o)
 FILES = Makefile $(SRCS)
-LIBNAME = flite
+LIBNAME = mimic
 
 ALL = 
 

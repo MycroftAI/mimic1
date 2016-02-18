@@ -39,7 +39,7 @@
 /*          Modified by Alan W Black (awb@cs.cmu.edu) Jan 2006       */
 /*          taken from festvox/src/vc/ back into Festival            */
 /*          Modified by Alan W Black (awb@cs.cmu.edu) Nov 2007       */
-/*          taken from Festival into Flite                           */
+/*          taken from Festival into Mimic                           */
 /*-------------------------------------------------------------------*/
 /*                                                                   */
 /*  Subroutine for Speech Synthesis                                  */

@@ -34,7 +34,7 @@
 ;;;               Date: November 2007                                   ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;                                                                     ;;;
-;;; Convert a clustergen voice to flite                                 ;;;
+;;; Convert a clustergen voice to mimic                                 ;;;
 ;;; (Oct 2014) support for random forests                                ;;;
 ;;;                                                                     ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

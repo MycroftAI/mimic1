@@ -34,11 +34,11 @@
 /*               Date:  June 2008                                        */
 /*************************************************************************/
 /*                                                                       */
-/*  SSML support for flite ( http://www.w3.org/TR/speech-synthesis/ )    */
+/*  SSML support for mimic ( http://www.w3.org/TR/speech-synthesis/ )    */
 /*                                                                       */
 /*  We don't use a full XML parser here for space and availability       */
 /*  reasons, but this is adequate for SSML                               */
-/*  This is based on some old SABLE support in flite that never got      */
+/*  This is based on some old SABLE support in mimic that never got      */
 /*  completed                                                            */
 /*                                                                       */
 /*  <ssml> </ssml>                                                       */
@@ -59,7 +59,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include "flite.h"
+#include "mimic.h"
 #include "cst_tokenstream.h"
 
 static const char * const ssml_singlecharsymbols_general = "<>&/\";";
@@ -256,7 +256,7 @@ static cst_utterance *ssml_apply_tag(const char *tag,
         if (cst_streq("start",feat_string(attributes,"_type")))
         {
             vname = get_param_string(attributes,"_val0","");
-            nvoice = flite_voice_select(vname);
+            nvoice = mimic_voice_select(vname);
             feat_set(feats,"current_voice",userdata_val(nvoice));
             return NULL;  /* cause an utterance break */
         }
@@ -283,7 +283,7 @@ static cst_utterance *ssml_apply_tag(const char *tag,
     return u;
 }
 			       
-static float flite_ssml_to_speech_ts(cst_tokenstream *ts,
+static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
                                      cst_voice *voice,
                                      const char *outtype)
 {
@@ -390,13 +390,13 @@ static float flite_ssml_to_speech_ts(cst_tokenstream *ts,
             
             if (utt)
             {
-                utt = flite_do_synth(utt,current_voice,utt_synth_tokens);
+                utt = mimic_do_synth(utt,current_voice,utt_synth_tokens);
                 if (feat_present(utt->features,"Interrupted"))
                 {
                     delete_utterance(utt); utt = NULL;
                     break;
                 }
-                durs += flite_process_output(utt,outtype,TRUE);
+                durs += mimic_process_output(utt,outtype,TRUE);
                 delete_utterance(utt); utt = NULL;
             }
             else 
@@ -418,7 +418,7 @@ static float flite_ssml_to_speech_ts(cst_tokenstream *ts,
             utt = utt_synth_wave(copy_wave(wave),current_voice);
             if (utt_user_callback)
                 utt = (utt_user_callback)(utt);
-            durs += flite_process_output(utt,outtype,TRUE);
+            durs += mimic_process_output(utt,outtype,TRUE);
             delete_utterance(utt); utt = NULL;
 
             utt = new_utterance();
@@ -453,7 +453,7 @@ static float flite_ssml_to_speech_ts(cst_tokenstream *ts,
     return durs;
 }
 
-float flite_ssml_file_to_speech(const char *filename,
+float mimic_ssml_file_to_speech(const char *filename,
                                 cst_voice *voice,
                                 const char *outtype)
 {
@@ -490,7 +490,7 @@ float flite_ssml_file_to_speech(const char *filename,
 	delete_wave(w);
     }
 
-    d = flite_ssml_to_speech_ts(ts,voice,outtype);
+    d = mimic_ssml_to_speech_ts(ts,voice,outtype);
 
     ts_close(ts);
     
@@ -498,7 +498,7 @@ float flite_ssml_file_to_speech(const char *filename,
 
 }
 
-float flite_ssml_text_to_speech(const char *text,
+float mimic_ssml_text_to_speech(const char *text,
                                 cst_voice *voice,
                                 const char *outtype)
 {
@@ -533,7 +533,7 @@ float flite_ssml_text_to_speech(const char *text,
 	delete_wave(w);
     }
 
-    d = flite_ssml_to_speech_ts(ts,voice,outtype);
+    d = mimic_ssml_to_speech_ts(ts,voice,outtype);
 
     ts_close(ts);
     

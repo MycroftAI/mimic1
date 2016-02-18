@@ -41,7 +41,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 
 cst_voice *register_cmu_us_kal();
 
@@ -68,19 +68,19 @@ int audio_stream_chunk_by_word(const cst_wave *w, int start, int size,
         asi->item = relation_head(utt_relation(asi->utt,"Token"));
     if (asi->item)
     {
-        start_time = flite_ffeature_float(asi->item,"R:Token.daughter1.R:SylStructure.daughter1.daughter1.R:Segment.p.end");
+        start_time = mimic_ffeature_float(asi->item,"R:Token.daughter1.R:SylStructure.daughter1.daughter1.R:Segment.p.end");
         start_sample = (int)(start_time * (float)w->sample_rate);
         /*        printf("start_time %f start_sample %d start %d\n",
                   start_time,start_sample,start); */
         if ((start_sample >= start) &&
             (start_sample < start+size))
         {
-            ws = flite_ffeature_string(asi->item,"whitespace");
-            prepunc = flite_ffeature_string(asi->item,"prepunctuation");
+            ws = mimic_ffeature_string(asi->item,"whitespace");
+            prepunc = mimic_ffeature_string(asi->item,"prepunctuation");
             if (cst_streq("0",prepunc))
                 prepunc = "";
-            token = flite_ffeature_string(asi->item,"name");
-            postpunc = flite_ffeature_string(asi->item,"punc");
+            token = mimic_ffeature_string(asi->item,"name");
+            postpunc = mimic_ffeature_string(asi->item,"punc");
             if (cst_streq("0",postpunc))
                 postpunc = "";
             printf("%s%s%s%s",ws,prepunc,token,postpunc);
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	return 1;
     }
 
-    flite_init();
+    mimic_init();
 
     v = register_cmu_us_kal();
 
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     asi->asc = audio_stream_chunk_by_word;
     feat_set(v->features,"streaming_info",audio_streaming_info_val(asi));
 
-    flite_file_to_speech(argv[1],v,"none"); /* streaming will play */
+    mimic_file_to_speech(argv[1],v,"none"); /* streaming will play */
 
     return 0;
 }

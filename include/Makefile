@@ -77,18 +77,18 @@ H = cst_alloc.h  \
 	cst_ss.h \
         cst_ffeatures.h \
         cst_wchar.h \
-	flite.h
+	mimic.h
 
 FILES = Makefile $(H)
 INSTALL_HEADERS = $(H)
 
-ALL = flite_version.h
+ALL = mimic_version.h
 
-LOCAL_CLEAN = flite_version.h
+LOCAL_CLEAN = mimic_version.h
 
 include $(TOP)/config/common_make_rules
 
-flite_version.h: $(TOP)/config/project.mak
+mimic_version.h: $(TOP)/config/project.mak
 	@grep "^PROJECT" $(TOP)/config/project.mak | \
-	   awk '{printf("#define FLITE_%s \"%s",$$1,$$3); for (i=4; i<=NF; i++) printf(" %s",$$i); printf("\"\n")}' >flite_version.h
+	   awk '{printf("#define MIMIC_%s \"%s",$$1,$$3); for (i=4; i<=NF; i++) printf(" %s",$$i); printf("\"\n")}' >mimic_version.h
 

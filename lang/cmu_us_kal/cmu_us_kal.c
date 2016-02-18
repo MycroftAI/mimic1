@@ -38,7 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include "flite.h"
+#include "mimic.h"
 #include "cst_diphone.h"
 #include "usenglish.h"
 #include "cmu_lex.h"
@@ -61,27 +61,27 @@ cst_voice *register_cmu_us_kal(const char *voxdir)
 
     /* Set up basic values for synthesizing with this voice */
     usenglish_init(v);
-    flite_feat_set_string(v->features,"name","cmu_us_kal_diphone");
+    mimic_feat_set_string(v->features,"name","cmu_us_kal_diphone");
 
     /* Lexicon */
     lex = cmu_lex_init();
-    flite_feat_set(v->features,"lexicon",lexicon_val(lex));
+    mimic_feat_set(v->features,"lexicon",lexicon_val(lex));
 
     /* Intonation */
-    flite_feat_set_float(v->features,"int_f0_target_mean",95.0);
-    flite_feat_set_float(v->features,"int_f0_target_stddev",11.0);
+    mimic_feat_set_float(v->features,"int_f0_target_mean",95.0);
+    mimic_feat_set_float(v->features,"int_f0_target_stddev",11.0);
 
-    flite_feat_set_float(v->features,"duration_stretch",1.1); 
+    mimic_feat_set_float(v->features,"duration_stretch",1.1); 
 
     /* Post lexical rules */
-    flite_feat_set(v->features,"postlex_func",uttfunc_val(&cmu_us_kal_postlex));
+    mimic_feat_set(v->features,"postlex_func",uttfunc_val(&cmu_us_kal_postlex));
 
     /* Waveform synthesis: diphone_synth */
-    flite_feat_set(v->features,"wave_synth_func",uttfunc_val(&diphone_synth));
-    flite_feat_set(v->features,"diphone_db",diphone_db_val(&cmu_us_kal_db));
-    flite_feat_set_int(v->features,"sample_rate",cmu_us_kal_db.sts->sample_rate);
-    flite_feat_set_string(v->features,"resynth_type","fixed");
-    flite_feat_set_string(v->features,"join_type","modified_lpc");
+    mimic_feat_set(v->features,"wave_synth_func",uttfunc_val(&diphone_synth));
+    mimic_feat_set(v->features,"diphone_db",diphone_db_val(&cmu_us_kal_db));
+    mimic_feat_set_int(v->features,"sample_rate",cmu_us_kal_db.sts->sample_rate);
+    mimic_feat_set_string(v->features,"resynth_type","fixed");
+    mimic_feat_set_string(v->features,"join_type","modified_lpc");
 
     cmu_us_kal_diphone = v;
 

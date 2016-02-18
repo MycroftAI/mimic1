@@ -38,7 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include "flite.h"
+#include "mimic.h"
 #include "usenglish.h"
 #include "us_text.h"
 

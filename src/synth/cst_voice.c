@@ -39,7 +39,7 @@
 /*************************************************************************/
 #include "cst_alloc.h"
 #include "cst_voice.h"
-#include "flite.h"
+#include "mimic.h"
 
 CST_VAL_REGISTER_TYPE(voice,cst_voice)
 
@@ -60,7 +60,7 @@ void delete_voice(cst_voice *v)
         if (feat_present(v->features,"voxdata"))
         {
             if (feat_present(v->features,"clunit_db"))
-                flite_munmap_clunit_voxdata(v);
+                mimic_munmap_clunit_voxdata(v);
         }
 
 	delete_features(v->features);

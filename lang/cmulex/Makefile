@@ -49,9 +49,9 @@ OBJS = $(SRCS:.c=.o)
 SCRIPTS=make_cmulex  
 
 SCM=
-WINDOWS = libflite-cmulex.vcproj
+WINDOWS = libmimic-cmulex.vcproj
 FILES = Makefile $(SCM) $(SRCS) $(H) $(SCRIPTS) $(LEX_DATA_INCLUDES) $(WINDOWS)
-LIBNAME = flite_cmulex
+LIBNAME = mimic_cmulex
 LOCAL_INCLUDES = $(LEXDEFS)
 
 ALL = 

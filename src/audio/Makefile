@@ -47,7 +47,7 @@ OBJS = $(SRCS:.c=.o)
 FILES = Makefile $(H) $(BASESRCS) au_command.c au_none.c \
 	au_oss.c au_sun.c au_wince.c au_palmos.c au_alsa.c \
         au_pulseaudio.c
-LIBNAME = flite
+LIBNAME = mimic
 
 LOCAL_INCLUDES = -I. $(AUDIODEFS)
 

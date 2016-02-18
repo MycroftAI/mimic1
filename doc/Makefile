@@ -38,32 +38,32 @@ TOP=..
 DIRNAME=doc
 BUILD_DIRS = 
 ALL_DIRS=
-FILES = Makefile flite.texi intro.txt alice stuff.ed
+FILES = Makefile mimic.texi intro.txt alice stuff.ed
 
 ALL = 
 
 include $(TOP)/config/common_make_rules
 
-doc: flite.html flite.pdf
-	cp -p flite.pdf html
+doc: mimic.html mimic.pdf
+	cp -p mimic.pdf html
 
-flite.html: flite.texi
+mimic.html: mimic.texi
 	@ if [ ! -d html ] ; \
           then mkdir -p html ; fi
-	(cd html; texi2html -number -split_chapter ../flite.texi)
-	@ if [ -d html/flite ] ; \
-	  then mv html/flite/*.html html ; \
-               rmdir html/flite; fi
+	(cd html; texi2html -number -split_chapter ../mimic.texi)
+	@ if [ -d html/mimic ] ; \
+	  then mv html/mimic/*.html html ; \
+               rmdir html/mimic; fi
 	@ for i in html/*.html ; \
 	  do \
 	    sed 's/<BODY>/<BODY bgcolor="#ffffff">/' $$i >ttt.html; \
 	    mv ttt.html $$i ; \
 	  done
-	@ cat stuff.ed | ed html/flite_toc.html
-	@ (cd html; rm -f index.html; ln flite_toc.html index.html)
+	@ cat stuff.ed | ed html/mimic_toc.html
+	@ (cd html; rm -f index.html; ln mimic_toc.html index.html)
 
-flite.pdf:  flite.texi
-	@ texi2pdf flite.texi
+mimic.pdf:  mimic.texi
+	@ texi2pdf mimic.texi
 
 
 

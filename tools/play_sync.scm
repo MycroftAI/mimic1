@@ -38,7 +38,7 @@
 ;;;                                                                     ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar play_sync_program "/home/awb/projects/flite/testsuite/play_sync")
+(defvar play_sync_program "/home/awb/projects/mimic/testsuite/play_sync")
 
 (define (display_as_we_go file filemode)
   "(display_as_we_go file filemode)

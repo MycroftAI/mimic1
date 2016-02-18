@@ -87,7 +87,7 @@
 /*          Date   :  June 2004                                      */
 /*                                                                   */
 /*-------------------------------------------------------------------*/
-/* Integrated into a single C file for festival/flite integration    */
+/* Integrated into a single C file for festival/mimic integration    */
 /* May 2008 awb@cs.cmu.edu                                           */
 /*-------------------------------------------------------------------*/
 

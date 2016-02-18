@@ -34,7 +34,7 @@
 /*  indic Lexical function                                            */
 /*                                                                       */
 /*************************************************************************/
-#include "flite.h"
+#include "mimic.h"
 #include "cst_val.h"
 #include "cst_voice.h"
 #include "cst_lexicon.h"

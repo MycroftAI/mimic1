@@ -38,9 +38,9 @@
 ##                                                                       ##
 ###########################################################################
 
-if [ "x$FLITEDIR" = "x" ]
+if [ "x$MIMICDIR" = "x" ]
 then
-   FLITEDIR=`pwd`/../..
+   MIMICDIR=`pwd`/../..
 fi
 
 ## Change these two lines
@@ -80,8 +80,8 @@ fi
 
 if [ "$1" = "lts2c" ]
 then
-   festival --heap 10000000 -b $FLITEDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
-   festival --heap 10000000 -b $FLITEDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "'$LEXNAME'" lex_lts_rules "wfst/" "c")';
+   festival --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
+   festival --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "'$LEXNAME'" lex_lts_rules "wfst/" "c")';
 fi
 
 if [ "$1" = "lex" ]
@@ -92,7 +92,7 @@ then
      # include them in the list 
 #     festival -b cmulex.scm ~/projects/flite/tools/make_lex.scm '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
 #     festival --heap 10000000 -b '(lex.compile "pruned_lex.scm" "pruned_lex.out")'
-     festival --heap 10000000 -b $FLITEDIR/tools/make_lex.scm '(lextoC "'$LEXNAME'" "lts_scratch/lex_entries.out" "c")' ;
+     festival --heap 10000000 -b $MIMICDIR/tools/make_lex.scm '(lextoC "'$LEXNAME'" "lts_scratch/lex_entries.out" "c")' ;
 
 fi
 
@@ -126,7 +126,7 @@ then
            for (i=1; i<=length($1); i++)
               printf("%s_%s ",substr($1,i,1),$(i+2));
            printf("\n");}' >pruned_lex2.data
-#     festival --heap 10000000 -b $FLITEDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
+#     festival --heap 10000000 -b $MIMICDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
    )
 fi
 
@@ -134,8 +134,8 @@ if [ "$1" = "compresslex" ]
 then
    # Compress the entries and phone strings by finding best ngrams 
    ( cd c;
-     $FLITEDIR/tools/huff_table phones ${LEXNAME}_lex_data ${LEXNAME}_lex_phones_huff_table.c
-     $FLITEDIR/tools/huff_table entries ${LEXNAME}_lex_data ${LEXNAME}_lex_entries_huff_table.c
+     $MIMICDIR/tools/huff_table phones ${LEXNAME}_lex_data ${LEXNAME}_lex_phones_huff_table.c
+     $MIMICDIR/tools/huff_table entries ${LEXNAME}_lex_data ${LEXNAME}_lex_entries_huff_table.c
      paste huff.entries.compressed huff.phones.compressed huff.tmp.corpus | 
      tr -d " " |
      awk 'BEGIN {pcount = 1;

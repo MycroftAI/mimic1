@@ -38,15 +38,15 @@ TOP=..
 DIRNAME=tools
 BUILD_DIRS = 
 ALL_DIRS=
-SRCS = find_sts_main.c flite_sort_main.c
+SRCS = find_sts_main.c mimic_sort_main.c
 OBJS = $(SRCS:.c=.o)
 TMPLTS = VOICE_ldom.c VOICE_clunits.c VOICE_diphone.c \
-         VOICE_cg.c Makefile.flite \
+         VOICE_cg.c Makefile.mimic \
          Makefile.lex LANGNAME_lex.c LANGNAME_lex.h \
          Makefile.lang LANGNAME_lang.c LANGNAME_lang.h
-SCRIPTS = build_flite setup_flite huff_table flite_test \
+SCRIPTS = build_mimic setup_mimic huff_table mimic_test \
           make_voice_list wfst2c build_lex clunit_prune \
-          a2byte.pl a2short.pl a2int.pl flite_rename_voice \
+          a2byte.pl a2short.pl a2int.pl mimic_rename_voice \
           make_lang_list make_new_lang_lex
 SCM=make_lex.scm make_lts.scm make_cart.scm play_sync.scm \
     make_phoneset.scm make_vallist.scm make_clunits.scm \
@@ -59,17 +59,17 @@ FILES = Makefile $(SCM) $(SRCS) $(SCRIPTS) $(TMPLTS) \
 LOCAL_INCLUDES = 
 
 ifeq ($(HOST_PLATFORM),$(TARGET_PLATFORM))
-ALL = $(BINDIR)/find_sts $(BINDIR)/flite_sort makescripts
+ALL = $(BINDIR)/find_sts $(BINDIR)/mimic_sort makescripts
 endif	
 
 include $(TOP)/config/common_make_rules
 
-LOCAL_CLEAN = $(BINDIR)/find_sts $(BINDIR)/flite_sort $(TOP)/bin
+LOCAL_CLEAN = $(BINDIR)/find_sts $(BINDIR)/mimic_sort $(TOP)/bin
 
-$(BINDIR)/find_sts: find_sts_main.o $(FLITELIBS) 
-	$(CC) $(CFLAGS) -o $@ find_sts_main.o $(FLITELIBFLAGS) $(LDFLAGS)
-$(BINDIR)/flite_sort: flite_sort_main.o $(FLITELIBS)
-	$(CC) $(CFLAGS) -o $@ flite_sort_main.o $(FLITELIBFLAGS) $(LDFLAGS)
+$(BINDIR)/find_sts: find_sts_main.o $(MIMICLIBS) 
+	$(CC) $(CFLAGS) -o $@ find_sts_main.o $(MIMICLIBFLAGS) $(LDFLAGS)
+$(BINDIR)/mimic_sort: mimic_sort_main.o $(MIMICLIBS)
+	$(CC) $(CFLAGS) -o $@ mimic_sort_main.o $(MIMICLIBFLAGS) $(LDFLAGS)
 makescripts:
 	@ cp -p $(SCRIPTS) $(TOP)/bin
 

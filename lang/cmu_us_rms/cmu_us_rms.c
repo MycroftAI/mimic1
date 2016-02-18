@@ -39,7 +39,7 @@
 /*************************************************************************/
 
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 #include "cst_cg.h"
 
 /* This isn't language independent .. */
@@ -64,22 +64,22 @@ cst_voice *register_cmu_us_rms(const char *voxdir)
     usenglish_init(vox);
 
     /* Things that weren't filled in already. */
-    flite_feat_set_string(vox->features,"name","cmu_us_rms");
+    mimic_feat_set_string(vox->features,"name","cmu_us_rms");
 
     /* Lexicon */
     lex = cmu_lex_init();
-    flite_feat_set(vox->features,"lexicon",lexicon_val(lex));
-    flite_feat_set(vox->features,"postlex_func",uttfunc_val(lex->postlex));
+    mimic_feat_set(vox->features,"lexicon",lexicon_val(lex));
+    mimic_feat_set(vox->features,"postlex_func",uttfunc_val(lex->postlex));
 
     /* No standard segment durations are needed as its done at the */
     /* HMM state level */
-    flite_feat_set_string(vox->features,"no_segment_duration_model","1");
-    flite_feat_set_string(vox->features,"no_f0_target_model","1");
+    mimic_feat_set_string(vox->features,"no_segment_duration_model","1");
+    mimic_feat_set_string(vox->features,"no_f0_target_model","1");
 
     /* Waveform synthesis */
-    flite_feat_set(vox->features,"wave_synth_func",uttfunc_val(&cg_synth));
-    flite_feat_set(vox->features,"cg_db",cg_db_val(&cmu_us_rms_cg_db));
-    flite_feat_set_int(vox->features,"sample_rate",cmu_us_rms_cg_db.sample_rate);
+    mimic_feat_set(vox->features,"wave_synth_func",uttfunc_val(&cg_synth));
+    mimic_feat_set(vox->features,"cg_db",cg_db_val(&cmu_us_rms_cg_db));
+    mimic_feat_set_int(vox->features,"sample_rate",cmu_us_rms_cg_db.sample_rate);
 
     cmu_us_rms_cg = vox;
 
