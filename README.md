@@ -46,7 +46,7 @@ We have successfully compiled and run on
   `make`
   
   Note: When rebuilding, often you will only need to run `make`. 
-  If you make changes to compile flags you will probobly want to 
+  If you make changes to compile flags you will probably want to 
   run `make clean` before recompiling with `make`. 
 
 ###Usage:
@@ -95,7 +95,7 @@ An additional set of feature setting options are available, these are
 *debug* options, Voices are represented as sets of feature values (see
 `lang/cmu_us_kal/cmu_us_kal.c`) and you can override values on the
 command line.  This can stop mimic from working if malicious values
-are set and therefor this facility is not intended to be made
+are set and therefore this facility is not intended to be made
 available for standard users.  But these are useful for
 debugging.  Some typical examples are
 
@@ -152,7 +152,7 @@ You can also find existing Flite voices here:
 ###Debugging:
 
   The debug flag `-g` is already set when compiling. (This should 
-  probobly be removed on release build)
+  probably be removed on release build)
 
   Note: Currently the configure script enables compiler optimizations.  
   These optimizations are the reason for any weird behavior while
