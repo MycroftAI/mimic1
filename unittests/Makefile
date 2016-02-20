@@ -42,7 +42,7 @@ DATAFILES=data.one
 SRCS = token_test_main.c hrg_test_main.c \
        regex_test_main.c nums_test_main.c \
        lex_test_main.c utt_test_main.c lpc_test_main.c \
-       lpc_test2_main.c voice_select_test_main.c
+       lpc_test2_main.c
 
 OTHERS = kal_test_main.c
 
@@ -57,14 +57,17 @@ utt_test_LIBS = -lmimic_cmulex
 lex_lookup_LIBS = -lmimic_cmulex
 ldom_time_LIBS = -L/home/awb/data/ldom/time_mimic/mimic/lib -lcmu_time_awb -lmimic_usenglish -lmimic_cmulex
 by_word_LIBS = -lmimic_cmu_us_kal -lmimic_usenglish -lmimic_cmulex
-voice_select_test_LIBS = ../main/mimic_voice_list.o -lmimic_cmu_us_slt -lmimic_usenglish -lmimic_cmulex -I../include
+voice_select_test_LIBS = $(TOP)/main/mimic_lang_list.o $(TOP)/main/mimic_voice_list.o -lmimic_cmu_us_kal -lmimic_cmu_time_awb -lmimic_cmu_us_kal16 -lmimic_cmu_us_awb -lmimic_cmu_us_rms -lmimic_cmu_us_slt -lmimic_usenglish -lmimic_cmu_indic_lang -lmimic_cmu_grapheme_lang -lmimic_cmulex -lmimic_cmu_indic_lex -lmimic_cmu_grapheme_lex -lmimic  -lm 
 #kal_test_LIBS = -lmimic_cmu_us_kal -lmimic_usenglish -lmimic_cmulex \
 #	          /home/awb/src/malloc/gmalloc.o
 
-ALL = $(MAIN_EXECS)
+ALL = $(MAIN_EXECS) voice_select_test
 LOCAL_CLEAN = $(MAIN_EXECS)
 
 include $(TOP)/config/common_make_rules
+
+voice_select_test: voice_select_test_main.c $(MIMIC_LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $($(@:=_LIBS)) $(MIMICLIBFLAGS) $(LDFLAGS) 
 
 MAIN_O = $(SRCS:%=%_main.o)
 $(MAIN_O) : %_main.o : %_main.c
