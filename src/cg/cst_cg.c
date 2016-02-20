@@ -35,7 +35,7 @@
 /*************************************************************************/
 /*                                                                       */
 /*  Implementation of Clustergen, Statistical Parameter Synthesizer in   */
-/*  Flite                                                                */
+/*  Mimic                                                                */
 /*                                                                       */
 /*  A statistical corpus based synthesizer.                              */
 /*  See Black, A. (2006), CLUSTERGEN: A Statistical Parametric           */

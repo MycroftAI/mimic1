@@ -67,7 +67,7 @@ extern int flowm_utt_pos_pos;
 extern int flowm_prev_utt_pos[FLOWM_NUM_UTT_POS];
 extern float flowm_duration;
 
-/* The interface to the Flite TTS system */
+/* The interface to the Mimic TTS system */
 void flowm_init();
 void flowm_terminate();
 int flowm_say_text(TCHAR *text);

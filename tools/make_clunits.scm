@@ -34,7 +34,7 @@
 ;;;               Date: April 2001                                      ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;                                                                     ;;;
-;;; Convert festvox voice to flite                                      ;;;
+;;; Convert festvox voice to mimic                                      ;;;
 ;;;                                                                     ;;;
 ;;;   clunits: catalogue, carts and param                               ;;;
 ;;;                                                                     ;;;
@@ -360,8 +360,8 @@ compilable single C file."
     (format lofdidx "  %d, /* sample rate */ \n" sample_rate)
     (format lofdidx "  %f, /* lpc min */ \n" lpc_min)
     (format lofdidx "  %f, /* lpc range */ \n" lpc_range)
-    (if (probe_file "flite/codec")
-        (set! codec (car (load "flite/codec" t)))
+    (if (probe_file "mimic/codec")
+        (set! codec (car (load "mimic/codec" t)))
         (set! codec "ulaw"))
     (format lofdidx "  \"%s\" /* residual codec */ \n" codec)
     (format lofdidx "};\n\n")

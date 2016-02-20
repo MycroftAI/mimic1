@@ -30,7 +30,7 @@ dnl ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF       ##
 dnl THIS SOFTWARE.                                                       ##
 dnl                                                                      ##
 dnl########################################################################
-AC_INIT(include/flite.h)
+AC_INIT(include/mimic.h)
 
 AC_CANONICAL_SYSTEM
 AC_PROG_CC

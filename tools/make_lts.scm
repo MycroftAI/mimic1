@@ -46,7 +46,7 @@
 
 (define (ltsregextoC name trees idir odir)
   "(ltsregextoC name idir odir)
-Converts its wfsts to a C compilation structure for flite.  Assumes
+Converts its wfsts to a C compilation structure for mimic.  Assumes
 $idir/[a-z].tree.wfst to compile from."
   (let 
     ((ofde (fopen (path-append odir (string-append name "_lts_rules.c")) "w"))

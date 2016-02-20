@@ -42,7 +42,7 @@ H =
 SRCS = cst_units.c cst_clunits.c cst_diphone.c \
        cst_sigpr.c cst_sts.c cst_reflpc.c
 OBJS = $(SRCS:.c=.o)
-LIBNAME = flite
+LIBNAME = mimic
 EXTRAS = 
 FILES = Makefile $(SRCS) $(H) $(EXTRAS)
 

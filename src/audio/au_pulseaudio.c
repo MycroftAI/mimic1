@@ -80,7 +80,7 @@ cst_audiodev *audio_open_pulseaudio(unsigned int sps, int channels, cst_audiofmt
 
   s = pa_simple_new(
                     NULL,      /* use default server */
-                    "flite",
+                    "mimic",
                     PA_STREAM_PLAYBACK,
                     NULL,      /* use default device */
                     "Speech",
@@ -91,7 +91,7 @@ cst_audiodev *audio_open_pulseaudio(unsigned int sps, int channels, cst_audiofmt
   if (err < 0)
       return NULL;
 
-  /* Write hardware parameters to flite audio device data structure */
+  /* Write hardware parameters to mimic audio device data structure */
   ad = cst_alloc(cst_audiodev, 1);
   ad->real_sps = ad->sps = sps;
   ad->real_channels = ad->channels = channels;

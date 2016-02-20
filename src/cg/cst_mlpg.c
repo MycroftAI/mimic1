@@ -75,7 +75,7 @@
 /*          Author :  Tomoki Toda (tomoki@ics.nitech.ac.jp)          */
 /*          Date   :  June 2004                                      */
 /*                                                                   */
-/*  Modified as a single file for inclusion in festival/flite        */
+/*  Modified as a single file for inclusion in festival/mimic        */
 /*  May 2008 awb@cs.cmu.edu                                          */
 /*-------------------------------------------------------------------*/
 /*                                                                   */

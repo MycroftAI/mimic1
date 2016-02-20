@@ -34,7 +34,7 @@
 /*               Date:  January 2009                                     */
 /*************************************************************************/
 /*                                                                       */
-/*  Flowm: Flite on Windows Mobile (pronounced flume)                    */
+/*  Flowm: Mimic on Windows Mobile (pronounced flume)                    */
 /*         0.5                                                           */
 /*                                                                       */
 /*  A simple file reader                                                 */

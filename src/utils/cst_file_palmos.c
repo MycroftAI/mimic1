@@ -36,7 +36,7 @@
 /*                                                                       */
 /*  File I/O wrappers for PalmOS platforms.                              */
 /*                                                                       */
-/*  flop/armflite currently (Jan 05) only uses cst_sprintf               */
+/*  flop/armmimic currently (Jan 05) only uses cst_sprintf               */
 /*                                                                       */
 /*************************************************************************/
 
@@ -209,7 +209,7 @@ static int po_ftoa(char *s, float f, const char* modifier)
 
 int cst_vsprintf(char *s, const char *fmt, va_list args)
 {
-    /* A simple sprintf that caters for what flite uses */
+    /* A simple sprintf that caters for what mimic uses */
     int sp=0,fp=0;
     char *sa;
     char ca;

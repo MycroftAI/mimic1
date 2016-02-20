@@ -39,10 +39,10 @@
 /*************************************************************************/
 
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 #include "cst_clunits.h"
-#include "__FLITELANG__.h"
-#include "__FLITELEX__.h"
+#include "__MIMICLANG__.h"
+#include "__MIMICLEX__.h"
 
 static char *__VOICENAME___unit_name(cst_item *s);
 
@@ -64,32 +64,32 @@ cst_voice *register___VOICENAME__(const char *voxdir)
     v->name = "__NICKNAME__";
 
     /* Sets up language specific parameters in the __VOICENAME__. */
-    __FLITELANG___init(v);
+    __MIMICLANG___init(v);
 
     /* Things that weren't filled in already. */
-    flite_feat_set_string(v->features,"name","__VOICENAME__");
+    mimic_feat_set_string(v->features,"name","__VOICENAME__");
 
     /* Duration model */
-    flite_feat_set(v->features,"dur_cart",cart_val(&__VOICENAME___dur_cart));
-    flite_feat_set(v->features,"dur_stats",dur_stats_val((dur_stats *)__VOICENAME___dur_stats));
+    mimic_feat_set(v->features,"dur_cart",cart_val(&__VOICENAME___dur_cart));
+    mimic_feat_set(v->features,"dur_stats",dur_stats_val((dur_stats *)__VOICENAME___dur_stats));
 
     /* Lexicon */
-    lex = __FLITELEX___init();
-    flite_feat_set(v->features,"lexicon",lexicon_val(lex));
-    flite_feat_set(v->features,"postlex_func",uttfunc_val(lex->postlex));
+    lex = __MIMICLEX___init();
+    mimic_feat_set(v->features,"lexicon",lexicon_val(lex));
+    mimic_feat_set(v->features,"postlex_func",uttfunc_val(lex->postlex));
 
     /* Waveform synthesis */
-    flite_feat_set(v->features,"wave_synth_func",uttfunc_val(&clunits_synth));
-    flite_feat_set(v->features,"clunit_db",clunit_db_val(&__VOICENAME___db));
-    flite_feat_set_int(v->features,"sample_rate",__VOICENAME___db.sts->sample_rate);
-    flite_feat_set_string(v->features,"join_type","simple_join");
-    flite_feat_set_string(v->features,"resynth_type","fixed");
+    mimic_feat_set(v->features,"wave_synth_func",uttfunc_val(&clunits_synth));
+    mimic_feat_set(v->features,"clunit_db",clunit_db_val(&__VOICENAME___db));
+    mimic_feat_set_int(v->features,"sample_rate",__VOICENAME___db.sts->sample_rate);
+    mimic_feat_set_string(v->features,"join_type","simple_join");
+    mimic_feat_set_string(v->features,"resynth_type","fixed");
 
     if ((voxdir != NULL) &&
         (__VOICENAME___db.sts->sts == NULL) &&
         (__VOICENAME___db.sts->sts_paged == NULL) &&
         (__VOICENAME___db.sts->frames == NULL))
-        flite_mmap_clunit_voxdata(voxdir,v);
+        mimic_mmap_clunit_voxdata(voxdir,v);
 
     /* Unit selection */
     __VOICENAME___db.unit_name_func = __VOICENAME___unit_name;
@@ -109,9 +109,9 @@ void unregister___VOICENAME__(cst_voice *vox)
 
 static const char *__VOICENAME___nextvoicing(cst_item *s)
 {
-    if (cst_streq("+",flite_ffeature_string(s,"n.ph_vc")))
+    if (cst_streq("+",mimic_ffeature_string(s,"n.ph_vc")))
         return "V";
-    else if (cst_streq("+",flite_ffeature_string(s,"n.ph_cvox")))
+    else if (cst_streq("+",mimic_ffeature_string(s,"n.ph_cvox")))
         return "CVox";
     else
         return "UV";
@@ -123,17 +123,17 @@ static char *__VOICENAME___unit_name(cst_item *s)
     /* This *is* long enough as long as you don't change external things */
     char cname[30];
 
-    name = flite_ffeature_string(s,"name");
+    name = mimic_ffeature_string(s,"name");
     /* Comment this out if you have more complex unit names */
 #if 1
     if (1 == 1)
         return cst_strdup(name);
     else 
 #endif
-    if (cst_streq("+",flite_ffeature_string(s,"ph_vc")))
+    if (cst_streq("+",mimic_ffeature_string(s,"ph_vc")))
     {
         cst_sprintf(cname,"%s_%s_%s",name,
-                    flite_ffeature_string(s,"R:SylStructure.parent.stress"),
+                    mimic_ffeature_string(s,"R:SylStructure.parent.stress"),
                     __VOICENAME___nextvoicing(s));
     }
     else 

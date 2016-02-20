@@ -48,7 +48,7 @@ SRCS = cmu_time_awb.c \
 OBJS = $(SRCS:.c=.o)
 SCM=
 FILES = Makefile $(SCM) $(SRCS) $(H)
-LIBNAME = flite_cmu_time_awb
+LIBNAME = mimic_cmu_time_awb
 LOCAL_INCLUDES = -I$(TOP)/lang/usenglish -I$(TOP)/lang/cmulex
 
 ALL = 

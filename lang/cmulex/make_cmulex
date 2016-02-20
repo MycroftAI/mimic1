@@ -36,9 +36,9 @@
 ##                                                                       ##
 ###########################################################################
 
-if [ "x$FLITEDIR" = "x" ]
+if [ "x$MIMICDIR" = "x" ]
 then
-   FLITEDIR=`pwd`/../..
+   MIMICDIR=`pwd`/../..
 fi
 
 if [ $# = 0 ]
@@ -70,8 +70,8 @@ then
    ./build_lts build
    ./build_lts merge
    ./build_lts test
-   festival --heap 10000000 -b $FLITEDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
-   festival --heap 10000000 -b $FLITEDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")';
+   festival --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
+   festival --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")';
    )
 fi
 
@@ -82,9 +82,9 @@ then
      # We will prune words that aren't homographs and the LTS gets correct
      # Use the lts_test.log to find the failed entries and only
      # include them in the list 
-     festival -b cmulex.scm ~/projects/flite/tools/make_lex.scm '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
+     festival -b cmulex.scm ~/projects/mimic/tools/make_lex.scm '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
      festival --heap 10000000 -b '(lex.compile "pruned_lex.scm" "pruned_lex.out")'
-     festival --heap 10000000 -b $FLITEDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
+     festival --heap 10000000 -b $MIMICDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
    )
 fi
 
@@ -118,7 +118,7 @@ then
            for (i=1; i<=length($1); i++)
               printf("%s_%s ",substr($1,i,1),$(i+2));
            printf("\n");}' >pruned_lex2.data
-#     festival --heap 10000000 -b $FLITEDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
+#     festival --heap 10000000 -b $MIMICDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
    )
 fi
 
@@ -126,8 +126,8 @@ if [ "$1" = "compresslex" ]
 then
    # Compress the entries and phone strings by finding best ngrams 
    ( cd festival/lib/dicts/cmu/c;
-     $FLITEDIR/tools/huff_table phones cmu_lex_data cmu_lex_phones_huff_table.c
-     $FLITEDIR/tools/huff_table entries cmu_lex_data cmu_lex_entries_huff_table.c
+     $MIMICDIR/tools/huff_table phones cmu_lex_data cmu_lex_phones_huff_table.c
+     $MIMICDIR/tools/huff_table entries cmu_lex_data cmu_lex_entries_huff_table.c
      paste huff.entries.compressed huff.phones.compressed huff.tmp.corpus | 
      tr -d " " |
      awk 'BEGIN {pcount = 1;

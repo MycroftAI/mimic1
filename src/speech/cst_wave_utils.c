@@ -36,7 +36,7 @@
 /*                                                                       */
 /*  Convertion routines for various waveform encodings                   */
 /*                                                                       */
-/*  This contains software written external to Flite                     */
+/*  This contains software written external to Mimic                     */
 /*       ulaw code came via the Edinburgh Speech Tools                   */
 /*  g72x codec came from Sun Microsystems                                */
 /*                                                                       */

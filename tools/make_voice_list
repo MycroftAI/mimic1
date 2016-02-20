@@ -35,27 +35,27 @@
 ##                                                                       ##
 ###########################################################################
 
-rm -f flite_voice_list.c
+rm -f mimic_voice_list.c
 
-echo "/* Generated automatically from make_voice_list */" >flite_voice_list.c
-echo >>flite_voice_list.c
-echo '#include "flite.h"' >>flite_voice_list.c
-echo >>flite_voice_list.c
+echo "/* Generated automatically from make_voice_list */" >mimic_voice_list.c
+echo >>mimic_voice_list.c
+echo '#include "mimic.h"' >>mimic_voice_list.c
+echo >>mimic_voice_list.c
 for i in $*
 do
-   echo "cst_voice *register_"$i"(const char *voxdir);">>flite_voice_list.c
+   echo "cst_voice *register_"$i"(const char *voxdir);">>mimic_voice_list.c
 done
 
-echo >>flite_voice_list.c
-echo "cst_val *flite_set_voice_list(const char *voxdir)" >>flite_voice_list.c
-echo "{" >>flite_voice_list.c
+echo >>mimic_voice_list.c
+echo "cst_val *mimic_set_voice_list(const char *voxdir)" >>mimic_voice_list.c
+echo "{" >>mimic_voice_list.c
 for i in $*
 do
-   echo "   flite_voice_list = cons_val(voice_val(register_"$i"(voxdir)),flite_voice_list);" >>flite_voice_list.c
+   echo "   mimic_voice_list = cons_val(voice_val(register_"$i"(voxdir)),mimic_voice_list);" >>mimic_voice_list.c
 done
-   echo "   flite_voice_list = val_reverse(flite_voice_list);" >>flite_voice_list.c
-   echo "   return flite_voice_list;" >>flite_voice_list.c
+   echo "   mimic_voice_list = val_reverse(mimic_voice_list);" >>mimic_voice_list.c
+   echo "   return mimic_voice_list;" >>mimic_voice_list.c
 
-echo "}" >>flite_voice_list.c
-echo >>flite_voice_list.c
+echo "}" >>mimic_voice_list.c
+echo >>mimic_voice_list.c
 

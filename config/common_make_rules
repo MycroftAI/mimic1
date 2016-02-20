@@ -66,8 +66,8 @@ endif
 LIBDIR=$(BUILDDIR)/lib
 BUILDDIRS=$(OBJDIR) $(BINDIR) $(LIBDIR)
 
-FLITELIBS = $(BUILDDIR)/lib/libflite.a
-FLITELIBFLAGS = -L$(BUILDDIR)/lib -lflite 
+MIMICLIBS = $(BUILDDIR)/lib/libmimic.a
+MIMICLIBFLAGS = -L$(BUILDDIR)/lib -lmimic 
 LDFLAGS += -lm $(AUDIOLIBS) $(OTHERLIBS)
 
 FULLOBJS = $(OBJS:%=$(OBJDIR)/%)

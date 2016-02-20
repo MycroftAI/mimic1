@@ -32,7 +32,7 @@
 ##                                                                       ##
 ###########################################################################
 ##                                                                       ##
-##  Setup the current directory for building a FLITE voice from a        ##
+##  Setup the current directory for building a MIMIC voice from a        ##
 ##  a festvox voice                                                      ##
 ##                                                                       ##
 ###########################################################################
@@ -47,13 +47,13 @@ then
    exit 1
 fi
 
-if [ ! "$FLITEDIR" ]
+if [ ! "$MIMICDIR" ]
 then
-   echo "environment variable FLITEDIR is unset"
+   echo "environment variable MIMICDIR is unset"
    echo "set it to your local festvox directory e.g."
-   echo '   bash$ export FLITEDIR=/home/awb/projects/flite/'
+   echo '   bash$ export MIMICDIR=/home/awb/projects/mimic/'
    echo or
-   echo '   csh% setenv FLITEDIR /home/awb/projects/flite/'
+   echo '   csh% setenv MIMICDIR /home/awb/projects/mimic/'
    exit 1
 fi
 

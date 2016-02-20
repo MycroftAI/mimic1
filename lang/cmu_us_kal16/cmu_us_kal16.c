@@ -39,7 +39,7 @@
 /*************************************************************************/
 
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 #include "cst_diphone.h"
 #include "usenglish.h"
 #include "cmu_lex.h"

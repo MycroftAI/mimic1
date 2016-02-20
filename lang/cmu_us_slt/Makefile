@@ -48,7 +48,7 @@ SRCS = cmu_us_$(VOXNAME).c cmu_us_$(VOXNAME)_cg_single_mcep_trees.c \
 OBJS = $(SRCS:.c=.o)
 
 FILES = Makefile $(SCM) $(SRCS) $(H)
-LIBNAME = flite_cmu_us_$(VOXNAME)
+LIBNAME = mimic_cmu_us_$(VOXNAME)
 LOCAL_INCLUDES = -I$(TOP)/lang/usenglish -I$(TOP)/lang/cmulex $(VOXDEFS)
 
 ALL = 

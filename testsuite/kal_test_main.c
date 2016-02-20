@@ -40,7 +40,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 
 cst_voice *register_cmu_us_kal();
 
@@ -62,14 +62,14 @@ int main(int argc, char **argv)
 	return 1;
     }
 
-    flite_init();
+    mimic_init();
 
     v = register_cmu_us_kal();
     durs = 0.0;
 
     for (i=0; i<2; i++)
     {
-	u = flite_synth_text(argv[1],v);
+	u = mimic_synth_text(argv[1],v);
 	w = utt_wave(u);
 	durs += (float)w->num_samples/(float)w->sample_rate;
 	

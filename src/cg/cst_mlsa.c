@@ -40,7 +40,7 @@
 /*   If I took more time I could probably make this use the same as  */
 /*   as the other code in this directory -- awb@cs.cmu.edu 03JAN06   */
 /*  ---------------------------------------------------------------  */
-/*   and then ported into Flite (November 2007 awb@cs.cmu.edu)       */
+/*   and then ported into Mimic (November 2007 awb@cs.cmu.edu)       */
 /*     with some speed uptimizations                                 */
 
 /*********************************************************************/

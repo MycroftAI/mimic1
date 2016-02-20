@@ -44,7 +44,7 @@ SCRIPTS =
 OBJS = $(SRCS:.c=.o)
 SCM=
 FILES = Makefile $(SCM) $(SRCS) $(H) $(SCRIPTS)
-LIBNAME = flite_cmu_indic_lex
+LIBNAME = mimic_cmu_indic_lex
 LOCAL_INCLUDES = 
 
 ALL = 

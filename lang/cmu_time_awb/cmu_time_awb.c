@@ -39,7 +39,7 @@
 /*************************************************************************/
 
 #include <string.h>
-#include "flite.h"
+#include "mimic.h"
 #include "cst_clunits.h"
 #include "usenglish.h"
 #include "cmu_lex.h"
@@ -72,7 +72,7 @@ cst_voice *register_cmu_time_awb(const char *voxdir)
     usenglish_init(v);
 
     /* Things that weren't filled in already. */
-    flite_feat_set_string(v->features,"name","cmu_time_awb");
+    mimic_feat_set_string(v->features,"name","cmu_time_awb");
 
     /* Lexicon */
     cmu_time_awb_lex.name = "cmu_time_awb";
@@ -85,14 +85,14 @@ cst_voice *register_cmu_time_awb(const char *voxdir)
     cmu_time_awb_lex.phone_hufftable = cmu_time_awb_lex_phones_huff_table;
     cmu_time_awb_lex.entry_hufftable = cmu_time_awb_lex_entries_huff_table;
     
-    flite_feat_set(v->features,"lexicon",lexicon_val(&cmu_time_awb_lex));
+    mimic_feat_set(v->features,"lexicon",lexicon_val(&cmu_time_awb_lex));
 
     /* Waveform synthesis */
-    flite_feat_set(v->features,"wave_synth_func",uttfunc_val(&clunits_synth));
-    flite_feat_set(v->features,"clunit_db",clunit_db_val(&cmu_time_awb_db));
-    flite_feat_set_int(v->features,"sample_rate",cmu_time_awb_db.sts->sample_rate);
-    flite_feat_set_string(v->features,"join_type","simple_join");
-    flite_feat_set_string(v->features,"resynth_type","fixed");
+    mimic_feat_set(v->features,"wave_synth_func",uttfunc_val(&clunits_synth));
+    mimic_feat_set(v->features,"clunit_db",clunit_db_val(&cmu_time_awb_db));
+    mimic_feat_set_int(v->features,"sample_rate",cmu_time_awb_db.sts->sample_rate);
+    mimic_feat_set_string(v->features,"join_type","simple_join");
+    mimic_feat_set_string(v->features,"resynth_type","fixed");
 
     /* Unit selection */
     cmu_time_awb_db.unit_name_func = cmu_time_awb_unit_name;
