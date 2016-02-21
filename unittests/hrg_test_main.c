@@ -40,7 +40,10 @@
 #include <stdio.h>
 #include "cst_hrg.h"
 
-int main(int argc, char **argv)
+#include "cutest.h"
+
+float correct_list[] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8};
+void test_hrg(void)
 {
     cst_utterance *u;
     cst_relation *r;
@@ -65,13 +68,14 @@ int main(int argc, char **argv)
     for (i=0,item=relation_head(utt_relation(u,"Segment")); 
 	 item; item=item_next(item),i++)
     {
-	printf("Segment %d %s %f\n",
-	       i,
-	       item_feat_string(item,"name"),
-	       item_feat_float(item,"duration"));
+        TEST_CHECK(item_feat_float(item, "duration") == correct_list[i]);
     }
 
     delete_utterance(u);
-
-    return 0;
 }
+
+TEST_LIST = {
+    {"hrg creation and manipulation", test_hrg},
+    {0},
+};
+
