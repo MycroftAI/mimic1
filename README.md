@@ -16,6 +16,7 @@ in the ACKNOWLEDGEMENTS file in the Mimic repo.
 - GNU Make
 - An audio device isn't required as mimic can write its output to
   a waveform file.
+- `libsound2-dev` (ubuntu)
 
 Supported platforms:
 
