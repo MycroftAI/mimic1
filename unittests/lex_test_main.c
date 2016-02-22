@@ -40,34 +40,87 @@
 #include <stdio.h>
 #include "cst_lexicon.h"
 
+#include "cutest.h"
+
 extern cst_lexicon cmu_lex;
 void cmu_lex_init();
 
-static void lookup_and_print(cst_lexicon *l,const char *word,const char *feats)
+static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
+        const char *expected_lexes)
 {
     cst_val *p;
+    const cst_val *syl;
 
-    printf("Lookup: %s %s\n",word,feats);
+    char *tok;
+    char * expected_str = malloc(strlen(expected_lexes) + 1);
+
     p = lex_lookup(l,word, feats, NULL);
-    val_print(stdout,p);
-    printf("\n");
+    strcpy(expected_str, expected_lexes);
+    tok = strtok(expected_str, " ");
+    for (syl = p; syl;)
+    {
+        TEST_CHECK(strcmp(val_string(val_car(syl)), tok) == 0);
+        syl = val_cdr(syl);
+        if (syl)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
+    }
     delete_val(p);
 }
 
-int main(int argc, char **argv)
+void test_sleekit(void)
 {
-
     cmu_lex_init();
-
-    lookup_and_print(&cmu_lex,"sleekit",NULL);
-    lookup_and_print(&cmu_lex,"chair",NULL);
-    lookup_and_print(&cmu_lex,"project","n");
-    lookup_and_print(&cmu_lex,"project","v");
-    lookup_and_print(&cmu_lex,"project","j");
-    lookup_and_print(&cmu_lex,"bbcc",NULL);
-    lookup_and_print(&cmu_lex,"zzzz",NULL);
-    lookup_and_print(&cmu_lex,"crax",NULL);
-    lookup_and_print(&cmu_lex,"a","dt");
-    
-    return 0;
+    lookup_and_test(&cmu_lex,"sleekit", NULL, "s l iy1 k ih0 t");
 }
+
+void test_chair(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"chair", NULL, "ch eh1 r");
+}
+
+void test_project(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"project", "n", "p r aa1 jh eh0 k t");
+    lookup_and_test(&cmu_lex,"project", "v", "p r ax0 jh eh1 k t");
+    lookup_and_test(&cmu_lex,"project", "j", "p r aa1 jh eh0 k t");
+}
+
+void test_bbcc(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "bbcc", NULL, "b b k");
+}
+
+void test_zzzz(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "zzzz", NULL, "z iy1 z");
+}
+
+
+void test_crax(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"crax",NULL, "k r ae1 k s");
+}
+    
+void test_a(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"a","dt", "ax0");
+}
+
+TEST_LIST = {
+    {"sleekit", test_sleekit},
+    {"chair", test_chair},
+    {"project", test_project},
+    {"bbcc", test_bbcc},
+    {"zzzz", test_zzzz},
+    {"crax", test_crax},
+    {"a", test_a},
+    {0}
+};
