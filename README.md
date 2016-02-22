@@ -170,3 +170,26 @@ You can also find existing Flite voices here:
 
   Now you can run the program in the debugger:
   `gdb --args ./bin/mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow."`
+  
+###How to Contribute 
+  For those who wish to help contribute to the development of mimic
+  there are a few things to keep in mind. 
+  
+#####Git branching structure
+  We will be using a branching struture similar to the one described in this article:
+  http://nvie.com/posts/a-successful-git-branching-model/ (a very interesting read)
+  
+  In short:
+  
+  `master` branch is for stable releases, 
+  
+  `development` branch is where development work is done between releases,
+  
+  any feature branch should branch off from `development`, and when complete will be merged back into `development`.
+  
+  Once enough features are added or a new release is complete those changes in `development` will be merged into `master`, 
+  then work can continue on `development` for the next release. 
+  
+#####Coding Style Requirements
+    todo: add style requirements 
+  
