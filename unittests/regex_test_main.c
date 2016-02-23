@@ -39,7 +39,7 @@
 /*************************************************************************/
 #include <stdio.h>
 #include "cst_regex.h"
-
+#include "cutest.h"
 char *rtests[] = {
     "1",
     " \n ",
@@ -54,44 +54,103 @@ char *rtests[] = {
     "1,2345",
     NULL };
 
-int main(int argc, char **argv)
+// match white spaces
+void test_match_whitespace(void)
 {
     int i;
-    cst_regex *commaint;
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_white, rtests[i]) == 0);
+    TEST_CHECK(cst_regex_match(cst_rx_white, " ") == 1);
+}
 
+// match upper case strings
+void test_match_upper(void)
+{
+    int i;
+    int expected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_uppercase, rtests[i]) == expected[i]);
+    
+    TEST_CHECK(cst_regex_match(cst_rx_uppercase, "HELLO") == 1);
+}
+
+// match strings containing only lower case letters
+void test_match_lower(void)
+{
+    int i;
+    int expected[] = {0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_lowercase, rtests[i]) == expected[i]);
+}
+
+// match strings containing letters and numericals
+void test_match_alphanum(void)
+{
+    int i;
+    int expected[] = {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_alphanum, rtests[i]) == expected[i]);
+}
+
+// match identifiers
+void test_match_ident(void)
+{
+    int i;
+    int expected[] = {0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_identifier, rtests[i]) == expected[i]);
+}
+
+// match strings containing only letters
+void test_match_alpha(void)
+{
+    int i;
+    int expected[] = {0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_alpha, rtests[i]) == expected[i]);
+}
+
+// match integer
+void test_match_int(void)
+{
+    int i;
+    int expected[] = {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_int, rtests[i]) == expected[i]);
+}
+
+// match double, i.e. 1.34 or 3.14
+void test_match_double(void)
+{
+    int i;
+    int expected[] = {1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0};
+    for (i = 0; rtests[i] != NULL; i++)
+	TEST_CHECK(cst_regex_match(cst_rx_double, rtests[i]) == expected[i]);
+}
+
+// match [numerical],[numerical]
+void test_match_commaint(void)
+{
+    int i;
+    int expected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+    cst_regex *commaint;
     commaint = new_cst_regex("[0-9][0-9]?[0-9]?,\\([0-9][0-9][0-9],\\)*[0-9][0-9][0-9]\\(\\.[0-9]+\\)?");
 
-    for (i=0; rtests[i]; i++)
-    {
-	printf("\"%s\"\n",rtests[i]);
-	printf(" %.8s %c\n",
-	       "white",(cst_regex_match(cst_rx_white,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "alpha",(cst_regex_match(cst_rx_alpha,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "upper",
-	       (cst_regex_match(cst_rx_uppercase,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "lower",
-	       (cst_regex_match(cst_rx_lowercase,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "alphanum",
-	       (cst_regex_match(cst_rx_alphanum,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "ident",
-	       (cst_regex_match(cst_rx_identifier,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "int",
-	       (cst_regex_match(cst_rx_int,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "double",
-	       (cst_regex_match(cst_rx_double,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "commaint",
-	       (cst_regex_match(commaint,rtests[i]) ? 't' : 'f'));
-    }
+    for (i = 0; rtests[i] != NULL; i++)
+        TEST_CHECK(cst_regex_match(commaint, rtests[i]) == expected[i]);
     
     delete_cst_regex(commaint);
-
-    return 0;
 }
+
+TEST_LIST = {
+    {"regex match commaint", test_match_commaint},
+    {"regex match double", test_match_double},
+    {"regex match integer", test_match_int},
+    {"regex match identifier", test_match_ident},
+    {"regex match alphanumerical", test_match_alphanum},
+    {"regex match lower", test_match_lower},
+    {"regex match upper", test_match_upper},
+    {"regex match alpha", test_match_alpha},
+    {"regex match whitespace", test_match_whitespace},
+    {0}
+};
