@@ -44,8 +44,11 @@ SRCS = play_wave_main.c record_wave_main.c \
        lex_lookup_main.c asciiS2U_main.c asciiU2S_main.c \
        combine_waves_main.c bin2ascii_main.c record_in_noise_main.c \
        compare_wave_main.c rfc_main.c lpc_resynth_main.c \
-       by_word_main.c multi_thread_main.c
-OTHERS=
+       by_word_main.c multi_thread_main.c lpc_test_main.c lpc_test2_main.c \
+       utt_test_main.c
+
+OTHERS=kal_test_main.c
+
 
 FILES = Makefile $(SRCS) $(DATAFILES) $(OTHERS)
 

@@ -41,11 +41,10 @@ ALL_DIRS=
 DATAFILES=data.one
 SRCS = token_test_main.c hrg_test_main.c \
        regex_test_main.c nums_test_main.c \
-       lex_test_main.c utt_test_main.c lpc_test_main.c \
-       lpc_test2_main.c
+       lex_test_main.c
+       
 
-OTHERS = kal_test_main.c
-
+OTHERS = 
 FILES = Makefile $(SRCS) $(DATAFILES) $(OTHERS)
 
 LOCAL_INCLUDES = -I$(TOP)/lang/usenglish

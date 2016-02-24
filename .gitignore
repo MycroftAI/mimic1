@@ -59,14 +59,14 @@ testsuite/record_in_noise
 testsuite/rfc
 testsuite/by_word
 testsuite/multi_thread
+testsuite/lpc_test
+testsuite/lpc_test2
+testsuite/utt_test
 
 # unittests
-unittests/utt_test
 unittests/regex_test
 unittests/token_test
 unittests/hrg_test
 unittests/lex_test
 unittests/nums_test
-unittests/lpc_test
-unittests/lpc_test2
 unittests/voice_select_test
