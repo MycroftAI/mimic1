@@ -4356,6 +4356,23 @@ if ac_fn_c_try_compile "$LINENO"; then :
                AUDIOLIBS=-lasound
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <portaudio.h>
+int
+main ()
+{
+int j= 3;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  AUDIODRIVER="portaudio"
+	       AUDIODEFS=-DCST_AUDIO_PORTAUDIO
+               AUDIOLIBS=-lportaudio
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 ac_fn_c_check_header_mongrel "$LINENO" "mmsystem.h" "ac_cv_header_mmsystem_h" "$ac_includes_default"
 if test "x$ac_cv_header_mmsystem_h" = xyes; then :
   AUDIODRIVER="wince"
@@ -4413,6 +4430,11 @@ if test "x$AUDIODEFS" = x; then
             AUDIODRIVER="pulseaudio"
 	    AUDIODEFS=-DCST_AUDIO_PULSEAUDIO
             AUDIOLIBS='-lpulse-simple -lpulse'
+	    ;;
+        portaudio)
+            AUDIODRIVER="portaudio"
+	    AUDIODEFS=-DCST_AUDIO_PORTAUDIO
+            AUDIOLIBS='-lportaudio'
 	    ;;
 	*bsd)
 	    AUDIODRIVER=oss

@@ -53,6 +53,14 @@
 
 static const char *sun_audio_device = "/dev/audio";
 
+int audio_init_sun() {
+   return 0;
+}
+
+int audio_exit_sun() {
+    return 0;
+}
+
 cst_audiodev *audio_open_sun(int sps, int channels, cst_audiofmt fmt)
 {
     audio_info_t ainfo;

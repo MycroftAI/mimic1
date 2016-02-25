@@ -47,6 +47,15 @@
 
 #include <System/SoundMgr.h>
 
+int audio_init_palmos() {
+   return 0;
+}
+
+int audio_exit_palmos() {
+    return 0;
+}
+
+
 cst_audiodev *audio_open_palmos(int sps, int channels, cst_audiofmt fmt)
 {
     cst_audiodev *ad;

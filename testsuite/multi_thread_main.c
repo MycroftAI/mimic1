@@ -76,6 +76,7 @@ int main() {
       printf("%d %d %f\n", omp_get_thread_num(), i, synth_text("Hello"));
     }
     
+    mimic_exit();
     return 0;
 }
       

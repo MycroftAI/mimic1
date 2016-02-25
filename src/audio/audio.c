@@ -208,6 +208,16 @@ int audio_write(cst_audiodev *ad,void *buff,int num_bytes)
     return (rv == real_num_bytes) ? num_bytes : 0;
 }
 
+int audio_init()
+{
+    return AUDIO_INIT_NATIVE();
+}
+
+int audio_exit()
+{
+    return AUDIO_EXIT_NATIVE();
+}
+
 int audio_drain(cst_audiodev *ad)
 {
     return AUDIO_DRAIN_NATIVE(ad);
@@ -231,8 +241,14 @@ int play_wave(cst_wave *w)
 			 /* FIXME: should be able to determine this somehow */
 			 CST_AUDIO_LINEAR16)) == NULL)
 	return CST_ERROR_FORMAT;
-
     num_shorts = w->num_samples*w->num_channels;
+    /* TODO: Fix all other play_wave functions so PortAudio works on them too */
+    #ifdef CST_AUDIO_PORTAUDIO
+    r = audio_write(ad,w->samples,num_shorts*2);
+    if (r <= 0) {
+        cst_errmsg("failed to write %d samples\n",n);
+    }
+    #else
     for (i=0; i < num_shorts; i += r/2)
     {
 	if (num_shorts > i+CST_AUDIOBUFFSIZE)
@@ -246,7 +262,7 @@ int play_wave(cst_wave *w)
 	    break;
 	}
     }
-
+    #endif
     audio_close(ad);
 
     return CST_OK_FORMAT;

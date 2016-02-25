@@ -82,5 +82,7 @@ int main(int argc, char **argv)
     printf("%f seconds of speech synthesized\n",durs);
 /*    muntrace(); */
 
+    mimic_exit();
+
     return 0;
 }

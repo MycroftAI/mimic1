@@ -389,6 +389,11 @@ AC_TRY_COMPILE([#include <alsa/version.h>],
               [AUDIODRIVER="alsa"
 	       AUDIODEFS=-DCST_AUDIO_ALSA
                AUDIOLIBS=-lasound])
+AC_TRY_COMPILE([#include <portaudio.h>],
+               [int j= 3;],
+              [AUDIODRIVER="portaudio"
+	       AUDIODEFS=-DCST_AUDIO_PORTAUDIO
+               AUDIOLIBS=-lportaudio])
 AC_CHECK_HEADER(mmsystem.h,
 	      [AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
@@ -443,6 +448,11 @@ if test "x$AUDIODEFS" = x; then
             AUDIODRIVER="pulseaudio"
 	    AUDIODEFS=-DCST_AUDIO_PULSEAUDIO
             AUDIOLIBS='-lpulse-simple -lpulse'
+	    ;;
+        portaudio)
+            AUDIODRIVER="portaudio"
+	    AUDIODEFS=-DCST_AUDIO_PORTAUDIO
+            AUDIOLIBS='-lportaudio'
 	    ;;
 	*bsd)
 	    AUDIODRIVER=oss

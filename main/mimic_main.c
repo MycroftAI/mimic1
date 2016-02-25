@@ -419,5 +419,6 @@ loop:
     delete_val(mimic_voice_list); mimic_voice_list=0;
     /*    cst_alloc_debug_summary(); */
 
+    mimic_exit();
     return 0;
 }

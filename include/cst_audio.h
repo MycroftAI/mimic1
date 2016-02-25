@@ -71,11 +71,13 @@ typedef struct cst_audiodev_struct {
 } cst_audiodev;
 
 /* Generic audio functions */
+int audio_init();
 cst_audiodev *audio_open(int sps, int channels, cst_audiofmt fmt);
 int audio_close(cst_audiodev *ad);
 int audio_write(cst_audiodev *ad, void *buff, int num_bytes);
 int audio_flush(cst_audiodev *ad); /* wait for buffers to empty */
 int audio_drain(cst_audiodev *ad); /* empty buffers now */
+int audio_exit();
 
 /* Generic high level audio functions */
 int play_wave(cst_wave *w);

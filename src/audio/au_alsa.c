@@ -55,6 +55,14 @@
 
 int audio_flush_alsa(cst_audiodev *ad);
 
+int audio_init_alsa() {
+   return 0;
+}
+
+int audio_exit_alsa() {
+    return 0;
+}
+
 /*static char *pcm_dev_name = "hw:0,0"; */
 static const char *pcm_dev_name ="default";
 

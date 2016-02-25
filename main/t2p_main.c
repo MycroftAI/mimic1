@@ -135,5 +135,6 @@ int main(int argc, char **argv)
     delete_features(args);
     delete_val(files);
     
+    mimic_exit();
     return 0;
 }

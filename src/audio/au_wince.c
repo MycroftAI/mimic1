@@ -254,3 +254,12 @@ int audio_drain_wince(cst_audiodev *ad)
         WaitForSingleObject(pd->bevt, INFINITE);
     return 0;
 }
+
+int audio_init_wince() {
+   return 0;
+}
+
+int audio_exit_wince() {
+    return 0;
+}
+
