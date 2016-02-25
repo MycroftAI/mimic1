@@ -228,12 +228,39 @@ int audio_flush(cst_audiodev *ad)
   return AUDIO_FLUSH_NATIVE(ad);
 }
 
+static void audio_write_buffer(cst_audiodev *ad, void *buff,
+                               int num_samples, int num_channels) {
+	int n, r, i;
+  int num_shorts = num_samples*num_channels;
+  int bytes_per_short = audio_bps(ad->fmt);
+  int num_bytes = num_shorts*bytes_per_short;
+  if (CST_AUDIOBUFFSIZE <= 0) {
+    r = audio_write(ad, buff, num_bytes);
+    if (r <= 0) {
+      cst_errmsg("failed to write %d samples\n", num_shorts);
+    }
+  } else {
+    for (i=0; i < num_shorts; i += r/2)
+    {
+      if (num_shorts > i+CST_AUDIOBUFFSIZE)
+        n = CST_AUDIOBUFFSIZE;
+      else
+        n = num_shorts-i;
+      r = audio_write(ad, buff+i*bytes_per_short, n*2);
+      if (r <= 0)
+      {
+        cst_errmsg("failed to write %d samples\n",n);
+        break;
+      }
+    }
+	}
+	return;
+}
+
+
 int play_wave(cst_wave *w)
 {
   cst_audiodev *ad;
-  int i,n,r;
-  int num_shorts;
-
   if (!w)
       return CST_ERROR_FORMAT;
   
@@ -241,30 +268,8 @@ int play_wave(cst_wave *w)
                        /* FIXME: should be able to determine this somehow */
                        CST_AUDIO_LINEAR16)) == NULL)
       return CST_ERROR_FORMAT;
-  num_shorts = w->num_samples*w->num_channels;
-  /* TODO: Fix all other play_wave functions so PortAudio works on them too */
-  #ifdef CST_AUDIO_PORTAUDIO
-  r = audio_write(ad,w->samples,num_shorts*2);
-  if (r <= 0) {
-      cst_errmsg("failed to write %d samples\n",n);
-  }
-  #else
-  for (i=0; i < num_shorts; i += r/2)
-  {
-      if (num_shorts > i+CST_AUDIOBUFFSIZE)
-          n = CST_AUDIOBUFFSIZE;
-      else
-          n = num_shorts-i;
-      r = audio_write(ad,&w->samples[i],n*2);
-      if (r <= 0)
-      {
-          cst_errmsg("failed to write %d samples\n",n);
-          break;
-      }
-  }
-  #endif
+  audio_write_buffer(ad, w->samples, w->num_samples, w->num_channels);
   audio_close(ad);
-
   return CST_OK_FORMAT;
 }
 
@@ -275,6 +280,11 @@ int play_wave_sync(cst_wave *w, cst_relation *rel,
   cst_audiodev *ad;
   float r_pos;
   cst_item *item;
+  
+  if (CST_AUDIOBUFFSIZE <= 0) {
+		cst_errmsg("play_wave_sync not compatible with PortAudio\n");
+		return -1;
+	}
 
   if (!w)
       return CST_ERROR_FORMAT;
@@ -291,7 +301,6 @@ int play_wave_sync(cst_wave *w, cst_relation *rel,
       if (i >= r_pos)
       {
           audio_flush(ad);
-
           if ((*call_back)(item) != CST_OK_FORMAT)
               break;
           item = item_next(item);
@@ -304,6 +313,7 @@ int play_wave_sync(cst_wave *w, cst_relation *rel,
           n = CST_AUDIOBUFFSIZE;
       else
           n = w->num_samples-i;
+      
       r = audio_write(ad,&w->samples[i],n*2);
       q +=r;
       if (r <= 0)

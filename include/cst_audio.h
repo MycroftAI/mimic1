@@ -44,9 +44,11 @@
 #include "cst_hrg.h"
 
 #ifdef CST_AUDIO_WIN32
-#define CST_AUDIOBUFFSIZE 8092
+  #define CST_AUDIOBUFFSIZE 8092
+#elif defined(CST_AUDIO_PORTAUDIO)
+  #define CST_AUDIOBUFFSIZE 0
 #else
-#define CST_AUDIOBUFFSIZE 128
+  #define CST_AUDIOBUFFSIZE 128
 #endif
 
 #define CST_AUDIO_DEFAULT_PORT 1746
