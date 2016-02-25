@@ -383,7 +383,7 @@ AC_CHECK_HEADER(sys/audioio.h,
 # the one I know -- you can still specific --with-audio=alsa
 AC_TRY_COMPILE([#include <alsa/version.h>],
                [int j=
-                #if SND_LIB_SUBMINOR >= 11
+                #if SND_LIB_SUBMINOR >= 11 || SND_LIB_MINOR > 0
                 3;
                 #endif],
               [AUDIODRIVER="alsa"

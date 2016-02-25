@@ -4343,7 +4343,7 @@ int
 main ()
 {
 int j=
-                #if SND_LIB_SUBMINOR >= 11
+                #if SND_LIB_SUBMINOR >= 11 || SND_LIB_MINOR > 0
                 3;
                 #endif
   ;
