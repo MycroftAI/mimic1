@@ -2,7 +2,7 @@
 /*                                                                       */
 /*                  Language Technologies Institute                      */
 /*                     Carnegie Mellon University                        */
-/*                        Copyright (c) 1999                             */
+/*                        Copyright (c) 2000                             */
 /*                        All Rights Reserved.                           */
 /*                                                                       */
 /*  Permission is hereby granted, free of charge, to use and distribute  */
@@ -31,47 +31,91 @@
 /*                                                                       */
 /*************************************************************************/
 /*             Author:  Alan W Black (awb@cs.cmu.edu)                    */
-/*               Date:  December 1999                                    */
+/*               Date:  January 2000                                     */
 /*************************************************************************/
 /*                                                                       */
-/*  Test of hrg creation and manipulation                                */
+/*  Text expander test (nums etc)                                        */
 /*                                                                       */
 /*************************************************************************/
-#include <stdio.h>
-#include "cst_hrg.h"
+#include <string.h>
 
-int main(int argc, char **argv)
+#include "mimic.h"
+#include "usenglish.h"
+#include "us_text.h"
+
+#include "cutest.h"
+
+void digits(const char *input, const char *expected)
 {
-    cst_utterance *u;
-    cst_relation *r;
-    cst_item *item=0;
-    int i;
-
-    u = new_utterance();
-    r = utt_relation_create(u,"Segment");
-
-    for (i=0; i<10; i++)
+    int mismatches = 0;
+    const cst_val *p, *v;
+    char *tok;
+    char * expected_str = malloc(strlen(expected) + 1);
+    v = en_exp_digits(input);
+    strcpy(expected_str, expected);
+    tok = strtok(expected_str, " ");
+    for (p=v; p; )
     {
-	char buff[20];
-	sprintf(buff,"seg_%03d",i);
-	if (i==0)
-	    item = relation_append(r,NULL);
-	else
-	    item = item_append(item,NULL);
-	item_set_string(item,"name",buff);
-	item_set_float(item,"duration",i*0.20);
+        mismatches += strcmp(val_string(val_car(p)), tok);
+        p=val_cdr(p);
+        if (p)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
     }
-
-    for (i=0,item=relation_head(utt_relation(u,"Segment")); 
-	 item; item=item_next(item),i++)
-    {
-	printf("Segment %d %s %f\n",
-	       i,
-	       item_feat_string(item,"name"),
-	       item_feat_float(item,"duration"));
-    }
-
-    delete_utterance(u);
-
-    return 0;
+    TEST_CHECK_(mismatches == 0, "%s != %s", input, expected);
 }
+
+void nums(const char *input, const char *expected)
+{
+    int mismatches = 0;
+    const cst_val *p, *v;
+    char *tok;
+    char * expected_str = malloc(strlen(expected) + 1);
+    v = en_exp_number(input);
+    strcpy(expected_str, expected);
+    tok = strtok(expected_str, " ");
+    for (p=v; p; )
+    {
+        mismatches += strcmp(val_string(val_car(p)), tok);
+        p=val_cdr(p);
+        if (p)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+        {
+            mismatches++;
+            break;
+        }
+    }
+    TEST_CHECK_(mismatches == 0, "%s != %s", input, expected);
+}
+
+
+
+   
+void test_nums(void)
+{
+    nums("13", "thirteen");
+    nums("1986", "one thousand nine hundred eighty six");
+    nums("1234567890", "one billion two hundred thirty four million five hundred sixty seven thousand eight hundred ninety");
+    nums("100", "one hundred");
+    nums("10001", "ten thousand one");
+    nums("10101", "ten thousand one hundred one");
+    nums("432567", "four hundred thirty two thousand five hundred sixty seven");
+    nums("432500", "four hundred thirty two thousand five hundred");
+    nums("1000523", "one million five hundred twenty three");
+    nums("1111111111111", "one one one one one one one one one one one one one");
+}
+void test_digits(void)
+{
+
+    digits("123", "one two three");
+    digits("1", "one");
+    digits("1234567809", "one two three four five six seven eight nine zero");
+}
+
+TEST_LIST = {
+    { "numbers", test_nums },
+    { "digits", test_digits },
+    {0}
+};
