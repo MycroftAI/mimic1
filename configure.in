@@ -378,9 +378,9 @@ AC_CHECK_HEADER(machine/soundcard.h,
 AC_CHECK_HEADER(sys/audioio.h,
               [AUDIODRIVER="sun"
                AUDIODEFS=-DCST_AUDIO_SUNOS])
-# Seems the alsa code I have breaks on earlier versions
-# I'm not sure what the threshold version is, but made this depend on
-# the one I know -- you can still specific --with-audio=alsa
+dnl Seems the alsa code I have breaks on earlier versions
+dnl I'm not sure what the threshold version is, but made this depend on
+dnl the one I know -- you can still specific --with-audio=alsa
 AC_TRY_COMPILE([#include <alsa/version.h>],
                [int j=
                 #if SND_LIB_SUBMINOR >= 11 || SND_LIB_MINOR > 0
@@ -389,11 +389,22 @@ AC_TRY_COMPILE([#include <alsa/version.h>],
               [AUDIODRIVER="alsa"
 	       AUDIODEFS=-DCST_AUDIO_ALSA
                AUDIOLIBS=-lasound])
-AC_TRY_COMPILE([#include <portaudio.h>],
-               [int j= 3;],
-              [AUDIODRIVER="portaudio"
-	       AUDIODEFS=-DCST_AUDIO_PORTAUDIO
-               AUDIOLIBS=-lportaudio])
+
+dnl Check PortAudio is at least 1899 (v19-dev)
+OLDLIBS="$LIBS"
+LIBS="-lportaudio"
+AC_TRY_RUN([
+#include <portaudio.h>
+int main() {
+  int j= Pa_GetVersion();
+  if (j>=1899)
+     return 0;
+  return -1;
+}],
+           [AUDIODRIVER="portaudio"
+            AUDIODEFS=-DCST_AUDIO_PORTAUDIO
+            AUDIOLIBS=-lportaudio])
+LIBS="$OLDLIBS"
 AC_CHECK_HEADER(mmsystem.h,
 	      [AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
