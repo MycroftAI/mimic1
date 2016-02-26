@@ -102,11 +102,10 @@ static int audio_error_portaudio(int err) {
   if( err == paNoError ) {
     return err;
   }
-    Pa_Terminate();
-    fprintf( stderr, "An error occured while using the portaudio stream\n" );
-    fprintf( stderr, "Error number: %d\n", err );
-    fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
-    return err;
+  cst_errmsg("An error occured while using the portaudio stream\n");
+  cst_errmsg("Error number: %d\n", err);
+  cst_errmsg("Error message: %s\n", Pa_GetErrorText(err));
+  return err;
 }
 
 
@@ -126,7 +125,7 @@ cst_audiodev * audio_open_portaudio(int sps, int channels, cst_audiofmt fmt) {
 
   hdl->outputParameters->device = Pa_GetDefaultOutputDevice(); /* default output device */
   if (hdl->outputParameters->device == paNoDevice) {
-    fprintf(stderr,"Error: No default output device.\n");
+    cst_errmsg("Error: No default output device.\n");
     audio_error_portaudio(paInvalidDevice);
     return NULL;
   }
@@ -141,7 +140,7 @@ cst_audiodev * audio_open_portaudio(int sps, int channels, cst_audiofmt fmt) {
       hdl->bytes_per_frame = channels*1;
       break;
     case CST_AUDIO_MULAW:
-      fprintf(stderr,"Error: MULAW not supported in portaudio.\n");
+      cst_errmsg("Error: MULAW not supported in portaudio.\n");
     default:
       audio_error_portaudio(paSampleFormatNotSupported);
       free(ad);
@@ -216,56 +215,21 @@ int audio_write_portaudio(cst_audiodev *ad, void *buff, int num_bytes) {
       paClipOff,  /* we won't output out of range samples?*/
       pa_callback,
       data);
-  if (audio_error_portaudio(err) < 0) return err;
+  if (audio_error_portaudio(err) < 0)
+    return err;
   err = Pa_StartStream(hdl->stream);
-  if (audio_error_portaudio(err) < 0) return err;
+  if (audio_error_portaudio(err) < 0)
+    return err;
   while((err = Pa_IsStreamActive(hdl->stream)) == 1){
     Pa_Sleep(100);
   }
   err = Pa_StopStream(hdl->stream);
-  if (audio_error_portaudio(err) < 0) return err;
+  if (audio_error_portaudio(err) < 0)
+    return err;
   err = Pa_CloseStream(hdl->stream);
-  if (audio_error_portaudio(err) < 0) return err;
+  if (audio_error_portaudio(err) < 0)
+    return err;
   free(data);
   return num_bytes;
 }
 
-
-
-/*
-int main(void)
-{
-    PaError err;
-
-    if (audio_init_portaudio() < 0) {
-    return -1;
-  }
-
-  int sps = 44100;
-  int channels = 2;
-  int num_seconds = 5;
-  long int i,j;
-  double freqs[] = {1500, 3500};
-  long int num_frames = num_seconds*sps;
-  long int num_bytes = num_frames*channels*sizeof(int16_t);
-  int16_t *buff = malloc(num_bytes);
-  int16_t *iter = buff;
-  if (buff == NULL) {
-    return -1;
-  }
-  for (i=0;i<num_frames;i++) {
-    for (j=0;j<channels;j++) {
-      *iter++ = 32767*sin(2*3.14*freqs[j]*i/sps);
-    }
-  }
-  cst_audiofmt fmt = CST_AUDIO_LINEAR16;
-  cst_audiodev *ad = audio_open_portaudio(sps, channels, fmt);
-  if (ad == NULL) return -1;
-  err = audio_write_portaudio(ad, buff, num_bytes);
-  if (err < 0) return -1;
-  
-  audio_exit_portaudio();
-    
-    return 0;
-}
-*/
