@@ -36,10 +36,80 @@
 ##                                                                       ##
 ###########################################################################
 
+export LANG=C
+export LC_ALL=C
+
 if [ "x$MIMICDIR" = "x" ]
 then
    MIMICDIR=`pwd`/../..
 fi
+export MIMICDIR
+
+if [ "x$FESTSUITE" = "x" ];
+then
+  FESTSUITE="${MIMICDIR}/_festsuite"
+fi
+
+BASE_URL="http://www.cstr.ed.ac.uk/downloads/festival/2.4/"
+
+export FESTVOXDIR="$FESTSUITE/festvox"
+export ESTDIR="$FESTSUITE/speech_tools"
+export FESTIVAL="$FESTSUITE/festival/bin/festival"
+export FESTIVALDIR="$FESTSUITE/festival"
+export HEAP="20000000"
+export PATH="$FESTIVALDIR/bin/:$ESTDIR/bin/:$PATH"
+
+mkdir -p "$FESTSUITE"
+
+if [ ! -d "$ESTDIR" ]
+then
+   echo "Preparing Edinburgh Speech Tools"
+   (cd "$FESTSUITE"
+      if [ ! -f "speech_tools-2.4-release.tar.gz" ]; then
+          echo "Downloading speech tools"
+          wget "${BASE_URL}/speech_tools-2.4-release.tar.gz" || exit 1
+      fi
+      tar xzf "speech_tools-2.4-release.tar.gz" || exit 1
+      (cd "speech_tools"
+       ./configure || exit 1
+       make || exit 1
+      )
+   )
+fi
+
+if [ ! -e "$FESTIVAL" ]
+then
+   echo "Preparing Festival"
+  (cd "$FESTSUITE"
+   if [ ! -f "festival-2.4-release.tar.gz" ]; then
+     echo "Downloading festival"
+     wget "${BASE_URL}/festival-2.4-release.tar.gz" || exit 1
+   fi
+   tar xzf "festival-2.4-release.tar.gz" || exit 1
+   (cd "festival"
+    ./configure || exit 1
+    make || exit 1
+   )
+  )
+fi
+
+
+if [ ! -d "$FESTVOXDIR" ]
+then
+   echo "Preparing Festvox"
+  (cd "$FESTSUITE"
+   if [ ! -f "festvox-2.7.0-release.tar.gz" ]; then
+     echo "Downloading festvox"
+     wget "http://festvox.org/festvox-2.7/festvox-2.7.0-release.tar.gz" || exit 1
+   fi
+   tar xzf "festvox-2.7.0-release.tar.gz" || exit 1
+   (cd "festvox"
+    ./configure || exit 1
+    make || exit 1
+   )
+  )
+fi
+
 
 if [ $# = 0 ]
 then
@@ -53,7 +123,12 @@ fi
 
 if [ "$1" = "setup" ]
 then
-   tar zxvf festlex_CMU.tar.gz
+   if [ ! -f "festlex_CMU.tar.gz" ]
+   then
+      echo "Downloading festlex_CMU"
+      wget "${BASE_URL}/festlex_CMU.tar.gz" || exit 1
+   fi
+   tar zxvf festlex_CMU.tar.gz || exit 1
    cp -p $FESTVOXDIR/src/lts/build_lts festival/lib/dicts/cmu
    cp -p $FESTVOXDIR/src/lts/build_lts_rules festival/lib/dicts/cmu
    mkdir festival/lib/dicts/cmu/c
@@ -64,14 +139,14 @@ fi
 if [ "$1" = "lts" ]
 then
   (cd festival/lib/dicts/cmu;
-   festival --heap 10000000 -b allowables.scm '(dump-flat-entries-all "cmudict-0.4.out" "lts_scratch/lex_entries.out")'
+   $FESTIVAL --heap 10000000 -b allowables.scm '(dump-flat-entries-all "cmudict-0.4.out" "lts_scratch/lex_entries.out")'
    ./build_lts cummulate
    ./build_lts align
    ./build_lts build
    ./build_lts merge
    ./build_lts test
-   festival --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
-   festival --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")';
+   $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
+   $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")';
    )
 fi
 
@@ -82,9 +157,9 @@ then
      # We will prune words that aren't homographs and the LTS gets correct
      # Use the lts_test.log to find the failed entries and only
      # include them in the list 
-     festival -b cmulex.scm ~/projects/mimic/tools/make_lex.scm '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
-     festival --heap 10000000 -b '(lex.compile "pruned_lex.scm" "pruned_lex.out")'
-     festival --heap 10000000 -b $MIMICDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
+     $FESTIVAL -b cmulex.scm "$MIMICDIR/tools/make_lex.scm" '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
+     $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))'
+     $FESTIVAL --heap 10000000 -b "$MIMICDIR/tools/make_lex.scm" '(lextoC "cmu" "pruned_lex.out" "c")' ;
    )
 fi
 
