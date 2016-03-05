@@ -182,7 +182,9 @@ int audio_close_portaudio(cst_audiodev *ad) {
 }
 
 int audio_init_portaudio() {
+    cst_errmsg("If audio works ignore messages below\n");
     int err = Pa_Initialize();
+    cst_errmsg("If audio works ignore messages above\n");
     audio_error_portaudio(err);
     return err;
 }
