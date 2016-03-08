@@ -143,9 +143,11 @@ then
   (cd festival/lib/dicts/cmu;
    rm cmu_lts_rules.scm
    #make lts_rules
-   cp lex_lts_rules.scm cmu_lts_rules.scm
    echo "lts/dump-entries started at" `date -R`
-   $FESTIVAL --heap 10000000 -b allowables.scm '(dump-flat-entries "cmudict-0.4.out" "lts_scratch/lex_entries.out")'
+   #$FESTIVAL --heap 10000000 -b allowables.scm '(dump-flat-entries "cmudict-0.4.out" "lts_scratch/lex_entries.out" "asis")'
+  )
+  python3 prune_lexicon.py --remove-short || exit 1
+  (cd festival/lib/dicts/cmu;
    echo "lts/cummulate started at" `date -R`
    ./build_lts cummulate
    echo "lts/align started at" `date -R`
@@ -156,11 +158,12 @@ then
    ./build_lts merge
    echo "lts/test started at" `date -R`
    ./build_lts test
+   cp lex_lts_rules.scm cmu_lts_rules.scm
    echo "lts/lts_to_rg_to_wfst started at" `date -R`
    $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
    echo "lts/ltsregextoC started at" `date -R`
    $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")';
-   )
+  )
 fi
 
 if [ "$1" = "lex" ]
@@ -173,7 +176,7 @@ then
    #  $FESTIVAL -b cmulex.scm "$MIMICDIR/tools/make_lex.scm" '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
    #)
    echo "lex/prune_lexicon started at" `date -R`
-     python3 prune_lexicon.py || exit 1
+     python3 prune_lexicon.py --prune || exit 1
    ( cd festival/lib/dicts/cmu;
      echo "lex/compile_pruned started at" `date -R`
      $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))'

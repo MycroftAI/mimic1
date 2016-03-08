@@ -7,6 +7,7 @@ that they work properly.
 Author: Sergio Oller, 2016
 """
 
+import argparse
 
 ##############################################################################
 # This interpreter of a subset of the scheme dialect of lisp is based on:
@@ -106,7 +107,7 @@ def lexicon_to_dict(lexicon):
     return output
 
 
-def flatten_lexicon(lexicon):
+def flatten_lexicon(lexicon, keep_pos=False):
     """ Converts the lexicon, as parsed by read_lexicon into a
     word->transcription dict.
     In this conversion process the syllabification is flattened, as we don't
@@ -115,10 +116,13 @@ def flatten_lexicon(lexicon):
     output = dict()
     for line in lexicon:
         word = line[0]
-        # pos = line[1]
+        pos = line[1]
         syls = line[2]
         transcr = flatten_syls(syls)
-        output[word] = transcr
+        if keep_pos:
+            output[word] = (pos, transcr)
+        else:
+            output[word] = transcr
     return output
 
 
@@ -317,12 +321,43 @@ def load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn):
                                                            lexicon_with_syl)
     write_lex(pruned_lex, output_pruned_lex_fn)
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Helpers to create lexicon and LTS rules.')
+    parser.add_argument('--prune', dest='prune', action='store_const',
+                        const="prune", default=None,
+                        help='Remove all lexicon entries correctly predicted')
+    parser.add_argument('--remove-short', dest='remove_short', action='store_const',
+                        const="remove_short", default=None,
+                        help='Remove all lexicon entries with 3 words or less for LTS training.')
+    args = parser.parse_args()
+    return args
+
+def load_and_filter_lex_for_lts(lexicon_fn, filtered_lex_fn):
+    lexicon_raw = read_lexicon(lexicon_fn)
+    lexicon = flatten_lexicon(lexicon_raw, keep_pos=True)
+    filtered_lex = dict()
+    for word in lexicon.keys():
+        if len(word) > 3:
+            filtered_lex[word] = lexicon[word]
+    write_lex(filtered_lex, filtered_lex_fn)
+
+
+
+
 if __name__ == "__main__":
     # ./make_cmulex setup
     # ./make_cmulex lts
     # ./make_cmulex lex
-    lexicon_fn = "festival/lib/dicts/cmu/cmudict-0.4.out"
-    lts_rules_fn = "festival/lib/dicts/cmu/lex_lts_rules.scm"
-    output_pruned_lex_fn = "festival/lib/dicts/cmu/pruned_lex.scm"
-    load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn)
+    args = parse_args()
+    if args.prune == "prune":
+        lexicon_fn = "festival/lib/dicts/cmu/cmudict-0.4.out"
+        lts_rules_fn = "festival/lib/dicts/cmu/lex_lts_rules.scm"
+        output_pruned_lex_fn = "festival/lib/dicts/cmu/pruned_lex.scm"
+        load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn)
+    elif args.remove_short == "remove_short":
+        lexicon_fn = "festival/lib/dicts/cmu/cmudict-0.4.out"
+        filtered_lex_fn = "festival/lib/dicts/cmu/lts_scratch/lex_entries.out"
+        load_and_filter_lex_for_lts(lexicon_fn, filtered_lex_fn)
+
+
 
