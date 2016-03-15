@@ -156,10 +156,11 @@ then
    echo "lts/build started at" `date -R`
    ./build_lts build || exit 1
    echo "lts/merge started at" `date -R`
-   ./build_lts merge
+   ./build_lts merge || exit 1
    echo "lts/test started at" `date -R`
-   ./build_lts test
-   cp lex_lts_rules.scm cmu_lts_rules.scm
+   ./build_lts test || exit 1
+   python3 prune_lexicon.py  --test-lts || exit 1
+   cp lex_lts_rules.scm cmu_lts_rules.scm || exit 1
    echo "lts/lts_to_rg_to_wfst started at" `date -R`
    $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")' || exit 1
    echo "lts/ltsregextoC started at" `date -R`
