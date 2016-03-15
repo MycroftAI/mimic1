@@ -37,7 +37,7 @@
 ;;; Convert the LTS cart trees to regular grammars and build wfsts
 ;;;
 ;;; Technique described in the Flite paper
-;;;  http://www.cs.cmu.edu/~awb/papers/ISCA01/mimic/mimic.html
+;;;  http://www.cs.cmu.edu/~awb/papers/ISCA01/flite/flite.html
 ;;;
 ;;;
 ;;; call as:

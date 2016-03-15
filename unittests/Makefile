@@ -41,7 +41,7 @@ ALL_DIRS=
 DATAFILES=data.one
 SRCS = token_test_main.c hrg_test_main.c \
        regex_test_main.c nums_test_main.c \
-       lex_test_main.c
+       lex_test_main.c lts_test_main.c
        
 
 OTHERS = 
@@ -51,6 +51,7 @@ LOCAL_INCLUDES = -I$(TOP)/lang/usenglish
 
 MAIN_EXECS = $(SRCS:_main.c=$(EXEEXT))
 lex_test_LIBS = -lmimic_cmulex
+lts_test_LIBS = -lmimic_cmulex
 nums_test_LIBS = -lmimic_usenglish
 utt_test_LIBS = -lmimic_cmulex
 lex_lookup_LIBS = -lmimic_cmulex
