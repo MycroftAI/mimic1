@@ -139,7 +139,10 @@ fi
 if [ "$1" = "lts" ]
 then
   (cd festival/lib/dicts/cmu;
-   $FESTIVAL --heap 10000000 -b allowables.scm '(dump-flat-entries-all "cmudict-0.4.out" "lts_scratch/lex_entries.out")'
+   rm cmu_lts_rules.scm
+   #make lts_rules
+   cp lex_lts_rules.scm cmu_lts_rules.scm
+   $FESTIVAL --heap 10000000 -b allowables.scm '(dump-flat-entries "cmudict-0.4.out" "lts_scratch/lex_entries.out")'
    ./build_lts cummulate
    ./build_lts align
    ./build_lts build
