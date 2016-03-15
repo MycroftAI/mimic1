@@ -8,6 +8,7 @@ Author: Sergio Oller, 2016
 """
 
 import argparse
+from collections import defaultdict
 
 ##############################################################################
 # This interpreter of a subset of the scheme dialect of lisp is based on:
@@ -97,32 +98,29 @@ def lexicon_to_dict(lexicon):
     """ Converts the lexicon, as parsed by read_lexicon into a
     word->transcription dict.
     """
-    output = dict()
+    output = defaultdict(list)
     for line in lexicon:
         word = line[0]
         pos = line[1]
         syls = line[2]
         #transcr = flatten_syls(syls)
-        output[(word, pos)] = syls
+        output[word].append((pos, syls))
     return output
 
 
-def flatten_lexicon(lexicon, keep_pos=False):
+def flatten_lexicon(lexicon):
     """ Converts the lexicon, as parsed by read_lexicon into a
     word->transcription dict.
     In this conversion process the syllabification is flattened, as we don't
     want it.
     """
-    output = dict()
+    output = defaultdict(list)
     for line in lexicon:
         word = line[0]
         pos = line[1]
         syls = line[2]
         transcr = flatten_syls(syls)
-        if keep_pos:
-            output[word] = (pos, transcr)
-        else:
-            output[word] = transcr
+        output[word].append((pos, transcr))
     return output
 
 
@@ -239,12 +237,23 @@ def parse_feat(feat):
     return offset
 
 
-def predict(word, lexicon, lts):
+def predict(word, pos=None, lexicon=None, lts=None):
     """To predict a word we use the lexicon and, as fallback the letter to
     sound rules.
     """
-    return lexicon.get(word, predict_lts(word, lts))
-
+    wordpred = None
+    if lexicon is not None:
+        wordpred = lexicon.get(word, [])
+        if len(wordpred == 0):
+            return predict_lts(word, lts)
+        elif len(wordpred == 1): # no disambiguation
+            return wordpred[0][1]
+        else:
+            pos_trans_dict = dict(wordpred)
+            if pos is not None and pos in pos_trans_dict.keys():
+                return pos_trans_dict[pos]
+            else:
+                return predict_lts(word, lts)
 
 def predict_lts(word, lts_lambda):
     """
@@ -268,18 +277,18 @@ def prune_lexicon(lexicon, lts, lexicon_with_syl):
     the words that are not predicted correctly"""
     count_word_right = 0
     count_word_wrong = 0
-    pruned_lex = dict()
-    for x, trans_syl in lexicon_with_syl.items():
-        (word, pos) = x
+    pruned_lex = defaultdict(list)
+    for word, homographs in lexicon_with_syl.items():
         lowerca = word.lower()
-        translts = predict_lts(lowerca, lts)
-        trans = lexicon[word]
-        if trans == translts:
-            count_word_right += 1
-        else:
-            count_word_wrong += 1
-            #pruned_lex[x[0]] = (pos, trans_syl)
-            pruned_lex[x[0]] = (pos, trans)
+        for (pos, trans_syl) in homographs:
+            translts = predict_lts(lowerca, lts)
+            trans = lexicon[word]
+            if trans == translts:
+                count_word_right += 1
+            else:
+                count_word_wrong += 1
+                #pruned_lex[word] = (pos, trans_syl)
+                pruned_lex[word].append((pos, trans))
     return (pruned_lex, count_word_right, count_word_wrong)
 
 
@@ -302,11 +311,15 @@ def write_syls(syls):
 def write_lex(pruned_lex, filename):
     with open(filename, "w") as fd:
         for word in sorted(pruned_lex.keys()):
-            (pos, syls) = pruned_lex[word]
-            #written_phones = write_syls(syls)
-            written_phones = "(" + " ".join(syls) + ")"
-            out = '("' + word + '" ' + pos + " " + written_phones + ")"
-            print(out, file=fd)
+            for (pos, syls) in pruned_lex[word]:
+                if isinstance(syls[0], list):
+                    # dict with syllable structure, we have to flatten it
+                    written_phones = write_syls(syls)
+                else:
+                    # already flattened
+                    written_phones = "(" + " ".join(syls) + ")"
+                out = '("' + word + '" ' + pos + " " + written_phones + ")"
+                print(out, file=fd)
 
 
 
@@ -324,17 +337,17 @@ def load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn):
 def parse_args():
     parser = argparse.ArgumentParser(description='Helpers to create lexicon and LTS rules.')
     parser.add_argument('--prune', dest='prune', action='store_const',
-                        const="prune", default=None,
+                        const=True, default=None,
                         help='Remove all lexicon entries correctly predicted')
     parser.add_argument('--remove-short', dest='remove_short', action='store_const',
-                        const="remove_short", default=None,
+                        const=True, default=None,
                         help='Remove all lexicon entries with 3 words or less for LTS training.')
     args = parser.parse_args()
     return args
 
 def load_and_filter_lex_for_lts(lexicon_fn, filtered_lex_fn):
     lexicon_raw = read_lexicon(lexicon_fn)
-    lexicon = flatten_lexicon(lexicon_raw, keep_pos=True)
+    lexicon = flatten_lexicon(lexicon_raw)
     filtered_lex = dict()
     for word in lexicon.keys():
         if len(word) > 3:
@@ -342,22 +355,16 @@ def load_and_filter_lex_for_lts(lexicon_fn, filtered_lex_fn):
     write_lex(filtered_lex, filtered_lex_fn)
 
 
-
-
 if __name__ == "__main__":
-    # ./make_cmulex setup
-    # ./make_cmulex lts
-    # ./make_cmulex lex
     args = parse_args()
-    if args.prune == "prune":
+    if args.prune:
         lexicon_fn = "festival/lib/dicts/cmu/cmudict-0.4.out"
         lts_rules_fn = "festival/lib/dicts/cmu/lex_lts_rules.scm"
         output_pruned_lex_fn = "festival/lib/dicts/cmu/pruned_lex.scm"
         load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn)
-    elif args.remove_short == "remove_short":
+    elif args.remove_short:
         lexicon_fn = "festival/lib/dicts/cmu/cmudict-0.4.out"
         filtered_lex_fn = "festival/lib/dicts/cmu/lts_scratch/lex_entries.out"
         load_and_filter_lex_for_lts(lexicon_fn, filtered_lex_fn)
-
 
 
