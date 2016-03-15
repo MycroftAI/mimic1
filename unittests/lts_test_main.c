@@ -34,13 +34,8 @@
 /*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Test of lexicon words                                                */
-/*  To make sure that the Lexicon is consulted properly we need to       */
-/*  search for words that are in the lexicon, this is words that were    */
-/*  kept in the pruned lexicon after the LTS rules were trained          */
-/*  These words must belong to the list lang/cmulex/cmu_lex_data_raw.c   */
-/*  Words that are not in the pruned lexicon are predicted by the lts    */
-/*  and belong to the lts_test_main unit test.                           */
+/*  Test of lts rules. The words tested here must not be in the pruned   */
+/*  lexicon, so they are predicted using the LTS rules.                  */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
@@ -75,36 +70,29 @@ static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
     delete_val(p);
 }
 
-void test_activism(void)
+void test_sleekit(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"activism", NULL, "ae1 k t ih0 v ih1 z ax0 m");
+    lookup_and_test(&cmu_lex,"sleekit", NULL, "s l iy1 k ih0 t");
 }
 
-void test_chronicles(void)
+void test_like(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"chronicles", NULL, "k r aa1 n ax0 k ax0 l z");
+    lookup_and_test(&cmu_lex,"like", NULL, "l ay1 k");
 }
 
-void test_project(void)
+
+void test_chair(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"project", "n", "p r aa1 jh eh0 k t");
-    lookup_and_test(&cmu_lex,"project", "v", "p r ax0 jh eh1 k t");
-    lookup_and_test(&cmu_lex,"project", "j", "p r aa1 jh eh0 k t");
+    lookup_and_test(&cmu_lex,"chair", NULL, "ch eh1 r");
 }
 
-void test_atypical(void)
+void test_further(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex, "atypical", NULL, "ey0 t ih1 p ih0 k ax0 l");
-}
-
-void test_zzzz(void)
-{
-    cmu_lex_init();
-    lookup_and_test(&cmu_lex, "zzzz", NULL, "z iy1 z");
+    lookup_and_test(&cmu_lex, "further", NULL, "f er1 dh er0");
 }
 
 
@@ -114,19 +102,13 @@ void test_crax(void)
     lookup_and_test(&cmu_lex,"crax",NULL, "k r ae1 k s");
 }
     
-void test_a(void)
-{
-    cmu_lex_init();
-    lookup_and_test(&cmu_lex,"a","dt", "ax0");
-}
 
 TEST_LIST = {
-    {"activism", test_activism},
-    {"chronicles", test_chronicles},
-    {"project", test_project},
-    {"atypical", test_atypical},
-    {"zzzz", test_zzzz},
+    {"sleekit", test_sleekit},
+    {"like", test_like},
+    {"chair", test_chair},
+    {"further", test_further},
     {"crax", test_crax},
-    {"a", test_a},
     {0}
 };
+
