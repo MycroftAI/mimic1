@@ -113,12 +113,13 @@ fi
 
 if [ $# = 0 ]
 then
-   $0 setup
-   $0 lts
-   $0 lex
-   $0 compresslex
-   $0 install
-   exit
+   $0 setup || exit 1
+   $0 lts  || exit 1
+   $0 lex  || exit 1
+   $0 compresslex || exit 1
+   $0 install || exit 1
+   echo "make_cmulex finished successfully"
+   exit 0
 fi
 
 if [ "$1" = "setup" ]
@@ -130,11 +131,11 @@ then
       wget "${BASE_URL}/festlex_CMU.tar.gz" || exit 1
    fi
    tar zxvf festlex_CMU.tar.gz || exit 1
-   cp -p "$FESTVOXDIR/src/lts/build_lts" "festival/lib/dicts/cmu"
-   cp -p "$FESTVOXDIR/src/lts/build_lts_rules" "festival/lib/dicts/cmu"
-   mkdir -p "festival/lib/dicts/cmu/c"
-   mkdir -p "festival/lib/dicts/cmu/wfst"
-   mkdir -p "festival/lib/dicts/cmu/lts_scratch"
+   cp -p "$FESTVOXDIR/src/lts/build_lts" "festival/lib/dicts/cmu" || exit 1
+   cp -p "$FESTVOXDIR/src/lts/build_lts_rules" "festival/lib/dicts/cmu" || exit 1
+   mkdir -p "festival/lib/dicts/cmu/c" || exit 1
+   mkdir -p "festival/lib/dicts/cmu/wfst" || exit 1
+   mkdir -p "festival/lib/dicts/cmu/lts_scratch" || exit 1
 fi
 
 if [ "$1" = "lts" ]
@@ -149,21 +150,21 @@ then
   python3 prune_lexicon.py --remove-short || exit 1
   (cd festival/lib/dicts/cmu;
    echo "lts/cummulate started at" `date -R`
-   ./build_lts cummulate
+   ./build_lts cummulate || exit 1
    echo "lts/align started at" `date -R`
-   ./build_lts align
+   ./build_lts align || exit 1
    echo "lts/build started at" `date -R`
-   ./build_lts build
+   ./build_lts build || exit 1
    echo "lts/merge started at" `date -R`
    ./build_lts merge
    echo "lts/test started at" `date -R`
    ./build_lts test
    cp lex_lts_rules.scm cmu_lts_rules.scm
    echo "lts/lts_to_rg_to_wfst started at" `date -R`
-   $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")';
+   $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")' || exit 1
    echo "lts/ltsregextoC started at" `date -R`
-   $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")';
-  )
+   $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts.scm lts_scratch/lex_lts_rules.scm '(ltsregextoC "cmu" lex_lts_rules "wfst/" "c")' || exit 1
+  ) || exit 1
 fi
 
 if [ "$1" = "lex" ]
@@ -179,10 +180,10 @@ then
      python3 prune_lexicon.py --prune || exit 1
    ( cd festival/lib/dicts/cmu;
      echo "lex/compile_pruned started at" `date -R`
-     $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))'
+     $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))' || exit 1
      echo "lex/lextoC started at" `date -R`
-     $FESTIVAL --heap 10000000 -b "$MIMICDIR/tools/make_lex.scm" '(lextoC "cmu" "pruned_lex.out" "c")' ;
-   )
+     $FESTIVAL --heap 10000000 -b "$MIMICDIR/tools/make_lex.scm" '(lextoC "cmu" "pruned_lex.out" "c")' || exit 1
+   ) || exit 1
 fi
 
 if [ "$1" = "lex2" ]
@@ -224,8 +225,8 @@ then
    echo "compresslex started at" `date -R`
    # Compress the entries and phone strings by finding best ngrams 
    ( cd festival/lib/dicts/cmu/c;
-     $MIMICDIR/tools/huff_table phones cmu_lex_data cmu_lex_phones_huff_table.c
-     $MIMICDIR/tools/huff_table entries cmu_lex_data cmu_lex_entries_huff_table.c
+     $MIMICDIR/tools/huff_table phones cmu_lex_data cmu_lex_phones_huff_table.c || exit 1
+     $MIMICDIR/tools/huff_table entries cmu_lex_data cmu_lex_entries_huff_table.c || exit 1
      paste huff.entries.compressed huff.phones.compressed huff.tmp.corpus | 
      tr -d " " |
      awk 'BEGIN {pcount = 1;
@@ -255,22 +256,22 @@ then
         END { printf("/* num_bytes = %d */\n",pcount);}' >cmu_lex_data_compressed.c
      grep "num_bytes = " cmu_lex_data_compressed.c |
      awk '{print $4}' >cmu_lex_num_bytes_compressed.c
-   )
+   ) || exit 1
 fi
 
 if [ "$1" = "install" ]
 then
    echo "install started at" `date -R`
-   cp -p festival/lib/dicts/cmu/c/cmu_lex_data.c .
-   cp -p festival/lib/dicts/cmu/c/cmu_lex_data_compressed.c cmu_lex_data_raw.c
-   cp -p festival/lib/dicts/cmu/c/cmu_lex_phones_huff_table.c .
-   cp -p festival/lib/dicts/cmu/c/cmu_lex_entries_huff_table.c .
-   cp -p festival/lib/dicts/cmu/c/cmu_lex_entries.c .
-   cp -p festival/lib/dicts/cmu/c/cmu_lex_num_bytes_compressed.c cmu_lex_num_bytes.c
+   cp -p festival/lib/dicts/cmu/c/cmu_lex_data.c . || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lex_data_compressed.c cmu_lex_data_raw.c || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lex_phones_huff_table.c . || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lex_entries_huff_table.c . || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lex_entries.c . || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lex_num_bytes_compressed.c cmu_lex_num_bytes.c || exit 1
 
-   cp -p festival/lib/dicts/cmu/c/cmu_lts_model.c .
-   cp -p festival/lib/dicts/cmu/c/cmu_lts_model.h .
-   cp -p festival/lib/dicts/cmu/c/cmu_lts_rules.c .
+   cp -p festival/lib/dicts/cmu/c/cmu_lts_model.c . || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lts_model.h . || exit 1
+   cp -p festival/lib/dicts/cmu/c/cmu_lts_rules.c . || exit 1
 
 fi
 
