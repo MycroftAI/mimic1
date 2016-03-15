@@ -130,11 +130,11 @@ then
       wget "${BASE_URL}/festlex_CMU.tar.gz" || exit 1
    fi
    tar zxvf festlex_CMU.tar.gz || exit 1
-   cp -p $FESTVOXDIR/src/lts/build_lts festival/lib/dicts/cmu
-   cp -p $FESTVOXDIR/src/lts/build_lts_rules festival/lib/dicts/cmu
-   mkdir festival/lib/dicts/cmu/c
-   mkdir festival/lib/dicts/cmu/wfst
-   mkdir festival/lib/dicts/cmu/lts_scratch
+   cp -p "$FESTVOXDIR/src/lts/build_lts" "festival/lib/dicts/cmu"
+   cp -p "$FESTVOXDIR/src/lts/build_lts_rules" "festival/lib/dicts/cmu"
+   mkdir -p "festival/lib/dicts/cmu/c"
+   mkdir -p "festival/lib/dicts/cmu/wfst"
+   mkdir -p "festival/lib/dicts/cmu/lts_scratch"
 fi
 
 if [ "$1" = "lts" ]
