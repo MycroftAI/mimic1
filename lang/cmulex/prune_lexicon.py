@@ -42,13 +42,13 @@ def read_from_tokens(tokens):
     if len(tokens) == 0:
         raise SyntaxError('unexpected EOF while reading')
     token = tokens.popleft()
-    if '(' == token:
+    if token == '(':
         L = []
         while tokens[0] != ')':
             L.append(read_from_tokens(tokens))
         tokens.popleft()  # pop off ')'
         return L
-    elif ')' == token:
+    elif token == ')':
         raise SyntaxError('unexpected )')
     else:
         return atom(token)
@@ -90,6 +90,20 @@ def read_lexicon(filename):
             yield parse(line)
         for line in fd:
             yield parse(line)
+
+
+def lexicon_to_dict(lexicon):
+    """ Converts the lexicon, as parsed by read_lexicon into a
+    word->transcription dict.
+    """
+    output = dict()
+    for line in lexicon:
+        word = line[0]
+        pos = line[1]
+        syls = line[2]
+        #transcr = flatten_syls(syls)
+        output[(word, pos)] = syls
+    return output
 
 
 def flatten_lexicon(lexicon):
@@ -239,24 +253,76 @@ def predict_lts(word, lts_lambda):
     for word_index in range(3, len(word_list)-3):
         word_char = word_list[word_index]
         tree_lambda = lts_lambda[word_char]
-        phonemes.append(tree_lambda(word_list, word_index))
+        phone = tree_lambda(word_list, word_index)
+        #if phone != "_epsilon_":
+        phonemes.append(phone)
     return phonemes
 
 
-# ./make_cmulex setup
-# ./make_cmulex lts
-# ./make_cmulex lex
-lexicon_raw = read_lexicon("festival/lib/dicts/cmu/pruned_lex.out")
-lexicon = flatten_lexicon(lexicon_raw)
-lts_raw = read_lts("festival/lib/dicts/cmu/cmu_lts_rules.scm")
-lts = process_lts(lts_raw)
+def prune_lexicon(lexicon, lts, lexicon_with_syl):
+    """Predicts all the lexicon words with lts rules, keeping in a dictionary
+    the words that are not predicted correctly"""
+    count_word_right = 0
+    count_word_wrong = 0
+    pruned_lex = dict()
+    for x, trans_syl in lexicon_with_syl.items():
+        (word, pos) = x
+        lowerca = word.lower()
+        translts = predict_lts(lowerca, lts)
+        trans = lexicon[word]
+        if trans == translts:
+            count_word_right += 1
+        else:
+            count_word_wrong += 1
+            #pruned_lex[x[0]] = (pos, trans_syl)
+            pruned_lex[x[0]] = (pos, trans)
+    return (pruned_lex, count_word_right, count_word_wrong)
 
-predict("hello", lexicon, lts)
 
-for x in lexicon.keys():
-    try:
-        lowerca = x.lower()  # predict_lts works with letters a-z only
-        predict_lts(lowerca, lts)
-    except:
-        print(x)
-        raise
+def write_syls(syls):
+    output = []
+    output.append("(")
+    for syl in syls:
+        output.append("(")
+        phones = syl[0]
+        output.append("(")
+        output.append(" ".join(phones))
+        output.append(") ")
+        stress = syl[1]
+        output.append(str(stress))
+        output.append(") ")
+    output.append(")")
+    return "".join(output)
+
+
+def write_lex(pruned_lex, filename):
+    with open(filename, "w") as fd:
+        for word in sorted(pruned_lex.keys()):
+            (pos, syls) = pruned_lex[word]
+            #written_phones = write_syls(syls)
+            written_phones = "(" + " ".join(syls) + ")"
+            out = '("' + word + '" ' + pos + " " + written_phones + ")"
+            print(out, file=fd)
+
+
+
+def load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn):
+    lexicon_raw = read_lexicon(lexicon_fn)
+    lexicon = flatten_lexicon(lexicon_raw)
+    lexicon_raw = read_lexicon(lexicon_fn)
+    lexicon_with_syl = lexicon_to_dict(lexicon_raw)
+    lts_raw = read_lts(lts_rules_fn)
+    lts = process_lts(lts_raw)
+    (pruned_lex, count_right, count_wrong) = prune_lexicon(lexicon, lts,
+                                                           lexicon_with_syl)
+    write_lex(pruned_lex, output_pruned_lex_fn)
+
+if __name__ == "__main__":
+    # ./make_cmulex setup
+    # ./make_cmulex lts
+    # ./make_cmulex lex
+    lexicon_fn = "festival/lib/dicts/cmu/cmudict-0.4.out"
+    lts_rules_fn = "festival/lib/dicts/cmu/lex_lts_rules.scm"
+    output_pruned_lex_fn = "festival/lib/dicts/cmu/pruned_lex.scm"
+    load_and_prune_lex(lexicon_fn, lts_rules_fn, output_pruned_lex_fn)
+

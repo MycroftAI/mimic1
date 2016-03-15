@@ -155,12 +155,15 @@ fi
 
 if [ "$1" = "lex" ]
 then
-   ( cd festival/lib/dicts/cmu;
      # Find the words to prune from the built lexicon
      # We will prune words that aren't homographs and the LTS gets correct
      # Use the lts_test.log to find the failed entries and only
      # include them in the list 
-     $FESTIVAL -b cmulex.scm "$MIMICDIR/tools/make_lex.scm" '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
+   #( cd festival/lib/dicts/cmu;
+   #  $FESTIVAL -b cmulex.scm "$MIMICDIR/tools/make_lex.scm" '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
+   #)
+     python3 prune_lexicon.py || exit 1
+   ( cd festival/lib/dicts/cmu;
      $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))'
      $FESTIVAL --heap 10000000 -b "$MIMICDIR/tools/make_lex.scm" '(lextoC "cmu" "pruned_lex.out" "c")' ;
    )
