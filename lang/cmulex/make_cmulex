@@ -141,13 +141,9 @@ fi
 if [ "$1" = "lts" ]
 then
    echo "lts started at" `date -R`
-  (cd festival/lib/dicts/cmu;
-   rm cmu_lts_rules.scm
-   #make lts_rules
+   rm -f festival/lib/dicts/cmu/cmu_lts_rules.scm
    echo "lts/dump-entries started at" `date -R`
-   #$FESTIVAL --heap 10000000 -b allowables.scm '(dump-flat-entries "cmudict-0.4.out" "lts_scratch/lex_entries.out" "asis")'
-  )
-  python3 prune_lexicon.py --remove-short || exit 1
+   python3 prune_lexicon.py --remove-short || exit 1
   (cd festival/lib/dicts/cmu;
    echo "lts/cummulate started at" `date -R`
    ./build_lts cummulate || exit 1
@@ -158,8 +154,9 @@ then
    echo "lts/merge started at" `date -R`
    ./build_lts merge || exit 1
    echo "lts/test started at" `date -R`
-   ./build_lts test || exit 1
+  )
    python3 prune_lexicon.py  --test-lts || exit 1
+  (cd festival/lib/dicts/cmu;
    cp lex_lts_rules.scm cmu_lts_rules.scm || exit 1
    echo "lts/lts_to_rg_to_wfst started at" `date -R`
    $FESTIVAL --heap 10000000 -b $MIMICDIR/tools/make_lts_wfst.scm lts_scratch/lex_lts_rules.scm '(lts_to_rg_to_wfst lex_lts_rules "wfst/")' || exit 1
@@ -174,51 +171,14 @@ then
      # We will prune words that aren't homographs and the LTS gets correct
      # Use the lts_test.log to find the failed entries and only
      # include them in the list 
-   #( cd festival/lib/dicts/cmu;
-   #  $FESTIVAL -b cmulex.scm "$MIMICDIR/tools/make_lex.scm" '(remove_predictable_entries "cmudict-0.4.out" "pruned_lex.scm" "lex_lts_rules.scm")'
-   #)
    echo "lex/prune_lexicon started at" `date -R`
-     python3 prune_lexicon.py --prune || exit 1
+   python3 prune_lexicon.py --prune || exit 1
    ( cd festival/lib/dicts/cmu;
      echo "lex/compile_pruned started at" `date -R`
      $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))' || exit 1
      echo "lex/lextoC started at" `date -R`
      $FESTIVAL --heap 10000000 -b "$MIMICDIR/tools/make_lex.scm" '(lextoC "cmu" "pruned_lex.out" "c")' || exit 1
    ) || exit 1
-fi
-
-if [ "$1" = "lex2" ]
-then
-   # experiment: put Letter_Phone(s) together as things to compress
-   # does give much smaller result, though needs to be less than 256 symbols
-   # not fully implemented
-   ( cd festival/lib/dicts/cmu;
-     # Use the lts_test.log to find the failed entries and only
-     # include them in the list 
-     # this needs festival-1.96 or later to get the pos from the lts_test.log
-     grep "^failed " lts_test.log |
-     sed 's/(/( /g;s/)/ )/g' |
-     awk '{printf("( \"");
-           for (i=3; $i != ")"; i++)
-               printf("%s",$i);
-           i++;
-           printf("\" %s ( ",$i);
-           i++; i++
-           for ( ; $i != ")"; i++)
-              if ($i != "#")
-                 printf("%s ",$i);
-           printf("))\n");
-         }' |
-     tr -d '()"' |
-     awk '{if ($2 == "nil") 
-              printf("0_start ");
-           else
-              printf("%s_start ",$2);
-           for (i=1; i<=length($1); i++)
-              printf("%s_%s ",substr($1,i,1),$(i+2));
-           printf("\n");}' >pruned_lex2.data
-#     festival --heap 10000000 -b $MIMICDIR/tools/make_lex.scm '(lextoC "cmu" "pruned_lex.out" "c")' ;
-   )
 fi
 
 if [ "$1" = "compresslex" ]
