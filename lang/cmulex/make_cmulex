@@ -143,7 +143,7 @@ then
    echo "lts started at" `date -R`
    rm -f festival/lib/dicts/cmu/cmu_lts_rules.scm
    echo "lts/dump-entries started at" `date -R`
-   python3 prune_lexicon.py --remove-short || exit 1
+   python make_cmulex_helper.py --remove-short || exit 1
   (cd festival/lib/dicts/cmu;
    echo "lts/cummulate started at" `date -R`
    ./build_lts cummulate || exit 1
@@ -155,7 +155,7 @@ then
    ./build_lts merge || exit 1
    echo "lts/test started at" `date -R`
   )
-   python3 prune_lexicon.py  --test-lts || exit 1
+   python make_cmulex_helper.py  --test-lts || exit 1
   (cd festival/lib/dicts/cmu;
    cp lex_lts_rules.scm cmu_lts_rules.scm || exit 1
    echo "lts/lts_to_rg_to_wfst started at" `date -R`
@@ -172,7 +172,7 @@ then
      # Use the lts_test.log to find the failed entries and only
      # include them in the list 
    echo "lex/prune_lexicon started at" `date -R`
-   python3 prune_lexicon.py --prune || exit 1
+   python make_cmulex_helper.py --prune || exit 1
    ( cd festival/lib/dicts/cmu;
      echo "lex/compile_pruned started at" `date -R`
      $FESTIVAL --heap 10000000 -b '(begin (load "cmulex.scm") (lex.compile "pruned_lex.scm" "pruned_lex.out"))' || exit 1

@@ -1,14 +1,22 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-View the pruned lexicon and the letter to sound rules to assess
-that they work properly.
+This script is able to:
+
+- Filter a lexicon removing short words not suitable for LTS rules training.
+- Test the performance of a LTS rules model, given a lexicon.
+- Prune a lexicon with entries that are predicted correctly by an LTS model
 
 Author: Sergio Oller, 2016
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from codecs import open
 
 import argparse
 from collections import defaultdict
+
+
 
 ##############################################################################
 # This interpreter of a subset of the scheme dialect of lisp is based on:
