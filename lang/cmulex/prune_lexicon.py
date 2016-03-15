@@ -351,7 +351,7 @@ def prune_lexicon(lexicon, lts):
         word_lower = word.lower()
         for (pos, syl, trans) in homographs:
             translts = predict_lts(word_lower, lts, silences=False)
-            if trans != translts:
+            if trans != translts or len(homographs) > 1:
                 pruned_lex[word_lower].append((pos, syl, trans))
     return pruned_lex
 
