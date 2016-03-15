@@ -418,11 +418,15 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def filter_lexicon(lexicon):
+def filter_lexicon(lexicon, minlength=4, lower=True):
     filtered_lex = defaultdict(list)
     for word in lexicon.keys():
-        if len(word) > 3:
-            filtered_lex[word] = lexicon[word]
+        word_filtered = word
+        if minlength is not None and len(word) < minlength:
+            continue
+        if lower is True:
+            word_filtered = word_filtered.lower()
+        filtered_lex[word_filtered] = lexicon[word]
     return filtered_lex
 
 def load_and_filter_lex_for_lts(lexicon_fn, filtered_lex_fn):
