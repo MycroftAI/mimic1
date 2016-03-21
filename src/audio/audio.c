@@ -41,6 +41,17 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 #include "native_audio.h"
+#include <errno.h>
+
+volatile int shutdown_request = 0;
+cst_audiodev *ad_playing = NULL;
+
+void shutdown_audio(int signum)
+{
+    shutdown_request = 1;
+    if (ad_playing != NULL)
+        audio_drain(ad_playing);
+}
 
 int audio_bps(cst_audiofmt fmt)
 {
@@ -260,17 +271,22 @@ static void audio_write_buffer(cst_audiodev *ad, void *buff,
 
 int play_wave(cst_wave *w)
 {
-  cst_audiodev *ad;
   if (!w)
       return CST_ERROR_FORMAT;
   
-  if ((ad = audio_open(w->sample_rate, w->num_channels,
+  if ((ad_playing = audio_open(w->sample_rate, w->num_channels,
                        /* FIXME: should be able to determine this somehow */
                        CST_AUDIO_LINEAR16)) == NULL)
       return CST_ERROR_FORMAT;
-  audio_write_buffer(ad, w->samples, w->num_samples, w->num_channels);
-  audio_close(ad);
-  return CST_OK_FORMAT;
+  audio_write_buffer(ad_playing, w->samples, w->num_samples, w->num_channels);
+  audio_close(ad_playing);
+  if (shutdown_request)
+  {
+     cst_errmsg("Shutdown requested!\n");
+     return EINTR;
+  }
+  else
+    return CST_OK_FORMAT;
 }
 
 int play_wave_sync(cst_wave *w, cst_relation *rel,

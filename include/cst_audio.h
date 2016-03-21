@@ -124,4 +124,5 @@ typedef int (*cst_audio_stream_callback)(const cst_wave *w,int start,int size,
 int audio_stream_chunk(const cst_wave *w, int start, int size, 
                        int last, cst_audio_streaming_info *asi);
 
+void shutdown_audio(int signum);
 #endif

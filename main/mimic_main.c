@@ -42,6 +42,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "mimic.h"
 #include "mimic_version.h"
@@ -204,6 +205,9 @@ int main(int argc, char **argv)
     const char *lex_addenda_file = NULL;
     const char *voicedumpfile = NULL;
     cst_audio_streaming_info *asi;
+
+    // Set signal handler to shutdown any playing audio on SIGINT
+    signal(SIGINT, shutdown_audio);
 
     filename = 0;
     outtype = "play";   /* default is to play */

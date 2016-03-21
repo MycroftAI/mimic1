@@ -37,7 +37,7 @@
 /*  Basic user level functions                                           */
 /*                                                                       */
 /*************************************************************************/
-
+#include <errno.h>
 #include "cst_tokenstream.h"
 #include "mimic.h"
 #include "cst_alloc.h"
@@ -251,11 +251,11 @@ float mimic_file_to_speech(const char *filename,
     return mimic_ts_to_speech(ts,voice,outtype);
 }
 
-
 float mimic_ts_to_speech(cst_tokenstream *ts,
                          cst_voice *voice,
                          const char *outtype)
 {
+    int err;
     cst_utterance *utt;
     const char *token;
     cst_item *t;
@@ -306,13 +306,17 @@ float mimic_ts_to_speech(cst_tokenstream *ts,
 
             if (utt)
             {
+                float new_durs = 0;
                 utt = mimic_do_synth(utt,voice,utt_synth_tokens);
                 if (feat_present(utt->features,"Interrupted"))
                 {
                     delete_utterance(utt); utt = NULL;
                     break;
                 }
-                durs += mimic_process_output(utt,outtype,TRUE);
+                err = mimic_process_output(utt,outtype,TRUE, &new_durs);
+                if (err < 0)
+                    goto cleanup;
+                durs += new_durs;
                 delete_utterance(utt); utt = NULL;
             }
             else 
@@ -339,7 +343,9 @@ float mimic_ts_to_speech(cst_tokenstream *ts,
                                    cst_strlen(ts->postpunctuation)));
 	item_set_int(t,"line_number",ts->line_number);
     }
-    if (utt) delete_utterance(utt);
+cleanup:
+    if (utt)
+        delete_utterance(utt);
     ts_close(ts);
     return durs;
 }
@@ -352,7 +358,7 @@ float mimic_text_to_speech(const char *text,
     float dur;
 
     u = mimic_synth_text(text,voice);
-    dur = mimic_process_output(u,outtype,FALSE);
+    mimic_process_output(u,outtype,FALSE, &dur);
     delete_utterance(u);
 
     return dur;
@@ -366,27 +372,29 @@ float mimic_phones_to_speech(const char *text,
     float dur;
 
     u = mimic_synth_phones(text,voice);
-    dur = mimic_process_output(u,outtype,FALSE);
+    mimic_process_output(u,outtype,FALSE, &dur);
     delete_utterance(u);
 
     return dur;
 }
 
-float mimic_process_output(cst_utterance *u, const char *outtype,
-                           int append)
+int mimic_process_output(cst_utterance *u, const char *outtype,
+                           int append, float *dur)
 {
     /* Play or save (append) output to output file */
     cst_wave *w;
-    float dur;
 
     if (!u) return 0.0;
 
     w = utt_wave(u);
 
-    dur = (float)w->num_samples/(float)w->sample_rate;
+    *dur = (float)w->num_samples/(float)w->sample_rate;
 	     
     if (cst_streq(outtype,"play"))
-	play_wave(w);
+    {
+        if (play_wave(w) == EINTR)
+            return -EINTR;
+    }
     else if (cst_streq(outtype,"stream"))
     {
         /* It's already been played so do nothing */
@@ -400,7 +408,7 @@ float mimic_process_output(cst_utterance *u, const char *outtype,
             cst_wave_save_riff(w,outtype);
     }
 
-    return dur;
+    return 0;
 }
 
 int mimic_get_param_int(const cst_features *f, const char *name,int def)

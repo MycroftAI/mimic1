@@ -307,6 +307,7 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
     int ssml_eou = 0;
     const cst_wave *wave;
     cst_wave *w;
+    int err;
 
     ssml_feats = new_features();
     feat_set(ssml_feats,"current_voice",userdata_val(voice));
@@ -390,13 +391,17 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
             
             if (utt)
             {
+                float new_durs;
                 utt = mimic_do_synth(utt,current_voice,utt_synth_tokens);
                 if (feat_present(utt->features,"Interrupted"))
                 {
                     delete_utterance(utt); utt = NULL;
                     break;
                 }
-                durs += mimic_process_output(utt,outtype,TRUE);
+                err = mimic_process_output(utt,outtype,TRUE, &new_durs);
+                if (err < 0)
+                    goto cleanup;
+                durs += new_durs;
                 delete_utterance(utt); utt = NULL;
             }
             else 
@@ -411,6 +416,7 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
 
         if (feat_present(ssml_word_feats,"ssml_play_audio"))
         {
+            float new_durs;
             wave = val_wave(feat_val(ssml_word_feats,"ssml_play_audio"));
             /* Should create an utterances with the waveform in it */
             /* Have to stream it if there is streaming */
@@ -418,7 +424,10 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
             utt = utt_synth_wave(copy_wave(wave),current_voice);
             if (utt_user_callback)
                 utt = (utt_user_callback)(utt);
-            durs += mimic_process_output(utt,outtype,TRUE);
+            mimic_process_output(utt,outtype,TRUE, &new_durs);
+            if (err < 0)
+                goto cleanup;
+            durs += new_durs;
             delete_utterance(utt); utt = NULL;
 
             utt = new_utterance();
@@ -446,7 +455,7 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
             feat_copy_into(ssml_word_feats,item_feats(t));
         }
     }
-
+cleanup:
     delete_utterance(utt);
     delete_features(ssml_feats);
     delete_features(ssml_word_feats);
