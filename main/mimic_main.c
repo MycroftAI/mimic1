@@ -56,6 +56,11 @@ void cst_alloc_debug_summary();
 void usenglish_init(cst_voice *v);
 cst_lexicon *cmu_lex_init(void);
 
+void sigint_handler(int signum)
+{
+    shutdown_audio(signum);
+}
+
 static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
@@ -207,7 +212,7 @@ int main(int argc, char **argv)
     cst_audio_streaming_info *asi;
 
     // Set signal handler to shutdown any playing audio on SIGINT
-    signal(SIGINT, shutdown_audio);
+    signal(SIGINT, sigint_handler);
 
     filename = 0;
     outtype = "play";   /* default is to play */
