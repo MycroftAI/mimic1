@@ -211,9 +211,12 @@ int main(int argc, char **argv)
     const char *voicedumpfile = NULL;
     cst_audio_streaming_info *asi;
 
+#ifndef UNDER_WINDOWS
     // Set signal handler to shutdown any playing audio on SIGINT
     signal(SIGINT, sigint_handler);
-
+#else
+    //TODO add signal handling for windows
+#endif //UNDER_WINDOWS
     filename = 0;
     outtype = "play";   /* default is to play */
     mimic_verbose = FALSE;
