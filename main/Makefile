@@ -133,8 +133,14 @@ install:
 	done
 	$(INSTALL) -m 755 $(BINDIR)/mimic_time $(DESTDIR)$(INSTALLBINDIR)
 #       The libraries: static and shared (if built)
+	# original cp flags for unix/linux systems
 	cp -pd $(mimic_LIBS_deps) $(DESTDIR)$(INSTALLLIBDIR)
+	# cp flag changes for building on Mac OSX
+	# cp -pR $(mimic_LIBS_deps) $(DESTDIR)$(INSTALLLIBDIR)
 ifdef SHFLAGS
+	# original cp flags for unix/linux systems
 	cp -pd $(SHAREDLIBS) $(VERSIONSHAREDLIBS) $(DESTDIR)$(INSTALLLIBDIR)
+	# cp flag changes for building on Mac OSX
+	# cp -pR $(SHAREDLIBS) $(VERSIONSHAREDLIBS) $(DESTDIR)$(INSTALLLIBDIR)
 endif
 
