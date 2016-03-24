@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/MycroftAI/mimic.png?label=ready&title=Ready)](https://waffle.io/MycroftAI/mimic)
 Mimic, the Mycroft TTS Engine
 ==========
 
