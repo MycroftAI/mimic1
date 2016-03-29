@@ -203,7 +203,7 @@ int audio_close_alsa(cst_audiodev *ad)
 
   pcm_handle = (snd_pcm_t *) ad->platform_data;
 
-  snd_pcm_drain(pcm_handle); /* wait for current stuff in buffer to finish */
+  audio_flush_alsa(ad); /* wait for current stuff in buffer to finish */
 
   result = snd_pcm_close(pcm_handle);
   snd_config_update_free_global();
@@ -295,7 +295,18 @@ int audio_write_alsa(cst_audiodev *ad, void *samples, int num_bytes)
 int audio_flush_alsa(cst_audiodev *ad)
 {
   int result;
-  result = snd_pcm_drain((snd_pcm_t *) ad->platform_data);
+  snd_pcm_t *pcm_handle = (snd_pcm_t*) ad->platform_data;
+  snd_pcm_sframes_t delay;
+  long int microseconds_per_frame = 1E6/ad->real_sps;
+
+  /* Sleeping for a while is needed to prevent PulseAudio blocking for few
+     seconds... according to:
+ http://mailman.alsa-project.org/pipermail/alsa-devel/2012-November/057129.html
+   */
+  snd_pcm_delay(pcm_handle, &delay);
+  usleep(delay * microseconds_per_frame);
+
+  result = snd_pcm_drain(pcm_handle);
   if (result < 0)
   {
 	cst_errmsg("audio_flush_alsa: Error: %s.\n", snd_strerror(result));

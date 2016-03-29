@@ -31,38 +31,84 @@
 /*                                                                       */
 /*************************************************************************/
 /*             Author:  Alan W Black (awb@cs.cmu.edu)                    */
-/*               Date:  August 1999                                      */
+/*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  test for tokenizer of strings and files                              */
+/*  Test of lts rules. The words tested here must not be in the pruned   */
+/*  lexicon, so they are predicted using the LTS rules.                  */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include "cst_tokenstream.h"
+#include "cst_lexicon.h"
 
-int main(int argc, char **argv)
+#include "cutest.h"
+
+extern cst_lexicon cmu_lex;
+void cmu_lex_init();
+
+static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
+        const char *expected_lexes)
 {
-    /* need that cool argument parser */
-    cst_tokenstream *fd;
-    const char *token;
+    cst_val *p;
+    const cst_val *syl;
 
-    fd = ts_open("data.one", " \n\t", NULL, "\"!", NULL);
+    char *tok;
+    char * expected_str = malloc(strlen(expected_lexes) + 1);
 
-    while (!ts_eof(fd))
+    p = lex_lookup(l,word, feats, NULL);
+    strcpy(expected_str, expected_lexes);
+    tok = strtok(expected_str, " ");
+    for (syl = p; syl;)
     {
-	token = ts_get(fd);
-	
-	printf("ws >%s<\n",fd->whitespace);
-	printf("pp >%s<\n",fd->prepunctuation);
-	printf("tk >%s<\n",token);
-	printf("pp >%s<\n",fd->postpunctuation);
-	printf("fp >%d<\n",fd->file_pos);
-	printf("ln >%d<\n",fd->line_number);
-	printf("\n");
-	
+        TEST_CHECK(strcmp(val_string(val_car(syl)), tok) == 0);
+        syl = val_cdr(syl);
+        if (syl)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
     }
-    
-    ts_close(fd);
-
-    return 0;
+    delete_val(p);
 }
+
+void test_sleekit(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"sleekit", NULL, "s l iy1 k ih0 t");
+}
+
+void test_like(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"like", NULL, "l ay1 k");
+}
+
+
+void test_chair(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"chair", NULL, "ch eh1 r");
+}
+
+void test_further(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "further", NULL, "f er1 dh er0");
+}
+
+
+void test_crax(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"crax",NULL, "k r ae1 k s");
+}
+    
+
+TEST_LIST = {
+    {"sleekit", test_sleekit},
+    {"like", test_like},
+    {"chair", test_chair},
+    {"further", test_further},
+    {"crax", test_crax},
+    {0}
+};
+

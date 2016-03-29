@@ -9,7 +9,7 @@ const int cmu_lex_num_bytes =
 #include "cmu_lex_num_bytes.c"
 ;
 
-const int cmu_lex_num_entries = 36963;
+const int cmu_lex_num_entries = 42291;
 
 const char * const cmu_lex_phone_table[57] = 
 {

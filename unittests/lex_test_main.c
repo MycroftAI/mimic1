@@ -2,7 +2,7 @@
 /*                                                                       */
 /*                  Language Technologies Institute                      */
 /*                     Carnegie Mellon University                        */
-/*                        Copyright (c) 2000                             */
+/*                        Copyright (c) 1999                             */
 /*                        All Rights Reserved.                           */
 /*                                                                       */
 /*  Permission is hereby granted, free of charge, to use and distribute  */
@@ -31,55 +31,102 @@
 /*                                                                       */
 /*************************************************************************/
 /*             Author:  Alan W Black (awb@cs.cmu.edu)                    */
-/*               Date:  January 2000                                     */
+/*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Text expander test (nums etc)                                        */
+/*  Test of lexicon words                                                */
+/*  To make sure that the Lexicon is consulted properly we need to       */
+/*  search for words that are in the lexicon, this is words that were    */
+/*  kept in the pruned lexicon after the LTS rules were trained          */
+/*  These words must belong to the list lang/cmulex/cmu_lex_data_raw.c   */
+/*  Words that are not in the pruned lexicon are predicted by the lts    */
+/*  and belong to the lts_test_main unit test.                           */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include "mimic.h"
-#include "usenglish.h"
-#include "us_text.h"
+#include "cst_lexicon.h"
 
-static void print_and_delete(cst_val *p)
+#include "cutest.h"
+
+extern cst_lexicon cmu_lex;
+void cmu_lex_init();
+
+static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
+        const char *expected_lexes)
 {
-    val_print(stdout,p);
-    printf("\n");
+    cst_val *p;
+    const cst_val *syl;
+
+    char *tok;
+    char * expected_str = malloc(strlen(expected_lexes) + 1);
+
+    p = lex_lookup(l,word, feats, NULL);
+    strcpy(expected_str, expected_lexes);
+    tok = strtok(expected_str, " ");
+    for (syl = p; syl;)
+    {
+        TEST_CHECK(strcmp(val_string(val_car(syl)), tok) == 0);
+        syl = val_cdr(syl);
+        if (syl)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
+    }
     delete_val(p);
 }
 
-static void nums(const char *w)
+void test_activism(void)
 {
-    printf("Number: %s\n",w);
-    print_and_delete(en_exp_number(w));
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"activism", NULL, "ae1 k t ih0 v ih1 z ax0 m");
 }
 
-static void digits(const char *w)
+void test_chronicles(void)
 {
-    printf("Digits: %s\n",w);
-    print_and_delete(en_exp_digits(w));
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"chronicles", NULL, "k r aa1 n ax0 k ax0 l z");
 }
 
-int main(int argc, char **argv)
+void test_project(void)
 {
-    (void)argc;
-    (void)argv;
-
-    nums("13");
-    nums("1986");
-    nums("1234567890");
-    nums("100");
-    nums("10001");
-    nums("10101");
-    nums("432567");
-    nums("432500");
-    nums("1000523");
-    nums("1111111111111");
-
-    digits("123");
-    digits("1");
-    digits("1234567809");
-
-    return 0;
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"project", "n", "p r aa1 jh eh0 k t");
+    lookup_and_test(&cmu_lex,"project", "v", "p r ax0 jh eh1 k t");
+    lookup_and_test(&cmu_lex,"project", "j", "p r aa1 jh eh0 k t");
 }
+
+void test_atypical(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "atypical", NULL, "ey0 t ih1 p ih0 k ax0 l");
+}
+
+void test_zzzz(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "zzzz", NULL, "z iy1 z");
+}
+
+
+void test_crax(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"crax",NULL, "k r ae1 k s");
+}
+    
+void test_a(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex,"a","dt", "ax0");
+}
+
+TEST_LIST = {
+    {"activism", test_activism},
+    {"chronicles", test_chronicles},
+    {"project", test_project},
+    {"atypical", test_atypical},
+    {"zzzz", test_zzzz},
+    {"crax", test_crax},
+    {"a", test_a},
+    {0}
+};

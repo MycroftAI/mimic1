@@ -157,8 +157,8 @@ get the prunciation."
 	(entry_count 0)
 	(pos)
 	(pcount 0))
-;    (if (not (string-equal "MNCL" (readfp ifd)))
-;	(error "L2C: input file is not a compiled lexicon\n"))
+    (if (not (string-equal "MNCL" (readfp ifd)))
+	(error "L2C: input file is not a compiled lexicon\n"))
     (set! pcount (+ 1 pcount)) ;; the initial 0
     (while (not (equal? (set! entry (readfp ifd)) (eof-val)))
      (if (not (car (cdr entry)))

@@ -34,40 +34,48 @@
 /*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Test of lexicon/lts rules                                            */
+/*  Test of hrg creation and manipulation                                */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include "cst_lexicon.h"
+#include "cst_hrg.h"
 
-extern cst_lexicon cmu_lex;
-void cmu_lex_init();
+#include "cutest.h"
 
-static void lookup_and_print(cst_lexicon *l,const char *word,const char *feats)
+float correct_list[] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8};
+void test_hrg(void)
 {
-    cst_val *p;
+    cst_utterance *u;
+    cst_relation *r;
+    cst_item *item=0;
+    int i;
 
-    printf("Lookup: %s %s\n",word,feats);
-    p = lex_lookup(l,word, feats, NULL);
-    val_print(stdout,p);
-    printf("\n");
-    delete_val(p);
+    u = new_utterance();
+    r = utt_relation_create(u,"Segment");
+
+    for (i=0; i<10; i++)
+    {
+	char buff[20];
+	sprintf(buff,"seg_%03d",i);
+	if (i==0)
+	    item = relation_append(r,NULL);
+	else
+	    item = item_append(item,NULL);
+	item_set_string(item,"name",buff);
+	item_set_float(item,"duration",i*0.20);
+    }
+
+    for (i=0,item=relation_head(utt_relation(u,"Segment")); 
+	 item; item=item_next(item),i++)
+    {
+        TEST_CHECK(item_feat_float(item, "duration") == correct_list[i]);
+    }
+
+    delete_utterance(u);
 }
 
-int main(int argc, char **argv)
-{
+TEST_LIST = {
+    {"hrg creation and manipulation", test_hrg},
+    {0},
+};
 
-    cmu_lex_init();
-
-    lookup_and_print(&cmu_lex,"sleekit",NULL);
-    lookup_and_print(&cmu_lex,"chair",NULL);
-    lookup_and_print(&cmu_lex,"project","n");
-    lookup_and_print(&cmu_lex,"project","v");
-    lookup_and_print(&cmu_lex,"project","j");
-    lookup_and_print(&cmu_lex,"bbcc",NULL);
-    lookup_and_print(&cmu_lex,"zzzz",NULL);
-    lookup_and_print(&cmu_lex,"crax",NULL);
-    lookup_and_print(&cmu_lex,"a","dt");
-    
-    return 0;
-}
