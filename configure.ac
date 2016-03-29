@@ -173,7 +173,21 @@ dnl         ;;
                 DLLWRAP="${MINGW32CEPREF}dllwrap"
                 NM="${MINGW32CEPREF}nm"
         ;;
-        mingw*)
+        msys*)
+                # For the Windows under mingw32 environment
+                # http://www.mingw.org
+                shared=false
+                CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32"
+                MINGWPREF=""
+                CC="${MINGWPREF}gcc"
+                RANLIB="${MINGWPREF}ranlib"
+                AR="${MINGWPREF}ar"
+                WINDRES="${MINGWPREF}windres"
+                DLLTOOL="${MINGWPREF}dlltool"
+                DLLWRAP="${MINGWPREF}dllwrap"
+                NM="${MINGWPREF}nm"
+        ;;
+	mingw*)
                 # For the Windows under mingw32 environment
                 # http://www.mingw.org
 		shared=false
