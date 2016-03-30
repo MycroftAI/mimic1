@@ -297,15 +297,21 @@ int audio_flush_alsa(cst_audiodev *ad)
 {
   int result;
   snd_pcm_t *pcm_handle = (snd_pcm_t*) ad->platform_data;
-  snd_pcm_sframes_t delay;
+  snd_pcm_sframes_t delay = -1, prev_delay;
   long int microseconds_per_frame = 1E6/ad->real_sps;
 
   /* Sleeping for a while is needed to prevent PulseAudio blocking for few
      seconds... according to:
  http://mailman.alsa-project.org/pipermail/alsa-devel/2012-November/057129.html
    */
-  snd_pcm_delay(pcm_handle, &delay);
-  usleep(delay * microseconds_per_frame);
+  do
+  {
+     long sleep;
+     prev_delay = delay;
+     snd_pcm_delay(pcm_handle, &delay);
+     sleep = delay * microseconds_per_frame;
+     usleep(sleep < 300000 ? sleep : 300000); // never sleep longer than 300 ms
+  } while (delay != prev_delay); // delay is changing
 
   result = snd_pcm_drain(pcm_handle);
   if (result < 0)
