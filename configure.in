@@ -38,6 +38,8 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_CHECK_TOOL(AR, ar)
 AC_C_BIGENDIAN
+PKG_PROG_PKG_CONFIG
+
 
 if test "x$GCC" = "xyes"; then
 	CFLAGS="$CFLAGS -Wall"
@@ -378,45 +380,20 @@ AC_CHECK_HEADER(machine/soundcard.h,
 AC_CHECK_HEADER(sys/audioio.h,
               [AUDIODRIVER="sun"
                AUDIODEFS=-DCST_AUDIO_SUNOS])
-dnl Seems the alsa code I have breaks on earlier versions
-dnl I'm not sure what the threshold version is, but made this depend on
-dnl the one I know -- you can still specific --with-audio=alsa
-AC_TRY_COMPILE([#include <alsa/version.h>],
-               [int j=
-                #if SND_LIB_SUBMINOR >= 11 || SND_LIB_MINOR > 0
-                3;
-                #endif],
-              [AUDIODRIVER="alsa"
-	       AUDIODEFS=-DCST_AUDIO_ALSA
-               AUDIOLIBS=-lasound])
 
-dnl Check PortAudio is at least 1899 (v19-dev)
-OLDLIBS="$LIBS"
-LIBS="-lportaudio"
-OLDCFLAGS="$CFLAGS"
-if test -e "/usr/local/include/portaudio.h" ; then
-   LOCALINC="-I/usr/local/include"
-   LOCALLIB="-L/usr/local/lib"
-else
-   LOCALINC=
-   LOCALLIB=
-fi
+dnl Check for ALSA sound library
+PKG_CHECK_MODULES([ALSA], [alsa >= 1.0.11],
+                  [AUDIODRIVER="alsa"
+                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+                   AUDIOLIBS="${ALSA_LIBS}"],
+                  [m4_ignore])
 
-CFLAGS="$LOCALINC $CFLAGS"
-LIBS="$LOCALLIB $LIBS"
-AC_TRY_RUN([
-#include <portaudio.h>
-int main() {
-  int j= Pa_GetVersion();
-  if (j>=1899)
-     return 0;
-  return -1;
-}],
-           [AUDIODRIVER="portaudio"
-            AUDIODEFS="$LOCALINC -DCST_AUDIO_PORTAUDIO"
-            AUDIOLIBS="$LOCALLIB -lportaudio"])
-LIBS="$OLDLIBS"
-CFLAGS="$OLDCFLAGS"
+dnl Check PortAudio is at least (v19-dev)
+PKG_CHECK_MODULES([PORTAUDIO], [portaudio-2.0 >= 19],
+                  [AUDIODRIVER="portaudio"
+                   AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
+                   AUDIOLIBS="${PORTAUDIO_LIBS}"],
+                  [m4_ignore])
 
 AC_CHECK_HEADER(mmsystem.h,
 	      [AUDIODRIVER="wince"
@@ -465,8 +442,8 @@ if test "x$AUDIODEFS" = x; then
 	    ;;
 	alsa)
             AUDIODRIVER="alsa"
-	    AUDIODEFS=-DCST_AUDIO_ALSA
-            AUDIOLIBS=-lasound
+	    AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+            AUDIOLIBS="${ALSA_LIBS}"
 	    ;;
 	pa|pulseaudio)
             AUDIODRIVER="pulseaudio"
@@ -475,8 +452,8 @@ if test "x$AUDIODEFS" = x; then
 	    ;;
         portaudio)
             AUDIODRIVER="portaudio"
-	    AUDIODEFS=-DCST_AUDIO_PORTAUDIO
-            AUDIOLIBS='-lportaudio'
+	    AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
+            AUDIOLIBS="${PORTAUDIO_LIBS}"
 	    ;;
 	*bsd)
 	    AUDIODRIVER=oss
