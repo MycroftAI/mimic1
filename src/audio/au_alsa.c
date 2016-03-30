@@ -53,6 +53,7 @@
 
 #include <alsa/asoundlib.h>
 
+int audio_flush_alsa(cst_audiodev *ad);
 
 /*static char *pcm_dev_name = "hw:0,0"; */
 static const char *pcm_dev_name ="default";
