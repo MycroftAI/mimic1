@@ -63,6 +63,15 @@
 
 static const char * const oss_audio_device = "/dev/dsp";
 
+int audio_init_oss() {
+   return 0;
+}
+
+int audio_exit_oss() {
+    return 0;
+}
+
+
 cst_audiodev *audio_open_oss(int sps, int channels, cst_audiofmt fmt)
 {
     cst_audiodev *ad;

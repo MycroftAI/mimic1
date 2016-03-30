@@ -144,6 +144,7 @@ void flowm_init()
                  uttfunc_val(flowm_print_relation_callback));
     }
 
+    mimic_exit();
 #endif
     return;
 }

@@ -70,6 +70,7 @@ extern cst_lang mimic_lang_list[20];
 
 /* Public functions */
 int mimic_init();
+int mimic_exit();
 
 /* General top level functions */
 cst_voice *mimic_voice_select(const char *name);

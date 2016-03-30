@@ -39,6 +39,14 @@
 /*************************************************************************/
 #include "cst_audio.h"
 
+int audio_init_command() {
+   return 0;
+}
+
+int audio_exit_command() {
+    return 0;
+}
+
 cst_audiodev * audio_open_command(int sps, int channels, int fmt)
 {
     cst_audiodev *ad;

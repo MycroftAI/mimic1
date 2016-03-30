@@ -43,6 +43,7 @@
 #include "cst_alloc.h"
 #include "cst_clunits.h"
 #include "cst_cg.h"
+#include "cst_audio.h"
 
 /* This is a global, which isn't ideal, this may change */
 /* It is set when mimic_set_voice_list() is called which happens in */
@@ -54,8 +55,15 @@ int mimic_lang_list_length = 0;
 int mimic_init()
 {
     cst_regex_init();
+    audio_init();
 
     return 0;
+}
+
+int mimic_exit()
+{
+	audio_exit();
+	return 0;
 }
 
 int mimic_voice_dump(cst_voice *voice, const char *filename)

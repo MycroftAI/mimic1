@@ -1,25 +1,60 @@
-[![Stories in Ready](https://badge.waffle.io/MycroftAI/mimic.png?label=ready&title=Ready)](https://waffle.io/MycroftAI/mimic)
 Mimic, the Mycroft TTS Engine
-==========
+==============================
+
+[![Stories in Ready](https://badge.waffle.io/MycroftAI/mimic.png?label=ready&title=Ready)](https://waffle.io/MycroftAI/mimic)
 
 Mimic is a lightweight run-time speech synthesis engine, based on
 Flite (Festival-Lite). The Flite project website can be found
 here: http://www.festvox.org/flite/ - further information can be found
 in the ACKNOWLEDGEMENTS file in the Mimic repo.
 
-###Requirements:
+### Requirements:
 
-- A good C compiler, some of these files are quite large and some C
-  compilers might choke on these, gcc is fine.  Sun CC 3.01 has been
-  tested too.  Visual C++ 6.0 is known to fail on the large diphone
-  database files.  We recommend you use GCC under Cygwin or mingw32
-  instead.
-- GNU Make
-- An audio device isn't required as mimic can write its output to
-  a waveform file.
-- `libasound2-dev` (ubuntu)
+An audio device and audio libraries aren't strictly required as mimic can write
+its output to a waveform file. However they are included in requirements for
+their convenience.
 
-Supported platforms:
+
+#### Linux
+
+- A good C compiler. gcc or clang are fine.
+- GNU make
+- pkg-config
+- For audio output: either ALSA, PortAudio or PulseAudio headers. We recommend
+  ALSA output for greater compatibility with most setups.
+
+On a Debian/Ubuntu computer this can be installed by using:
+
+    sudo apt-get install gcc make pkg-config libasound2-dev
+
+#### Mac OSX
+
+- A good C compiler. gcc or clang are fine.
+- GNU make
+- pkg-config
+- PortAudio
+
+In order to install pkg-config and PortAudio, `brew` can be used:
+
+1. Install brew
+
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+2. Install pkg-config and PortAudio
+
+    brew install pkg-config portaudio
+
+#### Windows
+
+* A good C compiler, some of these files are quite large and some C
+  compilers might choke on these, gcc is fine. Visual C++ 6.0 is known to fail
+  on the large diphone database files.  We recommend you use GCC under Cygwin
+  or mingw32 instead.
+* GNU Make
+* PortAudio
+
+
+### Supported platforms:
 
 We have successfully compiled and run on
 
@@ -27,29 +62,27 @@ We have successfully compiled and run on
 - Mac OS X
 - Android
 
-###Compilation
+### Building mimic
 
-    TODO: update this to reflect compilation
-####Linux:
-  Obtain copy of the git repo:
+1. Clone the repository (or download a tarball)
 
-  `git clone https://github.com/MycroftAI/mimic.git`
+    git clone https://github.com/MycroftAI/mimic.git
 
-  Navigate to the mimic directory:
+2. Navigate to the mimic directory
 
-  `cd mimic`
+    cd mimic
 
-  Setup configuration files for your machine:
+3. Configure.
 
-  `./configure`
+    ./configure
 
-  Build mimic:
+4. Build:
 
-  `make`
-
-  Note: When rebuilding, often you will only need to run `make`.
-  If you make changes to compile flags you will probably want to
-  run `make clean` before recompiling with `make`.
+    make
+ 
+Note: When rebuilding, often you will only need to run `make`.
+If you make changes to compile flags you will probably want to
+run `make clean` before recompiling with `make`.
 
 ###Usage:
 

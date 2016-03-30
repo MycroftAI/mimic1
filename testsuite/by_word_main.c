@@ -125,5 +125,6 @@ int main(int argc, char **argv)
 
     mimic_file_to_speech(argv[1],v,"none"); /* streaming will play */
 
+    mimic_exit();
     return 0;
 }

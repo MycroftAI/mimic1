@@ -103,6 +103,8 @@ int main(int argc, char **argv)
         printf("%s \"%s\"\n",feat,feat_string(v->features,feat));
     }
 
+    mimic_exit();
+
     return 0;
 
 }

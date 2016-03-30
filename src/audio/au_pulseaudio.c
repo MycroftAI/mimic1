@@ -47,6 +47,15 @@
 
 #include <pulse/simple.h>
 
+int audio_init_pulseaudio() {
+   return 0;
+}
+
+int audio_exit_pulseaudio() {
+    return 0;
+}
+
+
 cst_audiodev *audio_open_pulseaudio(unsigned int sps, int channels, cst_audiofmt fmt)
 {
   cst_audiodev *ad;

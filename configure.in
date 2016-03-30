@@ -38,6 +38,8 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_CHECK_TOOL(AR, ar)
 AC_C_BIGENDIAN
+PKG_PROG_PKG_CONFIG
+
 
 if test "x$GCC" = "xyes"; then
 	CFLAGS="$CFLAGS -Wall"
@@ -378,17 +380,21 @@ AC_CHECK_HEADER(machine/soundcard.h,
 AC_CHECK_HEADER(sys/audioio.h,
               [AUDIODRIVER="sun"
                AUDIODEFS=-DCST_AUDIO_SUNOS])
-# Seems the alsa code I have breaks on earlier versions
-# I'm not sure what the threshold version is, but made this depend on
-# the one I know -- you can still specific --with-audio=alsa
-AC_TRY_COMPILE([#include <alsa/version.h>],
-               [int j=
-                #if SND_LIB_SUBMINOR >= 11
-                3;
-                #endif],
-              [AUDIODRIVER="alsa"
-	       AUDIODEFS=-DCST_AUDIO_ALSA
-               AUDIOLIBS=-lasound])
+
+dnl Check for ALSA sound library
+PKG_CHECK_MODULES([ALSA], [alsa >= 1.0.11],
+                  [AUDIODRIVER="alsa"
+                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+                   AUDIOLIBS="${ALSA_LIBS}"],
+                  [m4_ignore])
+
+dnl Check PortAudio is at least (v19-dev)
+PKG_CHECK_MODULES([PORTAUDIO], [portaudio-2.0 >= 19],
+                  [AUDIODRIVER="portaudio"
+                   AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
+                   AUDIOLIBS="${PORTAUDIO_LIBS}"],
+                  [m4_ignore])
+
 AC_CHECK_HEADER(mmsystem.h,
 	      [AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
@@ -436,13 +442,18 @@ if test "x$AUDIODEFS" = x; then
 	    ;;
 	alsa)
             AUDIODRIVER="alsa"
-	    AUDIODEFS=-DCST_AUDIO_ALSA
-            AUDIOLIBS=-lasound
+	    AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+            AUDIOLIBS="${ALSA_LIBS}"
 	    ;;
 	pa|pulseaudio)
             AUDIODRIVER="pulseaudio"
 	    AUDIODEFS=-DCST_AUDIO_PULSEAUDIO
             AUDIOLIBS='-lpulse-simple -lpulse'
+	    ;;
+        portaudio)
+            AUDIODRIVER="portaudio"
+	    AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
+            AUDIOLIBS="${PORTAUDIO_LIBS}"
 	    ;;
 	*bsd)
 	    AUDIODRIVER=oss

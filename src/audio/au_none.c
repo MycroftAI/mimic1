@@ -42,6 +42,15 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
+int audio_init_none() {
+   return 0;
+}
+
+int audio_exit_none() {
+    return 0;
+}
+
+
 cst_audiodev * audio_open_none(int sps, int channels, int fmt)
 {
     cst_audiodev *ad;

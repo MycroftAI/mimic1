@@ -102,6 +102,8 @@ int main(int argc, char **argv)
     printf("%s\n",thetime);
     mimic_text_to_speech(thetime,v,output);
 
+    mimic_exit();
+
     return 0;
 }
 
