@@ -30,9 +30,14 @@ dnl ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF       ##
 dnl THIS SOFTWARE.                                                       ##
 dnl                                                                      ##
 dnl########################################################################
-AC_INIT(include/mimic.h)
 
-AC_CANONICAL_SYSTEM
+dnl Use aclocal && autoconf to create the configure script
+AC_PREREQ([2.69])
+AC_INIT([mimic],[0.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
+
+AC_CONFIG_SRCDIR([include/mimic.h])
+
+AC_CANONICAL_TARGET
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_INSTALL
@@ -307,11 +312,8 @@ fi
 dnl
 dnl Does this compiler support initialization of unions
 dnl
-AC_TRY_COMPILE([#include <stdio.h>],
-               [ struct a { union { float b; int c; } d; };
-                 const struct a e = { .d={ .b=3.14 } }; ],
-               [unioninit=yes],
-               [unioninit=no])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[ struct a { union { float b; int c; } d; };
+                 const struct a e = { .d={ .b=3.14 } }; ]])],[unioninit=yes],[unioninit=no])
 if test "$unioninit" = no; then
    AC_DEFINE(NO_UNION_INITIALIZATION)
 fi
@@ -503,4 +505,5 @@ AC_ARG_WITH( langvox,
         FL_LANGVOX=$with_langvox )
 AC_SUBST(FL_LANGVOX)
 
-AC_OUTPUT(config/config config/system.mak)
+AC_CONFIG_FILES([config/config config/system.mak])
+AC_OUTPUT
