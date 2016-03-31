@@ -34,7 +34,8 @@ config.log
 config.status
 config/config
 config/system.mak
-
+aclocal.m4
+autom4te.cache
 # Building Process Files/Directories
 build/
 bin/
@@ -70,3 +71,10 @@ unittests/hrg_test
 unittests/lex_test
 unittests/nums_test
 unittests/voice_select_test
+unittests/lts_test
+
+# temporary files for building cmulex
+_festsuite
+lang/cmulex/festival
+lang/cmulex/festlex_CMU.tar.gz
+
