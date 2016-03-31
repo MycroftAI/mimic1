@@ -263,6 +263,8 @@ static void audio_write_buffer(cst_audiodev *ad, void *buff,
         cst_errmsg("failed to write %d samples\n",n);
         break;
       }
+      if (shutdown_request)
+        break;
     }
 	}
 	return;
