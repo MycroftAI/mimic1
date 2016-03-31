@@ -42,6 +42,11 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#ifdef UNDER_WINDOWS
+#include <windows.h>
+#else
+#include <signal.h>
+#endif
 
 #include "mimic.h"
 #include "mimic_version.h"
@@ -54,6 +59,23 @@ void cst_alloc_debug_summary();
 /* Its not very appropriate that these are declared here */
 void usenglish_init(cst_voice *v);
 cst_lexicon *cmu_lex_init(void);
+
+#ifdef UNDER_WINDOWS
+BOOL WINAPI windows_signal_handler(DWORD signum)
+{
+   shutdown_audio(signum);
+   if (signum == CTRL_C_EVENT)
+      return TRUE;
+   else
+      return FALSE;
+}
+#else
+void sigint_handler(int signum)
+{
+    shutdown_audio(signum);
+}
+#endif
+
 
 static void mimic_version()
 {
@@ -205,6 +227,12 @@ int main(int argc, char **argv)
     const char *voicedumpfile = NULL;
     cst_audio_streaming_info *asi;
 
+    // Set signal handler to shutdown any playing audio on SIGINT
+#ifdef UNDER_WINDOWS
+    SetConsoleCtrlHandler(windows_signal_handler, TRUE);
+#else
+    signal(SIGINT, sigint_handler);
+#endif //UNDER_WINDOWS
     filename = 0;
     outtype = "play";   /* default is to play */
     mimic_verbose = FALSE;

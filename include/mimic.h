@@ -104,9 +104,10 @@ float mimic_ts_to_speech(cst_tokenstream *ts,
 cst_utterance *mimic_do_synth(cst_utterance *u,
                               cst_voice *voice,
                               cst_uttfunc synth);
-float mimic_process_output(cst_utterance *u,
-                           const char *outtype,
-                           int append);
+int mimic_process_output(cst_utterance *u,
+                         const char *outtype,
+                         int append,
+                         float *dur);
 
 /* for voices with external voxdata */
 int mimic_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice);
