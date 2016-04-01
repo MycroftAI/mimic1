@@ -29,6 +29,10 @@ tags
 # gdb files
 .gdb_history
 
+# gcov files
+*.gcno
+*.gcda
+
 # Configure Generated Files/Directories 
 config.log
 config.status

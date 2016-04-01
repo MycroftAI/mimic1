@@ -34,7 +34,6 @@ dnl########################################################################
 dnl Use aclocal && autoconf to create the configure script
 AC_PREREQ([2.69])
 AC_INIT([mimic],[0.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
-
 AC_CONFIG_SRCDIR([include/mimic.h])
 
 AC_CANONICAL_TARGET
@@ -49,9 +48,34 @@ PKG_PROG_PKG_CONFIG
 if test "x$GCC" = "xyes"; then
 	CFLAGS="$CFLAGS -Wall"
 fi
-AC_ARG_ENABLE( shared, 
-               [  --disable-shared     without shared library support],
-	       [case "${enableval}" in
+
+AC_ARG_ENABLE([gcov],[ AS_HELP_STRING([--enable-gcov  Enable gcov for profiling])],
+ [ case "${enableval}" in
+     yes)
+       # Add the special gcc flags
+       COVERAGE_CFLAGS="-O0 --coverage"
+       #COVERAGE_CXXFLAGS="-O0 -fprofile-arcs -ftest-coverage"
+       COVERAGE_LDFLAGS="-lgcov --coverage"
+       ;;
+     no)
+       COVERAGE_CFLAGS=
+       #COVERAGE_CXXFLAGS=
+       COVERAGE_LDFLAGS=
+       ;;
+     *)
+       AC_MSG_ERROR([bad value ${enableval} for gcov options])
+       ;;
+     esac
+ ], [  COVERAGE_CFLAGS=
+       #COVERAGE_CXXFLAGS=
+       COVERAGE_LDFLAGS=
+    ])
+CFLAGS="${CFLAGS} ${COVERAGE_CFLAGS}"
+LDFLAGS="${LDFLAGS} ${COVERAGE_LDFLAGS}"
+
+AC_ARG_ENABLE([shared], 
+              [ AS_HELP_STRING([--disable-shared     without shared library support])],
+              [case "${enableval}" in
                  yes) shared=true ;;
                  no) shared=false ;;
                  *) AC_MSG_ERROR(bad value ${enableval} for shared options) ;;

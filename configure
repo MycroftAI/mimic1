@@ -723,6 +723,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_gcov
 enable_shared
 with_pic
 enable_sockets
@@ -1363,7 +1364,10 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --disable-shared     without shared library support
+   --enable-gcov  Enable gcov for profiling
+
+   --disable-shared     without shared library support
+
   --disable-sockets     without socket support
 
 Optional Packages:
@@ -2179,7 +2183,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
 
 
 
@@ -4136,6 +4139,36 @@ fi
 if test "x$GCC" = "xyes"; then
 	CFLAGS="$CFLAGS -Wall"
 fi
+
+# Check whether --enable-gcov was given.
+if test "${enable_gcov+set}" = set; then :
+  enableval=$enable_gcov;  case "${enableval}" in
+     yes)
+       # Add the special gcc flags
+       COVERAGE_CFLAGS="-O0 --coverage"
+       #COVERAGE_CXXFLAGS="-O0 -fprofile-arcs -ftest-coverage"
+       COVERAGE_LDFLAGS="-lgcov --coverage"
+       ;;
+     no)
+       COVERAGE_CFLAGS=
+       #COVERAGE_CXXFLAGS=
+       COVERAGE_LDFLAGS=
+       ;;
+     *)
+       as_fn_error $? "bad value ${enableval} for gcov options" "$LINENO" 5
+       ;;
+     esac
+
+else
+    COVERAGE_CFLAGS=
+       #COVERAGE_CXXFLAGS=
+       COVERAGE_LDFLAGS=
+
+fi
+
+CFLAGS="${CFLAGS} ${COVERAGE_CFLAGS}"
+LDFLAGS="${LDFLAGS} ${COVERAGE_LDFLAGS}"
+
 # Check whether --enable-shared was given.
 if test "${enable_shared+set}" = set; then :
   enableval=$enable_shared; case "${enableval}" in
