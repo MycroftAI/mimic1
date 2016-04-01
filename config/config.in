@@ -53,3 +53,8 @@ EXEEXT	      = @EXEEXT@
 INSTALLBINDIR = @bindir@
 INSTALLLIBDIR = @libdir@
 INSTALLINCDIR = @includedir@/mimic
+
+BUILDDIR = @BUILDDIR@
+OBJSUBDIR = @OBJSUBDIR@
+
+ABS_TOP_SRCDIR = @abs_top_srcdir@

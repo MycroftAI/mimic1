@@ -56,11 +56,15 @@ AC_ARG_ENABLE([gcov],[ AS_HELP_STRING([--enable-gcov  Enable gcov for profiling]
        COVERAGE_CFLAGS="-O0 --coverage"
        #COVERAGE_CXXFLAGS="-O0 -fprofile-arcs -ftest-coverage"
        COVERAGE_LDFLAGS="-lgcov --coverage"
+       OBJSUBDIR="."
+       BUILDDIR="\$(TOP)"
        ;;
      no)
        COVERAGE_CFLAGS=
        #COVERAGE_CXXFLAGS=
        COVERAGE_LDFLAGS=
+       OBJSUBDIR="."
+       BUILDDIR="default"
        ;;
      *)
        AC_MSG_ERROR([bad value ${enableval} for gcov options])
@@ -69,7 +73,13 @@ AC_ARG_ENABLE([gcov],[ AS_HELP_STRING([--enable-gcov  Enable gcov for profiling]
  ], [  COVERAGE_CFLAGS=
        #COVERAGE_CXXFLAGS=
        COVERAGE_LDFLAGS=
+       OBJSUBDIR="obj"
+       BUILDDIR="default"
     ])
+
+AC_SUBST(BUILDDIR)
+AC_SUBST(OBJSUBDIR)
+
 CFLAGS="${CFLAGS} ${COVERAGE_CFLAGS}"
 LDFLAGS="${LDFLAGS} ${COVERAGE_LDFLAGS}"
 

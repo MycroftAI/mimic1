@@ -5,9 +5,13 @@ compiler:
   - gcc
 
 script: 
-  - ./configure --enable-gcov && make && ./bin/mimic -t "hello" && (cd unittests && make && ./run_all_tests)
+  - ./configure --enable-gcov || exit 1
+  - make || exit 1
+  - bin/mimic -t "Hello" test.wav
+  - (cd unittests && make && ./run_all_tests)
 
 after_success:
+  - make gcov
   - bash <(curl -s https://codecov.io/bash)
 
 env:

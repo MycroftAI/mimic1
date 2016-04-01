@@ -32,6 +32,7 @@ tags
 # gcov files
 *.gcno
 *.gcda
+*.gcov
 
 # Configure Generated Files/Directories 
 config.log
@@ -46,6 +47,7 @@ bin/
 include/mimic_version.h
 main/mimic_lang_list.c
 main/mimic_voice_list.c
+.build_lib
 
 # Test suite executables
 testsuite/play_client

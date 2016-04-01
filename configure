@@ -652,6 +652,8 @@ WINDRES
 M68KCC
 TARGET_CPU
 TARGET_OS
+OBJSUBDIR
+BUILDDIR
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
@@ -4148,11 +4150,15 @@ if test "${enable_gcov+set}" = set; then :
        COVERAGE_CFLAGS="-O0 --coverage"
        #COVERAGE_CXXFLAGS="-O0 -fprofile-arcs -ftest-coverage"
        COVERAGE_LDFLAGS="-lgcov --coverage"
+       OBJSUBDIR="."
+       BUILDDIR="\$(TOP)"
        ;;
      no)
        COVERAGE_CFLAGS=
        #COVERAGE_CXXFLAGS=
        COVERAGE_LDFLAGS=
+       OBJSUBDIR="."
+       BUILDDIR="default"
        ;;
      *)
        as_fn_error $? "bad value ${enableval} for gcov options" "$LINENO" 5
@@ -4163,8 +4169,14 @@ else
     COVERAGE_CFLAGS=
        #COVERAGE_CXXFLAGS=
        COVERAGE_LDFLAGS=
+       OBJSUBDIR="obj"
+       BUILDDIR="default"
 
 fi
+
+
+
+
 
 CFLAGS="${CFLAGS} ${COVERAGE_CFLAGS}"
 LDFLAGS="${LDFLAGS} ${COVERAGE_LDFLAGS}"
