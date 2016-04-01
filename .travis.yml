@@ -1,0 +1,32 @@
+language: c
+sudo: false
+
+compiler:
+  - gcc
+
+script: 
+  - ./configure --enable-gcov && make && ./bin/mimic -t "hello" && (cd unittests && make && ./run_all_tests)
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   # via the "travis encrypt" command using the project repo's public key
+   #- secure: "project_not_yet_registered"
+
+addons:
+  apt:
+    packages:
+    - libasound2-dev
+    - autoconf
+    - automake
+    - pkg-config
+#  coverity_scan:
+#    project:
+#      name: "mycroftai/mimic"
+#      description: "Your project description here"
+#    build_command:   ./run_testsuite.sh -f
+
+
