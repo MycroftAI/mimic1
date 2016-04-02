@@ -54,10 +54,11 @@ CFLAGS += $(EXTRA_CC_FLAGS) $(OPT) $(DBG)
 ## These'll become (target)arch dependent at some point
 TARGET_PLATFORM=$(TARGET_CPU)-$(TARGET_OS)
 HOST_PLATFORM=$(HOST_CPU)-$(HOST_OS)
-ifndef BUILDDIR
-BUILDDIR=$(TOP)/build/$(TARGET_PLATFORM)
+
+ifeq ($(BUILDDIR), default)
+BUILDDIR = $(ABS_TOP_SRCDIR)/build/$(TARGET_PLATFORM)
 endif
-OBJDIR=$(BUILDDIR)/obj/$(DIRNAME)
+OBJDIR=$(BUILDDIR)/$(OBJSUBDIR)/$(DIRNAME)
 BINDIR=$(BUILDDIR)/bin
 ifeq ($(HOST_PLATFORM),$(TARGET_PLATFORM))
 BINDIR=$(TOP)/bin
@@ -66,8 +67,8 @@ endif
 LIBDIR=$(BUILDDIR)/lib
 BUILDDIRS=$(OBJDIR) $(BINDIR) $(LIBDIR)
 
-MIMICLIBS = $(BUILDDIR)/lib/libmimic.a
-MIMICLIBFLAGS = -L$(BUILDDIR)/lib -lmimic 
+MIMICLIBS = $(LIBDIR)/libmimic.a
+MIMICLIBFLAGS = -L$(LIBDIR) -lmimic 
 LDFLAGS += -lm $(AUDIOLIBS) $(OTHERLIBS)
 
 FULLOBJS = $(OBJS:%=$(OBJDIR)/%)
@@ -108,12 +109,12 @@ $(OBJDIR)/%.os : %.c
 	$(CC) $(SHFLAGS) $(DEFS) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/.build_lib: $(FULLOBJS)
-	@ (cd $(OBJDIR) && $(AR) cruv ../../../$(LIBDIR)/lib$(LIBNAME).a $(OBJS))
+	@ (cd $(OBJDIR) && $(AR) cruv $(LIBDIR)/lib$(LIBNAME).a $(OBJS))
 	@ $(RANLIB) $(LIBDIR)/lib$(LIBNAME).a
 	@ touch $(OBJDIR)/.build_lib
 
 $(OBJDIR)/.build_so: $(FULLSHOBJS)
-	@ (cd $(OBJDIR) && $(AR) cruv ../../../$(LIBDIR)/lib$(LIBNAME).shared.a $(SOOBJS))
+	@ (cd $(OBJDIR) && $(AR) cruv $(LIBDIR)/lib$(LIBNAME).shared.a $(SOOBJS))
 	@ $(RANLIB) $(LIBDIR)/lib$(LIBNAME).shared.a
 	@ touch $(OBJDIR)/.build_so
 
@@ -139,7 +140,7 @@ endif
 
 clean:
 	@ echo make clean in $(DIRNAME) ...
-	@ rm -rf .build_lib .build_so *.o *.os *.a *~ $(LOCAL_CLEAN) $(OBJDIR)
+	@ rm -rf .build_lib .build_so *.gcda *.gcno *.gcov *.o *.os *.a *~ $(LOCAL_CLEAN)
 ifdef ALL_DIRS
 	@ set -e; for i in $(ALL_DIRS) ; \
 	do \
@@ -156,7 +157,7 @@ ifdef ALL_DIRS
 	done
 endif
 	@ rm -rf .build_lib .build_shlib make.depend \
-		*.o *.os *.a *~ $(LOCAL_CLEAN) $(DIST_CLEAN) $(OBJDIR)
+		*.o *.os *.a *~ $(LOCAL_CLEAN) $(DIST_CLEAN)
 
 DEPEND=$(OBJDIR)/make.depend
 MAKE_DEPEND=$(CC) -MM $(CPPFLAGS) $(CFLAGS)
@@ -212,6 +213,19 @@ info:
 	@echo
 	@echo Configuration Variables
 	@echo none at present
+
+gcov:
+	@ echo making gcov in $(DIRNAME) ...
+	@ for f in $(SRCS) ; \
+	do \
+	   gcov $$f ; \
+	done 
+ifdef ALL_DIRS
+	@ for i in $(ALL_DIRS) ; \
+	do \
+	   $(MAKE) -C $$i --no-print-directory gcov; \
+	done
+endif 
 
 # If there are sources in this directory, load in the dependencies
 ifdef SRCS
