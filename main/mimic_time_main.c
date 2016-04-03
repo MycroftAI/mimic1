@@ -69,15 +69,15 @@ int main(int argc, char **argv)
 
     if (argc != 2)
     {
-	fprintf(stderr,"usage: mimic_time HH:MM\n");
-	exit(-1);
+        fprintf(stderr, "usage: mimic_time HH:MM\n");
+        exit(-1);
     }
-    timex =  new_cst_regex("[012][0-9]:[0-5][0-9]");
-    if (!cst_regex_match(timex,argv[1]))
+    timex = new_cst_regex("[012][0-9]:[0-5][0-9]");
+    if (!cst_regex_match(timex, argv[1]))
     {
-	fprintf(stderr,"not a valid time\n");
-	fprintf(stderr,"usage: mimic_time HH:MM\n");
-	exit(-1);
+        fprintf(stderr, "not a valid time\n");
+        fprintf(stderr, "usage: mimic_time HH:MM\n");
+        exit(-1);
     }
     delete_cst_regex(timex);
     b[2] = '\0';
@@ -93,14 +93,12 @@ int main(int argc, char **argv)
     v = register_cmu_time_awb(NULL);
 
     sprintf(thetime,
-	    "The time is now, %s %s %s, %s.",
-	    time_approx(hour,min),
-	    time_min(hour,min),
-	    time_hour(hour,min),
-	    time_tod(hour,min));
+            "The time is now, %s %s %s, %s.",
+            time_approx(hour, min), time_min(hour, min), time_hour(hour, min),
+            time_tod(hour, min));
 
-    printf("%s\n",thetime);
-    mimic_text_to_speech(thetime,v,output);
+    printf("%s\n", thetime);
+    mimic_text_to_speech(thetime, v, output);
 
     mimic_exit();
 
@@ -108,20 +106,19 @@ int main(int argc, char **argv)
 }
 
 static const char *time_approx(int hour, int minute)
-
 {
     int mm;
 
     mm = minute % 5;
 
     if ((mm == 0) || (mm == 4))
-	return "exactly";
+        return "exactly";
     else if (mm == 1)
-	return "just after";
+        return "just after";
     else if (mm == 2)
-	return "a little after";
+        return "a little after";
     else
-	return "almost";
+        return "almost";
 }
 
 static const char *time_min(int hour, int minute)
@@ -130,37 +127,37 @@ static const char *time_min(int hour, int minute)
 
     mm = minute / 5;
     if ((minute % 5) > 2)
-	mm += 1;
+        mm += 1;
     mm = mm * 5;
     if (mm > 55)
-	mm = 0;
+        mm = 0;
 
     if (mm == 0)
-	return "";
+        return "";
     else if (mm == 5)
-	return "five past";
+        return "five past";
     else if (mm == 10)
-	return "ten past";
+        return "ten past";
     else if (mm == 15)
-	return "quarter past";
+        return "quarter past";
     else if (mm == 20)
-	return "twenty past";
+        return "twenty past";
     else if (mm == 25)
-	return "twenty-five past";
+        return "twenty-five past";
     else if (mm == 30)
-	return "half past";
+        return "half past";
     else if (mm == 35)
-	return "twenty-five to";
+        return "twenty-five to";
     else if (mm == 40)
-	return "twenty to";
+        return "twenty to";
     else if (mm == 45)
-	return "quarter to";
+        return "quarter to";
     else if (mm == 50)
-	return "ten to";
+        return "ten to";
     else if (mm == 55)
-	return "five to";
+        return "five to";
     else
-	return "five to";
+        return "five to";
 }
 
 static const char *time_hour(int hour, int minute)
@@ -169,40 +166,40 @@ static const char *time_hour(int hour, int minute)
 
     hh = hour;
     if (minute > 32)
-	hh += 1;
+        hh += 1;
     if (hh == 24)
-	hh = 0;
+        hh = 0;
     if (hh > 12)
-	hh -= 12;
+        hh -= 12;
 
     if (hh == 0)
-	return "midnight";
+        return "midnight";
     else if (hh == 1)
-	return "one";
+        return "one";
     else if (hh == 2)
-	return "two";
+        return "two";
     else if (hh == 3)
-	return "three";
+        return "three";
     else if (hh == 4)
-	return "four";
+        return "four";
     else if (hh == 5)
-	return "five";
+        return "five";
     else if (hh == 6)
-	return "six";
+        return "six";
     else if (hh == 7)
-	return "seven";
+        return "seven";
     else if (hh == 8)
-	return "eight";
+        return "eight";
     else if (hh == 9)
-	return "nine";
+        return "nine";
     else if (hh == 10)
-	return "ten";
+        return "ten";
     else if (hh == 11)
-	return "eleven";
+        return "eleven";
     else if (hh == 12)
-	return "twelve";
+        return "twelve";
     else
-	return "twelve";
+        return "twelve";
 }
 
 static const char *time_tod(int hour, int minute)
@@ -210,16 +207,16 @@ static const char *time_tod(int hour, int minute)
     int hh = hour;
 
     if (minute > 58)
-	hh++;
+        hh++;
 
     if (hh == 24)
-	return "";
+        return "";
     else if (hh > 17)
-	return "in the evening";
+        return "in the evening";
     else if (hh > 11)
-	return "in the afternoon";
+        return "in the afternoon";
     else if ((hh == 0) && (minute < 33))
-	return "";
+        return "";
     else
-	return "in the morning";
+        return "in the morning";
 }

@@ -65,23 +65,23 @@ static cst_voice *register_cmu_us_no_wave(const char *voxdir)
 
     /* Set up basic values for synthesizing with this voice */
     usenglish_init(v);
-    feat_set_string(v->features,"name","cmu_us_no_wave");
+    feat_set_string(v->features, "name", "cmu_us_no_wave");
 
     /* Lexicon */
     lex = cmu_lex_init();
-    feat_set(v->features,"lexicon",lexicon_val(lex));
+    feat_set(v->features, "lexicon", lexicon_val(lex));
 
     /* Intonation */
-    feat_set_float(v->features,"int_f0_target_mean",95.0);
-    feat_set_float(v->features,"int_f0_target_stddev",11.0);
+    feat_set_float(v->features, "int_f0_target_mean", 95.0);
+    feat_set_float(v->features, "int_f0_target_stddev", 11.0);
 
-    feat_set_float(v->features,"duration_stretch",1.1); 
+    feat_set_float(v->features, "duration_stretch", 1.1);
 
     /* Post lexical rules */
-    feat_set(v->features,"postlex_func",uttfunc_val(lex->postlex));
+    feat_set(v->features, "postlex_func", uttfunc_val(lex->postlex));
 
     /* Waveform synthesis: diphone_synth */
-    feat_set(v->features,"wave_synth_func",uttfunc_val(&no_wave_synth));
+    feat_set(v->features, "wave_synth_func", uttfunc_val(&no_wave_synth));
 
     cmu_us_no_wave = v;
 
@@ -91,42 +91,39 @@ static cst_voice *register_cmu_us_no_wave(const char *voxdir)
 int main(int argc, char **argv)
 {
     cst_val *files;
-    cst_features *args=new_features();
+    cst_features *args = new_features();
     cst_voice *v;
     cst_utterance *u;
     cst_item *s;
     const char *text, *name;
 
     files =
-        cst_args(argv,argc,
+        cst_args(argv, argc,
                  "usage: t2p \"word word word\"\n"
-                 "Convert text to US English phonemes.",
-                 args);
+                 "Convert text to US English phonemes.", args);
 
     if (files)
-	text = val_string(val_car(files));
+        text = val_string(val_car(files));
     else
     {
-	fprintf(stderr,"no text specified\n");
-	exit(-1);
+        fprintf(stderr, "no text specified\n");
+        exit(-1);
     }
-    
+
     mimic_init();
     v = register_cmu_us_no_wave(NULL);
 
-    u = mimic_synth_text(text,v);
+    u = mimic_synth_text(text, v);
 
-    for (s=relation_head(utt_relation(u,"Segment"));
-	 s;
-	 s = item_next(s))
+    for (s = relation_head(utt_relation(u, "Segment")); s; s = item_next(s))
     {
-	name = item_feat_string(s,"name");
-	printf("%s",name);
-	/* If its a vowel and is stessed output stress value */
-	if ((cst_streq("+",ffeature_string(s,"ph_vc"))) &&
-	    (cst_streq("1",ffeature_string(s,"R:SylStructure.parent.stress"))))
-	    printf("1");
-	printf(" ");
+        name = item_feat_string(s, "name");
+        printf("%s", name);
+        /* If its a vowel and is stessed output stress value */
+        if ((cst_streq("+", ffeature_string(s, "ph_vc"))) &&
+            (cst_streq("1", ffeature_string(s, "R:SylStructure.parent.stress"))))
+            printf("1");
+        printf(" ");
     }
 
     printf("\n");
@@ -134,7 +131,7 @@ int main(int argc, char **argv)
     delete_utterance(u);
     delete_features(args);
     delete_val(files);
-    
+
     mimic_exit();
     return 0;
 }
