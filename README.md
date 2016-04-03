@@ -224,6 +224,45 @@ You can also find existing Flite voices here:
   Once enough features are added or a new release is complete those changes in `development` will be merged into `master`, 
   then work can continue on `development` for the next release. 
   
-#####Coding Style Requirements
-    todo: add style requirements 
-  
+##### Coding Style Requirements
+  To keep the code in mimic coherent a simple coding style/guide is needed.
+
+  **Indentation**: Each level of indentation is *4 spaces*.
+
+  **Braces**: Braces always comes on the line following the statement.
+
+    Example:
+```c
+void cool_function(void)
+{
+    int cool;
+    for (cool = 0; cool < COOL_LIMIT; cool++)
+    {
+        [...]
+        if (cool == AWESOME)
+        {
+            [...]
+        }
+    }
+}
+```
+
+  **Parentheses**:
+* Always put a space between keyword (*for*, *if*, etc.) and paranthesis.
+* Never put a paranthesis between a function name and a paranthesis.
+
+Examples:
+```c
+    for (i = 0; i < 8; i++)
+```
+```c
+int main(int argc, char *argv[])
+{
+    helper_func(argv[1]);
+    return 0;
+}
+```
+
+  **Line length**: There is no hard limit for line lenght but if possible limit it to *80 characters*.
+    
+
