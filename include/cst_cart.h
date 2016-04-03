@@ -59,19 +59,18 @@ typedef struct cst_cart_node_struct {
     unsigned char feat;
     unsigned char op;
     /* yes is always the next node */
-    unsigned short no_node;  /* or answer index */
-    const cst_val *val;  
+    unsigned short no_node;     /* or answer index */
+    const cst_val *val;
 } cst_cart_node;
 
 typedef struct cst_cart_struct {
     const cst_cart_node *rule_table;
-    const char * const *feat_table;
+    const char *const *feat_table;
 } cst_cart;
 
 void delete_cart(cst_cart *c);
 
-CST_VAL_USER_TYPE_DCLS(cart,cst_cart)
-
-const cst_val *cart_interpret(cst_item *item, const cst_cart *tree);
+CST_VAL_USER_TYPE_DCLS(cart, cst_cart)
+     const cst_val *cart_interpret(cst_item *item, const cst_cart *tree);
 
 #endif

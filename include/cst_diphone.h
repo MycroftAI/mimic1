@@ -58,15 +58,14 @@ typedef struct cst_diphone_entry_struct cst_diphone_entry;
 
 struct cst_diphone_db_struct {
     const char *name;
-    int  num_entries;
+    int num_entries;
     const cst_diphone_entry *diphones;
     const cst_sts_list *sts;
 };
 typedef struct cst_diphone_db_struct cst_diphone_db;
 
-CST_VAL_USER_TYPE_DCLS(diphone_db,cst_diphone_db)
-
-cst_utterance* diphone_synth(cst_utterance *utt);
-cst_utterance *get_diphone_units(cst_utterance *utt);
+CST_VAL_USER_TYPE_DCLS(diphone_db, cst_diphone_db)
+     cst_utterance *diphone_synth(cst_utterance *utt);
+     cst_utterance *get_diphone_units(cst_utterance *utt);
 
 #endif

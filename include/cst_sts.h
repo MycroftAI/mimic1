@@ -49,8 +49,8 @@
 /* else where, this information plus the indexes in the Unit relation */
 /* allow reconstruction of the signal itself                          */
 struct cst_sts_struct {
-    const unsigned short *frame;  
-    const int size;      /* in samples */
+    const unsigned short *frame;
+    const int size;             /* in samples */
     const unsigned char *residual;
 };
 typedef struct cst_sts_struct cst_sts;
@@ -64,8 +64,8 @@ struct cst_sts_paged_struct {
     const unsigned int frame_offset;
     const unsigned short res_size;
     const unsigned int res_offset;
-    const unsigned short *frame_page;  
-    const unsigned char *res_page;  
+    const unsigned short *frame_page;
+    const unsigned char *res_page;
 };
 typedef struct cst_sts_paged_struct cst_sts_paged;
 
@@ -81,13 +81,13 @@ struct cst_sts_list_struct {
     const unsigned int *resoffs;
     const unsigned char *ressizes;
 
-    int num_sts;          /* But I don't think you need that number */
-    int num_channels;     /* typically lpc order */
+    int num_sts;                /* But I don't think you need that number */
+    int num_channels;           /* typically lpc order */
     int sample_rate;
-    float coeff_min;      /* used for decoding the short representation */
-    float coeff_range;    /* for coefficients  */ 
+    float coeff_min;            /* used for decoding the short representation */
+    float coeff_range;          /* for coefficients  */
 
-    const char *codec;    /* encoding type for residual */
+    const char *codec;          /* encoding type for residual */
 };
 typedef struct cst_sts_list_struct cst_sts_list;
 
@@ -111,27 +111,28 @@ struct cst_lpcres_struct {
     /* streaming will be more useful as the decoding will happen */
     /* during playback time */
     const unsigned char **packed_residuals;
-    int delayed_decoding;  /* 1 if decoding happens at streaming time */
+    int delayed_decoding;       /* 1 if decoding happens at streaming time */
 };
 typedef struct cst_lpcres_struct cst_lpcres;
 
 cst_lpcres *new_lpcres();
 void delete_lpcres(cst_lpcres *l);
 float lpcres_frame_shift(cst_lpcres *t, int frame);
-void lpcres_resize_frames(cst_lpcres *l,int num_frames);
-void lpcres_resize_samples(cst_lpcres *l,int num_samples);
+void lpcres_resize_frames(cst_lpcres *l, int num_frames);
+void lpcres_resize_samples(cst_lpcres *l, int num_samples);
 
 cst_sts_list *new_sts_list();
 void delete_sts_list(cst_sts_list *l);
 
-const unsigned short * get_sts_frame(const cst_sts_list *sts_list, int frame);
-const unsigned char * get_sts_residual(const cst_sts_list *sts_list, int frame);
-const unsigned char * get_sts_residual_fixed(const cst_sts_list *sts_list, int frame);
+const unsigned short *get_sts_frame(const cst_sts_list *sts_list, int frame);
+const unsigned char *get_sts_residual(const cst_sts_list *sts_list,
+                                      int frame);
+const unsigned char *get_sts_residual_fixed(const cst_sts_list *sts_list,
+                                            int frame);
 
 int get_frame_size(const cst_sts_list *sts_list, int frame);
-int get_unit_size(const cst_sts_list *s,int start, int end);
+int get_unit_size(const cst_sts_list *s, int start, int end);
 
-CST_VAL_USER_TYPE_DCLS(lpcres,cst_lpcres)
-CST_VAL_USER_TYPE_DCLS(sts_list,cst_sts_list)
-
+CST_VAL_USER_TYPE_DCLS(lpcres, cst_lpcres)
+CST_VAL_USER_TYPE_DCLS(sts_list, cst_sts_list)
 #endif

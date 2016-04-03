@@ -54,26 +54,25 @@
 #define CST_VAL_TYPE_FIRST_FREE 7
 #define CST_VAL_TYPE_MAX     54
 
-typedef struct  cst_val_cons_struct {
+typedef struct cst_val_cons_struct {
     struct cst_val_struct *car;
     struct cst_val_struct *cdr;
-}  cst_val_cons;
+} cst_val_cons;
 
-typedef struct  cst_val_atom_struct {
+typedef struct cst_val_atom_struct {
 #ifdef WORDS_BIGENDIAN
     short ref_count;
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
 #else
 #if (defined(__x86_64__) || defined(_M_X64))
-    int type;  /* order is here important */
+    int type;                   /* order is here important */
     int ref_count;
 #else
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
     short ref_count;
 #endif
 #endif
-    union 
-    {
+    union {
 #if (defined(__x86_64__) || defined(_M_X64))
         double fval;
         long long ival;
@@ -86,17 +85,16 @@ typedef struct  cst_val_atom_struct {
     } v;
 } cst_val_atom;
 
-typedef struct  cst_val_struct {
-    union
-    {
-	cst_val_cons cc;
-	cst_val_atom a;
+typedef struct cst_val_struct {
+    union {
+        cst_val_cons cc;
+        cst_val_atom a;
     } c;
 } cst_val;
 
 typedef struct cst_val_def_struct {
     const char *name;
-    void (*delete_function)(void *);
+    void (*delete_function) (void *);
 } cst_val_def;
 
 /* Constructor functions */
@@ -141,15 +139,15 @@ int val_equal(const cst_val *a, const cst_val *b);
 int val_less(const cst_val *a, const cst_val *b);
 int val_greater(const cst_val *a, const cst_val *b);
 int val_member(const cst_val *a, const cst_val *b);
-int val_member_string (const char *a, const cst_val *b);
+int val_member_string(const char *a, const cst_val *b);
 int val_stringp(const cst_val *a);
-const cst_val *val_assoc_string(const char *v1,const cst_val *al);
+const cst_val *val_assoc_string(const char *v1, const cst_val *al);
 
-void val_print(cst_file fd,const cst_val *v);
+void val_print(cst_file fd, const cst_val *v);
 cst_val *val_readlist_string(const char *str);
 
 cst_val *val_reverse(cst_val *v);
-cst_val *val_append(cst_val *a,cst_val *b);
+cst_val *val_append(cst_val *a, cst_val *b);
 int val_length(const cst_val *l);
 cst_val *cst_utf8_explode(const cst_string *utf8string);
 cst_string *cst_implode(const cst_val *string_list);
@@ -168,6 +166,5 @@ extern const cst_val_def cst_val_defs[];
 
 /* Generic pointer vals */
 typedef void cst_userdata;
-CST_VAL_USER_TYPE_DCLS(userdata,cst_userdata)
-
+CST_VAL_USER_TYPE_DCLS(userdata, cst_userdata)
 #endif

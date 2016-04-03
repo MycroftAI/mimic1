@@ -50,14 +50,14 @@
 #include "cst_track.h"
 #include "cst_wave.h"
 #include "cst_audio.h"
-#include "cst_synth.h" /* for dur_stat */
+#include "cst_synth.h"          /* for dur_stat */
 
 typedef struct cst_cg_db_struct {
     /* Please do not change this structure, but if you do only add things
        to the end of the struct.  If you change please modify dump/load  
        voice too (in cst_cg_dump_voice and cst_cg_map) */
     const char *name;
-    const char * const *types;
+    const char *const *types;
     int num_types;
 
     int sample_rate;
@@ -65,10 +65,10 @@ typedef struct cst_cg_db_struct {
     float f0_mean, f0_stddev;
 
     /* Cluster trees */
-    const cst_cart * const *f0_trees; 
+    const cst_cart *const *f0_trees;
 
     int num_param_models;
-    const cst_cart *** param_trees;
+    const cst_cart ***param_trees;
 
     const cst_cart *spamf0_accent_tree; /* spam accent tree */
     const cst_cart *spamf0_phrase_tree; /* spam phrase tree */
@@ -76,28 +76,28 @@ typedef struct cst_cg_db_struct {
     /* Model params e.g. mceps, deltas intersliced with stddevs */
     int *num_channels;
     int *num_frames;
-    const unsigned short *** model_vectors;
+    const unsigned short ***model_vectors;
 
     int num_channels_spamf0_accent;
     int num_frames_spamf0_accent;
-    const float * const * spamf0_accent_vectors;
+    const float *const *spamf0_accent_vectors;
 
     /* Currently shared between different models */
-    const float *model_min;    /* for vector coeffs encoding */
-    const float *model_range;  /* for vector coeffs encoding */
+    const float *model_min;     /* for vector coeffs encoding */
+    const float *model_range;   /* for vector coeffs encoding */
 
-    float frame_advance; 
+    float frame_advance;
 
     /* duration models (cart + phonedurs) */
     int num_dur_models;
-    const dur_stat *** dur_stats;
-    const cst_cart ** dur_cart;
+    const dur_stat ***dur_stats;
+    const cst_cart **dur_cart;
 
     /* phone to states map */
-    const char * const * const *phone_states;
+    const char *const *const *phone_states;
 
-    /* Other parameters */    
-    int do_mlpg;  /* implies deltas are in the model_vectors */
+    /* Other parameters */
+    int do_mlpg;                /* implies deltas are in the model_vectors */
     float *dynwin;
     int dynwinsize;
 
@@ -110,12 +110,12 @@ typedef struct cst_cg_db_struct {
     /* filters for Mixed Excitation */
     int ME_num;
     int ME_order;
-    const double * const *me_h;  
+    const double *const *me_h;
 
     int spamf0;
     float gain;
 
-    int freeable;  /* doesn't get dumped, but 1 when this a freeable struct */
+    int freeable;               /* doesn't get dumped, but 1 when this a freeable struct */
 
 } cst_cg_db;
 
@@ -123,18 +123,18 @@ typedef struct cst_cg_db_struct {
 #define CG_MODEL_VECTOR(M,N,X,Y)                                        \
     (M->model_min[Y]+((float)(M->N[X][Y])/65535.0*M->model_range[Y]))
 
-CST_VAL_USER_TYPE_DCLS(cg_db,cst_cg_db)
-void delete_cg_db(cst_cg_db *db);
+CST_VAL_USER_TYPE_DCLS(cg_db, cst_cg_db)
+     void delete_cg_db(cst_cg_db *db);
 
-cst_utterance *cg_synth(cst_utterance *utt);
-cst_wave *mlsa_resynthesis(const cst_track *t, 
-                           const cst_track *str, 
-                           cst_cg_db *cg_db,
-                           cst_audio_streaming_info *asc);
-cst_track *mlpg(const cst_track *param_track, cst_cg_db *cg_db);
+     cst_utterance *cg_synth(cst_utterance *utt);
+     cst_wave *mlsa_resynthesis(const cst_track *t,
+                                const cst_track *str,
+                                cst_cg_db *cg_db,
+                                cst_audio_streaming_info *asc);
+     cst_track *mlpg(const cst_track *param_track, cst_cg_db *cg_db);
 
-cst_voice *cst_cg_load_voice(const char *voxdir,
-                             const cst_lang lang_table[]);
-int cst_cg_dump_voice(const cst_voice *v,const cst_string *filename);
+     cst_voice *cst_cg_load_voice(const char *voxdir,
+                                  const cst_lang lang_table[]);
+     int cst_cg_dump_voice(const cst_voice *v, const cst_string *filename);
 
 #endif

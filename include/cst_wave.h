@@ -46,7 +46,7 @@
 #include "cst_endian.h"
 #include "cst_val.h"
 
-typedef struct  cst_wave_struct {
+typedef struct cst_wave_struct {
     const char *type;
     int sample_rate;
     int num_samples;
@@ -54,7 +54,7 @@ typedef struct  cst_wave_struct {
     short *samples;
 } cst_wave;
 
-typedef struct  cst_wave_header_struct {
+typedef struct cst_wave_header_struct {
     const char *type;
     int hsize;
     int num_bytes;
@@ -80,7 +80,7 @@ cst_wave *concat_wave(cst_wave *dest, const cst_wave *src);
 int cst_wave_save(cst_wave *w, const char *filename, const char *type);
 int cst_wave_save_riff(cst_wave *w, const char *filename);
 int cst_wave_save_raw(cst_wave *w, const char *filename);
-int cst_wave_append_riff(cst_wave *w,const char *filename);
+int cst_wave_append_riff(cst_wave *w, const char *filename);
 
 int cst_wave_save_riff_fd(cst_wave *w, cst_file fd);
 int cst_wave_save_raw_fd(cst_wave *w, cst_file fd);
@@ -88,39 +88,39 @@ int cst_wave_save_raw_fd(cst_wave *w, cst_file fd);
 int cst_wave_load(cst_wave *w, const char *filename, const char *type);
 int cst_wave_load_riff(cst_wave *w, const char *filename);
 int cst_wave_load_raw(cst_wave *w, const char *filename,
-				const char *bo, int sample_rate);
+                      const char *bo, int sample_rate);
 
-int cst_wave_load_riff_header(cst_wave_header *header,cst_file fd);
+int cst_wave_load_riff_header(cst_wave_header *header, cst_file fd);
 int cst_wave_load_riff_fd(cst_wave *w, cst_file fd);
-int cst_wave_load_raw_fd (cst_wave *w, cst_file fd,
-				    const char *bo, int sample_rate);
+int cst_wave_load_raw_fd(cst_wave *w, cst_file fd,
+                         const char *bo, int sample_rate);
 
-void cst_wave_resize(cst_wave *w,int samples, int num_channels);
+void cst_wave_resize(cst_wave *w, int samples, int num_channels);
 void cst_wave_resample(cst_wave *w, int sample_rate);
 void cst_wave_rescale(cst_wave *w, int factor);
 
 /* Resampling code */
 typedef struct cst_rateconv_struct {
-	int channels;           /* what do you think? */
-	int up, down;           /* up/down sampling ratio */
+    int channels;               /* what do you think? */
+    int up, down;               /* up/down sampling ratio */
 
-	double gain;            /* output gain */
-	int lag;                /* lag time (in samples) */
-	int *sin, *sout, *coep; /* filter buffers, coefficients */
+    double gain;                /* output gain */
+    int lag;                    /* lag time (in samples) */
+    int *sin, *sout, *coep;     /* filter buffers, coefficients */
 
-	/* n.b. outsize is the minimum buffer size for
-           cst_rateconv_out() when streaming */
-	int insize, outsize;    /* size of filter buffers */
-	int incount;		/* amount of input data */
-	int len;		/* size of filter */
+    /* n.b. outsize is the minimum buffer size for
+       cst_rateconv_out() when streaming */
+    int insize, outsize;        /* size of filter buffers */
+    int incount;                /* amount of input data */
+    int len;                    /* size of filter */
 
-	/* internal foo coefficients */
-	double fsin, fgk, fgg;
-	/* internal counters */
-	int inbaseidx, inoffset, cycctr, outidx;
+    /* internal foo coefficients */
+    double fsin, fgk, fgg;
+    /* internal counters */
+    int inbaseidx, inoffset, cycctr, outidx;
 } cst_rateconv;
 
-cst_rateconv * new_rateconv(int up, int down, int channels);
+cst_rateconv *new_rateconv(int up, int down, int channels);
 void delete_rateconv(cst_rateconv *filt);
 int cst_rateconv_in(cst_rateconv *filt, const short *inptr, int max);
 int cst_rateconv_leadout(cst_rateconv *filt);
@@ -135,12 +135,12 @@ int cst_rateconv_out(cst_rateconv *filt, short *outptr, int max);
 
 /* Sun/Next header, short and sweet, note its always BIG_ENDIAN though */
 typedef struct {
-    unsigned int    magic;	/* magic number */
-    unsigned int    hdr_size;	/* size of this header */
-    int             data_size;	/* length of data (optional) */
-    unsigned int    encoding;	/* data encoding format */
-    unsigned int    sample_rate; /* samples per second */
-    unsigned int    channels;	 /* number of interleaved channels */
+    unsigned int magic;         /* magic number */
+    unsigned int hdr_size;      /* size of this header */
+    int data_size;              /* length of data (optional) */
+    unsigned int encoding;      /* data encoding format */
+    unsigned int sample_rate;   /* samples per second */
+    unsigned int channels;      /* number of interleaved channels */
 } snd_header;
 
 #define CST_SND_MAGIC (unsigned int)0x2e736e64
@@ -153,11 +153,10 @@ unsigned char cst_short_to_ulaw(short sample);
 short cst_ulaw_to_short(unsigned char ulawbyte);
 
 #define CST_G721_LEADIN 8
-unsigned char *cst_g721_decode(int *actual_size,int size, 
+unsigned char *cst_g721_decode(int *actual_size, int size,
                                const unsigned char *packed_residual);
-unsigned char *cst_g721_encode(int *packed_size,int actual_size, 
+unsigned char *cst_g721_encode(int *packed_size, int actual_size,
                                const unsigned char *unpacked_residual);
 
-CST_VAL_USER_TYPE_DCLS(wave,cst_wave)
-
+CST_VAL_USER_TYPE_DCLS(wave, cst_wave)
 #endif

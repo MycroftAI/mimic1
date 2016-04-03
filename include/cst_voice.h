@@ -56,16 +56,15 @@ struct cst_voice_struct {
     /* This hook is called (from utt_init()) after the input text (if
        any) has been set and voice features have been copied in, but
        before synthesis. */
-    cst_utterance *(*utt_init)(cst_utterance *u,
-			       struct cst_voice_struct *v);
+    cst_utterance *(*utt_init) (cst_utterance *u, struct cst_voice_struct *v);
 };
 typedef struct cst_voice_struct cst_voice;
 
 /* Hold pointers to language and lexicon init function */
 struct cst_lang_struct {
     const char *lang;
-    void (*lang_init)(cst_voice *vox);
-    cst_lexicon *(*lex_init)();
+    void (*lang_init) (cst_voice *vox);
+    cst_lexicon *(*lex_init) ();
 };
 typedef struct cst_lang_struct cst_lang;
 
@@ -73,6 +72,5 @@ typedef struct cst_lang_struct cst_lang;
 cst_voice *new_voice();
 void delete_voice(cst_voice *u);
 
-CST_VAL_USER_TYPE_DCLS(voice,cst_voice)
-
+CST_VAL_USER_TYPE_DCLS(voice, cst_voice)
 #endif
