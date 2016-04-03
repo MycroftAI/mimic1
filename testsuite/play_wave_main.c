@@ -49,22 +49,22 @@ int main(int argc, char **argv)
 
     if (argc == 1)
     {
-	fprintf(stderr,"usage: play_wave WAVEFILE\n");
-	return 1;
+        fprintf(stderr, "usage: play_wave WAVEFILE\n");
+        return 1;
     }
 
-    for (i=1; i<argc; i++)
+    for (i = 1; i < argc; i++)
     {
-	w = new_wave();
-	if (cst_wave_load_riff(w,argv[i]) != CST_OK_FORMAT)
-	{
-	    fprintf(stderr,
-		    "play_wave: can't read file or wrong format \"%s\"\n",
-		    argv[i]);
-	    continue;
-	}
-	play_wave(w);
-	delete_wave(w);
+        w = new_wave();
+        if (cst_wave_load_riff(w, argv[i]) != CST_OK_FORMAT)
+        {
+            fprintf(stderr,
+                    "play_wave: can't read file or wrong format \"%s\"\n",
+                    argv[i]);
+            continue;
+        }
+        play_wave(w);
+        delete_wave(w);
     }
 
     return 0;

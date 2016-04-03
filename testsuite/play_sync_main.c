@@ -46,14 +46,14 @@ static int my_call_back(cst_item *i)
 {
     const char *name;
 
-    name = item_feat_string(i,"name");
-    if (cst_streq(name,"__silence__"))
-	printf("\n");
+    name = item_feat_string(i, "name");
+    if (cst_streq(name, "__silence__"))
+        printf("\n");
     else
     {
 /*	printf("%s %f\n",name,item_feat_float(i,"end")); */
-	printf("%s ",name);
-	fflush(stdout);
+        printf("%s ", name);
+        fflush(stdout);
     }
 
     return CST_OK_FORMAT;
@@ -67,19 +67,19 @@ int main(int argc, char **argv)
 
     if (argc != 3)
     {
-	fprintf(stderr,"usage: play_wave_sync WAVEFILE LABELFILE\n");
-	return 1;
+        fprintf(stderr, "usage: play_wave_sync WAVEFILE LABELFILE\n");
+        return 1;
     }
 
     w = new_wave();
-    if (cst_wave_load_riff(w,argv[1]) != CST_OK_FORMAT)
-	return -1;
+    if (cst_wave_load_riff(w, argv[1]) != CST_OK_FORMAT)
+        return -1;
     u = new_utterance();
-    r = utt_relation_create(u,"FOO");
-    if (relation_load(r,argv[2]) != CST_OK_FORMAT)
-	return -1;
-    
-    play_wave_sync(w,r,my_call_back);
+    r = utt_relation_create(u, "FOO");
+    if (relation_load(r, argv[2]) != CST_OK_FORMAT)
+        return -1;
+
+    play_wave_sync(w, r, my_call_back);
 
     return 0;
 }

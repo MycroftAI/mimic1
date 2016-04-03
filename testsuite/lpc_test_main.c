@@ -45,47 +45,47 @@
 int main(int argc, char **argv)
 {
     /* need that cool argument parser */
-    cst_wave *w,*res;
+    cst_wave *w, *res;
     cst_track *lpc;
     cst_lpcres *lpcres;
-    int i,j;
+    int i, j;
     float lpcmin = -2.709040;
-    float lpcrange = 2.328840+2.709040;
+    float lpcrange = 2.328840 + 2.709040;
     unsigned short *bbb;
 
     if (argc != 4)
     {
-	fprintf(stderr,"usage: lpc_test LPC RESIDUAL WAVEFILE\n");
-	return 1;
+        fprintf(stderr, "usage: lpc_test LPC RESIDUAL WAVEFILE\n");
+        return 1;
     }
 
     lpc = new_track();
-    cst_track_load_est(lpc,argv[1]);
+    cst_track_load_est(lpc, argv[1]);
     res = new_wave();
-    cst_wave_load_riff(res,argv[2]);
+    cst_wave_load_riff(res, argv[2]);
 
     lpcres = new_lpcres();
-    lpcres_resize_frames(lpcres,lpc->num_frames);
-    lpcres->num_channels = lpc->num_channels-1;
-    for (i=0; i<lpc->num_frames; i++)
+    lpcres_resize_frames(lpcres, lpc->num_frames);
+    lpcres->num_channels = lpc->num_channels - 1;
+    for (i = 0; i < lpc->num_frames; i++)
     {
-	bbb = cst_alloc(unsigned short,lpc->num_channels-1);
-	for (j=1; j<lpc->num_channels; j++)
-	    bbb[j-1] = (unsigned short)
-		(((lpc->frames[i][j]-lpcmin)/lpcrange)*65535);
-	lpcres->frames[i] = bbb;
-	lpcres->sizes[i] = track_frame_shift(lpc,i)*res->sample_rate;
+        bbb = cst_alloc(unsigned short, lpc->num_channels - 1);
+        for (j = 1; j < lpc->num_channels; j++)
+            bbb[j - 1] = (unsigned short)
+                (((lpc->frames[i][j] - lpcmin) / lpcrange) * 65535);
+        lpcres->frames[i] = bbb;
+        lpcres->sizes[i] = track_frame_shift(lpc, i) * res->sample_rate;
     }
-    lpcres_resize_samples(lpcres,res->num_samples);
+    lpcres_resize_samples(lpcres, res->num_samples);
     lpcres->lpc_min = lpcmin;
     lpcres->lpc_range = lpcrange;
     lpcres->sample_rate = res->sample_rate;
-    for (i=0; i<res->num_samples; i++)
-	lpcres->residual[i] = cst_short_to_ulaw(res->samples[i]);
-    
+    for (i = 0; i < res->num_samples; i++)
+        lpcres->residual[i] = cst_short_to_ulaw(res->samples[i]);
+
     w = lpc_resynth(lpcres);
 
-    cst_wave_save_riff(w,argv[3]);
+    cst_wave_save_riff(w, argv[3]);
 
     return 0;
 }

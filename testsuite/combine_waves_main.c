@@ -53,26 +53,27 @@ cst_val *get_wavelist(const char *wavelistfile)
     cst_val *l = 0;
     cst_tokenstream *ts;
     const char *token;
-    int i=0;
+    int i = 0;
 
     ts = ts_open(wavelistfile, " \n\t", "", ".\"", "\".!");
     if (!ts)
     {
-	fprintf(stderr,"combine_waves: can't open \"%s\"\n",wavelistfile);
-	return 0;
+        fprintf(stderr, "combine_waves: can't open \"%s\"\n", wavelistfile);
+        return 0;
     }
 
-    while ((token=ts_get(ts)) != 0)
+    while ((token = ts_get(ts)) != 0)
     {
-	l = cons_val(string_val(token),l);
-	i++;
+        l = cons_val(string_val(token), l);
+        i++;
     }
 
-    if (i%2 != 0)
+    if (i % 2 != 0)
     {
-	fprintf(stderr,"combine_waves: doesn't have matched pairs \"%s\"\n",wavelistfile);
-	delete_val(l);
-	l = 0;
+        fprintf(stderr, "combine_waves: doesn't have matched pairs \"%s\"\n",
+                wavelistfile);
+        delete_val(l);
+        l = 0;
     }
 
     ts_close(ts);
@@ -88,55 +89,55 @@ int main(int argc, char **argv)
     const cst_val *w;
     cst_val *wavelist;
     cst_features *args;
-    int i,j;
+    int i, j;
     float ntime;
     int stime;
     const char *nwfile;
 
     args = new_features();
     files =
-        cst_args(argv,argc,
+        cst_args(argv, argc,
                  "usage: combine_waves OPTIONS\n"
                  "Combine waves into single waveform\n"
-		 "-o <string>  Output waveform\n"
-		 "-f <int>     Input sample rate (for raw input)\n"
-		 "-itype <string>  Input type, raw or headered\n"
-		 "-wavelist <string>  File containing times and wave filenames\n",
+                 "-o <string>  Output waveform\n"
+                 "-f <int>     Input sample rate (for raw input)\n"
+                 "-itype <string>  Input type, raw or headered\n"
+                 "-wavelist <string>  File containing times and wave filenames\n",
                  args);
 
-    wavelist = get_wavelist(get_param_string(args,"-wavelist","-"));
+    wavelist = get_wavelist(get_param_string(args, "-wavelist", "-"));
 
     if (wavelist == 0)
-	return -1;
+        return -1;
 
     all = new_wave();
     for (w = wavelist; w; w = val_cdr(w))
     {
-	ntime = decode_time(val_string(val_car(w)));
-	nwfile = val_string(val_car(val_cdr(w)));
+        ntime = decode_time(val_string(val_car(w)));
+        nwfile = val_string(val_car(val_cdr(w)));
 
-	nw = new_wave();
-	if (cst_wave_load_riff(nw,nwfile) != CST_OK_FORMAT)
-	{
-	    fprintf(stderr,
-		    "combine_waves: can't read file or wrong format \"%s\"\n",
-		    nwfile);
-	    continue;
-	}
+        nw = new_wave();
+        if (cst_wave_load_riff(nw, nwfile) != CST_OK_FORMAT)
+        {
+            fprintf(stderr,
+                    "combine_waves: can't read file or wrong format \"%s\"\n",
+                    nwfile);
+            continue;
+        }
 
-	stime = ntime * nw->sample_rate;
+        stime = ntime * nw->sample_rate;
 
-	cst_wave_resize(all,stime+nw->num_samples,1);
-	
-	for (i=0,j=stime; i<nw->num_samples; i++,j++)
-	{
-	    /* this will cause overflows */
-	    all->samples[j] += nw->samples[i];
-	}
-	delete_wave(nw);
+        cst_wave_resize(all, stime + nw->num_samples, 1);
+
+        for (i = 0, j = stime; i < nw->num_samples; i++, j++)
+        {
+            /* this will cause overflows */
+            all->samples[j] += nw->samples[i];
+        }
+        delete_wave(nw);
     }
 
-    cst_wave_save_riff(all,get_param_string(args,"-o","-"));
+    cst_wave_save_riff(all, get_param_string(args, "-o", "-"));
 
     return 0;
 }

@@ -45,7 +45,7 @@
 
 cst_voice *register_cmu_us_kal();
 
-int audio_stream_chunk_by_word(const cst_wave *w, int start, int size, 
+int audio_stream_chunk_by_word(const cst_wave *w, int start, int size,
                                int last, cst_audio_streaming_info *asi)
 {
     /* Called with new samples from start for size samples */
@@ -62,34 +62,35 @@ int audio_stream_chunk_by_word(const cst_wave *w, int start, int size,
     /*    printf("in by word streaming\n"); */
 
     if (start == 0)
-        ad = audio_open(w->sample_rate,w->num_channels,CST_AUDIO_LINEAR16);
+        ad = audio_open(w->sample_rate, w->num_channels, CST_AUDIO_LINEAR16);
 
     if (asi->item == NULL)
-        asi->item = relation_head(utt_relation(asi->utt,"Token"));
+        asi->item = relation_head(utt_relation(asi->utt, "Token"));
     if (asi->item)
     {
-        start_time = mimic_ffeature_float(asi->item,"R:Token.daughter1.R:SylStructure.daughter1.daughter1.R:Segment.p.end");
-        start_sample = (int)(start_time * (float)w->sample_rate);
+        start_time =
+            mimic_ffeature_float(asi->item,
+                                 "R:Token.daughter1.R:SylStructure.daughter1.daughter1.R:Segment.p.end");
+        start_sample = (int) (start_time * (float) w->sample_rate);
         /*        printf("start_time %f start_sample %d start %d\n",
-                  start_time,start_sample,start); */
-        if ((start_sample >= start) &&
-            (start_sample < start+size))
+           start_time,start_sample,start); */
+        if ((start_sample >= start) && (start_sample < start + size))
         {
-            ws = mimic_ffeature_string(asi->item,"whitespace");
-            prepunc = mimic_ffeature_string(asi->item,"prepunctuation");
-            if (cst_streq("0",prepunc))
+            ws = mimic_ffeature_string(asi->item, "whitespace");
+            prepunc = mimic_ffeature_string(asi->item, "prepunctuation");
+            if (cst_streq("0", prepunc))
                 prepunc = "";
-            token = mimic_ffeature_string(asi->item,"name");
-            postpunc = mimic_ffeature_string(asi->item,"punc");
-            if (cst_streq("0",postpunc))
+            token = mimic_ffeature_string(asi->item, "name");
+            postpunc = mimic_ffeature_string(asi->item, "punc");
+            if (cst_streq("0", postpunc))
                 postpunc = "";
-            printf("%s%s%s%s",ws,prepunc,token,postpunc);
+            printf("%s%s%s%s", ws, prepunc, token, postpunc);
             fflush(stdout);
             asi->item = item_next(asi->item);
         }
-        
+
     }
-    n = audio_write(ad,&w->samples[start],size*sizeof(short));
+    n = audio_write(ad, &w->samples[start], size * sizeof(short));
 
     if (last == 1)
     {
@@ -111,8 +112,8 @@ int main(int argc, char **argv)
 
     if (argc != 2)
     {
-	fprintf(stderr,"usage: TEXTFILE\n");
-	return 1;
+        fprintf(stderr, "usage: TEXTFILE\n");
+        return 1;
     }
 
     mimic_init();
@@ -121,9 +122,9 @@ int main(int argc, char **argv)
 
     asi = new_audio_streaming_info();
     asi->asc = audio_stream_chunk_by_word;
-    feat_set(v->features,"streaming_info",audio_streaming_info_val(asi));
+    feat_set(v->features, "streaming_info", audio_streaming_info_val(asi));
 
-    mimic_file_to_speech(argv[1],v,"none"); /* streaming will play */
+    mimic_file_to_speech(argv[1], v, "none");   /* streaming will play */
 
     mimic_exit();
     return 0;

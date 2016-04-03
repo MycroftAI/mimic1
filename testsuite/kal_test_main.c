@@ -58,8 +58,8 @@ int main(int argc, char **argv)
 
     if (argc != 3)
     {
-	fprintf(stderr,"usage: TEXT WAVEFILE\n");
-	return 1;
+        fprintf(stderr, "usage: TEXT WAVEFILE\n");
+        return 1;
     }
 
     mimic_init();
@@ -67,19 +67,19 @@ int main(int argc, char **argv)
     v = register_cmu_us_kal();
     durs = 0.0;
 
-    for (i=0; i<2; i++)
+    for (i = 0; i < 2; i++)
     {
-	u = mimic_synth_text(argv[1],v);
-	w = utt_wave(u);
-	durs += (float)w->num_samples/(float)w->sample_rate;
-	
-	if (cst_streq(argv[2],"play"))
-	    play_wave(w);
-	else if (!cst_streq(argv[2],"none"))
-	    cst_wave_save_riff(w,argv[2]);
-	delete_utterance(u);
+        u = mimic_synth_text(argv[1], v);
+        w = utt_wave(u);
+        durs += (float) w->num_samples / (float) w->sample_rate;
+
+        if (cst_streq(argv[2], "play"))
+            play_wave(w);
+        else if (!cst_streq(argv[2], "none"))
+            cst_wave_save_riff(w, argv[2]);
+        delete_utterance(u);
     }
-    printf("%f seconds of speech synthesized\n",durs);
+    printf("%f seconds of speech synthesized\n", durs);
 /*    muntrace(); */
 
     mimic_exit();
