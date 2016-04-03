@@ -5,7 +5,6 @@
 #include "cst_tokenstream.h"
 #include "cst_lexicon.h"
 
-
 void test_token(void)
 {
     cst_tokenstream *fd;
@@ -39,7 +38,8 @@ void test_token(void)
     ts_close(fd);
 }
 
-TEST_LIST = {
-    { "tokens", test_token },
+TEST_LIST =
+{
+    {"tokens", test_token},
     {0}
 };

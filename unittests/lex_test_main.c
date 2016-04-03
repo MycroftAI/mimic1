@@ -51,16 +51,17 @@
 extern cst_lexicon cmu_lex;
 void cmu_lex_init();
 
-static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
-        const char *expected_lexes)
+static void
+lookup_and_test(cst_lexicon *l, const char *word,
+                const char *feats, const char *expected_lexes)
 {
     cst_val *p;
     const cst_val *syl;
 
     char *tok;
-    char * expected_str = malloc(strlen(expected_lexes) + 1);
+    char *expected_str = malloc(strlen(expected_lexes) + 1);
 
-    p = lex_lookup(l,word, feats, NULL);
+    p = lex_lookup(l, word, feats, NULL);
     strcpy(expected_str, expected_lexes);
     tok = strtok(expected_str, " ");
     for (syl = p; syl;)
@@ -78,21 +79,21 @@ static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
 void test_activism(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"activism", NULL, "ae1 k t ih0 v ih1 z ax0 m");
+    lookup_and_test(&cmu_lex, "activism", NULL, "ae1 k t ih0 v ih1 z ax0 m");
 }
 
 void test_chronicles(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"chronicles", NULL, "k r aa1 n ax0 k ax0 l z");
+    lookup_and_test(&cmu_lex, "chronicles", NULL, "k r aa1 n ax0 k ax0 l z");
 }
 
 void test_project(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"project", "n", "p r aa1 jh eh0 k t");
-    lookup_and_test(&cmu_lex,"project", "v", "p r ax0 jh eh1 k t");
-    lookup_and_test(&cmu_lex,"project", "j", "p r aa1 jh eh0 k t");
+    lookup_and_test(&cmu_lex, "project", "n", "p r aa1 jh eh0 k t");
+    lookup_and_test(&cmu_lex, "project", "v", "p r ax0 jh eh1 k t");
+    lookup_and_test(&cmu_lex, "project", "j", "p r aa1 jh eh0 k t");
 }
 
 void test_atypical(void)
@@ -107,17 +108,16 @@ void test_zzzz(void)
     lookup_and_test(&cmu_lex, "zzzz", NULL, "z iy1 z");
 }
 
-
 void test_crax(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"crax",NULL, "k r ae1 k s");
+    lookup_and_test(&cmu_lex, "crax", NULL, "k r ae1 k s");
 }
-    
+
 void test_a(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"a","dt", "ax0");
+    lookup_and_test(&cmu_lex, "a", "dt", "ax0");
 }
 
 TEST_LIST = {
