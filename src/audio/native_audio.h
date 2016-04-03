@@ -200,7 +200,7 @@
 int AUDIO_INIT_NATIVE();
 cst_audiodev *AUDIO_OPEN_NATIVE(int sps, int channels, cst_audiofmt fmt);
 int AUDIO_CLOSE_NATIVE(cst_audiodev *ad);
-int AUDIO_WRITE_NATIVE(cst_audiodev *ad,void *buff,int num_bytes);
+int AUDIO_WRITE_NATIVE(cst_audiodev *ad, void *buff, int num_bytes);
 int AUDIO_DRAIN_NATIVE(cst_audiodev *ad);
 int AUDIO_FLUSH_NATIVE(cst_audiodev *ad);
 int AUDIO_EXIT_NATIVE();

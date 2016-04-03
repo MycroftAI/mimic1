@@ -45,12 +45,11 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
-CST_VAL_REGISTER_TYPE(audio_streaming_info,cst_audio_streaming_info)
-
-cst_audio_streaming_info *new_audio_streaming_info(void)
+CST_VAL_REGISTER_TYPE(audio_streaming_info, cst_audio_streaming_info)
+     cst_audio_streaming_info *new_audio_streaming_info(void)
 {
-    cst_audio_streaming_info *asi = 
-        cst_alloc(struct cst_audio_streaming_info_struct,1);
+    cst_audio_streaming_info *asi =
+        cst_alloc(struct cst_audio_streaming_info_struct, 1);
 
     asi->min_buffsize = 256;
     asi->asc = NULL;
@@ -66,7 +65,7 @@ void delete_audio_streaming_info(cst_audio_streaming_info *asi)
     return;
 }
 
-int audio_stream_chunk(const cst_wave *w, int start, int size, 
+int audio_stream_chunk(const cst_wave *w, int start, int size,
                        int last, cst_audio_streaming_info *asi)
 {
     /* Called with new samples from start for size samples */
@@ -78,9 +77,9 @@ int audio_stream_chunk(const cst_wave *w, int start, int size,
     static cst_audiodev *ad = 0;
 
     if (start == 0)
-        ad = audio_open(w->sample_rate,w->num_channels,CST_AUDIO_LINEAR16);
+        ad = audio_open(w->sample_rate, w->num_channels, CST_AUDIO_LINEAR16);
 
-    audio_write(ad,&w->samples[start],size*sizeof(short));
+    audio_write(ad, &w->samples[start], size * sizeof(short));
 
     if (last == 1)
     {
@@ -91,4 +90,3 @@ int audio_stream_chunk(const cst_wave *w, int start, int size,
     /* if you want to stop return CST_AUDIO_STREAM_STOP */
     return CST_AUDIO_STREAM_CONT;
 }
-

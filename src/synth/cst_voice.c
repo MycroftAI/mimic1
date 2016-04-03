@@ -41,11 +41,10 @@
 #include "cst_voice.h"
 #include "mimic.h"
 
-CST_VAL_REGISTER_TYPE(voice,cst_voice)
-
+CST_VAL_REGISTER_TYPE(voice, cst_voice)
 cst_voice *new_voice()
 {
-    cst_voice *v = cst_alloc(struct cst_voice_struct,1);
+    cst_voice *v = cst_alloc(struct cst_voice_struct, 1);
 
     v->features = new_features();
     v->ffunctions = new_features();
@@ -57,15 +56,14 @@ void delete_voice(cst_voice *v)
 {
     if (v)
     {
-        if (feat_present(v->features,"voxdata"))
+        if (feat_present(v->features, "voxdata"))
         {
-            if (feat_present(v->features,"clunit_db"))
+            if (feat_present(v->features, "clunit_db"))
                 mimic_munmap_clunit_voxdata(v);
         }
 
-	delete_features(v->features);
-	delete_features(v->ffunctions);
-	cst_free(v);
+        delete_features(v->features);
+        delete_features(v->ffunctions);
+        cst_free(v);
     }
 }
-

@@ -52,18 +52,18 @@ cst_file cst_fopen(const char *path, int mode)
     if (cst_urlp(path))
         return cst_url_open(path);
     else if ((mode & CST_OPEN_WRITE) && (mode & CST_OPEN_READ))
-	strcpy(cmode, "r+");
+        strcpy(cmode, "r+");
     else if ((mode & CST_OPEN_APPEND) && (mode & CST_OPEN_READ))
-	strcpy(cmode, "a+");
+        strcpy(cmode, "a+");
     else if (mode & CST_OPEN_WRITE)
-	strcpy(cmode, "w");
+        strcpy(cmode, "w");
     else if (mode & CST_OPEN_APPEND)
-	strcpy(cmode, "a");
+        strcpy(cmode, "a");
     else if (mode & CST_OPEN_READ)
-	strcpy(cmode, "r");
+        strcpy(cmode, "r");
 
     if (mode & CST_OPEN_BINARY)
-	strcat(cmode, "b");
+        strcat(cmode, "b");
 
     return fopen(path, cmode);
 }
@@ -106,11 +106,11 @@ long cst_fseek(cst_file fh, long pos, int whence)
     int w = 0;
 
     if (whence == CST_SEEK_ABSOLUTE)
-	w = SEEK_SET;
+        w = SEEK_SET;
     else if (whence == CST_SEEK_RELATIVE)
-	w = SEEK_CUR;
+        w = SEEK_CUR;
     else if (whence == CST_SEEK_ENDREL)
-	w = SEEK_END;
+        w = SEEK_END;
 
     fseek(fh, pos, w);
 

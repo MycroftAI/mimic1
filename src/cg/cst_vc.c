@@ -21,7 +21,7 @@
 /*       of conditions and the following disclaimer.                 */
 /*                                                                   */
 /*    2. Any modifications must be clearly marked as such.           */
-/*                                                                   */    
+/*                                                                   */
 /*  NAGOYA INSTITUTE OF TECHNOLOGY, TOKYO INSITITUTE OF TECHNOLOGY,  */
 /*  HTS WORKING GROUP, AND THE CONTRIBUTORS TO THIS WORK DISCLAIM    */
 /*  ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL       */
@@ -59,8 +59,8 @@ LVECTOR xlvalloc(long length)
     LVECTOR x;
 
     length = MAX(length, 0);
-    x = cst_alloc(struct LVECTOR_STRUCT,1);
-    x->data = cst_alloc(long,MAX(length, 1));
+    x = cst_alloc(struct LVECTOR_STRUCT, 1);
+    x->data = cst_alloc(long, MAX(length, 1));
     x->imag = NULL;
     x->length = length;
 
@@ -69,14 +69,17 @@ LVECTOR xlvalloc(long length)
 
 void xlvfree(LVECTOR x)
 {
-    if (x != NULL) {
-	if (x->data != NULL) {
-	    cst_free(x->data);
-	}
-	if (x->imag != NULL) {
-	    cst_free(x->imag);
-	}
-	cst_free(x);
+    if (x != NULL)
+    {
+        if (x->data != NULL)
+        {
+            cst_free(x->data);
+        }
+        if (x->imag != NULL)
+        {
+            cst_free(x->imag);
+        }
+        cst_free(x);
     }
 
     return;
@@ -87,8 +90,8 @@ DVECTOR xdvalloc(long length)
     DVECTOR x;
 
     length = MAX(length, 0);
-    x = cst_alloc(struct DVECTOR_STRUCT,1);
-    x->data = cst_alloc(double,MAX(length, 1));
+    x = cst_alloc(struct DVECTOR_STRUCT, 1);
+    x->data = cst_alloc(double, MAX(length, 1));
     x->imag = NULL;
     x->length = length;
 
@@ -97,14 +100,17 @@ DVECTOR xdvalloc(long length)
 
 void xdvfree(DVECTOR x)
 {
-    if (x != NULL) {
-	if (x->data != NULL) {
-	    cst_free(x->data);
-	}
-	if (x->imag != NULL) {
-	    cst_free(x->imag);
-	}
-	cst_free(x);
+    if (x != NULL)
+    {
+        if (x->data != NULL)
+        {
+            cst_free(x->data);
+        }
+        if (x->imag != NULL)
+        {
+            cst_free(x->imag);
+        }
+        cst_free(x);
     }
 
     return;
@@ -112,10 +118,11 @@ void xdvfree(DVECTOR x)
 
 void dvialloc(DVECTOR x)
 {
-    if (x->imag != NULL) {
-	cst_free(x->imag);
+    if (x->imag != NULL)
+    {
+        cst_free(x->imag);
     }
-    x->imag = cst_alloc(double,x->length);
+    x->imag = cst_alloc(double, x->length);
 
     return;
 }
@@ -125,25 +132,32 @@ DVECTOR xdvcut(DVECTOR x, long offset, long length)
     long k;
     long pos;
     DVECTOR y;
-    
+
     y = xdvalloc(length);
-    if (x->imag != NULL) {
-	dvialloc(y);
+    if (x->imag != NULL)
+    {
+        dvialloc(y);
     }
 
-    for (k = 0; k < y->length; k++) {
-	pos = k + offset;
-	if (pos >= 0 && pos < x->length) {
-	    y->data[k] = x->data[pos];
-	    if (y->imag != NULL) {
-		y->imag[k] = x->imag[pos];
-	    }
-	} else {
-	    y->data[k] = 0.0;
-	    if (y->imag != NULL) {
-		y->imag[k] = 0.0;
-	    }
-	}
+    for (k = 0; k < y->length; k++)
+    {
+        pos = k + offset;
+        if (pos >= 0 && pos < x->length)
+        {
+            y->data[k] = x->data[pos];
+            if (y->imag != NULL)
+            {
+                y->imag[k] = x->imag[pos];
+            }
+        }
+        else
+        {
+            y->data[k] = 0.0;
+            if (y->imag != NULL)
+            {
+                y->imag[k] = 0.0;
+            }
+        }
     }
 
     return y;
@@ -154,10 +168,10 @@ DMATRIX xdmalloc(long row, long col)
     DMATRIX matrix;
     int i;
 
-    matrix = cst_alloc(struct DMATRIX_STRUCT,1);
-    matrix->data = cst_alloc(double *,row);
-    for (i=0; i<row; i++)
-        matrix->data[i] = cst_alloc(double,col);
+    matrix = cst_alloc(struct DMATRIX_STRUCT, 1);
+    matrix->data = cst_alloc(double *, row);
+    for (i = 0; i < row; i++)
+        matrix->data[i] = cst_alloc(double, col);
     matrix->imag = NULL;
     matrix->row = row;
     matrix->col = col;
@@ -169,18 +183,21 @@ void xdmfree(DMATRIX matrix)
 {
     int i;
 
-    if (matrix != NULL) {
-	if (matrix->data != NULL) {
-            for (i=0; i<matrix->row; i++)
+    if (matrix != NULL)
+    {
+        if (matrix->data != NULL)
+        {
+            for (i = 0; i < matrix->row; i++)
                 cst_free(matrix->data[i]);
             cst_free(matrix->data);
-	}
-	if (matrix->imag != NULL) {
-            for (i=0; i<matrix->row; i++)
+        }
+        if (matrix->imag != NULL)
+        {
+            for (i = 0; i < matrix->row; i++)
                 cst_free(matrix->imag[i]);
             cst_free(matrix->imag);
-	}
-	cst_free(matrix);
+        }
+        cst_free(matrix);
     }
 
     return;
@@ -192,26 +209,32 @@ DVECTOR xdvinit(double j, double incr, double n)
     long num;
     DVECTOR x;
 
-    if ((incr > 0.0 && j > n) || (incr < 0.0 && j < n)) {
-	x = xdvnull();
-	return x;
+    if ((incr > 0.0 && j > n) || (incr < 0.0 && j < n))
+    {
+        x = xdvnull();
+        return x;
     }
-    if (incr == 0.0) {
-	num = (long)n;
-	if (num <= 0) {
-	    x = xdvnull();
-	    return x;
-	}
-    } else {
-	num = LABS((long)((n - j) / incr)) + 1;
+    if (incr == 0.0)
+    {
+        num = (long) n;
+        if (num <= 0)
+        {
+            x = xdvnull();
+            return x;
+        }
     }
-    
+    else
+    {
+        num = LABS((long) ((n - j) / incr)) + 1;
+    }
+
     /* memory allocate */
     x = xdvalloc(num);
 
     /* initailize data */
-    for (k = 0; k < x->length; k++) {
-	x->data[k] = j + (k * incr);
+    for (k = 0; k < x->length; k++)
+    {
+        x->data[k] = j + (k * incr);
     }
 
     return x;
@@ -226,15 +249,18 @@ double dvmax(DVECTOR x, long *index)
 
     ind = 0;
     max = x->data[ind];
-    for (k = 1; k < x->length; k++) {
-	if (max < x->data[k]) {
-	    ind = k;
-	    max = x->data[k];
-	}
+    for (k = 1; k < x->length; k++)
+    {
+        if (max < x->data[k])
+        {
+            ind = k;
+            max = x->data[k];
+        }
     }
 
-    if (index != NULL) {
-	*index = ind;
+    if (index != NULL)
+    {
+        *index = ind;
     }
 
     return max;
@@ -248,15 +274,18 @@ double dvmin(DVECTOR x, long *index)
 
     ind = 0;
     min = x->data[ind];
-    for (k = 1; k < x->length; k++) {
-	if (min > x->data[k]) {
-	    ind = k;
-	    min = x->data[k];
-	}
+    for (k = 1; k < x->length; k++)
+    {
+        if (min > x->data[k])
+        {
+            ind = k;
+            min = x->data[k];
+        }
     }
 
-    if (index != NULL) {
-	*index = ind;
+    if (index != NULL)
+    {
+        *index = ind;
     }
 
     return min;
@@ -267,8 +296,9 @@ double dvsum(DVECTOR x)
     long k;
     double sum;
 
-    for (k = 0, sum = 0.0; k < x->length; k++) {
-	sum += x->data[k];
+    for (k = 0, sum = 0.0; k < x->length; k++)
+    {
+        sum += x->data[k];
     }
 
     return sum;

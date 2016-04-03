@@ -44,14 +44,14 @@
 #include "cst_alloc.h"
 
 typedef struct au_wince_pdata_struct {
-	HWAVEOUT wo;
-	HANDLE bevt;
-	HANDLE wevt;
-	LONG bcnt;
-  int in_reset;
-  void **fq;
-  int fqlen;
-  int fqmaxlen;
+    HWAVEOUT wo;
+    HANDLE bevt;
+    HANDLE wevt;
+    LONG bcnt;
+    int in_reset;
+    void **fq;
+    int fqlen;
+    int fqmaxlen;
 } au_wince_pdata;
 
 void add_to_free_queue(cst_audiodev *ad, void *datum)
@@ -61,7 +61,7 @@ void add_to_free_queue(cst_audiodev *ad, void *datum)
     if (pd->fqlen == pd->fqmaxlen && !(pd->fqmaxlen % 32))
     {
         pd->fqmaxlen += 32;
-        pd->fq = (void **)realloc(pd->fq, pd->fqmaxlen * sizeof(void *));
+        pd->fq = (void **) realloc(pd->fq, pd->fqmaxlen * sizeof(void *));
         if (!pd->fq)
         {
             cst_errmsg("Out of memory\n");
@@ -71,10 +71,9 @@ void add_to_free_queue(cst_audiodev *ad, void *datum)
     pd->fq[pd->fqlen++] = datum;
 }
 
-static void finish_header(HWAVEOUT drvr, WAVEHDR *hdr)
+static void finish_header(HWAVEOUT drvr, WAVEHDR * hdr)
 {
-    if (waveOutUnprepareHeader(drvr,hdr,sizeof(*hdr))
-        != MMSYSERR_NOERROR)
+    if (waveOutUnprepareHeader(drvr, hdr, sizeof(*hdr)) != MMSYSERR_NOERROR)
     {
         cst_errmsg("Failed to unprepare header %p\n", hdr);
         cst_error();
@@ -84,13 +83,14 @@ static void finish_header(HWAVEOUT drvr, WAVEHDR *hdr)
 }
 
 void CALLBACK sndbuf_done(HWAVEOUT drvr, UINT msg,
-			  DWORD udata, DWORD param1, DWORD param2)
+                          DWORD udata, DWORD param1, DWORD param2)
 {
-    WAVEHDR *hdr = (WAVEHDR *)param1;
-    cst_audiodev *ad = (cst_audiodev *)udata;
+    WAVEHDR *hdr = (WAVEHDR *) param1;
+    cst_audiodev *ad = (cst_audiodev *) udata;
     au_wince_pdata *pd = ad->platform_data;
 
-    if (msg == MM_WOM_DONE && hdr && (hdr->dwFlags & WHDR_DONE)) {
+    if (msg == MM_WOM_DONE && hdr && (hdr->dwFlags & WHDR_DONE))
+    {
         LONG c;
 
         c = InterlockedDecrement(&pd->bcnt);
@@ -98,7 +98,8 @@ void CALLBACK sndbuf_done(HWAVEOUT drvr, UINT msg,
             SetEvent(pd->bevt);
         if (c == 7)
             SetEvent(pd->wevt);
-        if (pd->in_reset) add_to_free_queue(ad, hdr);
+        if (pd->in_reset)
+            add_to_free_queue(ad, hdr);
     }
 }
 
@@ -110,12 +111,12 @@ cst_audiodev *audio_open_wince(int sps, int channels, int fmt)
     WAVEFORMATEX wfx;
     MMRESULT err;
 
-    ad = cst_alloc(cst_audiodev,1);
+    ad = cst_alloc(cst_audiodev, 1);
     ad->sps = ad->real_sps = sps;
     ad->channels = ad->real_channels = channels;
     ad->fmt = ad->real_fmt = fmt;
 
-    memset(&wfx,0,sizeof(wfx));
+    memset(&wfx, 0, sizeof(wfx));
     wfx.nChannels = channels;
     wfx.nSamplesPerSec = sps;
 
@@ -134,11 +135,10 @@ cst_audiodev *audio_open_wince(int sps, int channels, int fmt)
         cst_free(ad);
         cst_error();
     }
-    wfx.nBlockAlign = wfx.nChannels*wfx.wBitsPerSample/8;
-    wfx.nAvgBytesPerSec = wfx.nSamplesPerSec*wfx.nBlockAlign;
-    err = waveOutOpen(&wo,WAVE_MAPPER,&wfx,
-                      (DWORD)sndbuf_done,(DWORD)ad,
-                      CALLBACK_FUNCTION);
+    wfx.nBlockAlign = wfx.nChannels * wfx.wBitsPerSample / 8;
+    wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
+    err = waveOutOpen(&wo, WAVE_MAPPER, &wfx,
+                      (DWORD) sndbuf_done, (DWORD) ad, CALLBACK_FUNCTION);
     if (err != MMSYSERR_NOERROR)
     {
         cst_errmsg("Failed to open output device: %x\n", err);
@@ -146,10 +146,10 @@ cst_audiodev *audio_open_wince(int sps, int channels, int fmt)
         cst_error();
     }
 
-    pd = cst_alloc(au_wince_pdata,1);
+    pd = cst_alloc(au_wince_pdata, 1);
     pd->wo = wo;
-    pd->bevt = CreateEvent(NULL,FALSE,FALSE,NULL);
-    pd->wevt = CreateEvent(NULL,FALSE,FALSE,NULL);
+    pd->bevt = CreateEvent(NULL, FALSE, FALSE, NULL);
+    pd->wevt = CreateEvent(NULL, FALSE, FALSE, NULL);
     pd->bcnt = 0;
     ad->platform_data = pd;
     return ad;
@@ -210,9 +210,9 @@ int audio_write_wince(cst_audiodev *ad, void *samples, int num_bytes)
     if (num_bytes == 0)
         return 0;
 
-    hdr = cst_alloc(WAVEHDR,1);
-    hdr->lpData = cst_alloc(char,num_bytes);
-    memcpy(hdr->lpData,samples,num_bytes);
+    hdr = cst_alloc(WAVEHDR, 1);
+    hdr->lpData = cst_alloc(char, num_bytes);
+    memcpy(hdr->lpData, samples, num_bytes);
     hdr->dwBufferLength = num_bytes;
 
     err = waveOutPrepareHeader(pd->wo, hdr, sizeof(*hdr));
@@ -255,11 +255,12 @@ int audio_drain_wince(cst_audiodev *ad)
     return 0;
 }
 
-int audio_init_wince() {
-   return 0;
-}
-
-int audio_exit_wince() {
+int audio_init_wince()
+{
     return 0;
 }
 
+int audio_exit_wince()
+{
+    return 0;
+}

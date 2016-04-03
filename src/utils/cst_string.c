@@ -44,15 +44,16 @@
 #include "cst_string.h"
 #include "cst_file.h"
 
-#ifdef UNDER_CE /* WinCE does not fully implement ANSI C */
+#ifdef UNDER_CE                 /* WinCE does not fully implement ANSI C */
 
 cst_string *cst_strrchr(const cst_string *str, int c)
 {
-    cst_string *p = (const cst_string *)str + cst_strlen(str);
-    while (p >= str) {
-	if (*p == c)
-	    return p;
-	--p;
+    cst_string *p = (const cst_string *) str + cst_strlen(str);
+    while (p >= str)
+    {
+        if (*p == c)
+            return p;
+        --p;
     }
     return NULL;
 }
@@ -60,7 +61,7 @@ cst_string *cst_strrchr(const cst_string *str, int c)
 double cst_atof(const char *str)
 {
     /* double f = 0.0; */
-    
+
     /* sscanf(str, "%f", &f); */
     return atof(str);
 }
@@ -69,7 +70,7 @@ double cst_atof(const char *str)
 
 cst_string *cst_strrchr(const cst_string *str, int c)
 {
-    return (cst_string *)strrchr((const char *)str, c);
+    return (cst_string *) strrchr((const char *) str, c);
 }
 
 double cst_atof(const char *str)
@@ -84,40 +85,40 @@ cst_string *cst_strdup(const cst_string *str)
 
     if (str)
     {
-	nstr = cst_alloc(cst_string,cst_strlen((const char *)str)+1);
-	memmove(nstr,str,cst_strlen((const char *)str)+1);
+        nstr = cst_alloc(cst_string, cst_strlen((const char *) str) + 1);
+        memmove(nstr, str, cst_strlen((const char *) str) + 1);
     }
     return nstr;
 }
 
 cst_string *cst_strchr(const cst_string *s, int c)
 {
-    return (cst_string *)strchr((const char *)s,c);
+    return (cst_string *) strchr((const char *) s, c);
 }
 
-char *cst_substr(const char *str,int start, int length)
+char *cst_substr(const char *str, int start, int length)
 {
     char *nstr = NULL;
 
     if (str)
     {
-	nstr = cst_alloc(char,length+1);
-	strncpy(nstr,str+start,length);
-	nstr[length] = '\0';
+        nstr = cst_alloc(char, length + 1);
+        strncpy(nstr, str + start, length);
+        nstr[length] = '\0';
     }
     return nstr;
 }
 
-char *cst_string_before(const char *s,const char *c)
+char *cst_string_before(const char *s, const char *c)
 {
     char *p;
     char *q;
 
-    p = (char *)cst_strstr(s,c);
-    if (p == NULL) 
-	return NULL;
-    q = (char *)cst_strdup((cst_string *)s);
-    q[cst_strlen(s)-cst_strlen(p)] = '\0';
+    p = (char *) cst_strstr(s, c);
+    if (p == NULL)
+        return NULL;
+    q = (char *) cst_strdup((cst_string *) s);
+    q[cst_strlen(s) - cst_strlen(p)] = '\0';
     return q;
 }
 
@@ -127,10 +128,10 @@ cst_string *cst_downcase(const cst_string *str)
     int i;
 
     dc = cst_strdup(str);
-    for (i=0; str[i] != '\0'; i++)
+    for (i = 0; str[i] != '\0'; i++)
     {
-	if (isupper((int)str[i]))
-	    dc[i] = tolower((int)str[i]);
+        if (isupper((int) str[i]))
+            dc[i] = tolower((int) str[i]);
     }
     return dc;
 }
@@ -141,21 +142,21 @@ cst_string *cst_upcase(const cst_string *str)
     int i;
 
     uc = cst_strdup(str);
-    for (i=0; str[i] != '\0'; i++)
+    for (i = 0; str[i] != '\0'; i++)
     {
-	if (islower((int)str[i]))
-	    uc[i] = toupper((int)str[i]);
+        if (islower((int) str[i]))
+            uc[i] = toupper((int) str[i]);
     }
     return uc;
 }
 
-int cst_member_string(const char *str, const char * const *slist)
+int cst_member_string(const char *str, const char *const *slist)
 {
-    const char * const *p;
+    const char *const *p;
 
     for (p = slist; *p; ++p)
-	if (cst_streq(*p, str))
-	    break;
+        if (cst_streq(*p, str))
+            break;
 
     return *p != NULL;
 }
@@ -164,8 +165,8 @@ char *cst_strcat(const char *a, const char *b)
 {
     char *r;
 
-    r = cst_alloc(char,cst_strlen(a)+cst_strlen(b)+1);
-    cst_sprintf(r,"%s%s",a,b);
+    r = cst_alloc(char, cst_strlen(a) + cst_strlen(b) + 1);
+    cst_sprintf(r, "%s%s", a, b);
     return r;
 }
 
@@ -173,7 +174,7 @@ char *cst_strcat3(const char *a, const char *b, const char *c)
 {
     char *r;
 
-    r = cst_alloc(char,cst_strlen(a)+cst_strlen(b)+cst_strlen(c)+1);
-    cst_sprintf(r,"%s%s%s",a,b,c);
+    r = cst_alloc(char, cst_strlen(a) + cst_strlen(b) + cst_strlen(c) + 1);
+    cst_sprintf(r, "%s%s%s", a, b, c);
     return r;
 }
