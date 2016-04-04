@@ -41,7 +41,7 @@
 #include "cst_val.h"
 #include "cst_wave.h"
 
-CST_VAL_REGISTER_TYPE(wave, cst_wave)
+CST_VAL_REGISTER_TYPE(wave, cst_wave);
 cst_wave *new_wave()
 {
     cst_wave *w = cst_alloc(struct cst_wave_struct, 1);

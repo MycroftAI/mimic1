@@ -84,5 +84,5 @@ cst_val *lex_lookup(const cst_lexicon *l, const char *word,
 int in_lex(const cst_lexicon *l, const char *word, const char *pos,
            const cst_features *feats);
 
-CST_VAL_USER_TYPE_DCLS(lexicon, cst_lexicon)
+CST_VAL_USER_TYPE_DCLS(lexicon, cst_lexicon);
 #endif

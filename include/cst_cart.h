@@ -70,7 +70,7 @@ typedef struct cst_cart_struct {
 
 void delete_cart(cst_cart *c);
 
-CST_VAL_USER_TYPE_DCLS(cart, cst_cart)
-     const cst_val *cart_interpret(cst_item *item, const cst_cart *tree);
+CST_VAL_USER_TYPE_DCLS(cart, cst_cart);
+const cst_val *cart_interpret(cst_item *item, const cst_cart *tree);
 
 #endif

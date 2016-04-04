@@ -42,7 +42,7 @@
 #include "cst_lexicon.h"
 #include "cst_tokenstream.h"
 
-CST_VAL_REGISTER_TYPE_NODEL(lexicon, cst_lexicon)
+CST_VAL_REGISTER_TYPE_NODEL(lexicon, cst_lexicon);
 #define WP_SIZE 64
 static int no_syl_boundaries(const cst_item *i, const cst_val *p);
 static cst_val *lex_lookup_addenda(const char *wp, const cst_lexicon *l,

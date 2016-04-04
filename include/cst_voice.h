@@ -72,5 +72,5 @@ typedef struct cst_lang_struct cst_lang;
 cst_voice *new_voice();
 void delete_voice(cst_voice *u);
 
-CST_VAL_USER_TYPE_DCLS(voice, cst_voice)
+CST_VAL_USER_TYPE_DCLS(voice, cst_voice);
 #endif

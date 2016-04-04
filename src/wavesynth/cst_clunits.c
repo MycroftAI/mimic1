@@ -66,8 +66,8 @@
 #define BIG_BAD_NUMBER 50000    /* big enough to be bad, not big enough
                                    to cause overflows */
 
-CST_VAL_REGISTER_TYPE_NODEL(clunit_db, cst_clunit_db)
-CST_VAL_REGISTER_TYPE_NODEL(vit_cand, cst_vit_cand)
+CST_VAL_REGISTER_TYPE_NODEL(clunit_db, cst_clunit_db);
+CST_VAL_REGISTER_TYPE_NODEL(vit_cand, cst_vit_cand);
 static cst_utterance *clunits_select(cst_utterance *utt);
 static cst_vit_cand *cl_cand(cst_item *i, struct cst_viterbi_struct *vd);
 static cst_vit_path *cl_path(cst_vit_path *p,

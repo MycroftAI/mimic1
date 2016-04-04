@@ -55,13 +55,13 @@
 #include "cst_utt_utils.h"
 #include "cst_audio.h"
 
-CST_VAL_REGISTER_TYPE(cg_db, cst_cg_db)
-     static cst_utterance *cg_make_hmmstates(cst_utterance *utt);
-     static cst_utterance *cg_make_params(cst_utterance *utt);
-     static cst_utterance *cg_predict_params(cst_utterance *utt);
-     static cst_utterance *cg_resynth(cst_utterance *utt);
+CST_VAL_REGISTER_TYPE(cg_db, cst_cg_db);
+static cst_utterance *cg_make_hmmstates(cst_utterance *utt);
+static cst_utterance *cg_make_params(cst_utterance *utt);
+static cst_utterance *cg_predict_params(cst_utterance *utt);
+static cst_utterance *cg_resynth(cst_utterance *utt);
 
-     void delete_cg_db(cst_cg_db *db)
+void delete_cg_db(cst_cg_db *db)
 {
     int i, j;
 

@@ -64,7 +64,7 @@ int utt_relation_delete(cst_utterance *u, const char *name);
 int utt_relation_present(cst_utterance *u, const char *name);
 
 typedef cst_utterance *(*cst_uttfunc) (cst_utterance *i);
-CST_VAL_USER_FUNCPTR_DCLS(uttfunc, cst_uttfunc)
+CST_VAL_USER_FUNCPTR_DCLS(uttfunc, cst_uttfunc);
 /* Allocate memory "locally" to an utterance, on platforms that
    support/require this (currently only WinCE) */
 #define cst_utt_alloc(UTT,TYPE,SIZE) ((TYPE *)cst_local_alloc((UTT)->ctx,sizeof(TYPE)*(SIZE)))

@@ -46,7 +46,7 @@
 #include "cst_sigpr.h"
 #include "cst_sts.h"
 
-CST_VAL_REGISTER_TYPE_NODEL(sts_list, cst_sts_list)
+CST_VAL_REGISTER_TYPE_NODEL(sts_list, cst_sts_list);
 cst_sts_list *new_sts_list()
 {
     cst_sts_list *l = cst_alloc(struct cst_sts_list_struct, 1);

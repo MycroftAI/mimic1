@@ -47,7 +47,7 @@
 #include "cst_units.h"
 #include "cst_sigpr.h"
 
-CST_VAL_REGISTER_TYPE_NODEL(diphone_db, cst_diphone_db)
+CST_VAL_REGISTER_TYPE_NODEL(diphone_db, cst_diphone_db);
 static int get_diphone_entry(cst_diphone_db * udb, const char *name);
 static int get_diphone_entry_bsearch(const cst_diphone_entry * entries,
                                      int start, int end,

@@ -41,7 +41,7 @@
 #include "cst_val.h"
 #include "cst_track.h"
 
-CST_VAL_REGISTER_TYPE(track, cst_track)
+CST_VAL_REGISTER_TYPE(track, cst_track);
 cst_track *new_track()
 {
     cst_track *w = cst_alloc(struct cst_track_struct, 1);

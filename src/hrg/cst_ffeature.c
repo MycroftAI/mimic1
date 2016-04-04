@@ -43,7 +43,7 @@
 #include "cst_utterance.h"
 #include "cst_tokenstream.h"
 
-CST_VAL_REGISTER_FUNCPTR(ffunc, cst_ffunction)
+CST_VAL_REGISTER_FUNCPTR(ffunc, cst_ffunction);
 DEF_STATIC_CONST_VAL_STRING(ffeature_default_val, "0");
 
 static const void *internal_ff(const cst_item *item,

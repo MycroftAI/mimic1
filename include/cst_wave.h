@@ -158,5 +158,5 @@ unsigned char *cst_g721_decode(int *actual_size, int size,
 unsigned char *cst_g721_encode(int *packed_size, int actual_size,
                                const unsigned char *unpacked_residual);
 
-CST_VAL_USER_TYPE_DCLS(wave, cst_wave)
+CST_VAL_USER_TYPE_DCLS(wave, cst_wave);
 #endif

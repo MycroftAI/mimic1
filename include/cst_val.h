@@ -166,5 +166,5 @@ extern const cst_val_def cst_val_defs[];
 
 /* Generic pointer vals */
 typedef void cst_userdata;
-CST_VAL_USER_TYPE_DCLS(userdata, cst_userdata)
+CST_VAL_USER_TYPE_DCLS(userdata, cst_userdata);
 #endif

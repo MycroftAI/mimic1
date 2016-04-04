@@ -41,7 +41,7 @@
 #include "cst_utterance.h"
 
 /* utterance functions are the modules that do the meat in synthesis */
-CST_VAL_REGISTER_FUNCPTR(uttfunc, cst_uttfunc)
+CST_VAL_REGISTER_FUNCPTR(uttfunc, cst_uttfunc);
 cst_utterance *new_utterance()
 {
     cst_utterance *u;

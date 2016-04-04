@@ -42,30 +42,30 @@
 #include "cst_val.h"
 #include "cst_string.h"
 
-CST_VAL_REG_TD_TYPE(utterance, cst_utterance, 7)
-CST_VAL_REG_TD_TYPE(wave, cst_wave, 9)
-CST_VAL_REG_TD_TYPE(track, cst_track, 11)
-CST_VAL_REG_TD_TYPE(lpcres, cst_lpcres, 13)
-CST_VAL_REG_TD_FUNCPTR(uttfunc, cst_uttfunc, 15)
-CST_VAL_REG_TD_FUNCPTR(ffunc, cst_ffunction, 17)
-CST_VAL_REG_TD_TYPE_NODEL(relation, cst_relation, 19)
-CST_VAL_REG_TD_TYPE_NODEL(item, cst_item, 21)
-CST_VAL_REG_TD_TYPE_NODEL(cart, cst_cart, 23)
-CST_VAL_REG_TD_TYPE_NODEL(phoneset, cst_phoneset, 25)
-CST_VAL_REG_TD_TYPE_NODEL(lexicon, cst_lexicon, 27)
-CST_VAL_REG_TD_TYPE_NODEL(dur_stats, dur_stats, 29)
-CST_VAL_REG_TD_TYPE_NODEL(diphone_db, cst_diphone_db, 31)
-CST_VAL_REG_TD_TYPE_NODEL(clunit_db, cst_clunit_db, 33)
-CST_VAL_REG_TD_TYPE_NODEL(vit_cand, cst_vit_cand, 35)
-CST_VAL_REG_TD_TYPE_NODEL(sts_list, cst_sts_list, 37)
-CST_VAL_REG_TD_TYPE_NODEL(userdata, cst_userdata, 41)
-CST_VAL_REGISTER_TYPE_NODEL(userdata, cst_userdata)
-CST_VAL_REG_TD_FUNCPTR(itemfunc, cst_itemfunc, 43)
-CST_VAL_REG_TD_TYPE(features, cst_features, 45)
-CST_VAL_REG_TD_FUNCPTR(breakfunc, cst_breakfunc, 47)
-CST_VAL_REG_TD_TYPE(cg_db, cst_cg_db, 49)
-CST_VAL_REG_TD_TYPE(voice, cst_voice, 51)
-CST_VAL_REG_TD_TYPE(audio_streaming_info, cst_audio_streaming_info, 53)
+CST_VAL_REG_TD_TYPE(utterance, cst_utterance, 7);
+CST_VAL_REG_TD_TYPE(wave, cst_wave, 9);
+CST_VAL_REG_TD_TYPE(track, cst_track, 11);
+CST_VAL_REG_TD_TYPE(lpcres, cst_lpcres, 13);
+CST_VAL_REG_TD_FUNCPTR(uttfunc, cst_uttfunc, 15);
+CST_VAL_REG_TD_FUNCPTR(ffunc, cst_ffunction, 17);
+CST_VAL_REG_TD_TYPE_NODEL(relation, cst_relation, 19);
+CST_VAL_REG_TD_TYPE_NODEL(item, cst_item, 21);
+CST_VAL_REG_TD_TYPE_NODEL(cart, cst_cart, 23);
+CST_VAL_REG_TD_TYPE_NODEL(phoneset, cst_phoneset, 25);
+CST_VAL_REG_TD_TYPE_NODEL(lexicon, cst_lexicon, 27);
+CST_VAL_REG_TD_TYPE_NODEL(dur_stats, dur_stats, 29);
+CST_VAL_REG_TD_TYPE_NODEL(diphone_db, cst_diphone_db, 31);
+CST_VAL_REG_TD_TYPE_NODEL(clunit_db, cst_clunit_db, 33);
+CST_VAL_REG_TD_TYPE_NODEL(vit_cand, cst_vit_cand, 35);
+CST_VAL_REG_TD_TYPE_NODEL(sts_list, cst_sts_list, 37);
+CST_VAL_REG_TD_TYPE_NODEL(userdata, cst_userdata, 41);
+CST_VAL_REGISTER_TYPE_NODEL(userdata, cst_userdata);
+CST_VAL_REG_TD_FUNCPTR(itemfunc, cst_itemfunc, 43);
+CST_VAL_REG_TD_TYPE(features, cst_features, 45);
+CST_VAL_REG_TD_FUNCPTR(breakfunc, cst_breakfunc, 47);
+CST_VAL_REG_TD_TYPE(cg_db, cst_cg_db, 49);
+CST_VAL_REG_TD_TYPE(voice, cst_voice, 51);
+CST_VAL_REG_TD_TYPE(audio_streaming_info, cst_audio_streaming_info, 53);
 const cst_val_def cst_val_defs[] = {
     /* These ones are never called */
     {"int", NULL},         /* 1 INT */

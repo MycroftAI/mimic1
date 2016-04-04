@@ -133,6 +133,6 @@ const unsigned char *get_sts_residual_fixed(const cst_sts_list *sts_list,
 int get_frame_size(const cst_sts_list *sts_list, int frame);
 int get_unit_size(const cst_sts_list *s, int start, int end);
 
-CST_VAL_USER_TYPE_DCLS(lpcres, cst_lpcres)
-CST_VAL_USER_TYPE_DCLS(sts_list, cst_sts_list)
+CST_VAL_USER_TYPE_DCLS(lpcres, cst_lpcres);
+CST_VAL_USER_TYPE_DCLS(sts_list, cst_sts_list);
 #endif

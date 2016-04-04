@@ -41,7 +41,7 @@
 #include "cst_error.h"
 #include "cst_features.h"
 
-CST_VAL_REGISTER_TYPE(features, cst_features)
+CST_VAL_REGISTER_TYPE(features, cst_features);
 static cst_featvalpair *feat_find_featpair(const cst_features *f,
                                            const char *name)
 {

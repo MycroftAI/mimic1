@@ -70,5 +70,5 @@ int phone_feat_id(const cst_phoneset *ps, const char *featname);
 
 const cst_phoneset *item_phoneset(const cst_item *i);
 
-CST_VAL_USER_TYPE_DCLS(phoneset, cst_phoneset)
+CST_VAL_USER_TYPE_DCLS(phoneset, cst_phoneset);
 #endif

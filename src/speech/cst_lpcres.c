@@ -41,7 +41,7 @@
 #include "cst_val.h"
 #include "cst_sts.h"
 
-CST_VAL_REGISTER_TYPE(lpcres, cst_lpcres)
+CST_VAL_REGISTER_TYPE(lpcres, cst_lpcres);
 cst_lpcres *new_lpcres()
 {
     cst_lpcres *l = cst_alloc(struct cst_lpcres_struct, 1);

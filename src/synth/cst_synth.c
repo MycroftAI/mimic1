@@ -47,7 +47,7 @@
 #include "cst_synth.h"
 #include "cst_phoneset.h"
 
-CST_VAL_REGISTER_FUNCPTR(breakfunc, cst_breakfunc)
+CST_VAL_REGISTER_FUNCPTR(breakfunc, cst_breakfunc);
 #ifndef SYNTH_MODULES_DEBUG
 #define SYNTH_MODULES_DEBUG 0
 #endif
@@ -385,7 +385,7 @@ cst_utterance *cart_intonation(cst_utterance *u)
     return u;
 }
 
-CST_VAL_REGISTER_TYPE_NODEL(dur_stats, dur_stats)
+CST_VAL_REGISTER_TYPE_NODEL(dur_stats, dur_stats);
 const dur_stat *phone_dur_stat(const dur_stats * ds, const char *ph)
 {
     int i;

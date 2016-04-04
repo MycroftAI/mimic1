@@ -64,8 +64,8 @@ struct cst_diphone_db_struct {
 };
 typedef struct cst_diphone_db_struct cst_diphone_db;
 
-CST_VAL_USER_TYPE_DCLS(diphone_db, cst_diphone_db)
-     cst_utterance *diphone_synth(cst_utterance *utt);
-     cst_utterance *get_diphone_units(cst_utterance *utt);
+CST_VAL_USER_TYPE_DCLS(diphone_db, cst_diphone_db);
+cst_utterance *diphone_synth(cst_utterance *utt);
+cst_utterance *get_diphone_units(cst_utterance *utt);
 
 #endif

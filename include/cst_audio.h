@@ -115,14 +115,14 @@ typedef struct cst_audio_streaming_info_struct {
 } cst_audio_streaming_info;
 cst_audio_streaming_info *new_audio_streaming_info();
 void delete_audio_streaming_info(cst_audio_streaming_info *asi);
-CST_VAL_USER_TYPE_DCLS(audio_streaming_info, cst_audio_streaming_info)
-     typedef int (*cst_audio_stream_callback) (const cst_wave *w, int start,
-                                               int size, int last,
-                                               cst_audio_streaming_info *asi);
+CST_VAL_USER_TYPE_DCLS(audio_streaming_info, cst_audio_streaming_info);
+typedef int (*cst_audio_stream_callback) (const cst_wave *w, int start,
+                                          int size, int last,
+                                          cst_audio_streaming_info *asi);
 
 /* An example audio streaming callback function src/audio/au_streaming.c */
-     int audio_stream_chunk(const cst_wave *w, int start, int size,
-                            int last, cst_audio_streaming_info *asi);
+int audio_stream_chunk(const cst_wave *w, int start, int size,
+                       int last, cst_audio_streaming_info *asi);
 
-     void shutdown_audio(int signum);
+void shutdown_audio(int signum);
 #endif

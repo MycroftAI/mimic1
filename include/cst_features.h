@@ -93,11 +93,11 @@ int feat_length(const cst_features *f);
 /* string that will be deleted when the cst_features is deleted */
 const char *feat_own_string(cst_features *f, const char *name);
 
-CST_VAL_USER_TYPE_DCLS(features, cst_features)
-     int feat_copy_into(const cst_features *from, cst_features *to);
+CST_VAL_USER_TYPE_DCLS(features, cst_features);
+int feat_copy_into(const cst_features *from, cst_features *to);
 /* Link FROM into TO so FROM's features will be searched after TO's features */
-     int feat_link_into(const cst_features *from, cst_features *to);
+int feat_link_into(const cst_features *from, cst_features *to);
 /* For debugging */
-     int cst_feat_print(cst_file fd, const cst_features *f);
+int cst_feat_print(cst_file fd, const cst_features *f);
 
 #endif

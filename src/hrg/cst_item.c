@@ -43,10 +43,10 @@
 #include "cst_utterance.h"
 
 /* Define functions for using items, rels and utts as vals */
-CST_VAL_REGISTER_TYPE_NODEL(relation, cst_relation)
-CST_VAL_REGISTER_TYPE_NODEL(item, cst_item)
-CST_VAL_REGISTER_TYPE(utterance, cst_utterance)
-CST_VAL_REGISTER_FUNCPTR(itemfunc, cst_itemfunc)
+CST_VAL_REGISTER_TYPE_NODEL(relation, cst_relation);
+CST_VAL_REGISTER_TYPE_NODEL(item, cst_item);
+CST_VAL_REGISTER_TYPE(utterance, cst_utterance);
+CST_VAL_REGISTER_FUNCPTR(itemfunc, cst_itemfunc);
 cst_item *new_item_relation(cst_relation *r, cst_item *i)
 {
     cst_item *ni;

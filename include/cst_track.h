@@ -66,5 +66,5 @@ int cst_track_save_est(cst_track *t, const char *filename);
 int cst_track_save_est_binary(cst_track *t, const char *filename);
 int cst_track_load_est(cst_track *t, const char *filename);
 
-CST_VAL_USER_TYPE_DCLS(track, cst_track)
+CST_VAL_USER_TYPE_DCLS(track, cst_track);
 #endif

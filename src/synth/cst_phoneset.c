@@ -42,7 +42,7 @@
 #include "cst_item.h"
 #include "cst_phoneset.h"
 
-CST_VAL_REGISTER_TYPE_NODEL(phoneset, cst_phoneset)
+CST_VAL_REGISTER_TYPE_NODEL(phoneset, cst_phoneset);
 cst_phoneset *new_phoneset()
 {
     /* These aren't going to be supported dynamically */
