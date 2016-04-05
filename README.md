@@ -2,6 +2,9 @@ Mimic, the Mycroft TTS Engine
 ==============================
 
 [![Stories in Ready](https://badge.waffle.io/MycroftAI/mimic.png?label=ready&title=Ready)](https://waffle.io/MycroftAI/mimic)
+[![Build Status](https://travis-ci.org/MycroftAI/mimic.svg?branch=development)](https://travis-ci.org/MycroftAI/mimic)
+[![codecov.io](https://codecov.io/github/MycroftAI/mimic/coverage.svg?branch=development)](https://codecov.io/github/MycroftAI/mimic?branch=development)
+[![Coverity Scan](https://img.shields.io/coverity/scan/8420.svg)](https://scan.coverity.com/projects/mycroftai-mimic?tab=overview)
 
 Mimic is a lightweight run-time speech synthesis engine, based on
 Flite (Festival-Lite). The Flite project website can be found
