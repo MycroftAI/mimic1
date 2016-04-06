@@ -225,7 +225,7 @@ You can also find existing Flite voices here:
   then work can continue on `development` for the next release. 
   
 ##### Coding Style Requirements
-  To keep the code in mimic coherent a simple coding style/guide is needed.
+  To keep the code in mimic coherent a simple coding style/guide is used.
 
   **Indentation**: Each level of indentation is *4 spaces*.
 
@@ -247,22 +247,44 @@ void cool_function(void)
 }
 ```
 
-  **Parentheses**:
-* Always put a space between keyword (*for*, *if*, etc.) and paranthesis.
-* Never put a paranthesis between a function name and a paranthesis.
+  **Switch-statements**: Always keep the break statement last in the case, after any code blocks.
 
-Examples:
+  Example
 ```c
-    for (i = 0; i < 8; i++)
-```
-```c
-int main(int argc, char *argv[])
+switch(state)
 {
-    helper_func(argv[1]);
-    return 0;
+case 1:
+   doA(1);
+   break;
+case 2:
+   {
+      int b = 2;
+      doA(b);
+   }
+   break;
+case 3:
+[...]
 }
 ```
 
-  **Line length**: There is no hard limit for line lenght but if possible limit it to *80 characters*.
+
+  **Line length**: There's no hard limit but if possible keep lines shorter than *80 characters*.
     
+
+###### Indent command
+
+```
+indent [FILE] -npcs -i4 -bl -Tcst_wave -Tcst_wave_header -Tcst_rateconv \
+      -Tcst_voice -Tcst_item -Tcst_features -Tcst_val -Tcst_va -Tcst_viterbi \
+      -Tcst_utterance -Tcst_vit_cand_f_t -Tcst_vit_path_f_t -Tcst_vit_path \
+      -Tcst_vit_point -Tcst_string -Tcst_lexicon -Tcst_relation \
+      -Tcst_voice_struct -Tcst_track -Tcst_viterbi_struct -Tcst_vit_cand \
+      -Tcst_tokenstream -Tcst_tokenstream_struct -Tcst_synth_module \
+      -Tcst_sts_list -Tcst_lpcres -Tcst_ss -Tcst_regex -Tcst_regstate \
+      -Twchar_t -Tcst_phoneset -Tcst_lts_rewrites -Tlexicon_struct \
+      -Tcst_filemap -Tcst_lts_rules -Tcst_clunit_db -Tcst_cg_db \
+      -Tcst_audio_streaming_info -Tcst_audio_streaming_info_struct -Tcst_cart \
+      -Tcst_audiodev -TVocoderSetup -npsl -brs -bli0 -nut
+```
+
 
