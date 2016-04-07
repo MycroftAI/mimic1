@@ -5,10 +5,7 @@ compiler:
   - gcc
 
 script: 
-  - ./configure --enable-gcov || exit 1
-  - make || exit 1
-  - bin/mimic -t "Hello" test.wav
-  - (cd unittests && make && ./run_all_tests)
+  - ./run_testsuite.sh
 
 after_success:
   - make gcov
@@ -17,8 +14,9 @@ after_success:
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-   # via the "travis encrypt" command using the project repo's public key
-   #- secure: "project_not_yet_registered"
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "VQXmVb9lTL4Yo58doWyCkdPTaDoe7sHPnOMCcJMPuxOpK1d/JWkm9Pp2UV8L/32JkCOO32azPJ1R1nr7uz6GFs0CwNAW+FO24mRex/h3CaH33eu7fQkq4MwfBqa19qqPoUX7KB8iofT6KyRxNrC8Z+zYPR9gogP2VrLSldi0Wva3+On/9tnj+e0/Cy2lTfjyXGvdFoDCM+WtbVz38IZrrAl7TG9azCorM0AaHr1U57DNVKQNlWdTJLiN2tzc5971nA7/Ws+ZoNK2ZWV6fIghgLju/h25JIqKpXB/Wi5QyUWY0pZ5oAEfqIgJchZ3e5qLS4bARsJwXTL8BFfwStA05qBTKI5M0lj93u1/d4tuVJzSP5LTJJelFYPsLVtyOKglFHr/Pb4PhieHJXjr/jig8P48nP+jgXcQjpP4uLZ3D1Z01///QCWCiHXloSurQkA0fhQSyeCHGNiTPEjAYfcFAjlH5/C1tsRLIerxm8hdGDhF0x7lg9j069B0Yet5GINiBeBZdTph1r6YWYQUqAwb8gAYt20KE/i/f5TSIFOd9jDOrPHLgSZX0N+C7x6PqVTxBGMksNJtf+PNOrBC5+VbYxdw0ldX1AveBD4oW9bcJ9wo3rAsFGZ8q6Vnl0r3U48eKWtMUf4//aq4Ab1h/LP8t+c+XyEXfMNh4WpJ4lySn4s="
+
 
 addons:
   apt:
@@ -27,10 +25,12 @@ addons:
     - autoconf
     - automake
     - pkg-config
-#  coverity_scan:
-#    project:
-#      name: "mycroftai/mimic"
-#      description: "Your project description here"
-#    build_command:   ./run_testsuite.sh -f
-
+  coverity_scan:
+    project:
+      name: "MycroftAI/mimic"
+      description: "TTS for Mycroft AI"
+    notification_email: sergioller@gmail.com
+    # build_command_prepend: "<Your build preprocessing command here>"
+    build_command: ./run_testsuite.sh
+    branch_pattern: coverity_scan
 
