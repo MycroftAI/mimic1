@@ -42,7 +42,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif                          /* __cplusplus */
 
 #include "cst_string.h"
 #include "cst_regex.h"
@@ -65,83 +65,78 @@ extern "C" {
 #include "cst_units.h"
 #include "cst_tokenstream.h"
 
-extern cst_val *mimic_voice_list;
-extern cst_lang mimic_lang_list[20];
+    extern cst_val *mimic_voice_list;
+    extern cst_lang mimic_lang_list[20];
 
 /* Public functions */
-int mimic_init();
-int mimic_exit();
+    int mimic_init();
+    int mimic_exit();
 
 /* General top level functions */
-cst_voice *mimic_voice_select(const char *name);
-cst_voice *mimic_voice_load(const char *voice_filename);
-int mimic_voice_dump(cst_voice *voice, const char *voice_filename);
-float mimic_file_to_speech(const char *filename, 
-			   cst_voice *voice,
-			   const char *outtype);
-float mimic_text_to_speech(const char *text, 
-			   cst_voice *voice,
-			   const char *outtype);
-float mimic_phones_to_speech(const char *text, 
-			     cst_voice *voice,
-			     const char *outtype);
-float mimic_ssml_file_to_speech(const char *filename,
-                                cst_voice *voice,
-                                const char *outtype);
-float mimic_ssml_text_to_speech(const char *text,
-                                cst_voice *voice,
-                                const char *outtype);
-int mimic_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile);
+    cst_voice *mimic_voice_select(const char *name);
+    cst_voice *mimic_voice_load(const char *voice_filename);
+    int mimic_voice_dump(cst_voice *voice, const char *voice_filename);
+    float mimic_file_to_speech(const char *filename,
+                               cst_voice *voice, const char *outtype);
+    float mimic_text_to_speech(const char *text,
+                               cst_voice *voice, const char *outtype);
+    float mimic_phones_to_speech(const char *text,
+                                 cst_voice *voice, const char *outtype);
+    float mimic_ssml_file_to_speech(const char *filename,
+                                    cst_voice *voice, const char *outtype);
+    float mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
+                                    const char *outtype);
+    int mimic_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile);
 
 /* Lower lever user functions */
-cst_wave *mimic_text_to_wave(const char *text,cst_voice *voice);
-cst_utterance *mimic_synth_text(const char *text,cst_voice *voice);
-cst_utterance *mimic_synth_phones(const char *phones,cst_voice *voice);
+    cst_wave *mimic_text_to_wave(const char *text, cst_voice *voice);
+    cst_utterance *mimic_synth_text(const char *text, cst_voice *voice);
+    cst_utterance *mimic_synth_phones(const char *phones, cst_voice *voice);
 
-float mimic_ts_to_speech(cst_tokenstream *ts, 
-                         cst_voice *voice,
-                         const char *outtype);
-cst_utterance *mimic_do_synth(cst_utterance *u,
-                              cst_voice *voice,
-                              cst_uttfunc synth);
-int mimic_process_output(cst_utterance *u,
-                         const char *outtype,
-                         int append,
-                         float *dur);
+    float mimic_ts_to_speech(cst_tokenstream *ts,
+                             cst_voice *voice, const char *outtype);
+    cst_utterance *mimic_do_synth(cst_utterance *u,
+                                  cst_voice *voice, cst_uttfunc synth);
+    int mimic_process_output(cst_utterance *u,
+                             const char *outtype, int append, float *dur);
 
 /* for voices with external voxdata */
-int mimic_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice);
-int mimic_munmap_clunit_voxdata(cst_voice *voice);
+    int mimic_mmap_clunit_voxdata(const char *voxdir, cst_voice *voice);
+    int mimic_munmap_clunit_voxdata(cst_voice *voice);
 
 /* mimic public export wrappers for features access */
-int mimic_get_param_int(const cst_features *f, const char *name,int def);
-float mimic_get_param_float(const cst_features *f, const char *name, float def);
-const char *mimic_get_param_string(const cst_features *f, const char *name, const char *def);
-const cst_val *mimic_get_param_val(const cst_features *f, const char *name, cst_val *def);
-void mimic_feat_set_int(cst_features *f, const char *name, int v);
-void mimic_feat_set_float(cst_features *f, const char *name, float v);
-void mimic_feat_set_string(cst_features *f, const char *name, const char *v);
-void mimic_feat_set(cst_features *f, const char *name,const cst_val *v);
-int mimic_feat_remove(cst_features *f, const char *name);
+    int mimic_get_param_int(const cst_features *f, const char *name, int def);
+    float mimic_get_param_float(const cst_features *f, const char *name,
+                                float def);
+    const char *mimic_get_param_string(const cst_features *f,
+                                       const char *name, const char *def);
+    const cst_val *mimic_get_param_val(const cst_features *f,
+                                       const char *name, cst_val *def);
+    void mimic_feat_set_int(cst_features *f, const char *name, int v);
+    void mimic_feat_set_float(cst_features *f, const char *name, float v);
+    void mimic_feat_set_string(cst_features *f, const char *name,
+                               const char *v);
+    void mimic_feat_set(cst_features *f, const char *name, const cst_val *v);
+    int mimic_feat_remove(cst_features *f, const char *name);
 
-const char *mimic_ffeature_string(const cst_item *item,const char *featpath);
-int mimic_ffeature_int(const cst_item *item,const char *featpath);
-float mimic_ffeature_float(const cst_item *item,const char *featpath);
-const cst_val *mimic_ffeature(const cst_item *item,const char *featpath);
-cst_item* mimic_path_to_item(const cst_item *item,const char *featpath);
+    const char *mimic_ffeature_string(const cst_item *item,
+                                      const char *featpath);
+    int mimic_ffeature_int(const cst_item *item, const char *featpath);
+    float mimic_ffeature_float(const cst_item *item, const char *featpath);
+    const cst_val *mimic_ffeature(const cst_item *item, const char *featpath);
+    cst_item *mimic_path_to_item(const cst_item *item, const char *featpath);
 
 /* These functions are *not* thread-safe, they are designed to be called */
 /* before the initial synthesis occurs */
-int mimic_add_voice(cst_voice *voice);
-int mimic_add_lang(const char *langname,
-                   void (*lang_init)(cst_voice *vox),
-                   cst_lexicon *(*lex_init)());
+    int mimic_add_voice(cst_voice *voice);
+    int mimic_add_lang(const char *langname,
+                       void (*lang_init) (cst_voice *vox),
+                       cst_lexicon *(*lex_init) ());
 /* These are init functions for generic grapheme based voices */
-void utf8_grapheme_lang_init(cst_voice *v);
-cst_lexicon *utf8_grapheme_lex_init(void);
+    void utf8_grapheme_lang_init(cst_voice *v);
+    cst_lexicon *utf8_grapheme_lex_init(void);
 
 #ifdef __cplusplus
-}  /* extern "C" */
-#endif /* __cplusplus */
-
+}                               /* extern "C" */
+#endif                          /* __cplusplus */
 #endif

@@ -44,8 +44,8 @@ int main(int argc, char **argv)
 {
     int s;
 
-    while (scanf("%d\n",&s) != EOF)
-	printf("%d\n",(int)cst_ulaw_to_short((int)s));
+    while (scanf("%d\n", &s) != EOF)
+        printf("%d\n", (int) cst_ulaw_to_short((int) s));
 
     return 0;
 }

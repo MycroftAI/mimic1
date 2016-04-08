@@ -47,8 +47,7 @@ int play_server_main_usage()
     printf("simple audio server\n");
     printf("usage:  play_server [PORTNUMBER]\n");
     printf("Sit and listen on socket number PORTNUMBER and play waveforms\n");
-    printf("Send to it, default PORTNUMBER is %d\n",
-	   CST_AUDIO_DEFAULT_PORT);
+    printf("Send to it, default PORTNUMBER is %d\n", CST_AUDIO_DEFAULT_PORT);
     return 0;
 }
 
@@ -56,23 +55,22 @@ int main(int argc, char **argv)
 {
     int port;
 
-    port=CST_AUDIO_DEFAULT_PORT;
+    port = CST_AUDIO_DEFAULT_PORT;
 
     if (argc > 1)
     {
-	if ((cst_streq("-h",argv[1])) ||
-	    (cst_streq("-help",argv[1])) ||
-	    (cst_streq("--help",argv[1])))
-	{
-	    play_server_main_usage();
-	    return -1;
-	}
-	port = atoi(argv[1]);
-	if (port <= 0)
-	{
-	    fprintf(stderr,"invalid port number: %d\n",port);
-	    return -1;
-	}
+        if ((cst_streq("-h", argv[1])) ||
+            (cst_streq("-help", argv[1])) || (cst_streq("--help", argv[1])))
+        {
+            play_server_main_usage();
+            return -1;
+        }
+        port = atoi(argv[1]);
+        if (port <= 0)
+        {
+            fprintf(stderr, "invalid port number: %d\n", port);
+            return -1;
+        }
     }
 
     auserver(port);
@@ -80,4 +78,3 @@ int main(int argc, char **argv)
     return 0;
 
 }
-

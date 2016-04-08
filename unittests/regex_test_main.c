@@ -52,14 +52,15 @@ char *rtests[] = {
     "034",
     "1,234,235",
     "1,2345",
-    NULL };
+    NULL
+};
 
 // match white spaces
 void test_match_whitespace(void)
 {
     int i;
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_white, rtests[i]) == 0);
+        TEST_CHECK(cst_regex_match(cst_rx_white, rtests[i]) == 0);
     TEST_CHECK(cst_regex_match(cst_rx_white, " ") == 1);
 }
 
@@ -67,10 +68,11 @@ void test_match_whitespace(void)
 void test_match_upper(void)
 {
     int i;
-    int expected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int expected[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_uppercase, rtests[i]) == expected[i]);
-    
+        TEST_CHECK(cst_regex_match(cst_rx_uppercase, rtests[i]) ==
+                   expected[i]);
+
     TEST_CHECK(cst_regex_match(cst_rx_uppercase, "HELLO") == 1);
 }
 
@@ -78,67 +80,72 @@ void test_match_upper(void)
 void test_match_lower(void)
 {
     int i;
-    int expected[] = {0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0};
+    int expected[] = { 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_lowercase, rtests[i]) == expected[i]);
+        TEST_CHECK(cst_regex_match(cst_rx_lowercase, rtests[i]) ==
+                   expected[i]);
 }
 
 // match strings containing letters and numericals
 void test_match_alphanum(void)
 {
     int i;
-    int expected[] = {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0};
+    int expected[] = { 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_alphanum, rtests[i]) == expected[i]);
+        TEST_CHECK(cst_regex_match(cst_rx_alphanum, rtests[i]) ==
+                   expected[i]);
 }
 
 // match identifiers
 void test_match_ident(void)
 {
     int i;
-    int expected[] = {0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+    int expected[] = { 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_identifier, rtests[i]) == expected[i]);
+        TEST_CHECK(cst_regex_match(cst_rx_identifier, rtests[i]) ==
+                   expected[i]);
 }
 
 // match strings containing only letters
 void test_match_alpha(void)
 {
     int i;
-    int expected[] = {0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+    int expected[] = { 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_alpha, rtests[i]) == expected[i]);
+        TEST_CHECK(cst_regex_match(cst_rx_alpha, rtests[i]) == expected[i]);
 }
 
 // match integer
 void test_match_int(void)
 {
     int i;
-    int expected[] = {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0};
+    int expected[] = { 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_int, rtests[i]) == expected[i]);
+        TEST_CHECK(cst_regex_match(cst_rx_int, rtests[i]) == expected[i]);
 }
 
 // match double, i.e. 1.34 or 3.14
 void test_match_double(void)
 {
     int i;
-    int expected[] = {1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0};
+    int expected[] = { 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0 };
     for (i = 0; rtests[i] != NULL; i++)
-	TEST_CHECK(cst_regex_match(cst_rx_double, rtests[i]) == expected[i]);
+        TEST_CHECK(cst_regex_match(cst_rx_double, rtests[i]) == expected[i]);
 }
 
 // match [numerical],[numerical]
 void test_match_commaint(void)
 {
     int i;
-    int expected[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+    int expected[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 };
     cst_regex *commaint;
-    commaint = new_cst_regex("[0-9][0-9]?[0-9]?,\\([0-9][0-9][0-9],\\)*[0-9][0-9][0-9]\\(\\.[0-9]+\\)?");
+    commaint =
+        new_cst_regex
+        ("[0-9][0-9]?[0-9]?,\\([0-9][0-9][0-9],\\)*[0-9][0-9][0-9]\\(\\.[0-9]+\\)?");
 
     for (i = 0; rtests[i] != NULL; i++)
         TEST_CHECK(cst_regex_match(commaint, rtests[i]) == expected[i]);
-    
+
     delete_cst_regex(commaint);
 }
 

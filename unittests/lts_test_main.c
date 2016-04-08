@@ -46,16 +46,16 @@
 extern cst_lexicon cmu_lex;
 void cmu_lex_init();
 
-static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
-        const char *expected_lexes)
+static void lookup_and_test(cst_lexicon *l, const char *word,
+                            const char *feats, const char *expected_lexes)
 {
     cst_val *p;
     const cst_val *syl;
 
     char *tok;
-    char * expected_str = malloc(strlen(expected_lexes) + 1);
+    char *expected_str = malloc(strlen(expected_lexes) + 1);
 
-    p = lex_lookup(l,word, feats, NULL);
+    p = lex_lookup(l, word, feats, NULL);
     strcpy(expected_str, expected_lexes);
     tok = strtok(expected_str, " ");
     for (syl = p; syl;)
@@ -73,20 +73,19 @@ static void lookup_and_test(cst_lexicon *l, const char *word, const char *feats,
 void test_sleekit(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"sleekit", NULL, "s l iy1 k ih0 t");
+    lookup_and_test(&cmu_lex, "sleekit", NULL, "s l iy1 k ih0 t");
 }
 
 void test_like(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"like", NULL, "l ay1 k");
+    lookup_and_test(&cmu_lex, "like", NULL, "l ay1 k");
 }
-
 
 void test_chair(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"chair", NULL, "ch eh1 r");
+    lookup_and_test(&cmu_lex, "chair", NULL, "ch eh1 r");
 }
 
 void test_further(void)
@@ -95,13 +94,11 @@ void test_further(void)
     lookup_and_test(&cmu_lex, "further", NULL, "f er1 dh er0");
 }
 
-
 void test_crax(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex,"crax",NULL, "k r ae1 k s");
+    lookup_and_test(&cmu_lex, "crax", NULL, "k r ae1 k s");
 }
-    
 
 TEST_LIST = {
     {"sleekit", test_sleekit},
@@ -111,4 +108,3 @@ TEST_LIST = {
     {"crax", test_crax},
     {0}
 };
-

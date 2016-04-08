@@ -47,84 +47,82 @@
 
 #include <pulse/simple.h>
 
-int audio_init_pulseaudio() {
-   return 0;
+int audio_init_pulseaudio()
+{
+    return 0;
 }
 
-int audio_exit_pulseaudio() {
+int audio_exit_pulseaudio()
+{
     return 0;
 }
 
 
-cst_audiodev *audio_open_pulseaudio(unsigned int sps, int channels, cst_audiofmt fmt)
+cst_audiodev *audio_open_pulseaudio(unsigned int sps, int channels,
+                                    cst_audiofmt fmt)
 {
-  cst_audiodev *ad;
-  int err=0;
+    cst_audiodev *ad;
+    int err = 0;
 
-  /* Pulseaudio specific stuff */
-  pa_sample_spec *ss;
-  pa_simple *s;
+    /* Pulseaudio specific stuff */
+    pa_sample_spec *ss;
+    pa_simple *s;
 
-  ss = cst_alloc(pa_sample_spec,1);
-  ss->rate = sps;
-  ss->channels = channels;
-  switch (fmt)
-  {
-  case CST_AUDIO_LINEAR16:
-	if (CST_LITTLE_ENDIAN)
+    ss = cst_alloc(pa_sample_spec, 1);
+    ss->rate = sps;
+    ss->channels = channels;
+    switch (fmt)
+    {
+    case CST_AUDIO_LINEAR16:
+        if (CST_LITTLE_ENDIAN)
             ss->format = PA_SAMPLE_S16LE;
-	else
+        else
             ss->format = PA_SAMPLE_S16BE;
-	break;
-  case CST_AUDIO_LINEAR8:
-      ss->format = PA_SAMPLE_U8;
-      break;
-  case CST_AUDIO_MULAW:
-      ss->format = PA_SAMPLE_ULAW;
-      break;
-  default:
-      return NULL;
-      break;
-  }
+        break;
+    case CST_AUDIO_LINEAR8:
+        ss->format = PA_SAMPLE_U8;
+        break;
+    case CST_AUDIO_MULAW:
+        ss->format = PA_SAMPLE_ULAW;
+        break;
+    default:
+        return NULL;
+        break;
+    }
 
-  s = pa_simple_new(
-                    NULL,      /* use default server */
-                    "mimic",
-                    PA_STREAM_PLAYBACK,
-                    NULL,      /* use default device */
-                    "Speech",
-                    ss,
-                    NULL,      /* default channel map */
-                    NULL,      /* default buffering attributes */
-                    &err);
-  if (err < 0)
-      return NULL;
+    s = pa_simple_new(NULL,     /* use default server */
+                      "mimic", PA_STREAM_PLAYBACK, NULL,        /* use default device */
+                      "Speech", ss, NULL,       /* default channel map */
+                      NULL,     /* default buffering attributes */
+                      &err);
+    if (err < 0)
+        return NULL;
 
-  /* Write hardware parameters to mimic audio device data structure */
-  ad = cst_alloc(cst_audiodev, 1);
-  ad->real_sps = ad->sps = sps;
-  ad->real_channels = ad->channels = channels;
-  ad->real_fmt = ad->fmt = fmt;
-  ad->platform_data = (void *) s;
+    /* Write hardware parameters to mimic audio device data structure */
+    ad = cst_alloc(cst_audiodev, 1);
+    ad->real_sps = ad->sps = sps;
+    ad->real_channels = ad->channels = channels;
+    ad->real_fmt = ad->fmt = fmt;
+    ad->platform_data = (void *) s;
 
-  return ad;
+    return ad;
 }
 
 int audio_close_pulseaudio(cst_audiodev *ad)
 {
-  int result;
-  pa_simple *s;
+    int result;
+    pa_simple *s;
 
-  if (ad == NULL)
-      return 0;
+    if (ad == NULL)
+        return 0;
 
-  s = (pa_simple *) ad->platform_data;
+    s = (pa_simple *) ad->platform_data;
 
-  pa_simple_drain(s,&result);
+    pa_simple_drain(s, &result);
 
-  pa_simple_free(s);
-  cst_free(ad);
-  return result;
+    pa_simple_free(s);
+    cst_free(ad);
+    return result;
 }
 
 int audio_write_pulseaudio(cst_audiodev *ad, void *samples, int num_bytes)
@@ -132,8 +130,8 @@ int audio_write_pulseaudio(cst_audiodev *ad, void *samples, int num_bytes)
     pa_simple *s;
     int err;
 
-    s = (pa_simple *)ad->platform_data;
-    pa_simple_write(s,samples,(size_t)num_bytes,&err);
+    s = (pa_simple *) ad->platform_data;
+    pa_simple_write(s, samples, (size_t) num_bytes, &err);
 
     return num_bytes;
 }
@@ -143,9 +141,9 @@ int audio_flush_pulseaudio(cst_audiodev *ad)
     pa_simple *s;
     int err;
 
-    s = (pa_simple *)ad->platform_data;
-    pa_simple_drain(s,&err);
-    
+    s = (pa_simple *) ad->platform_data;
+    pa_simple_drain(s, &err);
+
     return err;
 }
 
@@ -154,9 +152,8 @@ int audio_drain_pulseaudio(cst_audiodev *ad)
     pa_simple *s;
     int err;
 
-    s = (pa_simple *)ad->platform_data;
-    pa_simple_drain(s,&err);
-    
+    s = (pa_simple *) ad->platform_data;
+    pa_simple_drain(s, &err);
+
     return err;
 }
-

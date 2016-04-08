@@ -42,31 +42,32 @@
 
 #include "cutest.h"
 
-float correct_list[] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8};
+float correct_list[] = { 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8 };
+
 void test_hrg(void)
 {
     cst_utterance *u;
     cst_relation *r;
-    cst_item *item=0;
+    cst_item *item = 0;
     int i;
 
     u = new_utterance();
-    r = utt_relation_create(u,"Segment");
+    r = utt_relation_create(u, "Segment");
 
-    for (i=0; i<10; i++)
+    for (i = 0; i < 10; i++)
     {
-	char buff[20];
-	sprintf(buff,"seg_%03d",i);
-	if (i==0)
-	    item = relation_append(r,NULL);
-	else
-	    item = item_append(item,NULL);
-	item_set_string(item,"name",buff);
-	item_set_float(item,"duration",i*0.20);
+        char buff[20];
+        sprintf(buff, "seg_%03d", i);
+        if (i == 0)
+            item = relation_append(r, NULL);
+        else
+            item = item_append(item, NULL);
+        item_set_string(item, "name", buff);
+        item_set_float(item, "duration", i * 0.20);
     }
 
-    for (i=0,item=relation_head(utt_relation(u,"Segment")); 
-	 item; item=item_next(item),i++)
+    for (i = 0, item = relation_head(utt_relation(u, "Segment"));
+         item; item = item_next(item), i++)
     {
         TEST_CHECK(item_feat_float(item, "duration") == correct_list[i]);
     }
@@ -76,6 +77,5 @@ void test_hrg(void)
 
 TEST_LIST = {
     {"hrg creation and manipulation", test_hrg},
-    {0},
+    {0}
 };
-

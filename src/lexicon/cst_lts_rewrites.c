@@ -45,114 +45,114 @@
 #include "cst_val.h"
 #include "cst_lts_rewrites.h"
 
-static int item_match(const cst_val *PATT, const cst_val *THING, 
-		      const cst_val *sets)
+static int item_match(const cst_val *PATT, const cst_val *THING,
+                      const cst_val *sets)
 {
     const cst_val *sss;
 
-    if (cst_streq(val_string(PATT),val_string(THING)))
-	return TRUE;
+    if (cst_streq(val_string(PATT), val_string(THING)))
+        return TRUE;
 
-    for (sss=sets; sss; sss=val_cdr(sss))
+    for (sss = sets; sss; sss = val_cdr(sss))
     {
-	if (cst_streq(val_string(val_car(val_car(sss))),val_string(PATT)))
-	{   /* Its a set not a letter */
-	    if (val_member_string(val_string(THING),val_cdr(val_car(sss))))
-	    {
-		return TRUE;
-	    }
-	    else
-	    {
-		return FALSE;
-	    }
-	}
+        if (cst_streq(val_string(val_car(val_car(sss))), val_string(PATT)))
+        {                       /* Its a set not a letter */
+            if (val_member_string(val_string(THING), val_cdr(val_car(sss))))
+            {
+                return TRUE;
+            }
+            else
+            {
+                return FALSE;
+            }
+        }
     }
     return FALSE;
 }
 
 static int context_match(const cst_val *PATTERN, const cst_val *STRING,
-			 const cst_val *sets)
+                         const cst_val *sets)
 {
-    int r,s,t;
+    int r, s, t;
 /*    printf("PATTERN: "); val_print(stdout, PATTERN); printf("\n"); */
 /*    printf("STRING: "); val_print(stdout, STRING); printf("\n"); */
     if (!PATTERN)
-	r = TRUE;
+        r = TRUE;
     else if (!STRING)
-	r = FALSE;
+        r = FALSE;
     else if (val_cdr(PATTERN) &&
-	     (cst_streq("*",val_string(val_car(PATTERN)))))
+             (cst_streq("*", val_string(val_car(PATTERN)))))
     {
-	r = context_match(val_cdr(val_cdr(PATTERN)),STRING,sets);
-	s = context_match(val_cdr(PATTERN),STRING,sets);
-	t = item_match(val_car(val_cdr(PATTERN)),val_car(STRING),sets) && 
-	    context_match(PATTERN, val_cdr(STRING),sets);
-	r = r || s || t;
+        r = context_match(val_cdr(val_cdr(PATTERN)), STRING, sets);
+        s = context_match(val_cdr(PATTERN), STRING, sets);
+        t = item_match(val_car(val_cdr(PATTERN)), val_car(STRING), sets) &&
+            context_match(PATTERN, val_cdr(STRING), sets);
+        r = r || s || t;
     }
 #if 0
     else if (val_cdr(PATTERN) &&
-	     (cst_streq("+",val_string(val_car(PATTERN)))))
-	return context_match(val_cdr(PATTERN),STRING,sets) || /* last match */
-	    (item_match(val_car(val_cdr(PATTERN)),val_car(STRING),sets) &&
-	    context_match(val_cdr(val_cdr(PATTERN)),  /* loop match */
-			  val_cdr(STRING),sets));
+             (cst_streq("+", val_string(val_car(PATTERN)))))
+        return context_match(val_cdr(PATTERN), STRING, sets) || /* last match */
+            (item_match(val_car(val_cdr(PATTERN)), val_car(STRING), sets) && context_match(val_cdr(val_cdr(PATTERN)),   /* loop match */
+                                                                                           val_cdr
+                                                                                           (STRING),
+                                                                                           sets));
 #endif
-    else if (item_match(val_car(PATTERN),val_car(STRING),sets))
-	r = context_match(val_cdr(PATTERN),val_cdr(STRING),sets);
+    else if (item_match(val_car(PATTERN), val_car(STRING), sets))
+        r = context_match(val_cdr(PATTERN), val_cdr(STRING), sets);
     else
-	r = FALSE;
+        r = FALSE;
 /*    printf("R = %s\n",(r ? "TRUE" : "FALSE")); */
     return r;
 }
 
-static int rule_matches(const cst_val *LC, const cst_val *RC, 
-			const cst_val *RLC, const cst_val *RA, 
-			const cst_val *RRC,
-			const cst_val *sets)
+static int rule_matches(const cst_val *LC, const cst_val *RC,
+                        const cst_val *RLC, const cst_val *RA,
+                        const cst_val *RRC, const cst_val *sets)
 {
     const cst_val *rc, *ra;
 
     /* Check [ X ] bit */
-    for (rc=RC,ra=RA; ra; ra=val_cdr(ra),rc=val_cdr(rc))
+    for (rc = RC, ra = RA; ra; ra = val_cdr(ra), rc = val_cdr(rc))
     {
-	if (!rc) return FALSE;
-	if (!cst_streq(val_string(val_car(ra)),
-		       val_string(val_car(rc))))
-	    return FALSE;
+        if (!rc)
+            return FALSE;
+        if (!cst_streq(val_string(val_car(ra)), val_string(val_car(rc))))
+            return FALSE;
     }
 
     /* Check LC bit: LC may have some limited regex stuff  */
-    if (context_match(RLC,LC,sets) && context_match(RRC,rc,sets))
-	return TRUE;
+    if (context_match(RLC, LC, sets) && context_match(RRC, rc, sets))
+        return TRUE;
     else
-	return FALSE;
+        return FALSE;
 }
 
 static const cst_val *find_rewrite_rule(const cst_val *LC,
-					const cst_val *RC, 
-					const cst_lts_rewrites *r)
+                                        const cst_val *RC,
+                                        const cst_lts_rewrites *r)
 {
     /* Search through rewrite rules to find matching one */
     const cst_val *i, *RLC, *RA, *RRC;
-    
-    for (i=r->rules; i; i=val_cdr(i))
+
+    for (i = r->rules; i; i = val_cdr(i))
     {
 /*	val_print(stdout, val_car(i));	printf("\n"); */
-	RLC = val_car(val_car(i));
-	RA = val_car(val_cdr(val_car(i)));
-	RRC = val_car(val_cdr(val_cdr(val_car(i))));
-	if (rule_matches(LC,RC,RLC,RA,RRC,r->sets))
-	    return val_car(i);
+        RLC = val_car(val_car(i));
+        RA = val_car(val_cdr(val_car(i)));
+        RRC = val_car(val_cdr(val_cdr(val_car(i))));
+        if (rule_matches(LC, RC, RLC, RA, RRC, r->sets))
+            return val_car(i);
     }
 
 #if 0
-    fprintf(stderr,"LTS_REWRITES: unable to find a matching rules for:\n");
-    fprintf(stderr,"CL: ");
-    val_print(stderr,LC);
-    fprintf(stderr,"\n");
-    fprintf(stderr,"RC: ");
-    val_print(stderr,RC);
-    fprintf(stderr,"\n");
+    fprintf(stderr, "LTS_REWRITES: unable to find a matching rules for:\n");
+    fprintf(stderr, "CL: ");
+    val_print(stderr, LC);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "RC: ");
+    val_print(stderr, RC);
+    fprintf(stderr, "\n");
 #endif
 
     return NULL;
@@ -165,18 +165,18 @@ cst_val *lts_rewrites_word(const char *word, const cst_lts_rewrites *r)
     int i;
 
     x[1] = '\0';
-    w = cons_val(string_val("#"),NULL);
-    for (i=0; word[i]; i++)
+    w = cons_val(string_val("#"), NULL);
+    for (i = 0; word[i]; i++)
     {
-	x[0] = word[i];
-	w = cons_val(string_val(x),w);
+        x[0] = word[i];
+        w = cons_val(string_val(x), w);
     }
-    w = cons_val(string_val("#"),w);
+    w = cons_val(string_val("#"), w);
 
     w = val_reverse(w);
 
-    p = lts_rewrites(w,r);
-    
+    p = lts_rewrites(w, r);
+
     delete_val(w);
 
     return p;
@@ -190,33 +190,32 @@ cst_val *lts_rewrites(const cst_val *itape, const cst_lts_rewrites *r)
     const cst_val *rule;
     cst_val *otape;
 
-    LC = cons_val(val_car(itape),NULL);
+    LC = cons_val(val_car(itape), NULL);
     RC = val_cdr(itape);
     otape = NULL;
 
     while (val_cdr(RC))
     {
-	rule = find_rewrite_rule(LC,RC,r);
+        rule = find_rewrite_rule(LC, RC, r);
 
-	if (!rule)
-	    break;
+        if (!rule)
+            break;
 /*	val_print(stdout,rule);
 	printf("\n"); */
 
-	/* Shift itape head */
-	for (i=val_car(val_cdr(rule)); i; i=val_cdr(i))
-	{
-	    LC = cons_val(val_car(RC),LC);
-	    RC = val_cdr(RC);
-	}
-	
-	/* Output things to otape */
-	for (i=val_car(val_cdr(val_cdr(val_cdr(rule)))); i; i=val_cdr(i))
-	    otape = cons_val(val_car(i),otape);
+        /* Shift itape head */
+        for (i = val_car(val_cdr(rule)); i; i = val_cdr(i))
+        {
+            LC = cons_val(val_car(RC), LC);
+            RC = val_cdr(RC);
+        }
+
+        /* Output things to otape */
+        for (i = val_car(val_cdr(val_cdr(val_cdr(rule)))); i; i = val_cdr(i))
+            otape = cons_val(val_car(i), otape);
     }
 
     delete_val(LC);
 
     return val_reverse(otape);
 }
-

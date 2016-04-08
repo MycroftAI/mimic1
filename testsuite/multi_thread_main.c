@@ -50,33 +50,37 @@ cst_voice *register_cmu_us_slt(const char *voxdir);
 
 cst_val *mimic_set_voice_list(const char *voxdir)
 {
-    mimic_voice_list = cons_val(voice_val(register_cmu_us_slt(voxdir)),mimic_voice_list);
+    mimic_voice_list =
+        cons_val(voice_val(register_cmu_us_slt(voxdir)), mimic_voice_list);
     mimic_voice_list = val_reverse(mimic_voice_list);
     return mimic_voice_list;
 }
 
-void init() {
-  mimic_init();
-  mimic_set_voice_list(NULL);
-  voice = mimic_voice_select("cmu_us_slt");
-  
+void init()
+{
+    mimic_init();
+    mimic_set_voice_list(NULL);
+    voice = mimic_voice_select("cmu_us_slt");
+
 }
 
-float synth_text(char* text) {
-  float dur;
-  dur = mimic_text_to_speech(text, voice, "none");
-  return dur;
+float synth_text(char *text)
+{
+    float dur;
+    dur = mimic_text_to_speech(text, voice, "none");
+    return dur;
 }
 
-int main() {
-  init();
-  int i;
-#pragma omp parallel for 
-    for (i=0; i<50; i++) {
-      printf("%d %d %f\n", omp_get_thread_num(), i, synth_text("Hello"));
+int main()
+{
+    init();
+    int i;
+#pragma omp parallel for
+    for (i = 0; i < 50; i++)
+    {
+        printf("%d %d %f\n", omp_get_thread_num(), i, synth_text("Hello"));
     }
-    
+
     mimic_exit();
     return 0;
 }
-      

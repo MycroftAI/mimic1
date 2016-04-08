@@ -83,11 +83,11 @@ struct cst_viterbi_struct;
 
 /* Functions for user call back, to find candiates at a point, and
    to join (and score) paths */
-typedef cst_vit_cand *(cst_vit_cand_f_t)(cst_item *s,
-					  struct cst_viterbi_struct *vd);
-typedef cst_vit_path *(cst_vit_path_f_t)(cst_vit_path *p,
-					  cst_vit_cand *c,
-					  struct cst_viterbi_struct *vd);
+typedef cst_vit_cand *(cst_vit_cand_f_t) (cst_item *s,
+                                          struct cst_viterbi_struct *vd);
+typedef cst_vit_path *(cst_vit_path_f_t) (cst_vit_path *p,
+                                          cst_vit_cand *c,
+                                          struct cst_viterbi_struct *vd);
 
 typedef struct cst_viterbi_struct {
     int num_states;
@@ -100,14 +100,13 @@ typedef struct cst_viterbi_struct {
     cst_features *f;
 } cst_viterbi;
 
-
-cst_viterbi *new_viterbi(cst_vit_cand_f_t *cand_func, 
-			 cst_vit_path_f_t *path_func);
+cst_viterbi *new_viterbi(cst_vit_cand_f_t *cand_func,
+                         cst_vit_path_f_t *path_func);
 void delete_viterbi(cst_viterbi *vd);
 
-void viterbi_initialise(cst_viterbi *vd,cst_relation *r);
+void viterbi_initialise(cst_viterbi *vd, cst_relation *r);
 void viterbi_decode(cst_viterbi *vd);
 int viterbi_result(cst_viterbi *vd, const char *n);
-void viterbi_copy_feature(cst_viterbi *vd,const char *featname);
+void viterbi_copy_feature(cst_viterbi *vd, const char *featname);
 
 #endif

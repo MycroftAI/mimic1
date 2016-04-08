@@ -55,8 +55,8 @@ cst_utterance *f0_targets_to_pm(cst_utterance *utt);
 cst_utterance *concat_units(cst_utterance *utt);
 
 void add_residual(int targ_size, unsigned char *targ_residual,
-		  int unit_size, const unsigned char *unit_residual);
+                  int unit_size, const unsigned char *unit_residual);
 void add_residual_pulse(int targ_size, unsigned char *targ_residual,
-			int unit_size, const unsigned char *unit_residual);
+                        int unit_size, const unsigned char *unit_residual);
 
 #endif
