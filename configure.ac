@@ -445,10 +445,12 @@ PKG_CHECK_MODULES([PORTAUDIO], [portaudio-2.0 >= 19],
                    AUDIOLIBS="${PORTAUDIO_LIBS}"],
                   [m4_ignore])
 
-AC_CHECK_HEADER(mmsystem.h,
+AC_CHECK_HEADERS(mmsystem.h,
 	      [AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
-	       AUDIOLIBS=-lwinmm])
+	       AUDIOLIBS=-lwinmm],
+               [],
+               AC_INCLUDES_DEFAULT)
 
 dnl I don't care what you ask for, for wince you get wince
 case "$target_os" in
