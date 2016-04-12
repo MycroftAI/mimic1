@@ -191,7 +191,7 @@ dnl         ;;
                 # For the Windows under mingw32 environment
                 # http://www.mingw.org
 		shared=false
-     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32 -shared"
+     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32"
                 MINGWPREF="i386-mingw32-"
                 CC="${MINGWPREF}gcc"
                 RANLIB="${MINGWPREF}ranlib"
