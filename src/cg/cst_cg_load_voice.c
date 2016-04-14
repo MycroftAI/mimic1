@@ -55,7 +55,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
     char *fval;
     cst_file vd;
 
-    vd = cst_fopen(filename, CST_OPEN_READ);
+    vd = cst_fopen(filename, CST_OPEN_READ|CST_OPEN_BINARY);
     if (vd == NULL)
     {
         cst_errmsg("Error load voice: can't open file %s\n", filename);
