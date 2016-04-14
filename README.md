@@ -228,7 +228,7 @@ You can also find existing Flite voices here:
   then work can continue on `development` for the next release. 
   
 ##### Coding Style Requirements
-  To keep the code in mimic coherent a simple coding style/guide is used.
+  To keep the code in mimic coherent a simple coding style/guide is used. It should be noted that the current codebase as a whole does not meet some of these guidlines,this is a result of comming from the flite codebase. As different parts of the codebase are touched it is the hope that these inconsistancies will deminish as time goes on.
 
   **Indentation**: Each level of indentation is *4 spaces*.
 
@@ -250,31 +250,94 @@ void cool_function(void)
 }
 ```
 
+  **If-statements**: Always use curly braces.
+  
+  Example
+  ```c
+  if(condition)
+  {                             /*always use curly braces even if the 'if' only has one statement
+      DoJustThisOneThing();        
+  }
+  
+  if(argv[i][2] == 'h' &&      /*split 'if' conditions to multiple lines if the conditions are long */
+     argv[i][3] == 'e' &&      /*or if it makes things more readable. */
+     argv[i][4] == 'l' && 
+     argv[i][5] == 'p')
+  {
+        /*example taken from args parsing code*/
+        /* code */
+  }
+  else if(condition)
+  {
+        /* code */
+  }
+  else
+  {
+      /* code */
+  }
+  ```
+  
   **Switch-statements**: Always keep the break statement last in the case, after any code blocks.
 
   Example
 ```c
 switch(state)
 {
-case 1:
-   doA(1);
-   break;
-case 2:
-   {
-      int b = 2;
-      doA(b);
-   }
-   break;
-case 3:
-[...]
+    case 1:
+    {               /* even if the case only has one line, use curly braces (similar reasoning as with if's) */ 
+        doA(1);
+    } break;
+                        /* separate cases with a line */
+    case 2:             /* unless it falls into the next one */
+    case 3:
+    {
+        DoThisFirst();
+    }                   /* no break, this one also falls through */
+    case 4:
+    {                   /* notice that curly braces line up with 'case' on line above */
+        int b = 2;
+        doA(b);
+    } break;        /* putting 'break' on this line saves some room and makes it look a little nicer */
+
+    case 5:
+    {
+        /* more code */
+    } break;
+
+    default:        /* It is nice to always have a default case, even if it does nothing */
+    {
+        InvalidDefaultCase(); /* or whatever, it depends on what you are trying to do. */
+    }
 }
 ```
 
 
   **Line length**: There's no hard limit but if possible keep lines shorter than *80 characters*.
     
+    
+###### Vimrc 
+ For those of you who use vim, add this to your vimrc to ensure proper indenting.
+ ```vimrc
+"####Indentation settings
+:filetype plugin indent on
+" show existing tab with 4 spaces width
+:set tabstop=4
+" when indenting with '>', use 4 spaces width
+:set shiftwidth=4
+" On pressing tab, insert 4 spaces
+:set expandtab
+" fix indentation problem with types above function name
+:set cinoptions+=t0
+" fix indentation of { after case
+:set cinoptions+==0
+" fix indentation of multiline if
+:set cinoptions+=(0   "closing ) to let vimrc hylighting work after this line
 
-###### Indent command
+"see http://vimdoc.sourceforge.net/htmldoc/indent.html#cinoptions-values
+"for more indent options
+ ```
+
+###### Indent command (currently does not indent switch/cases properly)
 
 ```
 indent [FILE] -npcs -i4 -bl -Tcst_wave -Tcst_wave_header -Tcst_rateconv \
