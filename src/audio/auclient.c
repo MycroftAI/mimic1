@@ -65,7 +65,7 @@ int play_wave_client(cst_wave *w, const char *servername, int port,
     if (!w)
         return CST_ERROR_FORMAT;
 
-    if ((audiofd = cst_socket_open(servername, port)) == 0)
+    if ((audiofd = cst_socket_open(servername, port)) < 0)
         return CST_ERROR_FORMAT;
 
     header.magic = (unsigned int) 0x2e736e64;
@@ -100,6 +100,7 @@ int play_wave_client(cst_wave *w, const char *servername, int port,
 
     if (write(audiofd, &header, sizeof(header)) != sizeof(header))
     {
+        cst_socket_close(audiofd);
         cst_errmsg("auclinet: failed to write header to server\n");
         return CST_ERROR_FORMAT;
     }

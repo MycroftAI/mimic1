@@ -126,6 +126,9 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
     }
     if (ad->real_channels != ad->channels)
     {
+        nbuf = cst_alloc(char,
+                         real_num_bytes * ad->real_channels / ad->channels);
+
         /* Yeah, we only do mono->stereo for now */
         if (ad->real_channels != 2 || ad->channels != 1)
         {
@@ -133,9 +136,6 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
                 ("audio_write: unsupported channel mapping requested (%d => %d).\n",
                  ad->channels, ad->real_channels);
         }
-        nbuf =
-            cst_alloc(char,
-                      real_num_bytes * ad->real_channels / ad->channels);
 
         if (audio_bps(ad->fmt) == 2)
         {
@@ -201,9 +201,9 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
             cst_errmsg
                 ("audio_write: unknown format conversion (%d => %d) requested.\n",
                  ad->fmt, ad->real_fmt);
-            cst_free(nbuf);
-            if (abuf != buff)
+            if ((abuf != nbuf) && (abuf != buff))
                 cst_free(abuf);
+            cst_free(nbuf);
             cst_error();
         }
         if (abuf != buff)
