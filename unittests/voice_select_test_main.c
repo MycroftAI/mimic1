@@ -19,12 +19,13 @@ void common_init(void)
 
 void test_no_voice_list(void)
 {
+    const char *test_url = "http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_rms.flitevox";
+    mimic_init();
+    mimic_set_lang_list();
     TEST_CHECK(mimic_voice_select("rms") == NULL);
-    TEST_CHECK(mimic_voice_select
-               ("http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_rms.flitevox")
-               == NULL);
-    TEST_CHECK(mimic_voice_select("../voices/cmu_us_rms.flitevox") == NULL);
-
+    TEST_CHECK(mimic_voice_select(NULL) == NULL);
+    TEST_CHECK(mimic_voice_select(test_url) != NULL);
+    TEST_CHECK(mimic_voice_select("../voices/cmu_us_rms.flitevox") != NULL);
 }
 
 void test_null(void)
@@ -42,8 +43,10 @@ void test_empty_string(void)
 
 void test_local_voice(void)
 {
+    const char *name;
     common_init();
-    TEST_CHECK(mimic_voice_select("rms") != NULL);
+    name = val_voice(val_car(mimic_voice_list))->name;
+    TEST_CHECK(mimic_voice_select(name) != NULL);
 }
 
 void test_url_voice(void)
