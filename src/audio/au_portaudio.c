@@ -53,7 +53,7 @@ typedef struct {
     long int num_frames;
     int channels;
     int sample_size;
-    int abort_requested;
+    volatile int abort_requested;
 } callback_data;
 
 
@@ -178,7 +178,10 @@ cst_audiodev *audio_open_portaudio(int sps, int channels, cst_audiofmt fmt)
 int audio_drain_portaudio(cst_audiodev *ad)
 {
     cst_audio_portaudiodata *hdl = ad->platform_data;
-    hdl->cd->abort_requested = 1;
+    if (hdl->cd != NULL)
+    {
+        hdl->cd->abort_requested = 1;
+    }
     return 0;
 }
 
