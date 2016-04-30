@@ -53,6 +53,7 @@ typedef struct {
     long int num_frames;
     int channels;
     int sample_size;
+    volatile int abort_requested;
 } callback_data;
 
 
@@ -71,6 +72,11 @@ static int pa_callback(const void *inputBuffer, void *outputBuffer,
     if (data->num_frames <= 0)
     {
         return paComplete;
+    }
+
+    if (data->abort_requested)
+    {
+        return paAbort;
     }
 
     /* Number of frames to process in this call: */
@@ -99,6 +105,7 @@ typedef struct cst_audio_portaudiodata_struct {
     double sample_rate;
     long int bytes_per_frame;
     PaStream *stream;
+    callback_data *cd;
 } cst_audio_portaudiodata;
 
 
@@ -170,7 +177,11 @@ cst_audiodev *audio_open_portaudio(int sps, int channels, cst_audiofmt fmt)
 
 int audio_drain_portaudio(cst_audiodev *ad)
 {
-    /* audio_write_portaudio does everything */
+    cst_audio_portaudiodata *hdl = ad->platform_data;
+    if (hdl->cd != NULL)
+    {
+        hdl->cd->abort_requested = 1;
+    }
     return 0;
 }
 
@@ -229,6 +240,8 @@ int audio_write_portaudio(cst_audiodev *ad, void *buff, int num_bytes)
     data->channels = ad->channels;
     data->bufpos = 0;
     data->sample_size = audio_bps(ad->fmt);
+    data->abort_requested = 0;
+    hdl->cd = data;
     /* Stream */
     err = Pa_OpenStream(&(hdl->stream), NULL,   /* no input */
                         outputParameters, sample_rate, 64, paClipOff,   /* we won't output out of range samples? */
