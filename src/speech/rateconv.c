@@ -174,65 +174,67 @@
  *	FIR-routines, mono and stereo
  *	this is where we need all the MIPS
  */
-static void
-fir_mono(int *inp, int *coep, int firlen, int *outp)
+static void fir_mono(int *inp, int *coep, int firlen, int *outp)
 {
-	register int akku = 0, *endp;
-	int n1 = (firlen / 8) * 8, n0 = firlen % 8;
+    register int akku = 0, *endp;
+    int n1 = (firlen / 8) * 8, n0 = firlen % 8;
 
-	endp = coep + n1;
-	while (coep != endp) {
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-		akku += *inp++ * *coep++;
-	}
+    endp = coep + n1;
+    while (coep != endp)
+    {
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+        akku += *inp++ * *coep++;
+    }
 
-	endp = coep + n0;
-	while (coep != endp) {
-		akku += *inp++ * *coep++;
-	}
-	*outp = akku;
+    endp = coep + n0;
+    while (coep != endp)
+    {
+        akku += *inp++ * *coep++;
+    }
+    *outp = akku;
 }
 
 static void
-fir_stereo(int *inp, int *coep,
-	   int firlen, int *out1p, int *out2p)
+fir_stereo(int *inp, int *coep, int firlen, int *out1p, int *out2p)
 {
-	register int akku1 = 0, akku2 = 0, *endp;
-	int n1 = (firlen / 8) * 8, n0 = firlen % 8;
+    register int akku1 = 0, akku2 = 0, *endp;
+    int n1 = (firlen / 8) * 8, n0 = firlen % 8;
 
-	endp = coep + n1;
-	while (coep != endp) {
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-	}
+    endp = coep + n1;
+    while (coep != endp)
+    {
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+    }
 
-	endp = coep + n0;
-	while (coep != endp) {
-		akku1 += *inp++ * *coep;
-		akku2 += *inp++ * *coep++;
-	}
-	*out1p = akku1;
-	*out2p = akku2;
+    endp = coep + n0;
+    while (coep != endp)
+    {
+        akku1 += *inp++ * *coep;
+        akku2 += *inp++ * *coep++;
+    }
+    *out1p = akku1;
+    *out2p = akku2;
 }
 
 /*
@@ -246,239 +248,242 @@ fir_stereo(int *inp, int *coep,
  *	is full and is expected to be stowed away;
  *
  */
-static int
-filtering_on_buffers(cst_rateconv *filt)
+static int filtering_on_buffers(cst_rateconv *filt)
 {
-	int insize;
+    int insize;
 
-	DPRINTF(0, ("filtering_on_buffers(%d)\n", filt->incount));
-	insize = filt->incount + filt->lag;
-	if (filt->channels == 1) {
-		while (1) {
-			filt->inoffset = (filt->cycctr * filt->down)/filt->up;
-			if ((filt->inbaseidx + filt->inoffset + filt->len) > insize) {
-				filt->inbaseidx -= insize - filt->len + 1;
-				memcpy(filt->sin, filt->sin + insize - filt->lag,
-				       filt->lag * sizeof(int));
-				/* Prevent people from re-filtering the same stuff. */
-				filt->incount = 0;
-				return 0;
-			}
-			fir_mono(filt->sin + filt->inoffset + filt->inbaseidx,
-				 filt->coep + filt->cycctr * filt->len,
-				 filt->len, filt->sout + filt->outidx);
-			DPRINTF(1, ("in(%d + %d) = %d cycctr %d out(%d) = %d\n",
-				    filt->inoffset, filt->inbaseidx,
-				    filt->sin[filt->inoffset + filt->inbaseidx],
-				    filt->cycctr, filt->outidx,
-				    filt->sout[filt->outidx] >> FIXSHIFT));
-			++filt->outidx;
-			++filt->cycctr;
-			if (!(filt->cycctr %= filt->up))
-				filt->inbaseidx += filt->down;
-			if (!(filt->outidx %= filt->outsize))
-				return filt->outsize;
-		}
-	} else if (filt->channels == 2) {
-		/*
-		 * rule how to convert mono routine to stereo routine:
-		 * firlen, up, down and cycctr relate to samples in general,
-		 * wether mono or stereo; inbaseidx, inoffset and outidx as
-		 * well as insize and outsize still account for mono samples.
-		 */
-		while (1) {
-			filt->inoffset = 2*((filt->cycctr * filt->down)/filt->up);
-			if ((filt->inbaseidx + filt->inoffset + 2*filt->len) > insize) {
-				filt->inbaseidx -= insize - 2*filt->len + 2;
-				return filt->outidx;
-			}
-			fir_stereo(filt->sin + filt->inoffset + filt->inbaseidx,
-				   filt->coep + filt->cycctr * filt->len,
-				   filt->len,
-				   filt->sout + filt->outidx,
-				   filt->sout + filt->outidx + 1);
-			filt->outidx += 2;
-			++filt->cycctr;
-			if (!(filt->cycctr %= filt->up))
-				filt->inbaseidx += 2*filt->down;
-			if (!(filt->outidx %= filt->outsize))
-				return filt->outsize;
-		}
-	} else {
-		cst_errmsg("filtering_on_buffers: only 1 or 2 channels supported!\n");
-		cst_error();
-	}
-	return 0;
+    DPRINTF(0, ("filtering_on_buffers(%d)\n", filt->incount));
+    insize = filt->incount + filt->lag;
+    if (filt->channels == 1)
+    {
+        while (1)
+        {
+            filt->inoffset = (filt->cycctr * filt->down) / filt->up;
+            if ((filt->inbaseidx + filt->inoffset + filt->len) > insize)
+            {
+                filt->inbaseidx -= insize - filt->len + 1;
+                memcpy(filt->sin, filt->sin + insize - filt->lag,
+                       filt->lag * sizeof(int));
+                /* Prevent people from re-filtering the same stuff. */
+                filt->incount = 0;
+                return 0;
+            }
+            fir_mono(filt->sin + filt->inoffset + filt->inbaseidx,
+                     filt->coep + filt->cycctr * filt->len,
+                     filt->len, filt->sout + filt->outidx);
+            DPRINTF(1, ("in(%d + %d) = %d cycctr %d out(%d) = %d\n",
+                        filt->inoffset, filt->inbaseidx,
+                        filt->sin[filt->inoffset + filt->inbaseidx],
+                        filt->cycctr, filt->outidx,
+                        filt->sout[filt->outidx] >> FIXSHIFT));
+            ++filt->outidx;
+            ++filt->cycctr;
+            if (!(filt->cycctr %= filt->up))
+                filt->inbaseidx += filt->down;
+            if (!(filt->outidx %= filt->outsize))
+                return filt->outsize;
+        }
+    }
+    else if (filt->channels == 2)
+    {
+        /*
+         * rule how to convert mono routine to stereo routine:
+         * firlen, up, down and cycctr relate to samples in general,
+         * wether mono or stereo; inbaseidx, inoffset and outidx as
+         * well as insize and outsize still account for mono samples.
+         */
+        while (1)
+        {
+            filt->inoffset = 2 * ((filt->cycctr * filt->down) / filt->up);
+            if ((filt->inbaseidx + filt->inoffset + 2 * filt->len) > insize)
+            {
+                filt->inbaseidx -= insize - 2 * filt->len + 2;
+                return filt->outidx;
+            }
+            fir_stereo(filt->sin + filt->inoffset + filt->inbaseidx,
+                       filt->coep + filt->cycctr * filt->len,
+                       filt->len,
+                       filt->sout + filt->outidx,
+                       filt->sout + filt->outidx + 1);
+            filt->outidx += 2;
+            ++filt->cycctr;
+            if (!(filt->cycctr %= filt->up))
+                filt->inbaseidx += 2 * filt->down;
+            if (!(filt->outidx %= filt->outsize))
+                return filt->outsize;
+        }
+    }
+    else
+    {
+        cst_errmsg("filtering_on_buffers: only 1 or 2 channels supported!\n");
+        cst_error();
+    }
+    return 0;
 }
 
 /*
  *	convert buffer of n samples to ints
  */
-static void
-sample_to_int(short *buff, int n)
+static void sample_to_int(short *buff, int n)
 {
-	short *s, *e;
-	int *d;
+    short *s, *e;
+    int *d;
 
-	if (n < 1)
-		return;	
-	s = buff + n;
-	d = (int*)buff + n;
-	e = buff;
-	while (s != e) {
-		*--d = (int)(*--s); 
-	}
+    if (n < 1)
+        return;
+    s = buff + n;
+    d = (int *) buff + n;
+    e = buff;
+    while (s != e)
+    {
+        *--d = (int) (*--s);
+    }
 }
 
 /*
  *	convert buffer of n ints to samples
  */
-static void
-int_to_sample(short *buff, int n)
+static void int_to_sample(short *buff, int n)
 {
-	int *s;
-	short *e, *d;
+    int *s;
+    short *e, *d;
 
-	if (n < 1)
-		return;	
-	s = (int *)buff;
-	d = buff;
-	e = buff + n;
-	while (d != e)
-		*d++ = (*s++ >> FIXSHIFT);
+    if (n < 1)
+        return;
+    s = (int *) buff;
+    d = buff;
+    e = buff + n;
+    while (d != e)
+        *d++ = (*s++ >> FIXSHIFT);
 }
 
 /*
  *	read and convert input sample format to integer
  */
-int
-cst_rateconv_in(cst_rateconv *filt, const short *inptr, int max)
+int cst_rateconv_in(cst_rateconv *filt, const short *inptr, int max)
 {
-	if (max > filt->insize - filt->lag)
-		max = filt->insize - filt->lag;
-	if (max > 0) {
-		memcpy(filt->sin + filt->lag, inptr, max * sizeof(short));
-		sample_to_int((short *)(filt->sin + filt->lag), max);
-	}
-	filt->incount = max;
-	return max;
+    if (max > filt->insize - filt->lag)
+        max = filt->insize - filt->lag;
+    if (max > 0)
+    {
+        memcpy(filt->sin + filt->lag, inptr, max * sizeof(short));
+        sample_to_int((short *) (filt->sin + filt->lag), max);
+    }
+    filt->incount = max;
+    return max;
 }
 
 /*
  *	do some conversion jobs and write
  */
-int
-cst_rateconv_out(cst_rateconv *filt, short *outptr, int max)
+int cst_rateconv_out(cst_rateconv *filt, short *outptr, int max)
 {
-	int outsize;
+    int outsize;
 
-	if ((outsize = filtering_on_buffers(filt)) == 0)
-		return 0;
-	if (max > outsize)
-		max = outsize;
-	int_to_sample((short *)filt->sout, max);
-	memcpy(outptr, filt->sout, max * sizeof(short));
-	return max;
+    if ((outsize = filtering_on_buffers(filt)) == 0)
+        return 0;
+    if (max > outsize)
+        max = outsize;
+    int_to_sample((short *) filt->sout, max);
+    memcpy(outptr, filt->sout, max * sizeof(short));
+    return max;
 }
 
-int
-cst_rateconv_leadout(cst_rateconv *filt)
+int cst_rateconv_leadout(cst_rateconv *filt)
 {
-	memset(filt->sin + filt->lag, 0, filt->lag * sizeof(int));
-	filt->incount = filt->lag;
-	return filt->lag;
+    memset(filt->sin + filt->lag, 0, filt->lag * sizeof(int));
+    filt->incount = filt->lag;
+    return filt->lag;
 }
 
 /*
  *	evaluate sinc(x) = sin(x)/x safely
  */
-static double
-sinc(double x)
+static double sinc(double x)
 {
-	return(fabs(x) < 1E-50 ? 1.0 : sin(fmod(x,2*M_PI))/x);
+    return (fabs(x) < 1E-50 ? 1.0 : sin(fmod(x, 2 * M_PI)) / x);
 }
 
 /*
  *	evaluate interpolation function g(t) at t
  *	integral of g(t) over all times is expected to be one
  */
-static double
-interpol_func(double t, double fgk, double fgg)
+static double interpol_func(double t, double fgk, double fgg)
 {
-	return (2*fgk*sinc(M_PI*2*fgk*t)*exp(-M_PI*sqr(2*fgg*t)));
+    return (2 * fgk * sinc(M_PI * 2 * fgk * t) *
+            exp(-M_PI * sqr(2 * fgg * t)));
 }
 
 /*
  *	evaluate coefficient from i, q=n%u by sampling interpolation function 
  *	and scale it for integer multiplication used by FIR-filtering
  */
-static int
-coefficient(int i, int q, cst_rateconv *filt)
+static int coefficient(int i, int q, cst_rateconv *filt)
 {
-	return (int)(FIXMUL * filt->gain *
-		     interpol_func((fmod(q* filt->down/(double)filt->up,1.0)
-				    + (filt->len-1)/2.0 - i) / filt->fsin,
-				   filt->fgk, filt->fgg) / filt->fsin);
+    return (int) (FIXMUL * filt->gain *
+                  interpol_func((fmod(q * filt->down / (double) filt->up, 1.0)
+                                 + (filt->len - 1) / 2.0 - i) / filt->fsin,
+                                filt->fgk, filt->fgg) / filt->fsin);
 }
 
 /*
  *	set up coefficient array
  */
-static void
-make_coe(cst_rateconv *filt)
+static void make_coe(cst_rateconv *filt)
 {
-	int i, q;
+    int i, q;
 
-	filt->coep = cst_alloc(int, filt->len * filt->up);
-	for (i = 0; i < filt->len; i++) {
-	    for (q = 0; q < filt->up; q++) {
-		filt->coep[q * filt->len + i]
-			= coefficient(i, q, filt);
-	    }
-	}
+    filt->coep = cst_alloc(int, filt->len * filt->up);
+    for (i = 0; i < filt->len; i++)
+    {
+        for (q = 0; q < filt->up; q++)
+        {
+            filt->coep[q * filt->len + i] = coefficient(i, q, filt);
+        }
+    }
 }
 
-cst_rateconv *
-new_rateconv(int up, int down, int channels)
+cst_rateconv *new_rateconv(int up, int down, int channels)
 {
-	cst_rateconv *filt;
+    cst_rateconv *filt;
 
-	if (!(channels == 1 || channels == 2)) {
-		cst_errmsg("new_rateconv: channels must be 1 or 2\n");
-		cst_error();
-	}
+    if (!(channels == 1 || channels == 2))
+    {
+        cst_errmsg("new_rateconv: channels must be 1 or 2\n");
+        cst_error();
+    }
 
-	filt = cst_alloc(cst_rateconv, 1);
-	filt->fsin = 1.0;
-	filt->gain = 0.8;
-	filt->fgg = 0.0116;
-	filt->fgk = 0.461;
-	filt->len = 162;
-	filt->down = down;
-	filt->up = up;
-	filt->channels = channels;
+    filt = cst_alloc(cst_rateconv, 1);
+    filt->fsin = 1.0;
+    filt->gain = 0.8;
+    filt->fgg = 0.0116;
+    filt->fgk = 0.461;
+    filt->len = 162;
+    filt->down = down;
+    filt->up = up;
+    filt->channels = channels;
 
-	if (down > up) {
-		filt->fgg *= (double) up / down;
-		filt->fgk *= (double) up / down;
-		filt->len = filt->len * down / up;
-	}
+    if (down > up)
+    {
+        filt->fgg *= (double) up / down;
+        filt->fgk *= (double) up / down;
+        filt->len = filt->len * down / up;
+    }
 
-	make_coe(filt);
-	filt->lag = (filt->len - 1) * channels;
-	filt->insize = channels*filt->len + filt->lag;
-	filt->outsize = channels*filt->len;
-	filt->sin = cst_alloc(int, filt->insize);
-	filt->sout = cst_alloc(int, filt->outsize);
+    make_coe(filt);
+    filt->lag = (filt->len - 1) * channels;
+    filt->insize = channels * filt->len + filt->lag;
+    filt->outsize = channels * filt->len;
+    filt->sin = cst_alloc(int, filt->insize);
+    filt->sout = cst_alloc(int, filt->outsize);
 
-	return filt;
+    return filt;
 }
 
-void
-delete_rateconv(cst_rateconv *filt)
+void delete_rateconv(cst_rateconv *filt)
 {
-	cst_free(filt->coep);
-	cst_free(filt->sin);
-	cst_free(filt->sout);
-	cst_free(filt);
+    cst_free(filt->coep);
+    cst_free(filt->sin);
+    cst_free(filt->sout);
+    cst_free(filt);
 }

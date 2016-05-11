@@ -43,7 +43,7 @@
 #include "cst_cg_map.h"
 
 cst_voice *cst_cg_load_voice(const char *filename,
-                             const cst_lang *lang_table)
+                             const cst_lang * lang_table)
 {
     cst_voice *vox;
     cst_lexicon *lex = NULL;
@@ -51,20 +51,21 @@ cst_voice *cst_cg_load_voice(const char *filename,
     const char *language;
     const char *xname;
     cst_cg_db *cg_db;
-    char* fname;
-    char* fval;
+    char *fname;
+    char *fval;
     cst_file vd;
 
-    vd = cst_fopen(filename,CST_OPEN_READ);
+    vd = cst_fopen(filename, CST_OPEN_READ);
     if (vd == NULL)
     {
-        cst_errmsg("Error load voice: can't open file %s\n",filename);
-	return NULL;
+        cst_errmsg("Error load voice: can't open file %s\n", filename);
+        return NULL;
     }
 
     if (cst_cg_read_header(vd) != 0)
     {
-        cst_errmsg("Error load voice: %s does not have expected header\n",filename);
+        cst_errmsg("Error load voice: %s does not have expected header\n",
+                   filename);
         cst_fclose(vd);
         return NULL;
     }
@@ -73,28 +74,28 @@ cst_voice *cst_cg_load_voice(const char *filename,
 
     /* Read voice features from the external file */
     /* Read until the feature is "end_of_features" */
-    fname="";
+    fname = "";
     end_of_features = 0;
     while (end_of_features == 0)
     {
-	cst_read_voice_feature(vd,&fname, &fval);
-        if (cst_streq(fname,"end_of_features"))
+        cst_read_voice_feature(vd, &fname, &fval);
+        if (cst_streq(fname, "end_of_features"))
             end_of_features = 1;
         else
         {
-            xname = feat_own_string(vox->features,fname);
-            mimic_feat_set_string(vox->features,xname, fval);
+            xname = feat_own_string(vox->features, fname);
+            mimic_feat_set_string(vox->features, xname, fval);
         }
         cst_free(fname);
         cst_free(fval);
     }
 
     /* Load up cg_db from external file */
-    cg_db = cst_cg_load_db(vox,vd);
+    cg_db = cst_cg_load_db(vox, vd);
 
     if (cg_db == NULL)
     {
-	cst_fclose(vd);
+        cst_fclose(vd);
         return NULL;
     }
 
@@ -102,48 +103,49 @@ cst_voice *cst_cg_load_voice(const char *filename,
     language = mimic_get_param_string(vox->features, "language", "");
 
     /* Search Lang table for lang_init() and lex_init(); */
-    for (i=0; lang_table[i].lang; i++)
+    for (i = 0; lang_table[i].lang; i++)
     {
-        if (cst_streq(language,lang_table[i].lang))
+        if (cst_streq(language, lang_table[i].lang))
         {
-            (lang_table[i].lang_init)(vox);
-            lex = (lang_table[i].lex_init)();
+            (lang_table[i].lang_init) (vox);
+            lex = (lang_table[i].lex_init) ();
             break;
         }
     }
     if (lex == NULL)
-    {   /* Language is not supported */
-	/* Delete allocated memory in cg_db */
-	cst_cg_free_db(vd,cg_db);
-	cst_fclose(vd);
-        cst_errmsg("Error load voice: lang/lex %s not supported in this binary\n",language);
-	return NULL;	
+    {                           /* Language is not supported */
+        /* Delete allocated memory in cg_db */
+        cst_cg_free_db(vd, cg_db);
+        cst_fclose(vd);
+        cst_errmsg
+            ("Error load voice: lang/lex %s not supported in this binary\n",
+             language);
+        return NULL;
     }
-    
+
     /* Things that weren't filled in already. */
     vox->name = cg_db->name;
-    mimic_feat_set_string(vox->features,"name",cg_db->name);
-    mimic_feat_set_string(vox->features,"pathname",filename);
-    
-    mimic_feat_set(vox->features,"lexicon",lexicon_val(lex));
-    mimic_feat_set(vox->features,"postlex_func",uttfunc_val(lex->postlex));
+    mimic_feat_set_string(vox->features, "name", cg_db->name);
+    mimic_feat_set_string(vox->features, "pathname", filename);
+
+    mimic_feat_set(vox->features, "lexicon", lexicon_val(lex));
+    mimic_feat_set(vox->features, "postlex_func", uttfunc_val(lex->postlex));
 
     /* No standard segment durations are needed as its done at the */
     /* HMM state level */
-    mimic_feat_set_string(vox->features,"no_segment_duration_model","1");
-    mimic_feat_set_string(vox->features,"no_f0_target_model","1");
+    mimic_feat_set_string(vox->features, "no_segment_duration_model", "1");
+    mimic_feat_set_string(vox->features, "no_f0_target_model", "1");
 
     /* Waveform synthesis */
-    mimic_feat_set(vox->features,"wave_synth_func",uttfunc_val(&cg_synth));
-    mimic_feat_set(vox->features,"cg_db",cg_db_val(cg_db));
-    mimic_feat_set_int(vox->features,"sample_rate",cg_db->sample_rate);
+    mimic_feat_set(vox->features, "wave_synth_func", uttfunc_val(&cg_synth));
+    mimic_feat_set(vox->features, "cg_db", cg_db_val(cg_db));
+    mimic_feat_set_int(vox->features, "sample_rate", cg_db->sample_rate);
 
     cst_fclose(vd);
     return vox;
 }
 
-void cst_cg_unload_voice(cst_voice *vox,cst_val *voice_list)
+void cst_cg_unload_voice(cst_voice *vox, cst_val *voice_list)
 {
     delete_voice(vox);
 }
-

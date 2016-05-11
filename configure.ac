@@ -30,21 +30,62 @@ dnl ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF       ##
 dnl THIS SOFTWARE.                                                       ##
 dnl                                                                      ##
 dnl########################################################################
-AC_INIT(include/mimic.h)
 
-AC_CANONICAL_SYSTEM
+dnl Use aclocal && autoconf to create the configure script
+AC_PREREQ([2.69])
+AC_INIT([mimic],[0.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
+AC_CONFIG_SRCDIR([include/mimic.h])
+
+AC_CANONICAL_TARGET
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_CHECK_TOOL(AR, ar)
 AC_C_BIGENDIAN
+PKG_PROG_PKG_CONFIG
+
 
 if test "x$GCC" = "xyes"; then
 	CFLAGS="$CFLAGS -Wall"
 fi
-AC_ARG_ENABLE( shared, 
-               [  --disable-shared     without shared library support],
-	       [case "${enableval}" in
+
+AC_ARG_ENABLE([gcov],[ AS_HELP_STRING([--enable-gcov  Enable gcov for profiling])],
+ [ case "${enableval}" in
+     yes)
+       # Add the special gcc flags
+       COVERAGE_CFLAGS="-O0 --coverage"
+       #COVERAGE_CXXFLAGS="-O0 -fprofile-arcs -ftest-coverage"
+       COVERAGE_LDFLAGS="-lgcov --coverage"
+       OBJSUBDIR="."
+       BUILDDIR="\$(TOP)"
+       ;;
+     no)
+       COVERAGE_CFLAGS=
+       #COVERAGE_CXXFLAGS=
+       COVERAGE_LDFLAGS=
+       OBJSUBDIR="."
+       BUILDDIR="default"
+       ;;
+     *)
+       AC_MSG_ERROR([bad value ${enableval} for gcov options])
+       ;;
+     esac
+ ], [  COVERAGE_CFLAGS=
+       #COVERAGE_CXXFLAGS=
+       COVERAGE_LDFLAGS=
+       OBJSUBDIR="obj"
+       BUILDDIR="default"
+    ])
+
+AC_SUBST(BUILDDIR)
+AC_SUBST(OBJSUBDIR)
+
+CFLAGS="${CFLAGS} ${COVERAGE_CFLAGS}"
+LDFLAGS="${LDFLAGS} ${COVERAGE_LDFLAGS}"
+
+AC_ARG_ENABLE([shared], 
+              [ AS_HELP_STRING([--disable-shared     without shared library support])],
+              [case "${enableval}" in
                  yes) shared=true ;;
                  no) shared=false ;;
                  *) AC_MSG_ERROR(bad value ${enableval} for shared options) ;;
@@ -305,11 +346,8 @@ fi
 dnl
 dnl Does this compiler support initialization of unions
 dnl
-AC_TRY_COMPILE([#include <stdio.h>],
-               [ struct a { union { float b; int c; } d; };
-                 const struct a e = { .d={ .b=3.14 } }; ],
-               [unioninit=yes],
-               [unioninit=no])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[ struct a { union { float b; int c; } d; };
+                 const struct a e = { .d={ .b=3.14 } }; ]])],[unioninit=yes],[unioninit=no])
 if test "$unioninit" = no; then
    AC_DEFINE(NO_UNION_INITIALIZATION)
 fi
@@ -378,17 +416,21 @@ AC_CHECK_HEADER(machine/soundcard.h,
 AC_CHECK_HEADER(sys/audioio.h,
               [AUDIODRIVER="sun"
                AUDIODEFS=-DCST_AUDIO_SUNOS])
-# Seems the alsa code I have breaks on earlier versions
-# I'm not sure what the threshold version is, but made this depend on
-# the one I know -- you can still specific --with-audio=alsa
-AC_TRY_COMPILE([#include <alsa/version.h>],
-               [int j=
-                #if SND_LIB_SUBMINOR >= 11
-                3;
-                #endif],
-              [AUDIODRIVER="alsa"
-	       AUDIODEFS=-DCST_AUDIO_ALSA
-               AUDIOLIBS=-lasound])
+
+dnl Check for ALSA sound library
+PKG_CHECK_MODULES([ALSA], [alsa >= 1.0.11],
+                  [AUDIODRIVER="alsa"
+                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+                   AUDIOLIBS="${ALSA_LIBS}"],
+                  [m4_ignore])
+
+dnl Check PortAudio is at least (v19-dev)
+PKG_CHECK_MODULES([PORTAUDIO], [portaudio-2.0 >= 19],
+                  [AUDIODRIVER="portaudio"
+                   AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
+                   AUDIOLIBS="${PORTAUDIO_LIBS}"],
+                  [m4_ignore])
+
 AC_CHECK_HEADER(mmsystem.h,
 	      [AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
@@ -436,13 +478,18 @@ if test "x$AUDIODEFS" = x; then
 	    ;;
 	alsa)
             AUDIODRIVER="alsa"
-	    AUDIODEFS=-DCST_AUDIO_ALSA
-            AUDIOLIBS=-lasound
+	    AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+            AUDIOLIBS="${ALSA_LIBS}"
 	    ;;
 	pa|pulseaudio)
             AUDIODRIVER="pulseaudio"
 	    AUDIODEFS=-DCST_AUDIO_PULSEAUDIO
             AUDIOLIBS='-lpulse-simple -lpulse'
+	    ;;
+        portaudio)
+            AUDIODRIVER="portaudio"
+	    AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
+            AUDIOLIBS="${PORTAUDIO_LIBS}"
 	    ;;
 	*bsd)
 	    AUDIODRIVER=oss
@@ -492,4 +539,5 @@ AC_ARG_WITH( langvox,
         FL_LANGVOX=$with_langvox )
 AC_SUBST(FL_LANGVOX)
 
-AC_OUTPUT(config/config config/system.mak)
+AC_CONFIG_FILES([config/config config/system.mak])
+AC_OUTPUT

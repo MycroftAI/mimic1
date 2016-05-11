@@ -43,12 +43,13 @@
 extern cst_lexicon cmu_lex;
 void cmu_lex_init();
 
-static void lookup_and_print(cst_lexicon *l,const char *word,const char *feats)
+static void lookup_and_print(cst_lexicon *l, const char *word,
+                             const char *feats)
 {
     cst_val *p;
 
-    p = lex_lookup(l,word,feats, NULL);
-    val_print(stdout,p);
+    p = lex_lookup(l, word, feats, NULL);
+    val_print(stdout, p);
     printf("\n");
     delete_val(p);
 }
@@ -60,18 +61,18 @@ int main(int argc, char **argv)
 
     if (argc == 1)
     {
-	fprintf(stderr,"usage: lex_lookup WORD [PartOfSpeech]\n");
-	return 1;
+        fprintf(stderr, "usage: lex_lookup WORD [PartOfSpeech]\n");
+        return 1;
     }
     else
-	word=argv[1];
+        word = argv[1];
 
     if (argc > 2)
-	pos=argv[2];
+        pos = argv[2];
 
     cmu_lex_init();
 
-    lookup_and_print(&cmu_lex,word,pos);
-    
+    lookup_and_print(&cmu_lex, word, pos);
+
     return 0;
 }

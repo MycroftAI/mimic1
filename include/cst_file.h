@@ -52,10 +52,10 @@ typedef HANDLE cst_file;
 #elif __palmos__
 #include <PalmOS.h>
 #include <System/StdIOPalm.h>
-typedef FILE * cst_file;
+typedef FILE *cst_file;
 #else
 #include <stdio.h>
-typedef FILE * cst_file;
+typedef FILE *cst_file;
 #endif
 
 /* File mapping stuff */

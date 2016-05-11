@@ -29,30 +29,32 @@ tags
 # gdb files
 .gdb_history
 
+# gcov files
+*.gcno
+*.gcda
+*.gcov
+
 # Configure Generated Files/Directories 
 config.log
 config.status
 config/config
 config/system.mak
-
+aclocal.m4
+autom4te.cache
 # Building Process Files/Directories
 build/
 bin/
 include/mimic_version.h
 main/mimic_lang_list.c
 main/mimic_voice_list.c
+.build_lib
 
 # Test suite executables
-testsuite/hrg_test
-testsuite/lex_test
-testsuite/nums_test
 testsuite/play_client
 testsuite/play_server
 testsuite/play_sync
 testsuite/play_wave
 testsuite/record_wave
-testsuite/regex_test
-testsuite/token_test
 testsuite/asciiS2U
 testsuite/asciiU2S
 testsuite/bin2ascii
@@ -60,10 +62,25 @@ testsuite/combine_waves
 testsuite/compare_wave
 testsuite/lex_lookup
 testsuite/lpc_resynth
-testsuite/lpc_test
-testsuite/lpc_test2
 testsuite/record_in_noise
 testsuite/rfc
-testsuite/utt_test
 testsuite/by_word
 testsuite/multi_thread
+testsuite/lpc_test
+testsuite/lpc_test2
+testsuite/utt_test
+
+# unittests
+unittests/regex_test
+unittests/token_test
+unittests/hrg_test
+unittests/lex_test
+unittests/nums_test
+unittests/voice_select_test
+unittests/lts_test
+
+# temporary files for building cmulex
+_festsuite
+lang/cmulex/festival
+lang/cmulex/festlex_CMU.tar.gz
+

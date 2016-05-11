@@ -1,6 +1,7 @@
 LIBRARY	"mimicDll"
 EXPORTS 
 	mimic_init
+	mimic_exit
 	mimic_voice_select
 	mimic_file_to_speech
 	mimic_text_to_speech
@@ -46,6 +47,8 @@ EXPORTS
 	audio_close
 	audio_stream_chunk
 	audio_streaming_info_val
+	audio_init
+	audio_exit
 	new_audio_streaming_info
 	
 	

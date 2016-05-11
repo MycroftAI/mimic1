@@ -34,40 +34,99 @@
 /*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Test of lexicon/lts rules                                            */
+/*  Test of lexicon words                                                */
+/*  To make sure that the Lexicon is consulted properly we need to       */
+/*  search for words that are in the lexicon, this is words that were    */
+/*  kept in the pruned lexicon after the LTS rules were trained          */
+/*  These words must belong to the list lang/cmulex/cmu_lex_data_raw.c   */
+/*  Words that are not in the pruned lexicon are predicted by the lts    */
+/*  and belong to the lts_test_main unit test.                           */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
 #include "cst_lexicon.h"
 
+#include "cutest.h"
+
 extern cst_lexicon cmu_lex;
 void cmu_lex_init();
 
-static void lookup_and_print(cst_lexicon *l,const char *word,const char *feats)
+static void
+lookup_and_test(cst_lexicon *l, const char *word,
+                const char *feats, const char *expected_lexes)
 {
     cst_val *p;
+    const cst_val *syl;
 
-    printf("Lookup: %s %s\n",word,feats);
-    p = lex_lookup(l,word, feats, NULL);
-    val_print(stdout,p);
-    printf("\n");
+    char *tok;
+    char *expected_str = malloc(strlen(expected_lexes) + 1);
+
+    p = lex_lookup(l, word, feats, NULL);
+    strcpy(expected_str, expected_lexes);
+    tok = strtok(expected_str, " ");
+    for (syl = p; syl;)
+    {
+        TEST_CHECK(strcmp(val_string(val_car(syl)), tok) == 0);
+        syl = val_cdr(syl);
+        if (syl)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
+    }
     delete_val(p);
 }
 
-int main(int argc, char **argv)
+void test_activism(void)
 {
-
     cmu_lex_init();
-
-    lookup_and_print(&cmu_lex,"sleekit",NULL);
-    lookup_and_print(&cmu_lex,"chair",NULL);
-    lookup_and_print(&cmu_lex,"project","n");
-    lookup_and_print(&cmu_lex,"project","v");
-    lookup_and_print(&cmu_lex,"project","j");
-    lookup_and_print(&cmu_lex,"bbcc",NULL);
-    lookup_and_print(&cmu_lex,"zzzz",NULL);
-    lookup_and_print(&cmu_lex,"crax",NULL);
-    lookup_and_print(&cmu_lex,"a","dt");
-    
-    return 0;
+    lookup_and_test(&cmu_lex, "activism", NULL, "ae1 k t ih0 v ih1 z ax0 m");
 }
+
+void test_chronicles(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "chronicles", NULL, "k r aa1 n ax0 k ax0 l z");
+}
+
+void test_project(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "project", "n", "p r aa1 jh eh0 k t");
+    lookup_and_test(&cmu_lex, "project", "v", "p r ax0 jh eh1 k t");
+    lookup_and_test(&cmu_lex, "project", "j", "p r aa1 jh eh0 k t");
+}
+
+void test_atypical(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "atypical", NULL, "ey0 t ih1 p ih0 k ax0 l");
+}
+
+void test_zzzz(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "zzzz", NULL, "z iy1 z");
+}
+
+void test_crax(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "crax", NULL, "k r ae1 k s");
+}
+
+void test_a(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "a", "dt", "ax0");
+}
+
+TEST_LIST = {
+    {"activism", test_activism},
+    {"chronicles", test_chronicles},
+    {"project", test_project},
+    {"atypical", test_atypical},
+    {"zzzz", test_zzzz},
+    {"crax", test_crax},
+    {"a", test_a},
+    {0}
+};

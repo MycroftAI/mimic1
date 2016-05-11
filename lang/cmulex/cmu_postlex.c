@@ -60,21 +60,34 @@ static void apostrophe_s(cst_utterance *u)
 		/* needs a schwa */
 	    {
 		schwa = item_prepend(s,NULL);
-		item_set_string(schwa,"name","ax");
+		item_set_string(schwa,"name","ih");
 		item_prepend(item_as(s,"SylStructure"),schwa);
 	    }
 	    else if (cst_streq("-",phone_feature_string(ps,pname,"cvox")))
 		item_set_string(s,"name","s");
 	}
 	else if (cst_streq("'ve", word)
-		 || cst_streq("'ll", word)
-		 || cst_streq("'d", word))
+		 || cst_streq("'ll", word))
 	{
 	    if (cst_streq("-",ffeature_string(s,"p.ph_vc")))
 	    {
 		schwa = item_prepend(s,NULL);
 		item_set_string(schwa,"name","ax");
 		item_prepend(item_as(s,"SylStructure"),schwa);
+	    }
+	}
+	else if (cst_streq("'d", word))
+	{
+	    pname = item_feat_string(item_prev(s),"name");
+	    if (cst_streq("t",pname) || cst_streq("d",pname))
+	    {
+		schwa = item_prepend(s,NULL);
+		item_set_string(schwa,"name","ih");
+		item_prepend(item_as(s,"SylStructure"),schwa);
+	    }
+	    else if (cst_streq("-",ffeature_string(s,"p.ph_vc")))
+	    {
+		item_set_string(s, "name", "t");
 	    }
 	}
     }

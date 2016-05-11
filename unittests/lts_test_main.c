@@ -34,44 +34,77 @@
 /*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Test of hrg creation and manipulation                                */
+/*  Test of lts rules. The words tested here must not be in the pruned   */
+/*  lexicon, so they are predicted using the LTS rules.                  */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include "cst_hrg.h"
+#include "cst_lexicon.h"
 
-int main(int argc, char **argv)
+#include "cutest.h"
+
+extern cst_lexicon cmu_lex;
+void cmu_lex_init();
+
+static void lookup_and_test(cst_lexicon *l, const char *word,
+                            const char *feats, const char *expected_lexes)
 {
-    cst_utterance *u;
-    cst_relation *r;
-    cst_item *item=0;
-    int i;
+    cst_val *p;
+    const cst_val *syl;
 
-    u = new_utterance();
-    r = utt_relation_create(u,"Segment");
+    char *tok;
+    char *expected_str = malloc(strlen(expected_lexes) + 1);
 
-    for (i=0; i<10; i++)
+    p = lex_lookup(l, word, feats, NULL);
+    strcpy(expected_str, expected_lexes);
+    tok = strtok(expected_str, " ");
+    for (syl = p; syl;)
     {
-	char buff[20];
-	sprintf(buff,"seg_%03d",i);
-	if (i==0)
-	    item = relation_append(r,NULL);
-	else
-	    item = item_append(item,NULL);
-	item_set_string(item,"name",buff);
-	item_set_float(item,"duration",i*0.20);
+        TEST_CHECK(strcmp(val_string(val_car(syl)), tok) == 0);
+        syl = val_cdr(syl);
+        if (syl)
+            tok = strtok(NULL, " ");
+        if (tok == NULL)
+            break;
     }
-
-    for (i=0,item=relation_head(utt_relation(u,"Segment")); 
-	 item; item=item_next(item),i++)
-    {
-	printf("Segment %d %s %f\n",
-	       i,
-	       item_feat_string(item,"name"),
-	       item_feat_float(item,"duration"));
-    }
-
-    delete_utterance(u);
-
-    return 0;
+    delete_val(p);
 }
+
+void test_sleekit(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "sleekit", NULL, "s l iy1 k ih0 t");
+}
+
+void test_like(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "like", NULL, "l ay1 k");
+}
+
+void test_chair(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "chair", NULL, "ch eh1 r");
+}
+
+void test_further(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "further", NULL, "f er1 dh er0");
+}
+
+void test_crax(void)
+{
+    cmu_lex_init();
+    lookup_and_test(&cmu_lex, "crax", NULL, "k r ae1 k s");
+}
+
+TEST_LIST = {
+    {"sleekit", test_sleekit},
+    {"like", test_like},
+    {"chair", test_chair},
+    {"further", test_further},
+    {"crax", test_crax},
+    {0}
+};

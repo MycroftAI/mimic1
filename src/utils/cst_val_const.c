@@ -42,60 +42,60 @@
 #include "cst_features.h"
 #include "cst_string.h"
 
-DEF_CONST_VAL_STRING(val_string_0,"0");
-DEF_CONST_VAL_STRING(val_string_1,"1");
-DEF_CONST_VAL_STRING(val_string_2,"2");
-DEF_CONST_VAL_STRING(val_string_3,"3");
-DEF_CONST_VAL_STRING(val_string_4,"4");
-DEF_CONST_VAL_STRING(val_string_5,"5");
-DEF_CONST_VAL_STRING(val_string_6,"6");
-DEF_CONST_VAL_STRING(val_string_7,"7");
-DEF_CONST_VAL_STRING(val_string_8,"8");
-DEF_CONST_VAL_STRING(val_string_9,"9");
-DEF_CONST_VAL_STRING(val_string_10,"10");
-DEF_CONST_VAL_STRING(val_string_11,"11");
-DEF_CONST_VAL_STRING(val_string_12,"12");
-DEF_CONST_VAL_STRING(val_string_13,"13");
-DEF_CONST_VAL_STRING(val_string_14,"14");
-DEF_CONST_VAL_STRING(val_string_15,"15");
-DEF_CONST_VAL_STRING(val_string_16,"16");
-DEF_CONST_VAL_STRING(val_string_17,"17");
-DEF_CONST_VAL_STRING(val_string_18,"18");
-DEF_CONST_VAL_STRING(val_string_19,"19");
-DEF_CONST_VAL_STRING(val_string_20,"20");
-DEF_CONST_VAL_STRING(val_string_21,"21");
-DEF_CONST_VAL_STRING(val_string_22,"22");
-DEF_CONST_VAL_STRING(val_string_23,"23");
-DEF_CONST_VAL_STRING(val_string_24,"24");
+DEF_CONST_VAL_STRING(val_string_0, "0");
+DEF_CONST_VAL_STRING(val_string_1, "1");
+DEF_CONST_VAL_STRING(val_string_2, "2");
+DEF_CONST_VAL_STRING(val_string_3, "3");
+DEF_CONST_VAL_STRING(val_string_4, "4");
+DEF_CONST_VAL_STRING(val_string_5, "5");
+DEF_CONST_VAL_STRING(val_string_6, "6");
+DEF_CONST_VAL_STRING(val_string_7, "7");
+DEF_CONST_VAL_STRING(val_string_8, "8");
+DEF_CONST_VAL_STRING(val_string_9, "9");
+DEF_CONST_VAL_STRING(val_string_10, "10");
+DEF_CONST_VAL_STRING(val_string_11, "11");
+DEF_CONST_VAL_STRING(val_string_12, "12");
+DEF_CONST_VAL_STRING(val_string_13, "13");
+DEF_CONST_VAL_STRING(val_string_14, "14");
+DEF_CONST_VAL_STRING(val_string_15, "15");
+DEF_CONST_VAL_STRING(val_string_16, "16");
+DEF_CONST_VAL_STRING(val_string_17, "17");
+DEF_CONST_VAL_STRING(val_string_18, "18");
+DEF_CONST_VAL_STRING(val_string_19, "19");
+DEF_CONST_VAL_STRING(val_string_20, "20");
+DEF_CONST_VAL_STRING(val_string_21, "21");
+DEF_CONST_VAL_STRING(val_string_22, "22");
+DEF_CONST_VAL_STRING(val_string_23, "23");
+DEF_CONST_VAL_STRING(val_string_24, "24");
 
-DEF_CONST_VAL_INT(val_int_0,0);
-DEF_CONST_VAL_INT(val_int_1,1);
-DEF_CONST_VAL_INT(val_int_2,2);
-DEF_CONST_VAL_INT(val_int_3,3);
-DEF_CONST_VAL_INT(val_int_4,4);
-DEF_CONST_VAL_INT(val_int_5,5);
-DEF_CONST_VAL_INT(val_int_6,6);
-DEF_CONST_VAL_INT(val_int_7,7);
-DEF_CONST_VAL_INT(val_int_8,8);
-DEF_CONST_VAL_INT(val_int_9,9);
-DEF_CONST_VAL_INT(val_int_10,10);
-DEF_CONST_VAL_INT(val_int_11,11);
-DEF_CONST_VAL_INT(val_int_12,12);
-DEF_CONST_VAL_INT(val_int_13,13);
-DEF_CONST_VAL_INT(val_int_14,14);
-DEF_CONST_VAL_INT(val_int_15,15);
-DEF_CONST_VAL_INT(val_int_16,16);
-DEF_CONST_VAL_INT(val_int_17,17);
-DEF_CONST_VAL_INT(val_int_18,18);
-DEF_CONST_VAL_INT(val_int_19,19);
-DEF_CONST_VAL_INT(val_int_20,20);
-DEF_CONST_VAL_INT(val_int_21,21);
-DEF_CONST_VAL_INT(val_int_22,22);
-DEF_CONST_VAL_INT(val_int_23,23);
-DEF_CONST_VAL_INT(val_int_24,24);
+DEF_CONST_VAL_INT(val_int_0, 0);
+DEF_CONST_VAL_INT(val_int_1, 1);
+DEF_CONST_VAL_INT(val_int_2, 2);
+DEF_CONST_VAL_INT(val_int_3, 3);
+DEF_CONST_VAL_INT(val_int_4, 4);
+DEF_CONST_VAL_INT(val_int_5, 5);
+DEF_CONST_VAL_INT(val_int_6, 6);
+DEF_CONST_VAL_INT(val_int_7, 7);
+DEF_CONST_VAL_INT(val_int_8, 8);
+DEF_CONST_VAL_INT(val_int_9, 9);
+DEF_CONST_VAL_INT(val_int_10, 10);
+DEF_CONST_VAL_INT(val_int_11, 11);
+DEF_CONST_VAL_INT(val_int_12, 12);
+DEF_CONST_VAL_INT(val_int_13, 13);
+DEF_CONST_VAL_INT(val_int_14, 14);
+DEF_CONST_VAL_INT(val_int_15, 15);
+DEF_CONST_VAL_INT(val_int_16, 16);
+DEF_CONST_VAL_INT(val_int_17, 17);
+DEF_CONST_VAL_INT(val_int_18, 18);
+DEF_CONST_VAL_INT(val_int_19, 19);
+DEF_CONST_VAL_INT(val_int_20, 20);
+DEF_CONST_VAL_INT(val_int_21, 21);
+DEF_CONST_VAL_INT(val_int_22, 22);
+DEF_CONST_VAL_INT(val_int_23, 23);
+DEF_CONST_VAL_INT(val_int_24, 24);
 
 static const int val_int_const_max = 25;
-static const cst_val * const val_int_const [] = {
+static const cst_val *const val_int_const[] = {
     VAL_INT_0,
     VAL_INT_1,
     VAL_INT_2,
@@ -120,9 +120,10 @@ static const cst_val * const val_int_const [] = {
     VAL_INT_21,
     VAL_INT_22,
     VAL_INT_23,
-    VAL_INT_24};
+    VAL_INT_24
+};
 
-static const cst_val * const val_string_const [] = {
+static const cst_val *const val_string_const[] = {
     VAL_STRING_0,
     VAL_STRING_1,
     VAL_STRING_2,
@@ -147,14 +148,15 @@ static const cst_val * const val_string_const [] = {
     VAL_STRING_21,
     VAL_STRING_22,
     VAL_STRING_23,
-    VAL_STRING_24};
-  
+    VAL_STRING_24
+};
+
 const cst_val *val_int_n(int n)
 {
     if (n < val_int_const_max)
-	return val_int_const[n];
+        return val_int_const[n];
     else
-	return val_int_const[val_int_const_max-1];
+        return val_int_const[val_int_const_max - 1];
 }
 
 /* carts are pretty confused about strings/ints, and some features */
@@ -162,11 +164,11 @@ const cst_val *val_int_n(int n)
 const cst_val *val_string_n(int n)
 {
     if (n < 0)
-	return val_string_const[0];
-    else if (n < val_int_const_max) /* yes I mean *int*, its the table size */
-	return val_string_const[n];
+        return val_string_const[0];
+    else if (n < val_int_const_max)     /* yes I mean *int*, its the table size */
+        return val_string_const[n];
     else
-	return val_string_const[val_int_const_max-1];
+        return val_string_const[val_int_const_max - 1];
 }
 
 #if 0
@@ -179,15 +181,15 @@ const cst_val *val_string_x(const char *n)
 
     /* *BUG* This will have to be fixed soon */
     if (val_string_consts == NULL)
-	val_string_consts = new_features();
-    
-    v = feat_val(val_string_consts,n);
+        val_string_consts = new_features();
+
+    v = feat_val(val_string_consts, n);
     if (v)
-	return v;
+        return v;
     else
     {
-	feat_set_string(val_string_consts,n,n);
-	return feat_val(val_string_consts,n);
+        feat_set_string(val_string_consts, n, n);
+        return feat_val(val_string_consts, n);
     }
 }
 #endif
