@@ -60,7 +60,7 @@ static void apostrophe_s(cst_utterance *u)
 		/* needs a schwa */
 	    {
 		schwa = item_prepend(s,NULL);
-		item_set_string(schwa,"name","ax");
+		item_set_string(schwa,"name","ih");
 		item_prepend(item_as(s,"SylStructure"),schwa);
 	    }
 	    else if (cst_streq("-",phone_feature_string(ps,pname,"cvox")))
