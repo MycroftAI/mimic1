@@ -48,64 +48,62 @@ int main(int argc, char **argv)
     cst_val *files;
     cst_features *args;
     int i1, i2, l;
-    double d,s;
+    double d, s;
     double b;
-    int best,x, y;
+    int best, x, y;
     const char *f1, *f2;
-    float v1,v2,v3,c;
-    float xsum,xsumsq,xcount;
-    float ysum,ysumsq,ycount;
-    float xxsum,xxsumsq,xxcount;
-    float yysum,yysumsq,yycount;
-    float xysum,xysumsq,xycount;
+    float v1, v2, v3, c;
+    float xsum, xsumsq, xcount;
+    float ysum, ysumsq, ycount;
+    float xxsum, xxsumsq, xxcount;
+    float yysum, yysumsq, yycount;
+    float xysum, xysumsq, xycount;
 
     args = new_features();
     files =
-        cst_args(argv,argc,
+        cst_args(argv, argc,
                  "usage: compare_waves OPTIONS WAVE1 WAVE2\n"
-                 "Compare two waveformfiles\n",
-                 args);
+                 "Compare two waveformfiles\n", args);
 
     f1 = val_string(val_car(files));
     f2 = val_string(val_car(val_cdr(files)));
     w1 = new_wave();
     w2 = new_wave();
 
-    if (cst_wave_load_riff(w1,f1) != CST_OK_FORMAT)
+    if (cst_wave_load_riff(w1, f1) != CST_OK_FORMAT)
     {
         fprintf(stderr,
-                "compare_wave: can't read file or wrong format \"%s\"\n",
-                f1);
+                "compare_wave: can't read file or wrong format \"%s\"\n", f1);
         return -1;
     }
 
-    if (cst_wave_load_riff(w2,f2) != CST_OK_FORMAT)
+    if (cst_wave_load_riff(w2, f2) != CST_OK_FORMAT)
     {
         fprintf(stderr,
-                "compare_wave: can't read file or wrong format \"%s\"\n",
-                f2);
+                "compare_wave: can't read file or wrong format \"%s\"\n", f2);
         return -1;
     }
-    
+
     s = 0.0;
     if (w1->num_samples > w2->num_samples)
         l = w2->num_samples;
     else
         l = w1->num_samples;
-    b=-1;
+    b = -1;
     best = -80;
 
-    for (y=-80; y < 80; y++)
+    for (y = -80; y < 80; y++)
     {
-        for (i1=80,i2=80; i1 < l-160; i1++,i2++)
+        for (i1 = 80, i2 = 80; i1 < l - 160; i1++, i2++)
         {
-            d = abs(w1->samples[i1+y]) - ((1.0+(x/100.0)) * (float)abs(w2->samples[i2]));
-            s += d*d;
+            d = abs(w1->samples[i1 + y]) -
+                ((1.0 + (x / 100.0)) * (float) abs(w2->samples[i2]));
+            s += d * d;
         }
-        s /= (l-160)-80;
+        s /= (l - 160) - 80;
         /*        printf("%f %d %f %d\n",sqrt(s),x,b,best); */
         if (b < 0)
-            b = s;  /* first time through loop */
+            b = s;              /* first time through loop */
         if (s < b)
         {
             b = s;
@@ -120,30 +118,41 @@ int main(int argc, char **argv)
     xycount = xysum = xysumsq = 0;
     xxcount = xxsum = xxsumsq = 0;
     yycount = yysum = yysumsq = 0;
-    for (i1=80+best,i2=80; i1 < l-160; i1++,i2++)
+    for (i1 = 80 + best, i2 = 80; i1 < l - 160; i1++, i2++)
     {
-        xcount++; xsum += w1->samples[i1]; 
-        xsumsq += w1->samples[i1]*w1->samples[i1];
+        xcount++;
+        xsum += w1->samples[i1];
+        xsumsq += w1->samples[i1] * w1->samples[i1];
 
-        ycount++; ysum += w2->samples[i2]; 
-        ysumsq += w2->samples[i2]*w2->samples[i2];
+        ycount++;
+        ysum += w2->samples[i2];
+        ysumsq += w2->samples[i2] * w2->samples[i2];
 
-        xxcount++; xxsum += w1->samples[i1] * w1->samples[i1];
-        xxsumsq += w1->samples[i1]*w1->samples[i1]*w1->samples[i1]*w1->samples[i1];
+        xxcount++;
+        xxsum += w1->samples[i1] * w1->samples[i1];
+        xxsumsq +=
+            w1->samples[i1] * w1->samples[i1] * w1->samples[i1] *
+            w1->samples[i1];
 
-        yycount++; yysum += w2->samples[i2] * w2->samples[i2]; 
-        yysumsq += w2->samples[i2]*w2->samples[i2] * w2->samples[i2]*w2->samples[i2];
-        
-        xycount++; xysum += w1->samples[i1] * w2->samples[i2];
-        xysumsq += w1->samples[i1]*w1->samples[i1]*w2->samples[i2]*w2->samples[i2];
+        yycount++;
+        yysum += w2->samples[i2] * w2->samples[i2];
+        yysumsq +=
+            w2->samples[i2] * w2->samples[i2] * w2->samples[i2] *
+            w2->samples[i2];
+
+        xycount++;
+        xysum += w1->samples[i1] * w2->samples[i2];
+        xysumsq +=
+            w1->samples[i1] * w1->samples[i1] * w2->samples[i2] *
+            w2->samples[i2];
 
     }
-    v1 = (xysum/xycount)-((xsum/xcount)*(ysum/ycount));
-    v2 = (xxsum/xxcount)-((xsum/xcount)*(xsum/xcount));
-    v3 = (yysum/yycount)-((ysum/ycount)*(ysum/ycount));
-    c = v1/sqrt(v2*v3);
-        
-    printf("%2.3f %0.3f %d\n",sqrt(b),c,best);
+    v1 = (xysum / xycount) - ((xsum / xcount) * (ysum / ycount));
+    v2 = (xxsum / xxcount) - ((xsum / xcount) * (xsum / xcount));
+    v3 = (yysum / yycount) - ((ysum / ycount) * (ysum / ycount));
+    c = v1 / sqrt(v2 * v3);
+
+    printf("%2.3f %0.3f %d\n", sqrt(b), c, best);
 
     return 0;
 }

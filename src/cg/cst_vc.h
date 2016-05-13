@@ -18,7 +18,7 @@
 /*       of conditions and the following disclaimer.                 */
 /*    2. Any modifications must be clearly marked as such.           */
 /*    3. Original authors' names are not deleted.                    */
-/*                                                                   */    
+/*                                                                   */
 /*  NAGOYA INSTITUTE OF TECHNOLOGY, NARA INSTITUTE OF SCIENCE AND    */
 /*  TECHNOLOGY, CARNEGIE MELLON UNIVERSITY, AND THE CONTRIBUTORS TO  */
 /*  THIS WORK DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,  */
@@ -89,13 +89,13 @@ DVECTOR xdvinit(double j, double incr, double n);
 
 double dvsum(DVECTOR x);
 
-#define RANDMAX 32767 
+#define RANDMAX 32767
 #define   B0         0x00000001
 #define   B28        0x10000000
 #define   B31        0x80000000
 #define   B31_       0x7fffffff
 #define   Z          0x00000000
 
-typedef enum {MFALSE, MTRUE} Boolean;
+typedef enum { MFALSE, MTRUE } Boolean;
 
 #endif /* __CST_VC_H */

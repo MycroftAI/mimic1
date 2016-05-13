@@ -61,8 +61,7 @@ int cst_urlp(const char *url)
 {
     /* Return 1 if url is a url, 0 otherwise */
     /* This is decided by the initial substring being "http:" or "file:" */
-    if (cst_streqn("http:",url,5) ||
-        cst_streqn("file:",url,5))
+    if (cst_streqn("http:", url, 5) || cst_streqn("file:", url, 5))
         return TRUE;
     else
         return FALSE;
@@ -79,33 +78,32 @@ cst_file cst_url_open(const char *url)
     char *url_request;
     char *path;
     cst_file ofd;
-    int state,n;
+    int state, n;
     char c;
 
     urlts = ts_open_string(url, "", ":/", "", "");
 
     protocol = ts_get(urlts);
-    if (cst_streq(protocol,"http"))
+    if (cst_streq(protocol, "http"))
     {
 #ifdef CST_NO_SOCKETS
         ts_close(urlts);
         return NULL;
 #else
-        if (!cst_streq(ts_get(urlts),":") ||
-            !cst_streq(ts_get(urlts),"/") ||
-            !cst_streq(ts_get(urlts),"/"))
+        if (!cst_streq(ts_get(urlts), ":") ||
+            !cst_streq(ts_get(urlts), "/") || !cst_streq(ts_get(urlts), "/"))
         {
             ts_close(urlts);
             return NULL;
         }
         host = cst_strdup(ts_get(urlts));
-        if (cst_streq(ts_get(urlts),":"))
-            port = (int)cst_atof(ts_get(urlts));
+        if (cst_streq(ts_get(urlts), ":"))
+            port = (int) cst_atof(ts_get(urlts));
         else
             port = 80;
 
         /* Open port to web server */
-        fd = cst_socket_open(host,port);
+        fd = cst_socket_open(host, port);
         if (fd < 0)
         {
             cst_free(host);
@@ -113,40 +111,40 @@ cst_file cst_url_open(const char *url)
             return NULL;
         }
 
-        url_request = cst_alloc(char,cst_strlen(url)+17);
-        cst_sprintf(url_request,"GET %s HTTP/1.2\n\n",url);
-        n = write(fd,url_request,cst_strlen(url_request));
+        url_request = cst_alloc(char, cst_strlen(url) + 17);
+        cst_sprintf(url_request, "GET %s HTTP/1.2\n\n", url);
+        n = write(fd, url_request, cst_strlen(url_request));
         cst_free(url_request);
 
         /* Skip http header -- until \n\n */
-        state=0;
+        state = 0;
         while (state != 4)
         {
-            n=read(fd,&c,1);
+            n = read(fd, &c, 1);
             if (n == 0)
-            {   /* eof or link gone down */
+            {                   /* eof or link gone down */
                 cst_free(host);
                 ts_close(urlts);
                 return NULL;
             }
             if ((state == 0) && (c == '\r'))
-                state=1;
+                state = 1;
             else if ((state == 1) && (c == '\n'))
-                state=2;
+                state = 2;
             else if ((state == 2) && (c == '\r'))
-                state=3;
+                state = 3;
             else if ((state == 3) && (c == '\n'))
-                state=4;
+                state = 4;
             /* Not sure you can get no CRs in the stream */
             else if ((state == 0) && (c == '\n'))
-                state=2;
+                state = 2;
             else if ((state == 2) && (c == '\n'))
-                state=4;
+                state = 4;
             else
                 state = 0;
         }
 
-        ofd = fdopen(fd,"rb");
+        ofd = fdopen(fd, "rb");
 
         ts_close(urlts);
         cst_free(host);
@@ -154,28 +152,26 @@ cst_file cst_url_open(const char *url)
         return ofd;
 #endif
     }
-    else if (cst_streq(protocol,"file"))
+    else if (cst_streq(protocol, "file"))
     {
-        if (!cst_streq(ts_get(urlts),":") ||
-            !cst_streq(ts_get(urlts),"/") ||
-            !cst_streq(ts_get(urlts),"/"))
+        if (!cst_streq(ts_get(urlts), ":") ||
+            !cst_streq(ts_get(urlts), "/") || !cst_streq(ts_get(urlts), "/"))
         {
             ts_close(urlts);
             return NULL;
         }
-        path = cst_strdup(&urlts->string_buffer[urlts->file_pos-1]);
+        path = cst_strdup(&urlts->string_buffer[urlts->file_pos - 1]);
         /* printf("awb_debug fileurl %s\n",path); */
 
-        ofd = cst_fopen(path,CST_OPEN_READ);
+        ofd = cst_fopen(path, CST_OPEN_READ);
 
         ts_close(urlts);
         cst_free(path);
-        
+
         return ofd;
     }
     else
-    {   /* Unsupported protocol */
+    {                           /* Unsupported protocol */
         return NULL;
     }
 }
-

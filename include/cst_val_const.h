@@ -125,8 +125,8 @@
 #define DEF_CONST_VAL_FLOAT(N,F) const cst_val N = {{.a={.type=CST_VAL_TYPE_FLOAT,.ref_count=-1,.v={.fval=F}}}}
 #define DEF_CONST_VAL_CONS(N,A,D) const cst_val N = {{.cc={.car=A,.cdr=D }}}
 
-extern const cst_val val_int_0; 
-extern const cst_val val_int_1; 
+extern const cst_val val_int_0;
+extern const cst_val val_int_1;
 extern const cst_val val_int_2;
 extern const cst_val val_int_3;
 extern const cst_val val_int_4;
@@ -135,8 +135,8 @@ extern const cst_val val_int_6;
 extern const cst_val val_int_7;
 extern const cst_val val_int_8;
 extern const cst_val val_int_9;
-extern const cst_val val_int_10; 
-extern const cst_val val_int_11; 
+extern const cst_val val_int_10;
+extern const cst_val val_int_11;
 extern const cst_val val_int_12;
 extern const cst_val val_int_13;
 extern const cst_val val_int_14;
@@ -151,8 +151,8 @@ extern const cst_val val_int_22;
 extern const cst_val val_int_23;
 extern const cst_val val_int_24;
 
-extern const cst_val val_string_0; 
-extern const cst_val val_string_1; 
+extern const cst_val val_string_0;
+extern const cst_val val_string_1;
 extern const cst_val val_string_2;
 extern const cst_val val_string_3;
 extern const cst_val val_string_4;
@@ -161,8 +161,8 @@ extern const cst_val val_string_6;
 extern const cst_val val_string_7;
 extern const cst_val val_string_8;
 extern const cst_val val_string_9;
-extern const cst_val val_string_10; 
-extern const cst_val val_string_11; 
+extern const cst_val val_string_10;
+extern const cst_val val_string_11;
 extern const cst_val val_string_12;
 extern const cst_val val_string_13;
 extern const cst_val val_string_14;
@@ -192,13 +192,13 @@ extern const cst_val val_string_24;
 typedef struct cst_val_atom_struct_float {
 #ifdef WORDS_BIGENDIAN
     short ref_count;
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
 #else
 #if (defined(__x86_64__) || defined(_M_X64))
-    int type;  /* order is here important */
+    int type;                   /* order is here important */
     int ref_count;
 #else
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
     short ref_count;
 #endif
 #endif
@@ -212,13 +212,13 @@ typedef struct cst_val_atom_struct_float {
 typedef struct cst_val_atom_struct_int {
 #ifdef WORDS_BIGENDIAN
     short ref_count;
-    short type;  /* order is here important (and unintuitive) */
+    short type;                 /* order is here important (and unintuitive) */
 #else
 #if (defined(__x86_64__) || defined(_M_X64))
-    int type;  /* order is here important */
+    int type;                   /* order is here important */
     int ref_count;
 #else
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
     short ref_count;
 #endif
 #endif
@@ -232,13 +232,13 @@ typedef struct cst_val_atom_struct_int {
 typedef struct cst_val_atom_struct_void {
 #ifdef WORDS_BIGENDIAN
     short ref_count;
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
 #else
 #if (defined(__x86_64__) || defined(_M_X64))
-    int type;  /* order is here important */
+    int type;                   /* order is here important */
     int ref_count;
 #else
-    short type;  /* order is here important */
+    short type;                 /* order is here important */
     short ref_count;
 #endif
 #endif
@@ -258,8 +258,8 @@ typedef struct cst_val_atom_struct_void {
 
 /* in the non-union intialization version we these consts have to be */
 /* more typed than need, we'll cast the back later                   */
-extern const cst_val_int val_int_0; 
-extern const cst_val_int val_int_1; 
+extern const cst_val_int val_int_0;
+extern const cst_val_int val_int_1;
 extern const cst_val_int val_int_2;
 extern const cst_val_int val_int_3;
 extern const cst_val_int val_int_4;
@@ -268,8 +268,8 @@ extern const cst_val_int val_int_6;
 extern const cst_val_int val_int_7;
 extern const cst_val_int val_int_8;
 extern const cst_val_int val_int_9;
-extern const cst_val_int val_int_10; 
-extern const cst_val_int val_int_11; 
+extern const cst_val_int val_int_10;
+extern const cst_val_int val_int_11;
 extern const cst_val_int val_int_12;
 extern const cst_val_int val_int_13;
 extern const cst_val_int val_int_14;
@@ -284,8 +284,8 @@ extern const cst_val_int val_int_22;
 extern const cst_val_int val_int_23;
 extern const cst_val_int val_int_24;
 
-extern const cst_val_void val_string_0; 
-extern const cst_val_void val_string_1; 
+extern const cst_val_void val_string_0;
+extern const cst_val_void val_string_1;
 extern const cst_val_void val_string_2;
 extern const cst_val_void val_string_3;
 extern const cst_val_void val_string_4;
@@ -294,8 +294,8 @@ extern const cst_val_void val_string_6;
 extern const cst_val_void val_string_7;
 extern const cst_val_void val_string_8;
 extern const cst_val_void val_string_9;
-extern const cst_val_void val_string_10; 
-extern const cst_val_void val_string_11; 
+extern const cst_val_void val_string_10;
+extern const cst_val_void val_string_11;
 extern const cst_val_void val_string_12;
 extern const cst_val_void val_string_13;
 extern const cst_val_void val_string_14;
@@ -376,6 +376,5 @@ const cst_val *val_int_n(int n);
 #define VAL_STRING_24 (cst_val *)&val_string_24
 
 const cst_val *val_string_n(int n);
-
 
 #endif

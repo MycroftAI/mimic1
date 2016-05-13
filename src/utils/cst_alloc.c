@@ -70,16 +70,16 @@ void *cst_safe_alloc(int size)
     void *p = NULL;
     if (size < 0)
     {
-	cst_errmsg("alloc: asked for negative size %d\n", size);
-	cst_error();
+        cst_errmsg("alloc: asked for negative size %d\n", size);
+        cst_error();
     }
-    else if (size == 0)  /* some mallocs return NULL for this */
-	size++;
+    else if (size == 0)         /* some mallocs return NULL for this */
+        size++;
 
 #ifdef CST_DEBUG_MALLOC
     if (size > cst_alloc_imax)
     {
-	cst_alloc_imax = size;
+        cst_alloc_imax = size;
     }
     cst_allocated += size;
     cst_alloc_out += size;
@@ -87,30 +87,30 @@ void *cst_safe_alloc(int size)
 #endif
 
 #ifdef UNDER_CE
-    p = (void *)LocalAlloc(LPTR, size);
+    p = (void *) LocalAlloc(LPTR, size);
 #else
-    p = (void *)calloc(size,1);
+    p = (void *) calloc(size, 1);
 #endif
 
 #ifdef CST_DEBUG_MALLOC
 #ifdef CST_DEBUG_MALLOC_TRACE
     if (cst_alloc_num_calls == cst_alloc_ckpt)
-	cst_dbgmsg("cst_malloc: %d\n", cst_alloc_ckpt);
+        cst_dbgmsg("cst_malloc: %d\n", cst_alloc_ckpt);
     cst_alloc_cunks[cst_alloc_num_calls] = p;
 #endif
     cst_alloc_num_calls++;
-    *(int *)p = 1314;
-    p = (int *)p + 1;
-    *(int *)p = size - (2 * sizeof(int));
+    *(int *) p = 1314;
+    p = (int *) p + 1;
+    *(int *) p = size - (2 * sizeof(int));
     if ((cst_allocated - cst_freed) > cst_alloc_max)
-	cst_alloc_max = cst_allocated - cst_freed;
-    p = (int *)p + 1;
+        cst_alloc_max = cst_allocated - cst_freed;
+    p = (int *) p + 1;
 #endif
 
     if (p == NULL)
     {
-	cst_errmsg("alloc: can't alloc %d bytes\n", size);
-	cst_error();
+        cst_errmsg("alloc: can't alloc %d bytes\n", size);
+        cst_error();
     }
 
     return p;
@@ -121,9 +121,9 @@ void *cst_safe_calloc(int size)
     return cst_safe_alloc(size);
 }
 
-void *cst_safe_realloc(void *p,int size)
+void *cst_safe_realloc(void *p, int size)
 {
-    void *np=0;
+    void *np = 0;
 
 #ifdef CST_DEBUG_MALLOC
     cst_free(p);
@@ -131,21 +131,21 @@ void *cst_safe_realloc(void *p,int size)
 #endif
 
     if (size == 0)
-	size++;  /* as some mallocs do strange things with 0 */
+        size++;                 /* as some mallocs do strange things with 0 */
 
     if (p == NULL)
-	np = cst_safe_alloc(size);
+        np = cst_safe_alloc(size);
     else
 #ifdef UNDER_CE
-	np = LocalReAlloc((HLOCAL)p, size, LMEM_MOVEABLE|LMEM_ZEROINIT);
+        np = LocalReAlloc((HLOCAL) p, size, LMEM_MOVEABLE | LMEM_ZEROINIT);
 #else
-	np = realloc(p,size);
+        np = realloc(p, size);
 #endif
 
     if (np == NULL)
     {
-	cst_errmsg("CST_REALLOC failed for %d bytes\n",size);
-	cst_error();
+        cst_errmsg("CST_REALLOC failed for %d bytes\n", size);
+        cst_error();
     }
 
     return np;
@@ -156,31 +156,31 @@ void cst_free(void *p)
     if (p != NULL)
     {
 #ifdef CST_DEBUG_MALLOC
-	if (*((int *)p - 2) != 1314)
-	{
-	    cst_dbgmsg("CST_MALLOC_DEBUG freeing non-malloc memory\n");
-	    return;
-	}
-	if (*((int *)p - 1) <= 0)
-	{
-	    cst_dbgmsg("CST_MALLOC_DEBUG re-freeing memory\n");
-	    return;
-	}
-	cst_freed += *((int *)p - 1);
-	cst_alloc_out -= *((int *)p - 1);
-	*((int *)p - 1) = 0; /* mark it as freed */
-	p = (int *)p - 2;
+        if (*((int *) p - 2) != 1314)
+        {
+            cst_dbgmsg("CST_MALLOC_DEBUG freeing non-malloc memory\n");
+            return;
+        }
+        if (*((int *) p - 1) <= 0)
+        {
+            cst_dbgmsg("CST_MALLOC_DEBUG re-freeing memory\n");
+            return;
+        }
+        cst_freed += *((int *) p - 1);
+        cst_alloc_out -= *((int *) p - 1);
+        *((int *) p - 1) = 0;   /* mark it as freed */
+        p = (int *) p - 2;
 #endif
 #ifndef CST_DEBUG_MALLOC_TRACE
 #ifdef UNDER_CE
-	if (LocalFree(p) != NULL)
-	{
-	    cst_errmsg("LocalFree(%p) failed with code %x\n",
-		       p, GetLastError());
-	    cst_error();
-	}
+        if (LocalFree(p) != NULL)
+        {
+            cst_errmsg("LocalFree(%p) failed with code %x\n",
+                       p, GetLastError());
+            cst_error();
+        }
 #else
-	free(p);
+        free(p);
 #endif
 #endif
     }
@@ -192,18 +192,15 @@ void cst_find_unfreed()
 {
     int i, t;
 
-    
+
     for (i = 0, t = 0;
-	 i < NUM_CHUNKS
-	     && i < cst_alloc_num_calls
-	     && cst_alloc_cunks[i];
-	 i++)
+         i < NUM_CHUNKS && i < cst_alloc_num_calls && cst_alloc_cunks[i]; i++)
     {
-	if (((int *)cst_alloc_cunks[i])[1] != 0) 
-	{
+        if (((int *) cst_alloc_cunks[i])[1] != 0)
+        {
             cst_dbgmsg("unfreed at %d\n", i);
-	    t++;
-	}
+            t++;
+        }
     }
     cst_dbgmsg("total unfreed %d\n", t);
 }
@@ -212,8 +209,8 @@ void cst_alloc_debug_summary()
 {
     cst_find_unfreed();
     printf("allocated %d freed %d max %d imax %d calls %d out %d\n",
-	   cst_allocated, cst_freed, cst_alloc_max, 
-	   cst_alloc_imax, cst_alloc_num_calls, cst_alloc_out);
+           cst_allocated, cst_freed, cst_alloc_max,
+           cst_alloc_imax, cst_alloc_num_calls, cst_alloc_out);
 }
 #endif
 
@@ -230,7 +227,7 @@ void delete_alloc_context(cst_alloc_context ctx)
 {
     HANDLE h;
 
-    h = (HANDLE)ctx;
+    h = (HANDLE) ctx;
     HeapDestroy(h);
 }
 
@@ -238,23 +235,21 @@ void *cst_local_alloc(cst_alloc_context ctx, int size)
 {
     HANDLE h;
 
-    h = (HANDLE)ctx;
+    h = (HANDLE) ctx;
     if (h)
-	return HeapAlloc(h, HEAP_ZERO_MEMORY, size);
+        return HeapAlloc(h, HEAP_ZERO_MEMORY, size);
     else
-	return LocalAlloc(LPTR, size);
+        return LocalAlloc(LPTR, size);
 }
 
 void cst_local_free(cst_alloc_context ctx, void *p)
 {
     HANDLE h;
 
-    h = (HANDLE)ctx;
+    h = (HANDLE) ctx;
     if (h)
-	HeapFree(h, 0, p);
+        HeapFree(h, 0, p);
     else
-	LocalFree(p);
+        LocalFree(p);
 }
 #endif
-
-

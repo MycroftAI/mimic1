@@ -55,6 +55,8 @@ DIST_CLEAN = .time-stamp $(TOP)/build/ \
                 config.cache config.log config.status \
 		config/config config/system.mak FileList
 
+LOCAL_CLEAN = build
+
 HOST_ONLY_DIRS = tools main
 ALL = $(BUILD_DIRS)
 

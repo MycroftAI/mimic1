@@ -47,36 +47,36 @@
 extern cst_lexicon cmu_lex;
 void cmu_lex_init();
 
-static int bbb_relation_load(cst_relation *r,const char *filename);
+static int bbb_relation_load(cst_relation *r, const char *filename);
 static int WordSylSeg(cst_utterance *u);
 
 int main(int argc, char **argv)
 {
     cst_utterance *u;
     cst_relation *r;
-    cst_item *item=0;
+    cst_item *item = 0;
     int i;
 
     cmu_lex_init();
 
     u = new_utterance();
-    r = utt_relation_create(u,"Word");
+    r = utt_relation_create(u, "Word");
 
-    bbb_relation_load(r,"ttt.txt");
+    bbb_relation_load(r, "ttt.txt");
 
     WordSylSeg(u);
 
-    for (i=0,item=item_next(relation_head(utt_relation(u,"Segment"))); 
-	 item; item=item_next(item),i++)
+    for (i = 0, item = item_next(relation_head(utt_relation(u, "Segment")));
+         item; item = item_next(item), i++)
     {
-	printf("Segment %s %s %s %s\n",
-	       ffeature_string(item,"name"),
-	       ffeature_string(item,"n.name"),
-	       ffeature_string(item,"p.name"),
-	       ffeature_string(item,"R:SylStructure.parent.name")
+        printf("Segment %s %s %s %s\n",
+               ffeature_string(item, "name"),
+               ffeature_string(item, "n.name"),
+               ffeature_string(item, "p.name"),
+               ffeature_string(item, "R:SylStructure.parent.name")
 /*	       ffeature_string(item,"R:SylStructure.parent.R:Word.n.name"), */
 /*	       item_feat_float(item,"duration")); */
-	       );
+            );
     }
 
     delete_utterance(u);
@@ -87,36 +87,38 @@ int main(int argc, char **argv)
 static int WordSylSeg(cst_utterance *u)
 {
     cst_item *word;
-    cst_relation *sylstructure,*seg,*syl;
+    cst_relation *sylstructure, *seg, *syl;
     cst_val *phones;
     const cst_val *p;
-    cst_item *ssword,*segitem;
-    
-    syl = utt_relation_create(u,"Syllable");
-    sylstructure = utt_relation_create(u,"SylStructure");
-    seg = utt_relation_create(u,"Segment");
-    
-    for (word=relation_head(utt_relation(u,"Word")); 
-	 word; word=item_next(word))
+    cst_item *ssword, *segitem;
+
+    syl = utt_relation_create(u, "Syllable");
+    sylstructure = utt_relation_create(u, "SylStructure");
+    seg = utt_relation_create(u, "Segment");
+
+    for (word = relation_head(utt_relation(u, "Word"));
+         word; word = item_next(word))
     {
-	printf("word: %s\n",item_feat_string(word,"name"));
-	ssword = relation_append(sylstructure,word);
-	phones = lex_lookup((cst_lexicon *)&cmu_lex,item_feat_string(word,"name"),0,NULL);
-	for (p=phones; p; p=val_cdr(p))
-	{
-	    segitem = relation_append(seg,NULL);
-	    item_set(segitem,"name",val_car(p));
-	    printf("seg: %s\n",item_feat_string(segitem,"name"));
-	    item_add_daughter(ssword,segitem);
-	}
-	delete_val_list(phones);
+        printf("word: %s\n", item_feat_string(word, "name"));
+        ssword = relation_append(sylstructure, word);
+        phones =
+            lex_lookup((cst_lexicon *) &cmu_lex,
+                       item_feat_string(word, "name"), 0, NULL);
+        for (p = phones; p; p = val_cdr(p))
+        {
+            segitem = relation_append(seg, NULL);
+            item_set(segitem, "name", val_car(p));
+            printf("seg: %s\n", item_feat_string(segitem, "name"));
+            item_add_daughter(ssword, segitem);
+        }
+        delete_val_list(phones);
     }
 
     return TRUE;
 
 }
 
-static int bbb_relation_load(cst_relation *r,const char *filename)
+static int bbb_relation_load(cst_relation *r, const char *filename)
 {
     const char *token;
     cst_item *item;
@@ -124,26 +126,23 @@ static int bbb_relation_load(cst_relation *r,const char *filename)
 
     fd = ts_open(filename, "", "", "", "");
     if (fd == 0)
-	return 0;
+        return 0;
 
     while (!ts_eof(fd))
     {
-	token = ts_get(fd);
-	if (cst_streq(token,""))
-	    continue;
-	item = relation_append(r,NULL);
-	item_set_string(item,"name",token);
-	item_set_string(item,"whitespace",fd->whitespace);
-	item_set_string(item,"prepunctuation",fd->prepunctuation);
-	item_set_string(item,"punc",fd->postpunctuation);
-	item_set_int(item,"file_pos",fd->file_pos);
-	item_set_int(item,"line_number",fd->line_number);
+        token = ts_get(fd);
+        if (cst_streq(token, ""))
+            continue;
+        item = relation_append(r, NULL);
+        item_set_string(item, "name", token);
+        item_set_string(item, "whitespace", fd->whitespace);
+        item_set_string(item, "prepunctuation", fd->prepunctuation);
+        item_set_string(item, "punc", fd->postpunctuation);
+        item_set_int(item, "file_pos", fd->file_pos);
+        item_set_int(item, "line_number", fd->line_number);
     }
-    
+
     ts_close(fd);
 
     return 1;
 }
-
-
-

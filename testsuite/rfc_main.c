@@ -56,42 +56,41 @@ int main(int argc, char **argv)
 
     args = new_features();
     files =
-        cst_args(argv,argc,
+        cst_args(argv, argc,
                  "usage: rfc OPTIONS INTRACK1 OUTTRACK2\n"
                  "Convert between LPC and RFC\n"
-		 "-tolpc    from RFC to LPC\n"
-		 "-torfc    from LPC to RFC\n",
-                 args);
+                 "-tolpc    from RFC to LPC\n"
+                 "-torfc    from LPC to RFC\n", args);
 
     f1 = val_string(val_car(files));
     f2 = val_string(val_car(val_cdr(files)));
     t1 = new_track();
 
-    if (cst_track_load_est(t1,f1) != CST_OK_FORMAT)
+    if (cst_track_load_est(t1, f1) != CST_OK_FORMAT)
     {
-        fprintf(stderr,
-                "rfc: can't read file or wrong format \"%s\"\n",
-                f1);
+        fprintf(stderr, "rfc: can't read file or wrong format \"%s\"\n", f1);
         return -1;
     }
-    if (feat_present(args,"-tolpc"))
+    if (feat_present(args, "-tolpc"))
         tolpc = 1;
-    if (feat_present(args,"-torfc"))
+    if (feat_present(args, "-torfc"))
         tolpc = 0;
 
     t2 = cst_track_copy(t1);
 
-    for (i=0; i<t2->num_frames; i++)
+    for (i = 0; i < t2->num_frames; i++)
     {
         if (tolpc)
-            ref2lpc(&(t1->frames[i][1]),&(t2->frames[i][1]),t2->num_channels-1);
+            ref2lpc(&(t1->frames[i][1]), &(t2->frames[i][1]),
+                    t2->num_channels - 1);
         else
-            lpc2ref(&(t1->frames[i][1]),&(t2->frames[i][1]),t2->num_channels-1);
+            lpc2ref(&(t1->frames[i][1]), &(t2->frames[i][1]),
+                    t2->num_channels - 1);
 
-        
+
     }
 
-    cst_track_save_est(t2,f2);
+    cst_track_save_est(t2, f2);
 
     return 0;
 }

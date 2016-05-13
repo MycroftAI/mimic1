@@ -31,67 +31,51 @@
 /*                                                                       */
 /*************************************************************************/
 /*             Author:  Alan W Black (awb@cs.cmu.edu)                    */
-/*               Date:  January 2000                                     */
+/*               Date:  December 1999                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Various regex tests                                                  */
+/*  Test of hrg creation and manipulation                                */
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include "cst_regex.h"
+#include "cst_hrg.h"
 
-char *rtests[] = {
-    "1",
-    " \n ",
-    "hello",
-    "Hello",
-    "1and2",
-    "oneandtwo",
-    "-1.34",
-    "235",
-    "034",
-    "1,234,235",
-    "1,2345",
-    NULL };
+#include "cutest.h"
 
-int main(int argc, char **argv)
+float correct_list[] = { 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8 };
+
+void test_hrg(void)
 {
+    cst_utterance *u;
+    cst_relation *r;
+    cst_item *item = 0;
     int i;
-    cst_regex *commaint;
 
-    commaint = new_cst_regex("[0-9][0-9]?[0-9]?,\\([0-9][0-9][0-9],\\)*[0-9][0-9][0-9]\\(\\.[0-9]+\\)?");
+    u = new_utterance();
+    r = utt_relation_create(u, "Segment");
 
-    for (i=0; rtests[i]; i++)
+    for (i = 0; i < 10; i++)
     {
-	printf("\"%s\"\n",rtests[i]);
-	printf(" %.8s %c\n",
-	       "white",(cst_regex_match(cst_rx_white,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "alpha",(cst_regex_match(cst_rx_alpha,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "upper",
-	       (cst_regex_match(cst_rx_uppercase,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "lower",
-	       (cst_regex_match(cst_rx_lowercase,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "alphanum",
-	       (cst_regex_match(cst_rx_alphanum,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "ident",
-	       (cst_regex_match(cst_rx_identifier,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "int",
-	       (cst_regex_match(cst_rx_int,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "double",
-	       (cst_regex_match(cst_rx_double,rtests[i]) ? 't' : 'f'));
-	printf(" %.8s %c\n",
-	       "commaint",
-	       (cst_regex_match(commaint,rtests[i]) ? 't' : 'f'));
+        char buff[20];
+        sprintf(buff, "seg_%03d", i);
+        if (i == 0)
+            item = relation_append(r, NULL);
+        else
+            item = item_append(item, NULL);
+        item_set_string(item, "name", buff);
+        item_set_float(item, "duration", i * 0.20);
     }
-    
-    delete_cst_regex(commaint);
 
-    return 0;
+    for (i = 0, item = relation_head(utt_relation(u, "Segment"));
+         item; item = item_next(item), i++)
+    {
+        TEST_CHECK(item_feat_float(item, "duration") == correct_list[i]);
+    }
+
+    delete_utterance(u);
 }
+
+TEST_LIST = {
+    {"hrg creation and manipulation", test_hrg},
+    {0}
+};
