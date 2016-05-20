@@ -147,8 +147,9 @@ cst_voice *mimic_voice_select(const char *name)
             return voice;
     }
 
-    if (cst_urlp(name) ||       /* naive check if its a url */
-        cst_strchr(name, '/'))
+    if (cst_urlp(name)        /* naive check if its a url */
+        || cst_strchr(name, '/')
+        || cst_strchr(name, '\\'))
     {
         voice = mimic_voice_load(name);
         if (!voice)
@@ -157,7 +158,6 @@ cst_voice *mimic_voice_select(const char *name)
         mimic_add_voice(voice);
         return voice;
     }
-
     return mimic_voice_select(NULL);
 
 }
