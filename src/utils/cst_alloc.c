@@ -60,7 +60,7 @@ int cst_alloc_out = 0;
 int cst_alloc_ckpt = -1;
 /* You have to know how big this should be to use it, its for debuging only */
 #define NUM_CHUNKS 10000000
-void *cst_alloc_cunks[NUM_CHUNKS];
+void *cst_alloc_chunks[NUM_CHUNKS];
 #endif
 #endif
 
@@ -96,7 +96,7 @@ void *cst_safe_alloc(int size)
 #ifdef CST_DEBUG_MALLOC_TRACE
     if (cst_alloc_num_calls == cst_alloc_ckpt)
         cst_dbgmsg("cst_malloc: %d\n", cst_alloc_ckpt);
-    cst_alloc_cunks[cst_alloc_num_calls] = p;
+    cst_alloc_chunks[cst_alloc_num_calls] = p;
 #endif
     cst_alloc_num_calls++;
     *(int *) p = 1314;
@@ -194,9 +194,9 @@ void cst_find_unfreed()
 
 
     for (i = 0, t = 0;
-         i < NUM_CHUNKS && i < cst_alloc_num_calls && cst_alloc_cunks[i]; i++)
+         i < NUM_CHUNKS && i < cst_alloc_num_calls && cst_alloc_chunks[i]; i++)
     {
-        if (((int *) cst_alloc_cunks[i])[1] != 0)
+        if (((int *) cst_alloc_chunks[i])[1] != 0)
         {
             cst_dbgmsg("unfreed at %d\n", i);
             t++;
