@@ -38,6 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 #include "cst_tokenstream.h"
+#include "cst_alloc.h"
 
 const cst_string *const cst_ts_default_whitespacesymbols = " \t\n\r";
 const cst_string *const cst_ts_default_singlecharsymbols = "(){}[]";
@@ -47,27 +48,193 @@ const cst_string *const cst_ts_default_postpunctuationsymbols =
 
 #define TS_BUFFER_SIZE 256
 
-static cst_string ts_getc(cst_tokenstream *ts);
-static cst_string internal_ts_getc(cst_tokenstream *ts);
+static void ts_getc(cst_tokenstream *ts);
+static void internal_ts_getc(cst_tokenstream *ts);
 
-static void set_charclass_table(cst_tokenstream *ts)
+
+int ts_charclass(const cst_string *const utf8char, int class,
+                 cst_tokenstream *ts)
 {
-    int i;
-    memset(ts->charclass, 0, 256);      /* zero everything */
+    unsigned char *c = (unsigned char *) utf8char;
+    switch (cst_strlen(c))
+    {
+    case 1:
+        return (ts->charclass[c[0]] & class);
+    case 2:
+        if (ts->charclass2[c[0]] != NULL)
+        {
+            return (ts->charclass2[c[0]][c[1]] & class);
+        }
+        else
+        {
+            return 0;
+        }
+    case 3:
+        if (ts->charclass3[c[0]] != NULL &&
+            ts->charclass3[c[0]][c[1]] != NULL)
+        {
+            return (ts->charclass3[c[0]][c[1]][c[2]] & class);
+        }
+        else
+        {
+            return 0;
+        }
+    case 4:
+        if (ts->charclass4[c[0]] != NULL &&
+            ts->charclass4[c[0]][c[1]] != NULL &&
+            ts->charclass4[c[0]][c[1]][c[2]] != NULL)
+        {
+            return (ts->charclass4[c[0]][c[1]][c[2]][c[3]] & class);
+        }
+        else
+        {
+            return 0;
+        }
+    default:
+        return 0;
+    }
+}
 
-    for (i = 0; ts->p_whitespacesymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_whitespacesymbols[i]] |=
-            TS_CHARCLASS_WHITESPACE;
-    for (i = 0; ts->p_singlecharsymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_singlecharsymbols[i]] |=
-            TS_CHARCLASS_SINGLECHAR;
-    for (i = 0; ts->p_prepunctuationsymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_prepunctuationsymbols[i]] |=
-            TS_CHARCLASS_PREPUNCT;
-    for (i = 0; ts->p_postpunctuationsymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_postpunctuationsymbols[i]] |=
-            TS_CHARCLASS_POSTPUNCT;
-    return;
+static int set_charclass_table_symbol(cst_tokenstream *ts,
+                                      const cst_string *symbols,
+                                      const unsigned char symbol_value)
+{
+    cst_val *utflets;
+    const cst_val *v;
+    const unsigned char *one_cp;
+    int one_cp_len;
+
+    cst_string *cl1;
+    cst_string **cl2;
+    cst_string ***cl3;
+    cst_string ****cl4;
+    int idx;
+    utflets = cst_utf8_explode(symbols);
+    for (v = utflets; v; v = val_cdr(v))
+    {
+        one_cp = (const unsigned char *) val_string(val_car(v));
+        one_cp_len = cst_strlen(one_cp);
+        idx = 0;
+        if (one_cp_len > 4)
+        {
+            delete_val(utflets);
+            return -1;
+        }
+        if (one_cp_len == 4)
+        {
+            cl4 = ts->charclass4;
+            if (cl4[one_cp[idx]] == NULL)
+            {
+                cl4[one_cp[idx]] = cst_alloc(cst_string **, 256);
+                memset(cl4[one_cp[idx]], 0, 256 * sizeof(cst_string **));
+            }
+            cl3 = cl4[one_cp[idx]];
+            idx++;
+        }
+        if (one_cp_len >= 3)
+        {
+            if (one_cp_len == 3)
+            {
+                cl3 = ts->charclass3;
+            }
+            if (cl3[one_cp[idx]] == NULL)
+            {
+                cl3[one_cp[idx]] = cst_alloc(cst_string *, 256);
+                memset(cl3[one_cp[idx]], 0, 256 * sizeof(cst_string *));
+            }
+            cl2 = cl3[one_cp[idx]];
+            idx++;
+        }
+        if (one_cp_len >= 2)
+        {
+            if (one_cp_len == 2)
+            {
+                cl2 = ts->charclass2;
+            }
+            if (cl2[one_cp[idx]] == NULL)
+            {
+                cl2[one_cp[idx]] = cst_alloc(cst_string, 256);
+                memset(cl2[one_cp[idx]], 0, 256 * sizeof(cst_string));
+            }
+            cl1 = cl2[one_cp[idx]];
+            idx++;
+        }
+        if (one_cp_len >= 1)
+        {
+            if (one_cp_len == 1)
+            {
+                cl1 = ts->charclass;
+            }
+            cl1[one_cp[idx]] |= symbol_value;
+        }
+    }
+    delete_val(utflets);
+    return 0;
+}
+
+static void free_tables(cst_tokenstream *ts)
+{
+    int i, j, k;
+    for (i = 0; i < 256; i++)
+    {
+        if (ts->charclass2[i] != NULL)
+        {
+            cst_free(ts->charclass2[i]);
+        }
+        if (ts->charclass3[i] != NULL)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                if (ts->charclass3[i][j] != NULL)
+                {
+                    cst_free(ts->charclass3[i][j]);
+                }
+            }
+            cst_free(ts->charclass3[i]);
+        }
+        if (ts->charclass4[i] != NULL)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                if (ts->charclass4[i][j] != NULL)
+                {
+                    for (k = 0; k < 256; k++)
+                    {
+                        if (ts->charclass4[i][j][k] != NULL)
+                        {
+                            cst_free(ts->charclass4[i][j][k]);
+                        }
+                    }
+                    cst_free(ts->charclass4[i][j]);
+                }
+            }
+            cst_free(ts->charclass4[i]);
+        }
+    }
+}
+
+static void reset_tables(cst_tokenstream *ts)
+{
+    memset(ts->charclass, 0, 256 * sizeof(cst_string));
+    memset(ts->charclass2, 0, 256 * sizeof(cst_string *));
+    memset(ts->charclass3, 0, 256 * sizeof(cst_string **));
+    memset(ts->charclass4, 0, 256 * sizeof(cst_string ***));
+}
+
+static int set_charclass_table(cst_tokenstream *ts)
+{
+    int i = 0;
+    free_tables(ts);
+    reset_tables(ts);
+    i += set_charclass_table_symbol(ts, ts->p_whitespacesymbols,
+                                    TS_CHARCLASS_WHITESPACE);
+    i += set_charclass_table_symbol(ts, ts->p_singlecharsymbols,
+                                    TS_CHARCLASS_SINGLECHAR);
+    i += set_charclass_table_symbol(ts, ts->p_prepunctuationsymbols,
+                                    TS_CHARCLASS_PREPUNCT);
+    i += set_charclass_table_symbol(ts, ts->p_postpunctuationsymbols,
+                                    TS_CHARCLASS_POSTPUNCT);
+    return i;
 }
 
 void set_charclasses(cst_tokenstream *ts,
@@ -95,9 +262,15 @@ void set_charclasses(cst_tokenstream *ts,
 static void extend_buffer(cst_string **buffer, int *buffer_max)
 {
     int new_max;
+    int increment;
     cst_string *new_buffer;
 
-    new_max = (*buffer_max) + (*buffer_max) / 5;
+    increment = (*buffer_max) / 5;
+    if (increment < 5)
+    {
+        increment = 5;
+    }
+    new_max = (*buffer_max) + increment;
     new_buffer = cst_alloc(cst_string, new_max);
     memmove(new_buffer, *buffer, *buffer_max);
     cst_free(*buffer);
@@ -132,8 +305,9 @@ static cst_tokenstream *new_tokenstream(const cst_string *whitespace,
         ts->postp_max = TS_BUFFER_SIZE;
     }
 
+    reset_tables(ts);
     set_charclasses(ts, whitespace, singlechars, prepunct, postpunct);
-    ts->current_char = 0;
+    ts->current_char[0] = 0;
 
     return ts;
 }
@@ -148,6 +322,7 @@ void delete_tokenstream(cst_tokenstream *ts)
         cst_free(ts->prepunctuation);
     if (ts->postpunctuation)
         cst_free(ts->postpunctuation);
+    free_tables(ts);
     cst_free(ts);
 }
 
@@ -263,15 +438,18 @@ static void get_token_sub_part(cst_tokenstream *ts,
                                cst_string **buffer, int *buffer_max)
 {
     int p;
+    int curr_char_len = 0;
 
     for (p = 0; ((!ts_eof(ts)) &&
                  (ts_charclass(ts->current_char, charclass, ts)) &&
                  (!ts_charclass(ts->current_char,
-                                TS_CHARCLASS_SINGLECHAR, ts))); p++)
+                                TS_CHARCLASS_SINGLECHAR, ts)));
+         p += curr_char_len)
     {
-        if (p + 1 >= *buffer_max)
+        curr_char_len = cst_strlen(ts->current_char);
+        if (p + curr_char_len >= *buffer_max)
             extend_buffer(buffer, buffer_max);
-        (*buffer)[p] = ts->current_char;
+        memcpy(&((*buffer)[p]), ts->current_char, curr_char_len);
         ts_getc(ts);
     }
     (*buffer)[p] = '\0';
@@ -291,16 +469,18 @@ static void get_token_sub_part_2(cst_tokenstream *ts,
                                  int endclass1,
                                  cst_string **buffer, int *buffer_max)
 {
-    int p;
+    int p, curr_char_len;
 
     for (p = 0; ((!ts_eof(ts)) &&
                  (!ts_charclass(ts->current_char, endclass1, ts)) &&
                  (!ts_charclass(ts->current_char,
-                                TS_CHARCLASS_SINGLECHAR, ts))); p++)
+                                TS_CHARCLASS_SINGLECHAR, ts)));
+         p += curr_char_len)
     {
-        if (p + 1 >= *buffer_max)
+        curr_char_len = cst_strlen(ts->current_char);
+        if (p + curr_char_len >= *buffer_max)
             extend_buffer(buffer, buffer_max);
-        (*buffer)[p] = ts->current_char;
+        memcpy(&((*buffer)[p]), ts->current_char, curr_char_len);
         /* If someone sets tags we end the token */
         /* This can't happen in standard tokenstreams, but can in user */
         /* defined ones */
@@ -319,23 +499,35 @@ static void get_token_sub_part_2(cst_tokenstream *ts,
 
 static void get_token_postpunctuation(cst_tokenstream *ts)
 {
-    int p, t;
+    int p, t, plast;
+    const cst_string *one_cp;
 
     t = cst_strlen(ts->token);
-    for (p = t;
-         (p > 0) &&
-         ((ts->token[p] == '\0') ||
-          (ts_charclass(ts->token[p], TS_CHARCLASS_POSTPUNCT, ts))); p--);
+    p = t;
+    cst_val *utf8lets;
+    const cst_val *v;
+    utf8lets = val_reverse(cst_utf8_explode(ts->token));
+    for (v = utf8lets; v; v = val_cdr(v))
+    {
+        one_cp = val_string(val_car(v));
+        plast = cst_strlen(one_cp);
+        p -= plast;
+        if (ts_charclass(one_cp, TS_CHARCLASS_POSTPUNCT, ts) == 0)
+        {
+            break;
+        }
+    }
 
     if (t != p)
     {
         if (t - p >= ts->postp_max)
             extend_buffer(&ts->postpunctuation, &ts->postp_max);
         /* Copy postpunctuation from token */
-        memmove(ts->postpunctuation, &ts->token[p + 1], (t - p));
+        memmove(ts->postpunctuation, &ts->token[p + plast], (t - p));
         /* truncate token at postpunctuation */
-        ts->token[p + 1] = '\0';
+        ts->token[p + plast] = '\0';
     }
+    delete_val(utf8lets);
 }
 
 int ts_eof(cst_tokenstream *ts)
@@ -377,7 +569,8 @@ int ts_set_stream_pos(cst_tokenstream *ts, int pos)
     else
         new_pos = pos;          /* not sure it can get here */
     ts->file_pos = new_pos;
-    ts->current_char = ' ';     /* To be safe (but this is wrong) */
+    ts->current_char[0] = ' ';  /* To be safe (but this is wrong) */
+    ts->current_char[1] = '\0'; /* To be safe (but this is wrong) */
 
     return ts->file_pos;
 }
@@ -408,44 +601,119 @@ int ts_get_stream_size(cst_tokenstream *ts)
         return 0;
 }
 
-cst_string private_ts_getc(cst_tokenstream *ts)
+void private_ts_getc(cst_tokenstream *ts)
 {
-    return internal_ts_getc(ts);
+    internal_ts_getc(ts);
 }
 
-static cst_string ts_getc(cst_tokenstream *ts)
+static void ts_getc(cst_tokenstream *ts)
 {
     if (ts->open)
-        ts->current_char = (ts->getc) (ts);
+        (ts->getc) (ts);
     else
-        ts->current_char = internal_ts_getc(ts);
-    return ts->current_char;
+        internal_ts_getc(ts);
+    return;
 }
 
-static cst_string internal_ts_getc(cst_tokenstream *ts)
+static void internal_ts_getc(cst_tokenstream *ts)
 {
+    int gotchar;
+    int cur_char_len, i;
     if (ts->fd)
     {
-        ts->current_char = cst_fgetc(ts->fd);
-        if (ts->current_char == -1)
+        gotchar = cst_fgetc(ts->fd);
+        if (gotchar == EOF)
+        {
             ts->eof_flag = TRUE;
+            ts->current_char[0] = '\0';
+            return;
+        }
+        ts->file_pos++;
+        ts->current_char[0] = gotchar;
+        cur_char_len = ts_utf8_sequence_length(ts->current_char[0]);
+        if (cur_char_len > 4)
+        {
+            cst_errmsg
+                ("Invalid UTF-8 sequence in tokenstream at position %s. Skipping.\n",
+                 ts->file_pos);
+            internal_ts_getc(ts);
+            return;
+        }
+        for (i = 1; i < cur_char_len; i++)
+        {
+            gotchar = cst_fgetc(ts->fd);
+            if (gotchar == -1)
+            {
+                ts->eof_flag = TRUE;
+                cst_errmsg
+                    ("End of file reached unexpectedly (UTF-8 continuation byte was expected)\n");
+                ts->current_char[0] = '\0';
+                return;
+            }
+            ts->file_pos++;
+            ts->current_char[i] = gotchar;
+            if ((ts->current_char[i] & 0xC0) != 0x80)
+            {
+                cst_errmsg
+                    ("Invalid UTF-8 continuation character %d in tokenstream\n",
+                     (int) ts->current_char[i]);
+            }
+        }
+        ts->current_char[cur_char_len] = 0;
     }
     else if (ts->string_buffer)
     {
         if (ts->string_buffer[ts->file_pos] == '\0')
         {
             ts->eof_flag = TRUE;
-            ts->current_char = '\0';
+            ts->current_char[0] = '\0';
+            return;
         }
         else
-            ts->current_char = ts->string_buffer[ts->file_pos];
+        {
+            ts->current_char[0] = ts->string_buffer[ts->file_pos];
+            ts->file_pos++;
+            if (((ts->current_char[0] & 0x80) != 0x00) &&
+                ((ts->current_char[0] & 0xE0) != 0xC0) &&
+                ((ts->current_char[0] & 0xF0) != 0xE0) &&
+                ((ts->current_char[0] & 0xF8) != 0xF0))
+            {
+                cst_errmsg
+                    ("Invalid UTF-8 sequence in tokenstream. Skipping\n");
+                internal_ts_getc(ts);
+                return;
+            }
+            cur_char_len = ts_utf8_sequence_length(ts->current_char[0]);
+            if (cur_char_len > 4 || cur_char_len < 1)
+            {
+                cst_errmsg
+                    ("Invalid UTF-8 sequence in tokenstream. Skipping\n");
+                internal_ts_getc(ts);
+                return;
+            }
+            for (i = 1; i < cur_char_len; i++)
+            {
+                ts->current_char[i] = ts->string_buffer[ts->file_pos];
+                if (ts->string_buffer[ts->file_pos] == '\0')
+                {
+                    ts->eof_flag = TRUE;
+                    ts->current_char[0] = '\0';
+                    return;
+                }
+                ts->file_pos++;
+                if ((ts->current_char[i] & 0xC0) != 0x80)
+                {
+                    cst_errmsg
+                        ("Invalid UTF-8 continuation character in tokenstream\n");
+                }
+            }
+            ts->current_char[cur_char_len] = '\0';
+        }
     }
 
-    if (!ts_eof(ts))
-        ts->file_pos++;
-    if (ts->current_char == '\n')
+    if (ts->current_char[0] == '\n')
         ts->line_number++;
-    return ts->current_char;
+    return;
 }
 
 const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
@@ -464,23 +732,25 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
                        &ts->whitespace, &ts->ws_max);
     ts->token_pos = ts->file_pos - 1;
 
-    if (ts->current_char == quote)
+    if (ts->current_char[0] == quote)
     {                           /* go until quote */
         ts_getc(ts);
-        for (p = 0; ((!ts_eof(ts)) && (ts->current_char != quote)); p++)
+        for (p = 0; ((!ts_eof(ts)) && (ts->current_char[0] != quote));)
         {
             if (p >= ts->token_max)
                 extend_buffer(&ts->token, &ts->token_max);
-            ts->token[p] = ts->current_char;
+            strcpy(&(ts->token[p]), ts->current_char);
             ts_getc(ts);
-            if (ts->current_char == escape)
+            if (ts->current_char[0] == escape)
             {
                 ts_get(ts);
                 if (p >= ts->token_max)
                     extend_buffer(&ts->token, &ts->token_max);
-                ts->token[p] = ts->current_char;
+                memcpy(&(ts->token[p]), ts->current_char,
+                       strlen(ts->current_char));
                 ts_get(ts);
             }
+            p += strlen(ts->current_char);
         }
         ts->token[p] = '\0';
         ts_getc(ts);
@@ -494,10 +764,10 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
         /* Get the symbol itself */
         if (ts_charclass(ts->current_char, TS_CHARCLASS_SINGLECHAR, ts))
         {
-            if (2 >= ts->token_max)
+            if (5 >= ts->token_max)
                 extend_buffer(&ts->token, &ts->token_max);
-            ts->token[0] = ts->current_char;
-            ts->token[1] = '\0';
+            strcpy(ts->token, ts->current_char);
+            p += strlen(ts->current_char);
             ts_getc(ts);
         }
         else
@@ -540,10 +810,9 @@ const cst_string *ts_get(cst_tokenstream *ts)
     if (!ts_eof(ts) &&
         ts_charclass(ts->current_char, TS_CHARCLASS_SINGLECHAR, ts))
     {
-        if (2 >= ts->token_max)
+        if (5 >= ts->token_max)
             extend_buffer(&ts->token, &ts->token_max);
-        ts->token[0] = ts->current_char;
-        ts->token[1] = '\0';
+        strcpy(ts->token, ts->current_char);
         ts_getc(ts);
     }
     else
@@ -557,20 +826,4 @@ const cst_string *ts_get(cst_tokenstream *ts)
         get_token_postpunctuation(ts);
 
     return ts->token;
-}
-
-int ts_read(void *buff, int size, int num, cst_tokenstream *ts)
-{
-    /* people should complain about the speed here */
-    /* people will complain about EOF as end of file */
-    int i, j, p;
-    cst_string *cbuff;
-
-    cbuff = (cst_string *) buff;
-
-    for (p = i = 0; i < num; i++)
-        for (j = 0; j < size; j++, p++)
-            cbuff[p] = ts_getc(ts);
-
-    return i;
 }

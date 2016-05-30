@@ -52,7 +52,7 @@ typedef struct cst_tokenstream_struct {
     int eof_flag;
     cst_string *string_buffer;
 
-    int current_char;
+    cst_string current_char[5]; /* UTF-8 character: 4 bytes + '\0' */
 
     int token_pos;
     int ws_max;
@@ -77,7 +77,11 @@ typedef struct cst_tokenstream_struct {
     const cst_string *p_prepunctuationsymbols;
     const cst_string *p_postpunctuationsymbols;
 
+
     cst_string charclass[256];
+    cst_string *charclass2[256];
+    cst_string **charclass3[256];
+    cst_string ***charclass4[256];
 
     /* To allow externally specified reading functions e.g. epub/xml */
     int (*open) (struct cst_tokenstream_struct *ts, const char *filename);
@@ -96,7 +100,7 @@ typedef struct cst_tokenstream_struct {
 #define TS_CHARCLASS_POSTPUNCT  16
 #define TS_CHARCLASS_QUOTE      32
 
-#define ts_charclass(C,CLASS,TS) ((TS)->charclass[(unsigned char)C] & CLASS)
+int ts_charclass(const cst_string *const c, int class, cst_tokenstream *ts);
 
 extern const cst_string *const cst_ts_default_whitespacesymbols;
 extern const cst_string *const cst_ts_default_prepunctuationsymbols;
@@ -137,7 +141,7 @@ const cst_string *ts_get(cst_tokenstream *ts);
 const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
                                       char quote, char escape);
 /* Externally specified ts interfaces may need this */
-cst_string private_ts_getc(cst_tokenstream *ts);
+void private_ts_getc(cst_tokenstream *ts);
 
 void set_charclasses(cst_tokenstream *ts,
                      const cst_string *whitespace,
@@ -145,7 +149,6 @@ void set_charclasses(cst_tokenstream *ts,
                      const cst_string *prepunctuation,
                      const cst_string *postpunctuation);
 
-int ts_read(void *buff, int size, int num, cst_tokenstream *ts);
 
 int ts_set_stream_pos(cst_tokenstream *ts, int pos);
 int ts_get_stream_pos(cst_tokenstream *ts);

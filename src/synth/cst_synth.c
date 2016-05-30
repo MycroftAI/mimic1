@@ -209,14 +209,17 @@ cst_utterance *default_tokenization(cst_utterance *u)
     text = utt_input_text(u);
     r = utt_relation_create(u, "Token");
     fd = ts_open_string(text,
-                        get_param_string(u->features, "text_whitespace",
-                                         NULL), get_param_string(u->features,
-                                                                 "text_singlecharsymbols",
-                                                                 NULL),
-                        get_param_string(u->features, "text_prepunctuation",
-                                         NULL), get_param_string(u->features,
-                                                                 "text_postpunctuation",
-                                                                 NULL));
+                        get_param_string(u->features,
+                                         "text_whitespace",
+                                         NULL),
+                        get_param_string(u->features,
+                                         "text_singlecharsymbols",
+                                         NULL),
+                        get_param_string(u->features,
+                                         "text_prepunctuation",
+                                         NULL),
+                        get_param_string(u->features,
+                                         "text_postpunctuation", NULL));
 
     while (!ts_eof(fd))
     {
