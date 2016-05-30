@@ -57,7 +57,7 @@
 
 #include "cst_alloc.h"
 #include "cst_string.h"
-#include "cst_math.h"
+#include <math.h>
 #include "cst_track.h"
 #include "cst_wave.h"
 #include "cst_audio.h"

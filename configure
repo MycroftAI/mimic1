@@ -4222,22 +4222,6 @@ esac
 fi
 
 case "$target_os" in
-        palmos*)
-		shared=false
-     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS"
-		# PalmOS Apps are always in M68K
-		M68KCC=/usr/m68k-palmos/bin/gcc
-		# Generic build is ARM or M68K (probably ARM though)
-                CC="/usr/$TARGET_CPU-palmos/bin/gcc"
-		if test "$target_cpu" = "arm"
-                then
-                   CC="$CC -fPIC -march=armv4t"
-                fi
-                RANLIB=/usr/$TARGET_CPU-palmos/bin/ranlib
-                AR=/usr/$TARGET_CPU-palmos/bin/ar
-		LEXDEFS="-DCST_NO_STATIC_LEX -DCST_NO_STATIC_LTS_MODEL"
-		VOXDEFS="-DCST_NO_STATIC_VOX"
-        ;;
         wince*)
                 # For the CEGCC environment (mingw32ce)
                 # http://cegcc.sourceforge.net/
@@ -4499,16 +4483,11 @@ fi
 
 
 
-if test "$target_os" = "palmos"
+if test "$target_os" = "wince"
 then
-    STDIOTYPE=palmos
+   STDIOTYPE=wince
 else
-   if test "$target_os" = "wince"
-   then
-      STDIOTYPE=wince
-   else
-      STDIOTYPE=stdio
-   fi
+   STDIOTYPE=stdio
 fi
 
 

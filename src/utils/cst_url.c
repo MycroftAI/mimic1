@@ -41,7 +41,7 @@
 /*  Only support http: if sockets are available                          */
 /*                                                                       */
 /*************************************************************************/
-#include "cst_math.h"
+#include <math.h>
 #include "cst_file.h"
 #include "cst_string.h"
 #include "cst_tokenstream.h"

@@ -40,7 +40,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include "cst_math.h"
+#include <math.h>
 #include "cst_hrg.h"
 #include "cst_wave.h"
 #include "cst_sigpr.h"
