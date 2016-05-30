@@ -173,11 +173,25 @@ dnl         ;;
                 DLLWRAP="${MINGW32CEPREF}dllwrap"
                 NM="${MINGW32CEPREF}nm"
         ;;
-        mingw*)
+        msys*)
+                # For the Windows under mingw32 environment
+                # http://www.mingw.org
+                shared=false
+                CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32"
+                MINGWPREF=""
+                CC="${MINGWPREF}gcc"
+                RANLIB="${MINGWPREF}ranlib"
+                AR="${MINGWPREF}ar"
+                WINDRES="${MINGWPREF}windres"
+                DLLTOOL="${MINGWPREF}dlltool"
+                DLLWRAP="${MINGWPREF}dllwrap"
+                NM="${MINGWPREF}nm"
+        ;;
+	mingw*)
                 # For the Windows under mingw32 environment
                 # http://www.mingw.org
 		shared=false
-     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32 -shared"
+     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32"
                 MINGWPREF="i386-mingw32-"
                 CC="${MINGWPREF}gcc"
                 RANLIB="${MINGWPREF}ranlib"
@@ -431,10 +445,12 @@ PKG_CHECK_MODULES([PORTAUDIO], [portaudio-2.0 >= 19],
                    AUDIOLIBS="${PORTAUDIO_LIBS}"],
                   [m4_ignore])
 
-AC_CHECK_HEADER(mmsystem.h,
+AC_CHECK_HEADERS(mmsystem.h,
 	      [AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
-	       AUDIOLIBS=-lwinmm])
+	       AUDIOLIBS=-lwinmm],
+               [],
+               AC_INCLUDES_DEFAULT)
 
 dnl I don't care what you ask for, for wince you get wince
 case "$target_os" in

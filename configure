@@ -4265,11 +4265,25 @@ case "$target_os" in
                 DLLWRAP="${MINGW32CEPREF}dllwrap"
                 NM="${MINGW32CEPREF}nm"
         ;;
-        mingw*)
+        msys*)
+                # For the Windows under mingw32 environment
+                # http://www.mingw.org
+                shared=false
+                CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32"
+                MINGWPREF=""
+                CC="${MINGWPREF}gcc"
+                RANLIB="${MINGWPREF}ranlib"
+                AR="${MINGWPREF}ar"
+                WINDRES="${MINGWPREF}windres"
+                DLLTOOL="${MINGWPREF}dlltool"
+                DLLWRAP="${MINGWPREF}dllwrap"
+                NM="${MINGWPREF}nm"
+        ;;
+	mingw*)
                 # For the Windows under mingw32 environment
                 # http://www.mingw.org
 		shared=false
-     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32 -shared"
+     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -DUNDER_WINDOWS -DWIN32"
                 MINGWPREF="i386-mingw32-"
                 CC="${MINGWPREF}gcc"
                 RANLIB="${MINGWPREF}ranlib"
@@ -4683,13 +4697,20 @@ $as_echo "yes" >&6; }
                    AUDIOLIBS="${PORTAUDIO_LIBS}"
 fi
 
-ac_fn_c_check_header_mongrel "$LINENO" "mmsystem.h" "ac_cv_header_mmsystem_h" "$ac_includes_default"
+for ac_header in mmsystem.h
+do :
+  ac_fn_c_check_header_compile "$LINENO" "mmsystem.h" "ac_cv_header_mmsystem_h" "$ac_includes_default
+"
 if test "x$ac_cv_header_mmsystem_h" = xyes; then :
-  AUDIODRIVER="wince"
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_MMSYSTEM_H 1
+_ACEOF
+ AUDIODRIVER="wince"
 	       AUDIODEFS=-DCST_AUDIO_WINCE
 	       AUDIOLIBS=-lwinmm
 fi
 
+done
 
 
 case "$target_os" in
