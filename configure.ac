@@ -33,7 +33,7 @@ dnl########################################################################
 
 dnl Use aclocal && autoconf to create the configure script
 AC_PREREQ([2.69])
-AC_INIT([mimic],[0.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
+AC_INIT([mimic],[1.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
 AC_CONFIG_SRCDIR([include/mimic.h])
 
 AC_CANONICAL_TARGET
@@ -121,31 +121,6 @@ esac
 fi
 
 case "$target_os" in
-        palmos*)
-		shared=false
-     	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS"
-		# PalmOS Apps are always in M68K
-		M68KCC=/usr/m68k-palmos/bin/gcc
-		# Generic build is ARM or M68K (probably ARM though)
-                CC="/usr/$TARGET_CPU-palmos/bin/gcc"
-		if test "$target_cpu" = "arm" 
-                then
-                   CC="$CC -fPIC -march=armv4t"
-                fi
-                RANLIB=/usr/$TARGET_CPU-palmos/bin/ranlib
-                AR=/usr/$TARGET_CPU-palmos/bin/ar
-		LEXDEFS="-DCST_NO_STATIC_LEX -DCST_NO_STATIC_LTS_MODEL"
-		VOXDEFS="-DCST_NO_STATIC_VOX"
-        ;;
-dnl         wince*)
-dnl                 # For the GNUWINCE environment
-dnl                 # http://win-ce.voxware.com:28575/Development%20Tools/
-dnl 		shared=false
-dnl      	        CFLAGS="$CFLAGS -DCST_NO_SOCKETS -march=armv4 -mapcs-32 -malignment-traps -DNEWLIB -DSARM -DWIN32 -DGNUWINCE"
-dnl                 CC="/usr/local/wince/bin/arm-wince-pe-gcc"
-dnl                 RANLIB=/usr/local/wince/bin/arm-wince-pe-ranlib
-dnl                 AR=/usr/local/wince/bin/arm-wince-pe-ar
-dnl         ;;
         wince*)
                 # For the CEGCC environment (mingw32ce)
                 # http://cegcc.sourceforge.net/
@@ -403,17 +378,12 @@ AC_ARG_WITH( mmap,
 
 AC_SUBST(MMAPTYPE)
 
-dnl stdio type, palmos/wince are different
-if test "$target_os" = "palmos"
+dnl stdio type, wince is different
+if test "$target_os" = "wince"
 then
-    STDIOTYPE=palmos
+   STDIOTYPE=wince
 else
-   if test "$target_os" = "wince"
-   then
-      STDIOTYPE=wince
-   else
-      STDIOTYPE=stdio
-   fi
+   STDIOTYPE=stdio
 fi
 AC_SUBST(STDIOTYPE)
 

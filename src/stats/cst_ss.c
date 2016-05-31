@@ -40,7 +40,7 @@
 
 #include "cst_alloc.h"
 #include "cst_ss.h"
-#include "cst_math.h"
+#include <math.h>
 
 cst_ss *new_ss()
 {

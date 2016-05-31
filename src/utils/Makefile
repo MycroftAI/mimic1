@@ -49,7 +49,7 @@ OBJS := $(SRCS:.c=.o) \
         $(STDIOTYPE:%=cst_file_%.o)
 FILES = Makefile $(H) $(SRCS) \
 	cst_mmap_posix.c cst_mmap_win32.c cst_mmap_none.c \
-	cst_file_stdio.c cst_file_wince.c cst_file_palmos.c
+	cst_file_stdio.c cst_file_wince.c
 LIBNAME = mimic
 
 LOCAL_INCLUDES = $(SOCKETS)

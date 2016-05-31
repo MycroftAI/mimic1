@@ -38,7 +38,7 @@
 #include "cst_hrg.h"
 #include "cst_utt_utils.h"
 #include "cst_spamf0.h"
-#include "cst_math.h"
+#include <math.h>
 
 static void cst_synthtilt(const cst_cg_db *cg_db,
                           const float start, const float peak,

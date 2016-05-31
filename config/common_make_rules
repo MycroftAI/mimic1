@@ -45,9 +45,6 @@
 include $(TOP)/config/config
 
 INCLUDES = -I$(TOP)/include
-ifeq ($(TARGET_OS),palmos)
-INCLUDES += -I$(TOP)/palm/include
-endif
 
 CPPFLAGS += $(LOCAL_INCLUDES) $(INCLUDES)
 CFLAGS += $(EXTRA_CC_FLAGS) $(OPT) $(DBG)
@@ -86,12 +83,6 @@ endif
 ifeq ($(HOST_PLATFORM),$(TARGET_PLATFORM))
 OTHER_BUILD_DIRS = $(HOST_ONLY_DIRS)
 ALL += $(HOST_ONLY_BUILDS)
-endif
-# When target is palm add the palm directory at the top level
-ifeq ($(DIRNAME),)
-ifeq ($(TARGET_OS),palmos)
-OTHER_BUILD_DIRS += palm
-endif
 endif
 
 all: $(BUILDDIRS) $(OTHER_BUILD_DIRS) $(OBJDIR)/.make_build_dirs $(ALL) nothing

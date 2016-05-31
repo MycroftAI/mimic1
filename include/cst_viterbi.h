@@ -41,7 +41,7 @@
 #define _CST_VITERBI_H__
 
 #include "cst_file.h"
-#include "cst_math.h"
+#include <math.h>
 #include "cst_utterance.h"
 
 typedef struct cst_vit_cand_struct {

@@ -73,23 +73,6 @@ int cst_errmsg(const char *fmt, ...)
 
 jmp_buf *cst_errjmp = 0;
 
-#elif defined(__palmos__)
-#ifdef __ARM_ARCH_4T__
-/* We only support throwing errors in ARM land */
-jmp_buf *cst_errjmp = 0;
-#endif
-
-char cst_error_msg[600];
-int cst_errmsg(const char *fmt, ...)
-{
-    va_list args;
-    int count;
-
-    va_start(args, fmt);
-    count = cst_vsprintf(cst_error_msg, fmt, args);
-    va_end(args);
-    return 0;
-}
 #else
 
 jmp_buf *cst_errjmp = 0;

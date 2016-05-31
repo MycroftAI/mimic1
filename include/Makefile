@@ -51,7 +51,6 @@ H = cst_alloc.h  \
 	cst_file.h \
 	cst_hrg.h \
 	cst_item.h \
-        cst_math.h \
 	cst_lexicon.h \
 	cst_lts.h \
 	cst_lts_rewrites.h \

@@ -37,7 +37,7 @@
 /*  Typed values                                                          */
 /*                                                                       */
 /*************************************************************************/
-#include "cst_math.h"
+#include <math.h>
 #include "cst_file.h"
 #include "cst_val.h"
 #include "cst_string.h"

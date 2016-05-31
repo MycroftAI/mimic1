@@ -734,10 +734,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\cst_math.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\cg\cst_mlpg.h"
 				>
 			</File>

@@ -149,8 +149,8 @@
  *	    Zwicker, E., Fastl, H.: "Psychoacoustics - Facts and Models",
  * Springer-Verlag, Berlin, Heidelberg, New-York, Tokyo, 1990 */
 
+#include <math.h>
 #include "cst_string.h"
-#include "cst_math.h"
 #include "cst_alloc.h"
 #include "cst_error.h"
 #include "cst_wave.h"

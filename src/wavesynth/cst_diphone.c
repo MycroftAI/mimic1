@@ -38,7 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 
-#include "cst_math.h"
+#include <math.h>
 #include "cst_hrg.h"
 #include "cst_utt_utils.h"
 #include "cst_wave.h"
