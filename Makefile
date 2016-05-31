@@ -71,9 +71,6 @@ endif
 config/config: config/config.in config.status
 	./config.status
 
-configure: configure.in
-	autoconf
-
 backup: time-stamp
 	@ $(RM) -f $(TOP)/FileList
 	@ $(MAKE) file-list
