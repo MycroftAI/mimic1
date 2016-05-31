@@ -33,7 +33,7 @@ dnl########################################################################
 
 dnl Use aclocal && autoconf to create the configure script
 AC_PREREQ([2.69])
-AC_INIT([mimic],[0.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
+AC_INIT([mimic],[1.0.0.9000],[https://github.com/MycroftAI/mimic/issues])
 AC_CONFIG_SRCDIR([include/mimic.h])
 
 AC_CANONICAL_TARGET
