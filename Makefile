@@ -126,7 +126,7 @@ voices: ./bin/mimic_cmu_us_awb ./bin/mimic_cmu_us_rms ./bin/mimic_cmu_us_rms
 	./bin/mimic_cmu_us_rms -voicedump voices/cmu_us_rms.mimicvox
 	./bin/mimic_cmu_us_slt -voicedump voices/cmu_us_slt.mimicvox
 
-test:
+test: all
 	@ $(MAKE) --no-print-directory -C unittests
 	@ $(MAKE) --no-print-directory -C testsuite
 
