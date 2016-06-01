@@ -48,12 +48,6 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
-#ifdef CST_AUDIO_LINUX
-/* Linux/voxware audio specific */
-#include <sys/ioctl.h>
-#include <sys/soundcard.h>
-#include <sys/types.h>
-#endif
 #ifdef CST_AUDIO_FREEBSD
 /* probably Net and Open too */
 #include <machine/soundcard.h>

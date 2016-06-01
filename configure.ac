@@ -391,9 +391,6 @@ dnl
 dnl determine audio type or use none if none supported on this platform
 dnl
 AUDIODRIVER=none
-AC_CHECK_HEADER(sys/soundcard.h,
-              [AUDIODRIVER="oss"
-               AUDIODEFS=-DCST_AUDIO_LINUX])
 AC_CHECK_HEADER(machine/soundcard.h,
               [AUDIODRIVER="oss"
                AUDIODEFS=-DCST_AUDIO_FREEBSD])
@@ -458,10 +455,6 @@ AC_ARG_WITH( audio,
 
 if test "x$AUDIODEFS" = x; then
     case "$AUDIODRIVER" in
-	linux|oss)
-	    AUDIODRIVER=oss
-	    AUDIODEFS=-DCST_AUDIO_LINUX
-	    ;;
 	alsa)
             AUDIODRIVER="alsa"
 	    AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"

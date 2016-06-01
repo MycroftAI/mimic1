@@ -66,19 +66,6 @@
 #define AUDIO_EXIT_NATIVE audio_exit_sun
 #endif
 
-#ifdef CST_AUDIO_LINUX
-
-#define AUDIO_INIT_NATIVE audio_init_oss
-#define AUDIO_OPEN_NATIVE audio_open_oss
-#define AUDIO_CLOSE_NATIVE audio_close_oss
-#define AUDIO_SET_SAMPLE_RATE_NATIVE audio_set_sample_rate_oss
-#define AUDIO_WRITE_NATIVE audio_write_oss
-#define AUDIO_DRAIN_NATIVE audio_drain_oss
-#define AUDIO_FLUSH_NATIVE audio_flush_oss
-#define AUDIO_EXIT_NATIVE audio_exit_oss
-
-#endif
-
 #ifdef CST_AUDIO_ALSA
 
 #define AUDIO_INIT_NATIVE audio_init_alsa
