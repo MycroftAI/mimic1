@@ -5960,3 +5960,8 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+if [ "$AUDIODRIVER" == "none" ] && [ "$with_audio" != "none" ] ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk." >&5
+$as_echo "$as_me: WARNING: No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk." >&2;}
+fi

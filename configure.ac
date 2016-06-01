@@ -520,3 +520,7 @@ AC_SUBST(FL_LANGVOX)
 
 AC_CONFIG_FILES([config/config config/system.mak])
 AC_OUTPUT
+
+if [[ "$AUDIODRIVER" == "none" ] && [ "$with_audio" != "none" ]] ; then
+    AC_MSG_WARN([No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk.])
+fi
