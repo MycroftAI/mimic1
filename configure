@@ -4506,13 +4506,6 @@ fi
 
 
 AUDIODRIVER=none
-ac_fn_c_check_header_mongrel "$LINENO" "sys/soundcard.h" "ac_cv_header_sys_soundcard_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_soundcard_h" = xyes; then :
-  AUDIODRIVER="oss"
-               AUDIODEFS=-DCST_AUDIO_LINUX
-fi
-
-
 ac_fn_c_check_header_mongrel "$LINENO" "machine/soundcard.h" "ac_cv_header_machine_soundcard_h" "$ac_includes_default"
 if test "x$ac_cv_header_machine_soundcard_h" = xyes; then :
   AUDIODRIVER="oss"
@@ -4727,10 +4720,6 @@ fi
 
 if test "x$AUDIODEFS" = x; then
     case "$AUDIODRIVER" in
-	linux|oss)
-	    AUDIODRIVER=oss
-	    AUDIODEFS=-DCST_AUDIO_LINUX
-	    ;;
 	alsa)
             AUDIODRIVER="alsa"
 	    AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
@@ -5971,3 +5960,8 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+if [ "$AUDIODRIVER" == "none" ] && [ "$with_audio" != "none" ] ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk." >&5
+$as_echo "$as_me: WARNING: No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk." >&2;}
+fi
