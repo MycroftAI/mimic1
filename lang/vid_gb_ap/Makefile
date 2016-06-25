@@ -35,7 +35,7 @@ TOP=../..
 DIRNAME=lang/vid_gb_$(VOXNAME)
 BUILD_DIRS = 
 ALL_DIRS= 
-FILE_BASE=cmu_us_vocalid
+FILE_BASE=vid_gb_ap
 H = voxdefs.h $(FILE_BASE)_cg_17_durmodel.h \
     $(FILE_BASE)_cg_17_mcep_trees.h \
     $(FILE_BASE)_cg_f0_trees.h \
