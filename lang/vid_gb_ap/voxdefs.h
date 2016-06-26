@@ -1,6 +1,6 @@
-#define VOXNAME cmu_us_vocalid
-#define REGISTER_VOX register_cmu_us_vocalid
-#define UNREGISTER_VOX unregister_cmu_us_vocalid
+#define VOXNAME vid_gb_ap
+#define REGISTER_VOX register_vid_gb_ap
+#define UNREGISTER_VOX unregister_vid_gb_ap
 #define VOXHUMAN "ap"
 #define VOXGENDER "unknown"
 #define VOXVERSION 1.0

@@ -45,25 +45,25 @@
 #include "usenglish.h"
 #include "cmu_lex.h"
 
-extern cst_cg_db cmu_us_vocalid_cg_db;
-cst_voice *cmu_us_vocalid_cg = NULL;
+extern cst_cg_db vid_gb_ap_cg_db;
+cst_voice *vid_gb_ap_cg = NULL;
 
 cst_voice *register_vid_gb_ap(const char *voxdir)
 {
     cst_voice *vox;
     cst_lexicon *lex;
 
-    if (cmu_us_vocalid_cg)
-        return cmu_us_vocalid_cg;  /* Already registered */
+    if (vid_gb_ap_cg)
+        return vid_gb_ap_cg;  /* Already registered */
 
     vox = new_voice();
     vox->name = "ap";
 
-    /* Sets up language specific parameters in the cmu_us_vocalid. */
+    /* Sets up language specific parameters in the vid_gb_ap. */
     usenglish_init(vox);
 
     /* Things that weren't filled in already. */
-    mimic_feat_set_string(vox->features,"name","cmu_us_vocalid");
+    mimic_feat_set_string(vox->features,"name","vid_gb_ap");
 
     /* Lexicon */
     lex = cmu_lex_init();
@@ -77,19 +77,19 @@ cst_voice *register_vid_gb_ap(const char *voxdir)
 
     /* Waveform synthesis */
     mimic_feat_set(vox->features,"wave_synth_func",uttfunc_val(&cg_synth));
-    mimic_feat_set(vox->features,"cg_db",cg_db_val(&cmu_us_vocalid_cg_db));
-    mimic_feat_set_int(vox->features,"sample_rate",cmu_us_vocalid_cg_db.sample_rate);
+    mimic_feat_set(vox->features,"cg_db",cg_db_val(&vid_gb_ap_cg_db));
+    mimic_feat_set_int(vox->features,"sample_rate",vid_gb_ap_cg_db.sample_rate);
 
-    cmu_us_vocalid_cg = vox;
+    vid_gb_ap_cg = vox;
 
-    return cmu_us_vocalid_cg;
+    return vid_gb_ap_cg;
 }
 
-void unregister_cmu_us_vocalid(cst_voice *vox)
+void unregister_vid_gb_ap(cst_voice *vox)
 {
-    if (vox != cmu_us_vocalid_cg)
+    if (vox != vid_gb_ap_cg)
 	return;
     delete_voice(vox);
-    cmu_us_vocalid_cg = NULL;
+    vid_gb_ap_cg = NULL;
 }
 
