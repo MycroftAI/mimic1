@@ -132,6 +132,8 @@ endif
 clean:
 	@ echo make clean in $(DIRNAME) ...
 	@ rm -rf .build_lib .build_so *.gcda *.gcno *.gcov *.o *.os *.a *~ $(LOCAL_CLEAN)
+	@ rm -rf $(OBJDIR)/*
+
 ifdef ALL_DIRS
 	@ set -e; for i in $(ALL_DIRS) ; \
 	do \
