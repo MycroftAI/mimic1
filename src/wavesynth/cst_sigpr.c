@@ -54,7 +54,11 @@ cst_wave *lpc_resynth(cst_lpcres *lpcres)
 
     /* Get a new wave to build the signal into */
     w = new_wave();
-    cst_wave_resize(w, lpcres->num_samples, 1);
+    if (cst_wave_resize(w, lpcres->num_samples, 1) < 0)
+    {
+        delete_wave(w);
+        return NULL;
+    }
     w->sample_rate = lpcres->sample_rate;
     /* outbuf is a circular buffer with past relevant samples in it */
     outbuf = cst_alloc(float, 1 + lpcres->num_channels);
@@ -108,7 +112,11 @@ cst_wave *lpc_resynth_windows(cst_lpcres *lpcres)
 
     /* Get a new wave to build the signal into */
     w = new_wave();
-    cst_wave_resize(w, lpcres->num_samples, 1);
+    if (cst_wave_resize(w, lpcres->num_samples, 1) < 0)
+    {
+        delete_wave(w);
+        return NULL;
+    }
     w->sample_rate = lpcres->sample_rate;
     /* outbuf is a circular buffer with past relevant samples in it */
     outbuf = cst_alloc(float, 1 + lpcres->num_channels);
@@ -198,7 +206,11 @@ cst_wave *lpc_resynth_fixedpoint(cst_lpcres *lpcres)
 
     /* Get a new wave to build the signal into */
     w = new_wave();
-    cst_wave_resize(w, lpcres->num_samples, 1);
+    if (cst_wave_resize(w, lpcres->num_samples, 1) < 0)
+    {
+        delete_wave(w);
+        return NULL;
+    }
     w->sample_rate = lpcres->sample_rate;
     /* outbuf is a circular buffer with past relevant samples in it */
     outbuf = cst_alloc(int, 1 + lpcres->num_channels);
@@ -280,7 +292,11 @@ cst_wave *lpc_resynth_sfp(cst_lpcres *lpcres)
 
     /* Get a new wave to build the signal into */
     w = new_wave();
-    cst_wave_resize(w, lpcres->num_samples, 1);
+    if (cst_wave_resize(w, lpcres->num_samples, 1) < 0)
+    {
+        delete_wave(w);
+        return NULL;
+    }
     w->sample_rate = lpcres->sample_rate;
     /* outbuf is a circular buffer with past relevant samples in it */
     outbuf = cst_alloc(int, 1 + lpcres->num_channels);

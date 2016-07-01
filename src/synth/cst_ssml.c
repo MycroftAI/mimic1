@@ -338,9 +338,11 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
         !cst_streq(outtype, "none") && !cst_streq(outtype, "stream"))
     {
         w = new_wave();
-        cst_wave_resize(w, 0, 1);
-        cst_wave_set_sample_rate(w, 16000);
-        cst_wave_save_riff(w, outtype); /* an empty wave */
+        if (cst_wave_resize(w, 0, 1) == 0)
+        {
+            cst_wave_set_sample_rate(w, 16000);
+            cst_wave_save_riff(w, outtype); /* an empty wave */
+        }
         delete_wave(w);
     }
 
@@ -432,6 +434,8 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
             if (utt)
                 delete_utterance(utt);
             utt = utt_synth_wave(copy_wave(wave), current_voice);
+            if (utt == NULL)
+               goto cleanup;
             if (utt_user_callback)
                 utt = (utt_user_callback) (utt);
             mimic_process_output(utt, outtype, TRUE, &new_durs);
@@ -505,9 +509,11 @@ float mimic_ssml_file_to_speech(const char *filename,
         !cst_streq(outtype, "none") && !cst_streq(outtype, "stream"))
     {
         w = new_wave();
-        cst_wave_resize(w, 0, 1);
-        cst_wave_set_sample_rate(w, 16000);
-        cst_wave_save_riff(w, outtype); /* an empty wave */
+        if (cst_wave_resize(w, 0, 1) == 0)
+        {
+            cst_wave_set_sample_rate(w, 16000);
+            cst_wave_save_riff(w, outtype); /* an empty wave */
+        }
         delete_wave(w);
     }
 
@@ -550,9 +556,11 @@ float mimic_ssml_text_to_speech(const char *text,
         !cst_streq(outtype, "none") && !cst_streq(outtype, "stream"))
     {
         w = new_wave();
-        cst_wave_resize(w, 0, 1);
-        cst_wave_set_sample_rate(w, 16000);
-        cst_wave_save_riff(w, outtype); /* an empty wave */
+        if (cst_wave_resize(w, 0, 1) == 0)
+        {
+            cst_wave_set_sample_rate(w, 16000);
+            cst_wave_save_riff(w, outtype); /* an empty wave */
+        }
         delete_wave(w);
     }
 

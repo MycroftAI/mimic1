@@ -66,7 +66,7 @@ typedef struct cst_wave_header_struct {
 cst_wave *new_wave();
 cst_wave *copy_wave(const cst_wave *w);
 void delete_wave(cst_wave *val);
-cst_wave *concat_wave(cst_wave *dest, const cst_wave *src);
+int concat_wave(cst_wave *dest, const cst_wave *src);
 
 #define cst_wave_num_samples(w) (w?w->num_samples:0)
 #define cst_wave_num_channels(w) (w?w->num_channels:0)
@@ -95,7 +95,7 @@ int cst_wave_load_riff_fd(cst_wave *w, cst_file fd);
 int cst_wave_load_raw_fd(cst_wave *w, cst_file fd,
                          const char *bo, int sample_rate);
 
-void cst_wave_resize(cst_wave *w, int samples, int num_channels);
+int cst_wave_resize(cst_wave *w, int samples, int num_channels);
 void cst_wave_resample(cst_wave *w, int sample_rate);
 void cst_wave_rescale(cst_wave *w, int factor);
 
