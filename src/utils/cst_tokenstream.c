@@ -51,53 +51,59 @@ const cst_string *const cst_ts_default_postpunctuationsymbols =
 static void ts_getc(cst_tokenstream *ts);
 static void internal_ts_getc(cst_tokenstream *ts);
 
-/**
- * Receives an UTF-8 character and a class (for instance:
- * `TS_CHARCLASS_WHITESPACE` or `TS_CHARCLASS_POSTPUNCT`) and returns
- * whether or not the UTF-8 character given belongs to that class.
- * 
- * @param utf8char A cst_string containing a utf-8 character, that can
- *                 be 1 to 4 bytes long.
- * @param class    An integer, usually one of the `TS_CHARCLASS_*` macros
- * @param ts       The tokenstream that has defined which characters
- *                 belong to what classes.
- * 
- * @return Returns 0 if the given character does not belong to the given
- *         class. It returns the class otherwise.
- */
 int ts_charclass(const cst_string *const utf8char, int class,
                  cst_tokenstream *ts)
 {
+	  unsigned char c1, c2, c3, c4;
     unsigned char *c = (unsigned char *) utf8char;
     switch (cst_strlen(c))
     {
     case 1:
-        return (ts->charclass[c[0]] & class);
+        /* 1-byte must be [0, 128), we mask with b01111111 = 0x7f */
+        return (ts->charclass[c[0] & 0x7f] & class);
     case 2:
-        if (ts->charclass2[c[0]] != NULL)
+        /* 1st byte must be 110xxxxx so we mask with b00011111 = 0x1f */
+        c1 = c[0] & 0x1f;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        if (ts->charclass2[c1] != NULL)
         {
-            return (ts->charclass2[c[0]][c[1]] & class);
+            return (ts->charclass2[c1][c2] & class);
         }
         else
         {
             return 0;
         }
     case 3:
-        if (ts->charclass3[c[0]] != NULL &&
-            ts->charclass3[c[0]][c[1]] != NULL)
+        /* 1st byte must be 1110xxxx so we mask with b00011111 = 0x0f */
+        c1 = c[0] & 0x0f;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* 3rd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c3 = c[2] & 0x3f;
+        if (ts->charclass3[c1] != NULL &&
+            ts->charclass3[c1][c2] != NULL)
         {
-            return (ts->charclass3[c[0]][c[1]][c[2]] & class);
+            return (ts->charclass3[c1][c2][c3] & class);
         }
         else
         {
             return 0;
         }
     case 4:
-        if (ts->charclass4[c[0]] != NULL &&
-            ts->charclass4[c[0]][c[1]] != NULL &&
-            ts->charclass4[c[0]][c[1]][c[2]] != NULL)
+        /* 1st byte must be 11110xxx so we mask with b00011111 = 0x07 */
+        c1 = c[0] & 0x07;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* 3rd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c3 = c[2] & 0x3f;
+        /* 4th byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c4 = c[3] & 0x3f;
+        if (ts->charclass4[c1] != NULL &&
+            ts->charclass4[c1][c2] != NULL &&
+            ts->charclass4[c1][c2][c3] != NULL)
         {
-            return (ts->charclass4[c[0]][c[1]][c[2]][c[3]] & class);
+            return (ts->charclass4[c1][c2][c3][c4] & class);
         }
         else
         {
@@ -108,14 +114,18 @@ int ts_charclass(const cst_string *const utf8char, int class,
     }
 }
 
+/** This function modifies the cst_tokenstream by setting the UTF-8
+    characters given in symbols as symbols of class symbol_value.
+  */
 static int set_charclass_table_symbol(cst_tokenstream *ts,
                                       const cst_string *symbols,
                                       const unsigned char symbol_value)
 {
     cst_val *utflets;
     const cst_val *v;
-    const unsigned char *one_cp;
-    int one_cp_len;
+    const unsigned char *utf8char;
+    unsigned char c1;
+    int utf8char_len;
 
     cst_string *cl1;
     cst_string **cl2;
@@ -123,62 +133,86 @@ static int set_charclass_table_symbol(cst_tokenstream *ts,
     cst_string ****cl4;
     int idx;
     utflets = cst_utf8_explode(symbols);
+    /* For each UTF-8 character */
     for (v = utflets; v; v = val_cdr(v))
     {
-        one_cp = (const unsigned char *) val_string(val_car(v));
-        one_cp_len = cst_strlen(one_cp);
+			  /* The character as an unsigned char* */
+        utf8char = (const unsigned char *) val_string(val_car(v));
+        /* The number of UTF-8 bytes required to express this char */
+        utf8char_len = cst_strlen(utf8char);
         idx = 0;
-        if (one_cp_len > 4)
+        if (utf8char_len > 4)
         {
+					  /* Invalid UTF-8 symbol */
             delete_val(utflets);
             return -1;
         }
-        if (one_cp_len == 4)
+        if (utf8char_len == 4)
         {
             cl4 = ts->charclass4;
-            if (cl4[one_cp[idx]] == NULL)
+            /* First character: 11110xxx */
+            c1 = utf8char[idx] & 0x07;
+            if (cl4[c1] == NULL)
             {
-                cl4[one_cp[idx]] = cst_alloc(cst_string **, 256);
-                memset(cl4[one_cp[idx]], 0, 256 * sizeof(cst_string **));
+								/* It has 10xxxxx -> 2^6 = 64 options */
+                cl4[c1] = cst_alloc(cst_string **, 64);
+                memset(cl4[c1], 0, 64 * sizeof(cst_string **));
             }
-            cl3 = cl4[one_cp[idx]];
+            cl3 = cl4[c1];
             idx++;
         }
-        if (one_cp_len >= 3)
+        if (utf8char_len >= 3)
         {
-            if (one_cp_len == 3)
+            if (utf8char_len == 3)
             {
                 cl3 = ts->charclass3;
-            }
-            if (cl3[one_cp[idx]] == NULL)
+                /* First character: 1110xxxx */
+                c1 = utf8char[idx] & 0x0f;
+            } else {
+                /* Cont. char must be 10xxxxxx so we mask with b00111111 = 0x3f */
+							  c1 = utf8char[idx] & 0x3f;
+						}
+            if (cl3[c1] == NULL)
             {
-                cl3[one_cp[idx]] = cst_alloc(cst_string *, 256);
-                memset(cl3[one_cp[idx]], 0, 256 * sizeof(cst_string *));
+								/* It has 10xxxxx -> 2^6 = 64 options */
+                cl3[c1] = cst_alloc(cst_string *, 64);
+                memset(cl3[c1], 0, 64 * sizeof(cst_string *));
             }
-            cl2 = cl3[one_cp[idx]];
+            cl2 = cl3[c1];
             idx++;
         }
-        if (one_cp_len >= 2)
+        if (utf8char_len >= 2)
         {
-            if (one_cp_len == 2)
+            if (utf8char_len == 2)
             {
                 cl2 = ts->charclass2;
-            }
-            if (cl2[one_cp[idx]] == NULL)
+                /* 1st byte must be 110xxxxx so we mask with b00011111 = 0x1f */
+                c1 = utf8char[idx] & 0x1f;
+            } else {
+                /* Cont. char must be 10xxxxxx so we mask with b00111111 = 0x3f */
+							  c1 = utf8char[idx] & 0x3f;
+						}
+            if (cl2[c1] == NULL)
             {
-                cl2[one_cp[idx]] = cst_alloc(cst_string, 256);
-                memset(cl2[one_cp[idx]], 0, 256 * sizeof(cst_string));
+								/* It has 10xxxxx -> 2^6 = 64 options */
+                cl2[c1] = cst_alloc(cst_string, 64);
+                memset(cl2[c1], 0, 64 * sizeof(cst_string));
             }
-            cl1 = cl2[one_cp[idx]];
+            cl1 = cl2[c1];
             idx++;
         }
-        if (one_cp_len >= 1)
+        if (utf8char_len >= 1)
         {
-            if (one_cp_len == 1)
+            if (utf8char_len == 1)
             {
                 cl1 = ts->charclass;
-            }
-            cl1[one_cp[idx]] |= symbol_value;
+                /* 1st byte must be 0xxxxxxx so we mask with b01111111 = 0x7f */
+                c1 = utf8char[idx] & 0x7f;
+            } else {
+                /* Cont. char must be 10xxxxxx so we mask with b00111111 = 0x3f */
+							  c1 = utf8char[idx] & 0x3f;
+						}
+            cl1[c1] |= symbol_value;
         }
     }
     delete_val(utflets);
@@ -188,15 +222,17 @@ static int set_charclass_table_symbol(cst_tokenstream *ts,
 static void free_tables(cst_tokenstream *ts)
 {
     int i, j, k;
-    for (i = 0; i < 256; i++)
-    {
+    for (i = 0; i < 32; i++) {
         if (ts->charclass2[i] != NULL)
         {
             cst_free(ts->charclass2[i]);
         }
+		}
+		for (i = 0; i < 16; i++)
+		{
         if (ts->charclass3[i] != NULL)
         {
-            for (j = 0; j < 256; j++)
+            for (j = 0; j < 64; j++)
             {
                 if (ts->charclass3[i][j] != NULL)
                 {
@@ -205,13 +241,16 @@ static void free_tables(cst_tokenstream *ts)
             }
             cst_free(ts->charclass3[i]);
         }
+		}		
+    for (i = 0; i < 8; i++)
+    {
         if (ts->charclass4[i] != NULL)
         {
-            for (j = 0; j < 256; j++)
+            for (j = 0; j < 64; j++)
             {
                 if (ts->charclass4[i][j] != NULL)
                 {
-                    for (k = 0; k < 256; k++)
+                    for (k = 0; k < 64; k++)
                     {
                         if (ts->charclass4[i][j][k] != NULL)
                         {
@@ -228,10 +267,10 @@ static void free_tables(cst_tokenstream *ts)
 
 static void reset_tables(cst_tokenstream *ts)
 {
-    memset(ts->charclass, 0, 256 * sizeof(cst_string));
-    memset(ts->charclass2, 0, 256 * sizeof(cst_string *));
-    memset(ts->charclass3, 0, 256 * sizeof(cst_string **));
-    memset(ts->charclass4, 0, 256 * sizeof(cst_string ***));
+    memset(ts->charclass, 0, 128 * sizeof(cst_string));
+    memset(ts->charclass2, 0, 32 * sizeof(cst_string *));
+    memset(ts->charclass3, 0, 16 * sizeof(cst_string **));
+    memset(ts->charclass4, 0, 8 * sizeof(cst_string ***));
 }
 
 static int set_charclass_table(cst_tokenstream *ts)
@@ -278,10 +317,15 @@ static void extend_buffer(cst_string **buffer, int *buffer_max)
     int increment;
     cst_string *new_buffer;
 
+    /* Extend buffer 20% */
     increment = (*buffer_max) / 5;
+    /* We need at least 5 bytes increment, as the longest UTF-8 char
+     * requires 4 bytes and there may be an ending 0 */
     if (increment < 5)
     {
-        increment = 5;
+			 /* We could set it to 5, but incrementing a power of two
+			  * seems more "alignment friendly" */
+        increment = 8;
     }
     new_max = (*buffer_max) + increment;
     new_buffer = cst_alloc(cst_string, new_max);

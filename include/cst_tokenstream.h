@@ -77,11 +77,17 @@ typedef struct cst_tokenstream_struct {
     const cst_string *p_prepunctuationsymbols;
     const cst_string *p_postpunctuationsymbols;
 
-
-    cst_string charclass[256];
-    cst_string *charclass2[256];
-    cst_string **charclass3[256];
-    cst_string ***charclass4[256];
+    /* 1-byte long UTF-8 characters are in [0, 128) */
+    cst_string charclass[128];
+    /* 2-byte long UTF-8 characters have a first UTF-8 character like
+     *  110xxxxx, so 32 possibilities are only possible*/
+    cst_string *charclass2[32];
+    /* 3-byte long UTF-8 characters have a first UTF-8 character like
+     * 1110xxxx, so 16 possibilities are only possible*/
+    cst_string **charclass3[16];
+    /* 4-byte long UTF-8 characters have a first UTF-8 character like
+     * 11110xxx, so 8 possibilities are only possible*/
+    cst_string ***charclass4[8];
 
     /* To allow externally specified reading functions e.g. epub/xml */
     int (*open) (struct cst_tokenstream_struct *ts, const char *filename);
@@ -100,6 +106,22 @@ typedef struct cst_tokenstream_struct {
 #define TS_CHARCLASS_POSTPUNCT  16
 #define TS_CHARCLASS_QUOTE      32
 
+/**
+ * Receives an UTF-8 character and a class (for instance:
+ * `TS_CHARCLASS_WHITESPACE` or `TS_CHARCLASS_POSTPUNCT`) and returns
+ * whether or not the UTF-8 character given belongs to that class.
+ * If an invalid UTF-8 character is given the returned value is 
+ * undefined.
+ * 
+ * @param utf8char A cst_string containing a utf-8 character, that can
+ *                 be 1 to 4 bytes long.
+ * @param class    An integer, usually one of the `TS_CHARCLASS_*` macros
+ * @param ts       The tokenstream that has defined which characters
+ *                 belong to what classes.
+ * 
+ * @return Returns 0 if the given character does not belong to the given
+ *         class. It returns the class otherwise.
+ */
 int ts_charclass(const cst_string *const c, int class, cst_tokenstream *ts);
 
 extern const cst_string *const cst_ts_default_whitespacesymbols;
