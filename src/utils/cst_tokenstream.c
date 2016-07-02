@@ -51,7 +51,20 @@ const cst_string *const cst_ts_default_postpunctuationsymbols =
 static void ts_getc(cst_tokenstream *ts);
 static void internal_ts_getc(cst_tokenstream *ts);
 
-
+/**
+ * Receives an UTF-8 character and a class (for instance:
+ * `TS_CHARCLASS_WHITESPACE` or `TS_CHARCLASS_POSTPUNCT`) and returns
+ * whether or not the UTF-8 character given belongs to that class.
+ * 
+ * @param utf8char A cst_string containing a utf-8 character, that can
+ *                 be 1 to 4 bytes long.
+ * @param class    An integer, usually one of the `TS_CHARCLASS_*` macros
+ * @param ts       The tokenstream that has defined which characters
+ *                 belong to what classes.
+ * 
+ * @return Returns 0 if the given character does not belong to the given
+ *         class. It returns the class otherwise.
+ */
 int ts_charclass(const cst_string *const utf8char, int class,
                  cst_tokenstream *ts)
 {
@@ -599,11 +612,6 @@ int ts_get_stream_size(cst_tokenstream *ts)
         return (ts->size) (ts);
     else
         return 0;
-}
-
-void private_ts_getc(cst_tokenstream *ts)
-{
-    internal_ts_getc(ts);
 }
 
 static void ts_getc(cst_tokenstream *ts)

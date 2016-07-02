@@ -140,8 +140,6 @@ const cst_string *ts_get(cst_tokenstream *ts);
 
 const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
                                       char quote, char escape);
-/* Externally specified ts interfaces may need this */
-void private_ts_getc(cst_tokenstream *ts);
 
 void set_charclasses(cst_tokenstream *ts,
                      const cst_string *whitespace,
