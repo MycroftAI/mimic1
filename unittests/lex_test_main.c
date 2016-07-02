@@ -85,7 +85,7 @@ void test_activism(void)
 void test_chronicles(void)
 {
     cmu_lex_init();
-    lookup_and_test(&cmu_lex, "chronicles", NULL, "k r aa1 n ax0 k ax0 l z");
+    lookup_and_test(&cmu_lex, "chronicles", NULL, "k r aa1 n ih0 k ax0 l z");
 }
 
 void test_project(void)
