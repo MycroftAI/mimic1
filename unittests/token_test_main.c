@@ -42,16 +42,18 @@ void test_token_utf8(void)
 {
     cst_tokenstream *fd;
     const char *token;
-    const char *singl = "€(){}[]";    /* EURO SIGN + defaults */
+    const char *singl = "€(){}[]😊";    /* EURO SIGN + defaults + emoji */
     const char *prepunc = "¿¡\"!";    /* INVERTED QUESTION MARK, INV. EXCL. MARK, ", ! */
-
-    fd = ts_open("data_utf8.txt", " \n\t", singl, prepunc, NULL);       /* defaults */
+    const char *postpunc = "\"'`.,:;!?(){}[]";
+    fd = ts_open("data_utf8.txt", " \n\t", singl, prepunc, postpunc);
 
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "Hello") == 0);
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "world") == 0);
     TEST_CHECK(strcmp(fd->postpunctuation, ".") == 0);
+    token = ts_get(fd);
+    TEST_CHECK(strcmp(token, "😊") == 0);
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "Yahoo") == 0);
     TEST_CHECK(strcmp(fd->postpunctuation, "!\"") == 0);
@@ -71,6 +73,8 @@ void test_token_utf8(void)
     TEST_CHECK(strcmp(fd->postpunctuation, "!") == 0);
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "Åke") == 0);
+    token = ts_get(fd);
+    TEST_CHECK(strcmp(token, "€") == 0);
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "Über") == 0);
     token = ts_get(fd);
