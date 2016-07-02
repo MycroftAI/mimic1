@@ -70,6 +70,12 @@ void test_token_utf8(void)
     TEST_CHECK(strcmp(token, "News") == 0);
     TEST_CHECK(strcmp(fd->postpunctuation, "!") == 0);
     token = ts_get(fd);
+    TEST_CHECK(strcmp(token, "Åke") == 0);
+    token = ts_get(fd);
+    TEST_CHECK(strcmp(token, "Über") == 0);
+    token = ts_get(fd);
+    TEST_CHECK(strcmp(token, "漢字") == 0);
+    token = ts_get(fd);
     TEST_CHECK(strcmp(token, "") == 0);
     TEST_CHECK(ts_eof(fd));
     ts_close(fd);
