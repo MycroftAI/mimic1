@@ -45,6 +45,7 @@
 /*************************************************************************/
 #ifndef _CST_CG_H__
 #define _CST_CG_H__
+#include <stdint.h>
 
 #include "cst_cart.h"
 #include "cst_track.h"
@@ -58,28 +59,28 @@ typedef struct cst_cg_db_struct {
        voice too (in cst_cg_dump_voice and cst_cg_map) */
     const char *name;
     const char *const *types;
-    int num_types;
+    int32_t num_types;
 
-    int sample_rate;
+    int32_t sample_rate;
 
     float f0_mean, f0_stddev;
 
     /* Cluster trees */
     const cst_cart *const *f0_trees;
 
-    int num_param_models;
+    int32_t num_param_models;
     const cst_cart ***param_trees;
 
     const cst_cart *spamf0_accent_tree; /* spam accent tree */
     const cst_cart *spamf0_phrase_tree; /* spam phrase tree */
 
     /* Model params e.g. mceps, deltas intersliced with stddevs */
-    int *num_channels;
-    int *num_frames;
-    const unsigned short ***model_vectors;
+    int32_t *num_channels;
+    int32_t *num_frames;
+    const uint16_t ***model_vectors;
 
-    int num_channels_spamf0_accent;
-    int num_frames_spamf0_accent;
+    int32_t num_channels_spamf0_accent;
+    int32_t num_frames_spamf0_accent;
     const float *const *spamf0_accent_vectors;
 
     /* Currently shared between different models */
@@ -89,7 +90,7 @@ typedef struct cst_cg_db_struct {
     float frame_advance;
 
     /* duration models (cart + phonedurs) */
-    int num_dur_models;
+    int32_t num_dur_models;
     const dur_stat ***dur_stats;
     const cst_cart **dur_cart;
 
@@ -97,25 +98,25 @@ typedef struct cst_cg_db_struct {
     const char *const *const *phone_states;
 
     /* Other parameters */
-    int do_mlpg;                /* implies deltas are in the model_vectors */
+    int32_t do_mlpg;       /* implies deltas are in the model_vectors */
     float *dynwin;
-    int dynwinsize;
+    int32_t dynwinsize;
 
     float mlsa_alpha;
     float mlsa_beta;
 
-    int multimodel;
-    int mixed_excitation;
+    int32_t multimodel;
+    int32_t mixed_excitation;
 
     /* filters for Mixed Excitation */
-    int ME_num;
-    int ME_order;
+    int32_t ME_num;
+    int32_t ME_order;
     const double *const *me_h;
 
-    int spamf0;
+    int32_t spamf0;
     float gain;
 
-    int freeable;               /* doesn't get dumped, but 1 when this a freeable struct */
+    int32_t freeable;               /* doesn't get dumped, but 1 when this a freeable struct */
 
 } cst_cg_db;
 

@@ -37,6 +37,7 @@
 /*  A clustergen generic voice, that can load from a file                */
 /*                                                                       */
 /*************************************************************************/
+#include <stdlib.h>
 #include "cst_string.h"
 #include "cst_cg_map.h"
 
@@ -45,7 +46,8 @@ const char *const cg_voice_header_string = "CMU_FLITE_CG_VOXDATA-v2.0";
 int cst_cg_read_header(cst_file fd)
 {
     char header[200];
-    int n, endianness;
+    size_t n;
+    int32_t endianness;
 
     n = cst_fread(fd, header, sizeof(char),
                   cst_strlen(cg_voice_header_string) + 1);
@@ -56,7 +58,7 @@ int cst_cg_read_header(cst_file fd)
     if (!cst_streq(header, cg_voice_header_string))
         return -1;
 
-    cst_fread(fd, &endianness, sizeof(int), 1); /* for byte order check */
+    cst_fread(fd, &endianness, sizeof(int32_t), 1); /* for byte order check */
     if (endianness != cst_endian_loc)
         return -1;              /* dumped with other byte order */
 
@@ -223,8 +225,8 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
     {
         cst_fread(fd, &nodes[i].feat, sizeof(char), 1);
         cst_fread(fd, &nodes[i].op, sizeof(char), 1);
-        cst_fread(fd, &nodes[i].no_node, sizeof(short), 1);
-        cst_fread(fd, &vtype, sizeof(short), 1);
+        cst_fread(fd, &nodes[i].no_node, sizeof(int16_t), 1);
+        cst_fread(fd, &vtype, sizeof(int16_t), 1);
         if (vtype == CST_VAL_TYPE_STRING)
         {
             str = cst_read_padded(fd, &temp);
@@ -368,12 +370,12 @@ void cst_read_voice_feature(cst_file fd, char **fname, char **fval)
     *fval = cst_read_padded(fd, &temp);
 }
 
-int cst_read_int(cst_file fd)
+int32_t cst_read_int(cst_file fd)
 {
-    int val;
-    int n;
+    int32_t val;
+    size_t n;
 
-    n = cst_fread(fd, &val, sizeof(int), 1);
+    n = cst_fread(fd, &val, sizeof(int32_t), 1);
     if (n != 1)
         return 0;
     return val;

@@ -50,14 +50,14 @@ static void cst_cg_write_header(cst_file fd)
     const char *header = cg_voice_header_string;
 
     cst_fwrite(fd, header, 1, cst_strlen(header) + 1);
-    cst_fwrite(fd, &cst_endian_loc, sizeof(int), 1);    /* for byte order check */
+    cst_fwrite(fd, &cst_endian_loc, sizeof(int32_t), 1);    /* for byte order check */
 
 }
 
 static void cst_cg_write_padded(cst_file fd, const void *data, int numbytes)
 {
     /* We used to do 4-byte alignments. but that's not necessary now */
-    cst_fwrite(fd, &numbytes, sizeof(int), 1);
+    cst_fwrite(fd, &numbytes, sizeof(int32_t), 1);
     cst_fwrite(fd, data, 1, numbytes);
 }
 
@@ -70,7 +70,7 @@ static void cst_cg_write_db_types(cst_file fd, const cst_cg_db *db)
     while (db->types[n])
         n++;
 
-    cst_fwrite(fd, &n, sizeof(int), 1);
+    cst_fwrite(fd, &n, sizeof(int32_t), 1);
 
     for (i = 0; i < n; i++)
         cst_cg_write_padded(fd, (void *) (db->types[i]),
@@ -88,13 +88,13 @@ static void cst_cg_write_tree_nodes(cst_file fd, const cst_cart_node * nodes)
     while (nodes[num_nodes].val != 0)
         num_nodes++;
 
-    cst_fwrite(fd, &num_nodes, sizeof(int), 1);
+    cst_fwrite(fd, &num_nodes, sizeof(int32_t), 1);
     for (i = 0; i < num_nodes; i++)
     {
         cst_fwrite(fd, &nodes[i].feat, sizeof(char), 1);
         cst_fwrite(fd, &nodes[i].op, sizeof(char), 1);
-        cst_fwrite(fd, &nodes[i].no_node, sizeof(short), 1);
-        cst_fwrite(fd, &nodes[i].val->c.a.type, sizeof(short), 1);
+        cst_fwrite(fd, &nodes[i].no_node, sizeof(int16_t), 1);
+        cst_fwrite(fd, &nodes[i].val->c.a.type, sizeof(int16_t), 1);
         if (nodes[i].val->c.a.type == CST_VAL_TYPE_STRING)
         {
             cst_cg_write_padded(fd, nodes[i].val->c.a.v.vval,
@@ -103,7 +103,7 @@ static void cst_cg_write_tree_nodes(cst_file fd, const cst_cart_node * nodes)
         else if (nodes[i].val->c.a.type == CST_VAL_TYPE_INT)
         {
             an_int = nodes[i].val->c.a.v.ival;
-            cst_fwrite(fd, &an_int, sizeof(int), 1);
+            cst_fwrite(fd, &an_int, sizeof(int32_t), 1);
         }
         else if (nodes[i].val->c.a.type == CST_VAL_TYPE_FLOAT)
         {
@@ -112,7 +112,7 @@ static void cst_cg_write_tree_nodes(cst_file fd, const cst_cart_node * nodes)
         }
         else
         {                       /* its not going to work without more code ... */
-            cst_fwrite(fd, &nodes[i].val->c.a.v.ival, sizeof(int), 1);
+            cst_fwrite(fd, &nodes[i].val->c.a.v.ival, sizeof(int32_t), 1);
         }
     }
 }
@@ -125,7 +125,7 @@ static void cst_cg_write_tree_feats(cst_file fd, const char *const *feats)
     i = 0;
     while (feats[i])
         i++;
-    cst_fwrite(fd, &i, sizeof(int), 1);
+    cst_fwrite(fd, &i, sizeof(int32_t), 1);
 
     for (i = 0; feats[i]; i++)
         cst_cg_write_padded(fd, (void *) (feats[i]), strlen(feats[i]) + 1);
@@ -145,7 +145,7 @@ static void cst_cg_write_tree_array(cst_file fd, const cst_cart *const *trees)
 
     while (trees && trees[i])
         i++;
-    cst_fwrite(fd, &i, sizeof(int), 1);
+    cst_fwrite(fd, &i, sizeof(int32_t), 1);
 
     for (i = 0; trees && trees[i]; i++)
         cst_cg_write_tree(fd, trees[i]);
@@ -164,7 +164,7 @@ static void cst_cg_write_2d_array(cst_file fd, void **data, int rows,
     int i;
     int columnsize = cols * unitsize;
 
-    cst_fwrite(fd, &rows, sizeof(int), 1);
+    cst_fwrite(fd, &rows, sizeof(int32_t), 1);
 
     for (i = 0; i < rows; i++)
         cst_cg_write_array(fd, data[i], columnsize);
@@ -180,7 +180,7 @@ static void cst_cg_write_dur_stats(cst_file fd, const dur_stat * const *ds)
     while (ds[numstats])
         numstats++;
 
-    cst_fwrite(fd, &numstats, sizeof(int), 1);
+    cst_fwrite(fd, &numstats, sizeof(int32_t), 1);
 
     /* Write the string resources */
     for (i = 0; i < numstats; i++)
@@ -203,14 +203,14 @@ static void cst_cg_write_phone_states(cst_file fd,
     count = 0;
     while (ps[count])
         count++;
-    cst_fwrite(fd, &count, sizeof(int), 1);
+    cst_fwrite(fd, &count, sizeof(int32_t), 1);
 
     for (i = 0; i < count; i++)
     {
         count2 = 0;
         while (ps[i][count2])
             count2++;
-        cst_fwrite(fd, &count2, sizeof(int), 1);
+        cst_fwrite(fd, &count2, sizeof(int32_t), 1);
 
         for (j = 0; j < count2; j++)
             cst_cg_write_padded(fd, ps[i][j], strlen(ps[i][j]) + 1);
@@ -278,8 +278,8 @@ int cst_cg_dump_voice(const cst_voice *v, const cst_string *filename)
     cst_cg_write_padded(fd, (void *) db->name, cst_strlen(db->name) + 1);
     cst_cg_write_db_types(fd, db);
 
-    cst_fwrite(fd, &db->num_types, sizeof(int), 1);
-    cst_fwrite(fd, &db->sample_rate, sizeof(int), 1);
+    cst_fwrite(fd, &db->num_types, sizeof(int32_t), 1);
+    cst_fwrite(fd, &db->sample_rate, sizeof(int32_t), 1);
     cst_fwrite(fd, &db->f0_mean, sizeof(float), 1);
     cst_fwrite(fd, &db->f0_stddev, sizeof(float), 1);
 
@@ -288,7 +288,7 @@ int cst_cg_dump_voice(const cst_voice *v, const cst_string *filename)
     for (pm = 0; pm < db->num_param_models; pm++)
         cst_cg_write_tree_array(fd, db->param_trees[pm]);
 
-    cst_fwrite(fd, &db->spamf0, sizeof(int), 1);
+    cst_fwrite(fd, &db->spamf0, sizeof(int32_t), 1);
     if (db->spamf0)
     {
         cst_cg_write_tree(fd, db->spamf0_accent_tree);
@@ -297,17 +297,17 @@ int cst_cg_dump_voice(const cst_voice *v, const cst_string *filename)
 
     for (pm = 0; pm < db->num_param_models; pm++)
     {
-        cst_fwrite(fd, &db->num_channels[pm], sizeof(int), 1);
-        cst_fwrite(fd, &db->num_frames[pm], sizeof(int), 1);
+        cst_fwrite(fd, &db->num_channels[pm], sizeof(int32_t), 1);
+        cst_fwrite(fd, &db->num_frames[pm], sizeof(int32_t), 1);
         cst_cg_write_2d_array(fd, (void *) db->model_vectors[pm],
                               db->num_frames[pm], db->num_channels[pm],
-                              sizeof(unsigned short));
+                              sizeof(uint16_t));
     }
 
     if (db->spamf0)
     {
-        cst_fwrite(fd, &db->num_channels_spamf0_accent, sizeof(int), 1);
-        cst_fwrite(fd, &db->num_frames_spamf0_accent, sizeof(int), 1);
+        cst_fwrite(fd, &db->num_channels_spamf0_accent, sizeof(int32_t), 1);
+        cst_fwrite(fd, &db->num_frames_spamf0_accent, sizeof(int32_t), 1);
         cst_cg_write_2d_array(fd, (void *) db->spamf0_accent_vectors,
                               db->num_frames_spamf0_accent,
                               db->num_channels_spamf0_accent, sizeof(float));
@@ -328,22 +328,22 @@ int cst_cg_dump_voice(const cst_voice *v, const cst_string *filename)
 
     cst_cg_write_phone_states(fd, db->phone_states);
 
-    cst_fwrite(fd, &db->do_mlpg, sizeof(int), 1);
+    cst_fwrite(fd, &db->do_mlpg, sizeof(int32_t), 1);
     cst_cg_write_array(fd, db->dynwin, db->dynwinsize * sizeof(float));
-    cst_fwrite(fd, &db->dynwinsize, sizeof(int), 1);
+    cst_fwrite(fd, &db->dynwinsize, sizeof(int32_t), 1);
 
     cst_fwrite(fd, &db->mlsa_alpha, sizeof(float), 1);
     cst_fwrite(fd, &db->mlsa_beta, sizeof(float), 1);
 
-    cst_fwrite(fd, &db->multimodel, sizeof(int), 1);
-    cst_fwrite(fd, &db->mixed_excitation, sizeof(int), 1);
+    cst_fwrite(fd, &db->multimodel, sizeof(int32_t), 1);
+    cst_fwrite(fd, &db->mixed_excitation, sizeof(int32_t), 1);
 
-    cst_fwrite(fd, &db->ME_num, sizeof(int), 1);
-    cst_fwrite(fd, &db->ME_order, sizeof(int), 1);
+    cst_fwrite(fd, &db->ME_num, sizeof(int32_t), 1);
+    cst_fwrite(fd, &db->ME_order, sizeof(int32_t), 1);
     cst_cg_write_2d_array(fd, (void *) db->me_h, db->ME_num, db->ME_order,
                           sizeof(double));
 
-    cst_fwrite(fd, &db->spamf0, sizeof(int), 1);
+    cst_fwrite(fd, &db->spamf0, sizeof(int32_t), 1);
     cst_fwrite(fd, &db->gain, sizeof(float), 1);
 
     cst_fclose(fd);
