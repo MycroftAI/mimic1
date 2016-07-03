@@ -114,8 +114,8 @@ $(LIBDIR)/%.so: $(LIBDIR)/%.shared.a
 	@ echo making $@
 	@ rm -rf shared_os && mkdir shared_os
 	@ rm -f $@ $@.${PROJECT_VERSION} $@.${PROJECT_SHLIB_VERSION} 
-	@ (cd shared_os && ar x ../$<)
-	@ (cd shared_os && $(CC) -shared -Wl,-soname,`basename $@`.${PROJECT_SHLIB_VERSION} -o ../$@.${PROJECT_VERSION} *.os)
+	@ (cd shared_os && ar x $<)
+	@ (cd shared_os && $(CC) -shared -Wl,-soname,`basename $@`.${PROJECT_SHLIB_VERSION} -o $@.${PROJECT_VERSION} *.os)
 	@ (cd $(LIBDIR) && ln -s `basename $@.${PROJECT_VERSION}` `basename $@.${PROJECT_SHLIB_VERSION}` )
 	@ (cd $(LIBDIR) && ln -s `basename $@.${PROJECT_SHLIB_VERSION}` `basename $@` )
 	@ rm -rf shared_os
@@ -132,6 +132,8 @@ endif
 clean:
 	@ echo make clean in $(DIRNAME) ...
 	@ rm -rf .build_lib .build_so *.gcda *.gcno *.gcov *.o *.os *.a *~ $(LOCAL_CLEAN)
+	@ rm -rf $(OBJDIR)/*
+
 ifdef ALL_DIRS
 	@ set -e; for i in $(ALL_DIRS) ; \
 	do \

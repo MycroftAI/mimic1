@@ -80,8 +80,13 @@ multi_thread: multi_thread_main.c
 		$(CFLAGS) -I$(TOP)/include $(MIMICLIBFLAGS) $(LDFLAGS) \
 		-l mimic_cmu_us_slt -lmimic_cmulex -lmimic_usenglish \
 		-lmimic -lm -lasound -lgomp
-do_thread_test: multi_thread
-#	This shouldn't segfault
-	export OMP_NUM_THREADS=100 && ./multi_thread
 
+run_more_tests: $(MAIN_EXECS) multi_thread
+	export LD_LIBRARY_PATH="$(LIBDIR)"; \
+	export OMP_NUM_THREADS=100 && ./multi_thread || \
+	  (echo "Multi thread test failed"; exit 1); \
+# TODO: The other tests are not so automatic and need to be reviewed
+#for exec in $(MAIN_EXECS); do \
+#./$$exec || err=1; \
+#done; \
 

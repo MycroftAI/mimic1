@@ -631,10 +631,10 @@ FL_LANG
 AUDIOLIBS
 AUDIODEFS
 AUDIODRIVER
-PORTAUDIO_LIBS
-PORTAUDIO_CFLAGS
 ALSA_LIBS
 ALSA_CFLAGS
+PORTAUDIO_LIBS
+PORTAUDIO_CFLAGS
 STDIOTYPE
 MMAPTYPE
 SHFLAGS
@@ -748,10 +748,10 @@ CPP
 PKG_CONFIG
 PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
-ALSA_CFLAGS
-ALSA_LIBS
 PORTAUDIO_CFLAGS
-PORTAUDIO_LIBS'
+PORTAUDIO_LIBS
+ALSA_CFLAGS
+ALSA_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1397,12 +1397,12 @@ Some influential environment variables:
               directories to add to pkg-config's search path
   PKG_CONFIG_LIBDIR
               path overriding pkg-config's built-in search path
-  ALSA_CFLAGS C compiler flags for ALSA, overriding pkg-config
-  ALSA_LIBS   linker flags for ALSA, overriding pkg-config
   PORTAUDIO_CFLAGS
               C compiler flags for PORTAUDIO, overriding pkg-config
   PORTAUDIO_LIBS
               linker flags for PORTAUDIO, overriding pkg-config
+  ALSA_CFLAGS C compiler flags for ALSA, overriding pkg-config
+  ALSA_LIBS   linker flags for ALSA, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4523,80 +4523,6 @@ fi
 
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA" >&5
-$as_echo_n "checking for ALSA... " >&6; }
-
-if test -n "$ALSA_CFLAGS"; then
-    pkg_cv_ALSA_CFLAGS="$ALSA_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"alsa >= 1.0.11\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "alsa >= 1.0.11") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_ALSA_CFLAGS=`$PKG_CONFIG --cflags "alsa >= 1.0.11" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$ALSA_LIBS"; then
-    pkg_cv_ALSA_LIBS="$ALSA_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"alsa >= 1.0.11\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "alsa >= 1.0.11") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_ALSA_LIBS=`$PKG_CONFIG --libs "alsa >= 1.0.11" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        ALSA_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "alsa >= 1.0.11" 2>&1`
-        else
-	        ALSA_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "alsa >= 1.0.11" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$ALSA_PKG_ERRORS" >&5
-
-
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-else
-	ALSA_CFLAGS=$pkg_cv_ALSA_CFLAGS
-	ALSA_LIBS=$pkg_cv_ALSA_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-	AUDIODRIVER="alsa"
-                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
-                   AUDIOLIBS="${ALSA_LIBS}"
-fi
-
-
-pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for PORTAUDIO" >&5
 $as_echo_n "checking for PORTAUDIO... " >&6; }
 
@@ -4667,6 +4593,80 @@ $as_echo "yes" >&6; }
 	AUDIODRIVER="portaudio"
                    AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
                    AUDIOLIBS="${PORTAUDIO_LIBS}"
+fi
+
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA" >&5
+$as_echo_n "checking for ALSA... " >&6; }
+
+if test -n "$ALSA_CFLAGS"; then
+    pkg_cv_ALSA_CFLAGS="$ALSA_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"alsa >= 1.0.11\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "alsa >= 1.0.11") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_ALSA_CFLAGS=`$PKG_CONFIG --cflags "alsa >= 1.0.11" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$ALSA_LIBS"; then
+    pkg_cv_ALSA_LIBS="$ALSA_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"alsa >= 1.0.11\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "alsa >= 1.0.11") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_ALSA_LIBS=`$PKG_CONFIG --libs "alsa >= 1.0.11" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        ALSA_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "alsa >= 1.0.11" 2>&1`
+        else
+	        ALSA_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "alsa >= 1.0.11" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$ALSA_PKG_ERRORS" >&5
+
+
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+else
+	ALSA_CFLAGS=$pkg_cv_ALSA_CFLAGS
+	ALSA_LIBS=$pkg_cv_ALSA_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	AUDIODRIVER="alsa"
+                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+                   AUDIOLIBS="${ALSA_LIBS}"
 fi
 
 for ac_header in mmsystem.h

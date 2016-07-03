@@ -398,18 +398,18 @@ AC_CHECK_HEADER(sys/audioio.h,
               [AUDIODRIVER="sun"
                AUDIODEFS=-DCST_AUDIO_SUNOS])
 
-dnl Check for ALSA sound library
-PKG_CHECK_MODULES([ALSA], [alsa >= 1.0.11],
-                  [AUDIODRIVER="alsa"
-                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
-                   AUDIOLIBS="${ALSA_LIBS}"],
-                  [m4_ignore])
-
 dnl Check PortAudio is at least (v19-dev)
 PKG_CHECK_MODULES([PORTAUDIO], [portaudio-2.0 >= 19],
                   [AUDIODRIVER="portaudio"
                    AUDIODEFS="-DCST_AUDIO_PORTAUDIO ${PORTAUDIO_CFLAGS}"
                    AUDIOLIBS="${PORTAUDIO_LIBS}"],
+                  [m4_ignore])
+
+dnl Check for ALSA sound library
+PKG_CHECK_MODULES([ALSA], [alsa >= 1.0.11],
+                  [AUDIODRIVER="alsa"
+                   AUDIODEFS="-DCST_AUDIO_ALSA ${ALSA_CFLAGS}"
+                   AUDIOLIBS="${ALSA_LIBS}"],
                   [m4_ignore])
 
 AC_CHECK_HEADERS(mmsystem.h,
