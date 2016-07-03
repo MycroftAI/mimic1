@@ -66,12 +66,22 @@ LOCAL_CLEAN = $(MAIN_EXECS)
 
 include $(TOP)/config/common_make_rules
 
+
 voice_select_test: voice_select_test_main.c $(MIMIC_LIBS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $($(@:=_LIBS)) $(MIMICLIBFLAGS) $(LDFLAGS) 
+
+run_unit_tests: $(MAIN_EXECS)
+	export LD_LIBRARY_PATH="$(LIBDIR)"; \
+	err=0; \
+	for exec in $(MAIN_EXECS); do \
+        ./$$exec || err=1; \
+        done; \
+	[ "x$$err" = "x0" ] || (echo "Some unit tests failed"; exit 1)
 
 MAIN_O = $(SRCS:%=%_main.o)
 $(MAIN_O) : %_main.o : %_main.c
 	$(CC) $(CFLAGS) -o $@ $< 
+
 $(ALL) : %$(EXEEXT) : %_main.o $(MIMICLIBS)
 	$(CC) $(CFLAGS) -o $@ $@_main.o $($(@:=_LIBS)) $(MIMICLIBFLAGS) $(LDFLAGS)
 

@@ -46,8 +46,8 @@ DIRNAME=
 BUILD_DIRS = include src lang doc
 ALL_DIRS=config $(BUILD_DIRS) testsuite \
          wince windows android \
-         tools main 
-CONFIG=configure configure.in config.sub config.guess \
+         tools main unittests
+CONFIG=configure configure.ac config.sub config.guess \
        missing install-sh mkinstalldirs
 WINDOWS = Exports.def mimic.sln mimicDll.vcproj
 FILES = Makefile README ACKNOWLEDGEMENTS COPYING $(CONFIG) $(WINDOWS)
@@ -124,6 +124,6 @@ voices: ./bin/mimic_cmu_us_awb ./bin/mimic_cmu_us_rms ./bin/mimic_cmu_us_rms
 	./bin/mimic_cmu_us_slt -voicedump voices/cmu_us_slt.mimicvox
 
 test: all
-	@ $(MAKE) --no-print-directory -C unittests
-	@ $(MAKE) --no-print-directory -C testsuite
+	@ $(MAKE) run_unit_tests --no-print-directory -C unittests
+	@ $(MAKE) run_more_tests --no-print-directory -C testsuite
 
