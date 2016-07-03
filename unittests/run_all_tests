@@ -1,1 +1,8 @@
-find . -name \*_test -exec {} \;
+#!/usr/bin/env bash
+
+set -e
+FILES=./*_test
+for f in $FILES
+do
+    $f
+done
