@@ -115,6 +115,11 @@ int ts_charclass(const cst_string *const utf8char, int class,
 
 /** This function modifies the cst_tokenstream by setting the UTF-8
     characters given in symbols as symbols of class symbol_value.
+    
+    So if `symbols` is "})." and `symbol_value` is `TS_CHARCLASS_POSTPUNCT`,
+    then after this function is called, the tokenstream `ts` will
+    identify the "})." characters as postpunctuation.
+    
   */
 static int set_charclass_table_symbol(cst_tokenstream *ts,
                                       const cst_string *symbols,
@@ -146,6 +151,68 @@ static int set_charclass_table_symbol(cst_tokenstream *ts,
             delete_val(utflets);
             return -1;
         }
+        /* For 1-byte long characters we have a look up table
+         * For 2-byte long characters we have a 2-level look up table.
+         * For 3-byte long characters we have a 3-level look up table.
+         * For 4-byte long characters we have a 4-level look up table.
+         * 
+         * This implementation is like a cascade, but it is easier
+         * to understand if we start by the simplest level: A 1-byte
+         * character.
+         * 
+         * 1-byte characters
+         * --------------------
+         * 
+         * In this case, the final and only look up table we need to
+         * modify is ts->charclass. We assign this look up table to
+         * `cl1` for convenience.
+         * 
+         * To make sure the byte is valid, we mask it with 0x7f.
+         * The masked byte can be looked up, so we add the symbol_value:
+         * cl1[masked_byte] = cl1[masked_byte] | symbol_value;
+         * 
+         * 2-byte characters
+         * -------------------
+         * 
+         * In this case we have to look up two tables. The first look
+         * up table is ts->charclass2. For convenience, we assign this
+         * look up table to cl2.
+         * 
+         * The first byte must be 110xxxxx to be valid, so we mask it
+         * with 0x1f. The masked byte is looked up and we obtain (or
+         * allocate if it does not yet exist) the second look up table,
+         * that for convenience we call cl1:
+         * cl1 = cl2[masked_byte];
+         * 
+         * For the second byte we can proceed as in the 1-byte character
+         * case using the cl1 class that we have found and using a 0x3f 
+         * mask instead of the 0x7f mask to ensure that the second byte
+         * is a valid UTF-8 continuation character (10xxxxxx).
+         * 
+         * 3-byte characters
+         * ------------------
+         * 
+         * Hopefully you can see the pattern or you will see it soon.
+         * We have to check 3-look up tables. The first one is 
+         * ts->charclass3 and we assign it for convenience to cl3.
+         * cl3 = ts->charclass3;
+         * 
+         * The first byte must be 1110xxxx to be valid, so we mask it
+         * with 0x0f. The masked byte is looked up and we obtain (or
+         * allocate if it does not yet exist) the second look up table,
+         * that for convenience we call cl2.
+         * cl2 = cl3[masked_byte].
+         * 
+         * Once we have cl2, we can proceed as in the 2-byte character
+         * case, using 0x3f instead of the 0x1f mask, as we have now a
+         * continuation character.
+         * 
+         * 4-byte character
+         * ----------------
+         * 
+         * Hopefully the recurrence is seen so this is not necessary.
+         * 
+         */
         if (utf8char_len == 4)
         {
             cl4 = ts->charclass4;

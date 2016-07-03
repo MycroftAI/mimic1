@@ -113,6 +113,11 @@ typedef struct cst_tokenstream_struct {
  * If an invalid UTF-8 character is given the returned value is 
  * undefined.
  * 
+ * If you want to understand how the classes are set, read
+ * `set_charclass_table_symbol` in `src/utils/cst_tokenstream.c`.
+ * 
+ * @see set_charclasses, set_charclass_table_symbol
+ * 
  * @param utf8char A cst_string containing a utf-8 character, that can
  *                 be 1 to 4 bytes long.
  * @param class    An integer, usually one of the `TS_CHARCLASS_*` macros
@@ -122,7 +127,7 @@ typedef struct cst_tokenstream_struct {
  * @return Returns 0 if the given character does not belong to the given
  *         class. It returns the class otherwise.
  */
-int ts_charclass(const cst_string *const c, int class, cst_tokenstream *ts);
+int ts_charclass(const cst_string *const utf8char, int class, cst_tokenstream *ts);
 
 extern const cst_string *const cst_ts_default_whitespacesymbols;
 extern const cst_string *const cst_ts_default_prepunctuationsymbols;
