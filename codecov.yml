@@ -1,0 +1,6 @@
+coverage:
+  ignore:          # files and folders that will be removed during processing
+    - "testsuite/*"
+    - "unittests/*"
+
+
