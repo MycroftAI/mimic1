@@ -38,6 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 #include "cst_tokenstream.h"
+#include "cst_alloc.h"
 
 const cst_string *const cst_ts_default_whitespacesymbols = " \t\n\r";
 const cst_string *const cst_ts_default_singlecharsymbols = "(){}[]";
@@ -47,27 +48,318 @@ const cst_string *const cst_ts_default_postpunctuationsymbols =
 
 #define TS_BUFFER_SIZE 256
 
-static cst_string ts_getc(cst_tokenstream *ts);
-static cst_string internal_ts_getc(cst_tokenstream *ts);
+static void ts_getc(cst_tokenstream *ts);
+static void internal_ts_getc(cst_tokenstream *ts);
 
-static void set_charclass_table(cst_tokenstream *ts)
+int ts_charclass(const cst_string *const utf8char, int class,
+                 cst_tokenstream *ts)
 {
-    int i;
-    memset(ts->charclass, 0, 256);      /* zero everything */
+    unsigned char c1, c2, c3, c4;
+    unsigned char *c = (unsigned char *) utf8char;
+    switch (cst_strlen(c))
+    {
+    case 1:
+        /* 1-byte must be [0, 128), we mask with b01111111 = 0x7f */
+        return (ts->charclass[c[0] & 0x7f] & class);
+    case 2:
+        /* 1st byte must be 110xxxxx so we mask with b00011111 = 0x1f */
+        c1 = c[0] & 0x1f;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        if (ts->charclass2[c1] != NULL)
+        {
+            return (ts->charclass2[c1][c2] & class);
+        }
+        else
+        {
+            return 0;
+        }
+    case 3:
+        /* 1st byte must be 1110xxxx so we mask with b00011111 = 0x0f */
+        c1 = c[0] & 0x0f;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* 3rd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c3 = c[2] & 0x3f;
+        if (ts->charclass3[c1] != NULL && ts->charclass3[c1][c2] != NULL)
+        {
+            return (ts->charclass3[c1][c2][c3] & class);
+        }
+        else
+        {
+            return 0;
+        }
+    case 4:
+        /* 1st byte must be 11110xxx so we mask with b00011111 = 0x07 */
+        c1 = c[0] & 0x07;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* 3rd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c3 = c[2] & 0x3f;
+        /* 4th byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c4 = c[3] & 0x3f;
+        if (ts->charclass4[c1] != NULL &&
+            ts->charclass4[c1][c2] != NULL &&
+            ts->charclass4[c1][c2][c3] != NULL)
+        {
+            return (ts->charclass4[c1][c2][c3][c4] & class);
+        }
+        else
+        {
+            return 0;
+        }
+    default:
+        return 0;
+    }
+}
 
-    for (i = 0; ts->p_whitespacesymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_whitespacesymbols[i]] |=
-            TS_CHARCLASS_WHITESPACE;
-    for (i = 0; ts->p_singlecharsymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_singlecharsymbols[i]] |=
-            TS_CHARCLASS_SINGLECHAR;
-    for (i = 0; ts->p_prepunctuationsymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_prepunctuationsymbols[i]] |=
-            TS_CHARCLASS_PREPUNCT;
-    for (i = 0; ts->p_postpunctuationsymbols[i]; i++)
-        ts->charclass[(unsigned char) ts->p_postpunctuationsymbols[i]] |=
-            TS_CHARCLASS_POSTPUNCT;
-    return;
+/** This function modifies the cst_tokenstream by setting the UTF-8
+    characters given in symbols as symbols of class symbol_value.
+    
+    So if `symbols` is "})." and `symbol_value` is `TS_CHARCLASS_POSTPUNCT`,
+    then after this function is called, the tokenstream `ts` will
+    identify the "})." characters as postpunctuation.
+    
+  */
+static int set_charclass_table_symbol(cst_tokenstream *ts,
+                                      const cst_string *symbols,
+                                      const unsigned char symbol_value)
+{
+    cst_val *utflets;
+    const cst_val *v;
+    const unsigned char *utf8char;
+    unsigned char c1;
+    int utf8char_len;
+
+    cst_string *cl1;
+    cst_string **cl2;
+    cst_string ***cl3;
+    cst_string ****cl4;
+    int idx;
+    utflets = cst_utf8_explode(symbols);
+    /* For each UTF-8 character */
+    for (v = utflets; v; v = val_cdr(v))
+    {
+        /* The character as an unsigned char* */
+        utf8char = (const unsigned char *) val_string(val_car(v));
+        /* The number of UTF-8 bytes required to express this char */
+        utf8char_len = cst_strlen(utf8char);
+        idx = 0;
+        if (utf8char_len > 4)
+        {
+            /* Invalid UTF-8 symbol */
+            delete_val(utflets);
+            return -1;
+        }
+        /* For 1-byte long characters we have a look up table
+         * For 2-byte long characters we have a 2-level look up table.
+         * For 3-byte long characters we have a 3-level look up table.
+         * For 4-byte long characters we have a 4-level look up table.
+         * 
+         * This implementation is like a cascade, but it is easier
+         * to understand if we start by the simplest level: A 1-byte
+         * character.
+         * 
+         * 1-byte characters
+         * --------------------
+         * 
+         * In this case, the final and only look up table we need to
+         * modify is ts->charclass. We assign this look up table to
+         * `cl1` for convenience.
+         * 
+         * To make sure the byte is valid, we mask it with 0x7f.
+         * The masked byte can be looked up, so we add the symbol_value:
+         * cl1[masked_byte] = cl1[masked_byte] | symbol_value;
+         * 
+         * 2-byte characters
+         * -------------------
+         * 
+         * In this case we have to look up two tables. The first look
+         * up table is ts->charclass2. For convenience, we assign this
+         * look up table to cl2.
+         * 
+         * The first byte must be 110xxxxx to be valid, so we mask it
+         * with 0x1f. The masked byte is looked up and we obtain (or
+         * allocate if it does not yet exist) the second look up table,
+         * that for convenience we call cl1:
+         * cl1 = cl2[masked_byte];
+         * 
+         * For the second byte we can proceed as in the 1-byte character
+         * case using the cl1 class that we have found and using a 0x3f 
+         * mask instead of the 0x7f mask to ensure that the second byte
+         * is a valid UTF-8 continuation character (10xxxxxx).
+         * 
+         * 3-byte characters
+         * ------------------
+         * 
+         * Hopefully you can see the pattern or you will see it soon.
+         * We have to check 3-look up tables. The first one is 
+         * ts->charclass3 and we assign it for convenience to cl3.
+         * cl3 = ts->charclass3;
+         * 
+         * The first byte must be 1110xxxx to be valid, so we mask it
+         * with 0x0f. The masked byte is looked up and we obtain (or
+         * allocate if it does not yet exist) the second look up table,
+         * that for convenience we call cl2.
+         * cl2 = cl3[masked_byte].
+         * 
+         * Once we have cl2, we can proceed as in the 2-byte character
+         * case, using 0x3f instead of the 0x1f mask, as we have now a
+         * continuation character.
+         * 
+         * 4-byte character
+         * ----------------
+         * 
+         * Hopefully the recurrence is seen so this is not necessary.
+         * 
+         */
+        if (utf8char_len == 4)
+        {
+            cl4 = ts->charclass4;
+            /* First character: 11110xxx */
+            c1 = utf8char[idx] & 0x07;
+            if (cl4[c1] == NULL)
+            {
+                /* It has 10xxxxx -> 2^6 = 64 options */
+                cl4[c1] = cst_alloc(cst_string **, 64);
+                memset(cl4[c1], 0, 64 * sizeof(cst_string **));
+            }
+            cl3 = cl4[c1];
+            idx++;
+        }
+        if (utf8char_len >= 3)
+        {
+            if (utf8char_len == 3)
+            {
+                cl3 = ts->charclass3;
+                /* First character: 1110xxxx */
+                c1 = utf8char[idx] & 0x0f;
+            }
+            else
+            {
+                /* Cont. char must be 10xxxxxx so we mask with b00111111 = 0x3f */
+                c1 = utf8char[idx] & 0x3f;
+            }
+            if (cl3[c1] == NULL)
+            {
+                /* It has 10xxxxx -> 2^6 = 64 options */
+                cl3[c1] = cst_alloc(cst_string *, 64);
+                memset(cl3[c1], 0, 64 * sizeof(cst_string *));
+            }
+            cl2 = cl3[c1];
+            idx++;
+        }
+        if (utf8char_len >= 2)
+        {
+            if (utf8char_len == 2)
+            {
+                cl2 = ts->charclass2;
+                /* 1st byte must be 110xxxxx so we mask with b00011111 = 0x1f */
+                c1 = utf8char[idx] & 0x1f;
+            }
+            else
+            {
+                /* Cont. char must be 10xxxxxx so we mask with b00111111 = 0x3f */
+                c1 = utf8char[idx] & 0x3f;
+            }
+            if (cl2[c1] == NULL)
+            {
+                /* It has 10xxxxx -> 2^6 = 64 options */
+                cl2[c1] = cst_alloc(cst_string, 64);
+                memset(cl2[c1], 0, 64 * sizeof(cst_string));
+            }
+            cl1 = cl2[c1];
+            idx++;
+        }
+        if (utf8char_len >= 1)
+        {
+            if (utf8char_len == 1)
+            {
+                cl1 = ts->charclass;
+                /* 1st byte must be 0xxxxxxx so we mask with b01111111 = 0x7f */
+                c1 = utf8char[idx] & 0x7f;
+            }
+            else
+            {
+                /* Cont. char must be 10xxxxxx so we mask with b00111111 = 0x3f */
+                c1 = utf8char[idx] & 0x3f;
+            }
+            cl1[c1] |= symbol_value;
+        }
+    }
+    delete_val(utflets);
+    return 0;
+}
+
+static void free_tables(cst_tokenstream *ts)
+{
+    int i, j, k;
+    for (i = 0; i < 32; i++)
+    {
+        if (ts->charclass2[i] != NULL)
+        {
+            cst_free(ts->charclass2[i]);
+        }
+    }
+    for (i = 0; i < 16; i++)
+    {
+        if (ts->charclass3[i] != NULL)
+        {
+            for (j = 0; j < 64; j++)
+            {
+                if (ts->charclass3[i][j] != NULL)
+                {
+                    cst_free(ts->charclass3[i][j]);
+                }
+            }
+            cst_free(ts->charclass3[i]);
+        }
+    }
+    for (i = 0; i < 8; i++)
+    {
+        if (ts->charclass4[i] != NULL)
+        {
+            for (j = 0; j < 64; j++)
+            {
+                if (ts->charclass4[i][j] != NULL)
+                {
+                    for (k = 0; k < 64; k++)
+                    {
+                        if (ts->charclass4[i][j][k] != NULL)
+                        {
+                            cst_free(ts->charclass4[i][j][k]);
+                        }
+                    }
+                    cst_free(ts->charclass4[i][j]);
+                }
+            }
+            cst_free(ts->charclass4[i]);
+        }
+    }
+}
+
+static void reset_tables(cst_tokenstream *ts)
+{
+    memset(ts->charclass, 0, 128 * sizeof(cst_string));
+    memset(ts->charclass2, 0, 32 * sizeof(cst_string *));
+    memset(ts->charclass3, 0, 16 * sizeof(cst_string **));
+    memset(ts->charclass4, 0, 8 * sizeof(cst_string ***));
+}
+
+static int set_charclass_table(cst_tokenstream *ts)
+{
+    int i = 0;
+    free_tables(ts);
+    reset_tables(ts);
+    i += set_charclass_table_symbol(ts, ts->p_whitespacesymbols,
+                                    TS_CHARCLASS_WHITESPACE);
+    i += set_charclass_table_symbol(ts, ts->p_singlecharsymbols,
+                                    TS_CHARCLASS_SINGLECHAR);
+    i += set_charclass_table_symbol(ts, ts->p_prepunctuationsymbols,
+                                    TS_CHARCLASS_PREPUNCT);
+    i += set_charclass_table_symbol(ts, ts->p_postpunctuationsymbols,
+                                    TS_CHARCLASS_POSTPUNCT);
+    return i;
 }
 
 void set_charclasses(cst_tokenstream *ts,
@@ -95,9 +387,20 @@ void set_charclasses(cst_tokenstream *ts,
 static void extend_buffer(cst_string **buffer, int *buffer_max)
 {
     int new_max;
+    int increment;
     cst_string *new_buffer;
 
-    new_max = (*buffer_max) + (*buffer_max) / 5;
+    /* Extend buffer 20% */
+    increment = (*buffer_max) / 5;
+    /* We need at least 5 bytes increment, as the longest UTF-8 char
+     * requires 4 bytes and there may be an ending 0 */
+    if (increment < 5)
+    {
+        /* We could set it to 5, but incrementing a power of two
+         * seems more "alignment friendly" */
+        increment = 8;
+    }
+    new_max = (*buffer_max) + increment;
     new_buffer = cst_alloc(cst_string, new_max);
     memmove(new_buffer, *buffer, *buffer_max);
     cst_free(*buffer);
@@ -132,8 +435,9 @@ static cst_tokenstream *new_tokenstream(const cst_string *whitespace,
         ts->postp_max = TS_BUFFER_SIZE;
     }
 
+    reset_tables(ts);
     set_charclasses(ts, whitespace, singlechars, prepunct, postpunct);
-    ts->current_char = 0;
+    ts->current_char[0] = 0;
 
     return ts;
 }
@@ -148,6 +452,7 @@ void delete_tokenstream(cst_tokenstream *ts)
         cst_free(ts->prepunctuation);
     if (ts->postpunctuation)
         cst_free(ts->postpunctuation);
+    free_tables(ts);
     cst_free(ts);
 }
 
@@ -263,15 +568,18 @@ static void get_token_sub_part(cst_tokenstream *ts,
                                cst_string **buffer, int *buffer_max)
 {
     int p;
+    int curr_char_len = 0;
 
     for (p = 0; ((!ts_eof(ts)) &&
                  (ts_charclass(ts->current_char, charclass, ts)) &&
                  (!ts_charclass(ts->current_char,
-                                TS_CHARCLASS_SINGLECHAR, ts))); p++)
+                                TS_CHARCLASS_SINGLECHAR, ts)));
+         p += curr_char_len)
     {
-        if (p + 1 >= *buffer_max)
+        curr_char_len = cst_strlen(ts->current_char);
+        if (p + curr_char_len >= *buffer_max)
             extend_buffer(buffer, buffer_max);
-        (*buffer)[p] = ts->current_char;
+        memcpy(&((*buffer)[p]), ts->current_char, curr_char_len);
         ts_getc(ts);
     }
     (*buffer)[p] = '\0';
@@ -291,16 +599,18 @@ static void get_token_sub_part_2(cst_tokenstream *ts,
                                  int endclass1,
                                  cst_string **buffer, int *buffer_max)
 {
-    int p;
+    int p, curr_char_len;
 
     for (p = 0; ((!ts_eof(ts)) &&
                  (!ts_charclass(ts->current_char, endclass1, ts)) &&
                  (!ts_charclass(ts->current_char,
-                                TS_CHARCLASS_SINGLECHAR, ts))); p++)
+                                TS_CHARCLASS_SINGLECHAR, ts)));
+         p += curr_char_len)
     {
-        if (p + 1 >= *buffer_max)
+        curr_char_len = cst_strlen(ts->current_char);
+        if (p + curr_char_len >= *buffer_max)
             extend_buffer(buffer, buffer_max);
-        (*buffer)[p] = ts->current_char;
+        memcpy(&((*buffer)[p]), ts->current_char, curr_char_len);
         /* If someone sets tags we end the token */
         /* This can't happen in standard tokenstreams, but can in user */
         /* defined ones */
@@ -319,23 +629,35 @@ static void get_token_sub_part_2(cst_tokenstream *ts,
 
 static void get_token_postpunctuation(cst_tokenstream *ts)
 {
-    int p, t;
+    int p, t, plast;
+    const cst_string *one_cp;
 
     t = cst_strlen(ts->token);
-    for (p = t;
-         (p > 0) &&
-         ((ts->token[p] == '\0') ||
-          (ts_charclass(ts->token[p], TS_CHARCLASS_POSTPUNCT, ts))); p--);
+    p = t;
+    cst_val *utf8lets;
+    const cst_val *v;
+    utf8lets = val_reverse(cst_utf8_explode(ts->token));
+    for (v = utf8lets; v; v = val_cdr(v))
+    {
+        one_cp = val_string(val_car(v));
+        plast = cst_strlen(one_cp);
+        p -= plast;
+        if (ts_charclass(one_cp, TS_CHARCLASS_POSTPUNCT, ts) == 0)
+        {
+            break;
+        }
+    }
 
     if (t != p)
     {
         if (t - p >= ts->postp_max)
             extend_buffer(&ts->postpunctuation, &ts->postp_max);
         /* Copy postpunctuation from token */
-        memmove(ts->postpunctuation, &ts->token[p + 1], (t - p));
+        memmove(ts->postpunctuation, &ts->token[p + plast], (t - p));
         /* truncate token at postpunctuation */
-        ts->token[p + 1] = '\0';
+        ts->token[p + plast] = '\0';
     }
+    delete_val(utf8lets);
 }
 
 int ts_eof(cst_tokenstream *ts)
@@ -377,7 +699,8 @@ int ts_set_stream_pos(cst_tokenstream *ts, int pos)
     else
         new_pos = pos;          /* not sure it can get here */
     ts->file_pos = new_pos;
-    ts->current_char = ' ';     /* To be safe (but this is wrong) */
+    ts->current_char[0] = ' ';  /* To be safe (but this is wrong) */
+    ts->current_char[1] = '\0'; /* To be safe (but this is wrong) */
 
     return ts->file_pos;
 }
@@ -408,44 +731,114 @@ int ts_get_stream_size(cst_tokenstream *ts)
         return 0;
 }
 
-cst_string private_ts_getc(cst_tokenstream *ts)
-{
-    return internal_ts_getc(ts);
-}
-
-static cst_string ts_getc(cst_tokenstream *ts)
+static void ts_getc(cst_tokenstream *ts)
 {
     if (ts->open)
-        ts->current_char = (ts->getc) (ts);
+        (ts->getc) (ts);
     else
-        ts->current_char = internal_ts_getc(ts);
-    return ts->current_char;
+        internal_ts_getc(ts);
+    return;
 }
 
-static cst_string internal_ts_getc(cst_tokenstream *ts)
+static void internal_ts_getc(cst_tokenstream *ts)
 {
+    int gotchar;
+    int cur_char_len, i;
     if (ts->fd)
     {
-        ts->current_char = cst_fgetc(ts->fd);
-        if (ts->current_char == -1)
+        gotchar = cst_fgetc(ts->fd);
+        if (gotchar == EOF)
+        {
             ts->eof_flag = TRUE;
+            ts->current_char[0] = '\0';
+            return;
+        }
+        ts->file_pos++;
+        ts->current_char[0] = gotchar;
+        cur_char_len = ts_utf8_sequence_length(ts->current_char[0]);
+        if (cur_char_len > 4)
+        {
+            cst_errmsg
+                ("Invalid UTF-8 sequence in tokenstream at position %s. Skipping.\n",
+                 ts->file_pos);
+            internal_ts_getc(ts);
+            return;
+        }
+        for (i = 1; i < cur_char_len; i++)
+        {
+            gotchar = cst_fgetc(ts->fd);
+            if (gotchar == -1)
+            {
+                ts->eof_flag = TRUE;
+                cst_errmsg
+                    ("End of file reached unexpectedly (UTF-8 continuation byte was expected)\n");
+                ts->current_char[0] = '\0';
+                return;
+            }
+            ts->file_pos++;
+            ts->current_char[i] = gotchar;
+            if ((ts->current_char[i] & 0xC0) != 0x80)
+            {
+                cst_errmsg
+                    ("Invalid UTF-8 continuation character %d in tokenstream\n",
+                     (int) ts->current_char[i]);
+            }
+        }
+        ts->current_char[cur_char_len] = 0;
     }
     else if (ts->string_buffer)
     {
         if (ts->string_buffer[ts->file_pos] == '\0')
         {
             ts->eof_flag = TRUE;
-            ts->current_char = '\0';
+            ts->current_char[0] = '\0';
+            return;
         }
         else
-            ts->current_char = ts->string_buffer[ts->file_pos];
+        {
+            ts->current_char[0] = ts->string_buffer[ts->file_pos];
+            ts->file_pos++;
+            if (((ts->current_char[0] & 0x80) != 0x00) &&
+                ((ts->current_char[0] & 0xE0) != 0xC0) &&
+                ((ts->current_char[0] & 0xF0) != 0xE0) &&
+                ((ts->current_char[0] & 0xF8) != 0xF0))
+            {
+                cst_errmsg
+                    ("Invalid UTF-8 sequence in tokenstream. Skipping\n");
+                internal_ts_getc(ts);
+                return;
+            }
+            cur_char_len = ts_utf8_sequence_length(ts->current_char[0]);
+            if (cur_char_len > 4 || cur_char_len < 1)
+            {
+                cst_errmsg
+                    ("Invalid UTF-8 sequence in tokenstream. Skipping\n");
+                internal_ts_getc(ts);
+                return;
+            }
+            for (i = 1; i < cur_char_len; i++)
+            {
+                ts->current_char[i] = ts->string_buffer[ts->file_pos];
+                if (ts->string_buffer[ts->file_pos] == '\0')
+                {
+                    ts->eof_flag = TRUE;
+                    ts->current_char[0] = '\0';
+                    return;
+                }
+                ts->file_pos++;
+                if ((ts->current_char[i] & 0xC0) != 0x80)
+                {
+                    cst_errmsg
+                        ("Invalid UTF-8 continuation character in tokenstream\n");
+                }
+            }
+            ts->current_char[cur_char_len] = '\0';
+        }
     }
 
-    if (!ts_eof(ts))
-        ts->file_pos++;
-    if (ts->current_char == '\n')
+    if (ts->current_char[0] == '\n')
         ts->line_number++;
-    return ts->current_char;
+    return;
 }
 
 const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
@@ -464,23 +857,25 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
                        &ts->whitespace, &ts->ws_max);
     ts->token_pos = ts->file_pos - 1;
 
-    if (ts->current_char == quote)
+    if (ts->current_char[0] == quote)
     {                           /* go until quote */
         ts_getc(ts);
-        for (p = 0; ((!ts_eof(ts)) && (ts->current_char != quote)); p++)
+        for (p = 0; ((!ts_eof(ts)) && (ts->current_char[0] != quote));)
         {
             if (p >= ts->token_max)
                 extend_buffer(&ts->token, &ts->token_max);
-            ts->token[p] = ts->current_char;
+            strcpy(&(ts->token[p]), ts->current_char);
             ts_getc(ts);
-            if (ts->current_char == escape)
+            if (ts->current_char[0] == escape)
             {
                 ts_get(ts);
                 if (p >= ts->token_max)
                     extend_buffer(&ts->token, &ts->token_max);
-                ts->token[p] = ts->current_char;
+                memcpy(&(ts->token[p]), ts->current_char,
+                       strlen(ts->current_char));
                 ts_get(ts);
             }
+            p += strlen(ts->current_char);
         }
         ts->token[p] = '\0';
         ts_getc(ts);
@@ -494,10 +889,10 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
         /* Get the symbol itself */
         if (ts_charclass(ts->current_char, TS_CHARCLASS_SINGLECHAR, ts))
         {
-            if (2 >= ts->token_max)
+            if (5 >= ts->token_max)
                 extend_buffer(&ts->token, &ts->token_max);
-            ts->token[0] = ts->current_char;
-            ts->token[1] = '\0';
+            strcpy(ts->token, ts->current_char);
+            p += strlen(ts->current_char);
             ts_getc(ts);
         }
         else
@@ -540,10 +935,9 @@ const cst_string *ts_get(cst_tokenstream *ts)
     if (!ts_eof(ts) &&
         ts_charclass(ts->current_char, TS_CHARCLASS_SINGLECHAR, ts))
     {
-        if (2 >= ts->token_max)
+        if (5 >= ts->token_max)
             extend_buffer(&ts->token, &ts->token_max);
-        ts->token[0] = ts->current_char;
-        ts->token[1] = '\0';
+        strcpy(ts->token, ts->current_char);
         ts_getc(ts);
     }
     else
@@ -557,20 +951,4 @@ const cst_string *ts_get(cst_tokenstream *ts)
         get_token_postpunctuation(ts);
 
     return ts->token;
-}
-
-int ts_read(void *buff, int size, int num, cst_tokenstream *ts)
-{
-    /* people should complain about the speed here */
-    /* people will complain about EOF as end of file */
-    int i, j, p;
-    cst_string *cbuff;
-
-    cbuff = (cst_string *) buff;
-
-    for (p = i = 0; i < num; i++)
-        for (j = 0; j < size; j++, p++)
-            cbuff[p] = ts_getc(ts);
-
-    return i;
 }
