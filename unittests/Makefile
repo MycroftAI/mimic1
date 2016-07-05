@@ -72,7 +72,7 @@ run_unit_tests: $(MAIN_EXECS)
 	export LD_LIBRARY_PATH="$(LIBDIR)"; \
 	err=0; \
 	for exec in $(MAIN_EXECS); do \
-        ./$$exec || err=1; \
+        ./$$exec 2> /dev/null || err=1; \
         done; \
 	[ "x$$err" = "x0" ] || (echo "Some unit tests failed"; exit 1)
 
