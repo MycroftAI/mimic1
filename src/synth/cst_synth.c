@@ -118,6 +118,9 @@ cst_utterance *utt_synth_wave(cst_wave *w, cst_voice *v)
     cst_utterance *u;
     const cst_val *streaming_info_val;
     cst_audio_streaming_info *asi = NULL;
+    
+    if (w == NULL)
+       return NULL;
 
     u = new_utterance();
     utt_init(u, v);

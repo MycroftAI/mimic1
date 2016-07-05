@@ -61,14 +61,14 @@ void delete_wave(cst_wave *w)
     return;
 }
 
-void cst_wave_resize(cst_wave *w, int samples, int num_channels)
+int cst_wave_resize(cst_wave *w, int samples, int num_channels)
 {
     short *ns;
 
     if (!w)
     {
         cst_errmsg("cst_wave_resize: null wave given to resize\n");
-        cst_error();
+        return -1;
     }
     ns = cst_alloc(short, samples * num_channels);
     if (num_channels == w->num_channels)
@@ -81,6 +81,7 @@ void cst_wave_resize(cst_wave *w, int samples, int num_channels)
     w->num_samples = samples;
     w->num_channels = num_channels;
 
+    return 0;
 }
 
 void cst_wave_rescale(cst_wave *w, int factor)
@@ -95,7 +96,8 @@ cst_wave *copy_wave(const cst_wave *w)
 {
     cst_wave *n = new_wave();
 
-    cst_wave_resize(n, w->num_samples, w->num_channels);
+    if (cst_wave_resize(n, w->num_samples, w->num_channels) < 0)
+       return NULL;
     n->sample_rate = w->sample_rate;
     n->num_channels = w->num_channels;
     n->type = w->type;
@@ -104,7 +106,7 @@ cst_wave *copy_wave(const cst_wave *w)
     return n;
 }
 
-cst_wave *concat_wave(cst_wave *dest, const cst_wave *src)
+int concat_wave(cst_wave *dest, const cst_wave *src)
 {
     int orig_nsamps;
 
@@ -112,20 +114,21 @@ cst_wave *concat_wave(cst_wave *dest, const cst_wave *src)
     {
         cst_errmsg("concat_wave: channel count mismatch (%d != %d)\n",
                    dest->num_channels, src->num_channels);
-        cst_error();
+        return -1;
     }
     if (dest->sample_rate != src->sample_rate)
     {
         cst_errmsg("concat_wave: sample rate mismatch (%d != %d)\n",
                    dest->sample_rate, src->sample_rate);
-        cst_error();
+        return -1;
     }
 
     orig_nsamps = dest->num_samples * dest->num_channels;
-    cst_wave_resize(dest, dest->num_samples + src->num_samples,
-                    dest->num_channels);
+    if (cst_wave_resize(dest, dest->num_samples + src->num_samples,
+                    dest->num_channels) < 0)
+       return -1;
     memcpy(dest->samples + orig_nsamps, src->samples,
            src->num_samples * src->num_channels * sizeof(short));
 
-    return dest;
+    return 0;
 }

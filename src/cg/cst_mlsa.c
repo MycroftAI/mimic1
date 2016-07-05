@@ -131,7 +131,11 @@ static cst_wave *synthesis_body(const cst_track *params,        /* f0 + mcep */
 
     /* synthesize waveforms by MLSA filter */
     wave = new_wave();
-    cst_wave_resize(wave, params->num_frames * framel, 1);
+    if (cst_wave_resize(wave, params->num_frames * framel, 1) < 0)
+    {
+        delete_wave(wave);
+        return NULL;
+    }
     wave->sample_rate = fs;
 
     mcep = cst_alloc(double, num_mcep + 1);

@@ -78,7 +78,7 @@ unittests/lex_test
 unittests/nums_test
 unittests/voice_select_test
 unittests/lts_test
-
+unittests/wave_test
 # temporary files for building cmulex
 _festsuite
 lang/cmulex/festival
