@@ -37,6 +37,7 @@
 /*  Convert binary to ascii files (for tracks)                           */
 /*************************************************************************/
 #include <stdio.h>
+#include <stdint.h>
 #include "cst_wave.h"
 #include "cst_tokenstream.h"
 #include "cst_args.h"
@@ -50,7 +51,7 @@ int main(int argc, char **argv)
     const char *datatype;
     FILE *fd;
     int channels;
-    int d_int;
+    int32_t d_int;
     float d_flt;
     double d_dbl;
     int swap = FALSE;
@@ -83,7 +84,7 @@ int main(int argc, char **argv)
                     if (n != 1)
                         break;
                     if (swap)
-                        d_int = SWAPINT(d_int);
+                        d_int = SWAPINT32(d_int);
                     printf("%d ", d_int);
                 }
                 else if (cst_streq(datatype, "float"))

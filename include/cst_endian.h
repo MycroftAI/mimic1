@@ -55,11 +55,11 @@ extern const int32_t cst_endian_loc;
 #define BYTE_ORDER_BIG "10"
 #define BYTE_ORDER_LITTLE "01"
 
-#define SWAPINT(x) ((((uint32_t)x) & 0xff) << 24 | \
+#define SWAPINT32(x) ((((uint32_t)x) & 0xff) << 24 | \
         (((uint32_t)x) & 0xff00) << 8 | \
 	(((uint32_t)x) & 0xff0000) >> 8 | \
         (((uint32_t)x) & 0xff000000) >> 24)
-#define SWAPSHORT(x) ((((uint16_t)x) & 0xff) << 8 | \
+#define SWAPINT16(x) ((((uint16_t)x) & 0xff) << 8 | \
         (((uint16_t)x) & 0xff00) >> 8)
 
 void swap_bytes_short(int16_t *b, size_t n);

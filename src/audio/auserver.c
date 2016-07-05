@@ -116,7 +116,7 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
             r = read(audiostream, shorts, n * 2);
             if (CST_LITTLE_ENDIAN)
                 for (q = 0; q < r / 2; q++)
-                    shorts[q] = SWAPSHORT(shorts[q]);
+                    shorts[q] = SWAPINT16(shorts[q]);
         }
 
         if (r <= 0)
@@ -166,12 +166,12 @@ static int auserver_process_client(int client_name, int fd)
     }
     if (CST_LITTLE_ENDIAN)
     {
-        header.magic = SWAPINT(header.magic);
-        header.hdr_size = SWAPINT(header.hdr_size);
-        header.data_size = SWAPINT(header.data_size);
-        header.encoding = SWAPINT(header.encoding);
-        header.sample_rate = SWAPINT(header.sample_rate);
-        header.channels = SWAPINT(header.channels);
+        header.magic = SWAPINT32(header.magic);
+        header.hdr_size = SWAPINT32(header.hdr_size);
+        header.data_size = SWAPINT32(header.data_size);
+        header.encoding = SWAPINT32(header.encoding);
+        header.sample_rate = SWAPINT32(header.sample_rate);
+        header.channels = SWAPINT32(header.channels);
     }
 
     if (header.magic != CST_SND_MAGIC)
