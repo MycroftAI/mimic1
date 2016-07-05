@@ -7,51 +7,44 @@
 
 Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](https://mycroft.ai/) and [VocaliD](https://vocalid.co/), based on Carnegie Mellon University’s [Flite (Festival-Lite)](http://www.festvox.org/flite) software. Mimic takes in text and reads it out loud to create a high quality voice. 
 
-Official project site: [mimic.mycroft.ai](https://mimic.mycroft.ai/)
+######Official project site: [mimic.mycroft.ai](https://mimic.mycroft.ai/)
 
 
-###Supported platforms
-
-Successfully compiled and run on
+##Supported platforms
 
 - Linux (ARM & Intel architectures)
 - Mac OS X
 - Windows
+
 - Android
-- iOS (coming soon)
+- iOS
 
 ##Requirements
 
-- Audio device 
-- Audio libraries
-
-######Note
-
-Audio device and audio libraries are optional, as mimic can write its output to a waveform file
-
-
-####Linux
+###Linux
 
 - A good C compiler (_Recommended:_ gcc or clang)
 - GNU make
 - pkg-config
 - ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
 
-#####Requirements installation
+####Instructions
 
-######On Debian/Ubuntu
+- Install *gcc*, *make*, *pkg-config* and *ALSA*
+
+#####On Debian/Ubuntu
 ```
 $ sudo apt-get install gcc make pkg-config libasound2-dev
 ```
 
-####Mac OSX
+###Mac OSX
 
 - A good C compiler. (_Recommended:_ gcc or clang)
 - GNU make
 - pkg-config
 - PortAudio
 
-#####Requirements installation
+####Instructions
 
 - Install *Brew*
   ```
@@ -63,16 +56,16 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
   $ brew install pkg-config portaudio
   ```
 
-#### Windows
+###Windows
 
 * A good C compiler (_Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/))
 * GNU Make
 * PortAudio
 
 ######Note
-- Some of the source files are quite large, that some C compilers might choke on these. So, gcc is recommended.
-- Visual C++ 6.0 is known to fail on the large diphone database files.
-
+- Audio device and audio libraries are optional, as mimic can write its output to a waveform file
+- Some of the source files are quite large, that some C compilers might choke on these. So, *gcc* is recommended.
+- Visual C++ 6.0 is known to fail on the large diphone database files
 
 ##Build
 
@@ -98,7 +91,7 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
 
 ######Note
 
-If changes were made to the _compile flags_ after building, run `make clean` before recompiling with `make`.
+- If changes were made to the _compile flags_ after building, run `make clean` before recompiling with `make`.
 
 
 ##Usage
