@@ -16,7 +16,10 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 - Mac OS X
 - Windows
 
+**Untested**
 - Android
+
+**Future**
 - iOS
 
 ##Requirements
