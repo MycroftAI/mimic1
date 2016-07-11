@@ -52,23 +52,11 @@ void *cst_safe_alloc(int size);
 void *cst_safe_calloc(int size);
 void *cst_safe_realloc(void *p, int size);
 
-/* Allocate on local heap (needed on WinCE for various reasons) */
-#ifdef UNDER_CE
-#include <windows.h>
-typedef HANDLE cst_alloc_context;
-
-cst_alloc_context new_alloc_context(int size);
-void delete_alloc_context(cst_alloc_context ctx);
-
-void *cst_local_alloc(cst_alloc_context ctx, int size);
-void cst_local_free(cst_alloc_context ctx, void *p);
-#else /* not UNDER_CE */
 typedef void *cst_alloc_context;
 #define new_alloc_context(size)   (NULL)
 #define delete_alloc_context(ctx)
 #define cst_local_alloc(ctx,size) cst_safe_alloc(size)
 #define cst_local_free(cst,p)     cst_free(p)
-#endif /* UNDER_CE */
 
 /* The public interface to the alloc functions */
 

@@ -44,30 +44,6 @@
 #include "cst_string.h"
 #include "cst_file.h"
 
-#ifdef UNDER_CE                 /* WinCE does not fully implement ANSI C */
-
-cst_string *cst_strrchr(const cst_string *str, int c)
-{
-    cst_string *p = (const cst_string *) str + cst_strlen(str);
-    while (p >= str)
-    {
-        if (*p == c)
-            return p;
-        --p;
-    }
-    return NULL;
-}
-
-double cst_atof(const char *str)
-{
-    /* double f = 0.0; */
-
-    /* sscanf(str, "%f", &f); */
-    return atof(str);
-}
-
-#else /* Sane operating system */
-
 cst_string *cst_strrchr(const cst_string *str, int c)
 {
     return (cst_string *) strrchr((const char *) str, c);
@@ -77,7 +53,6 @@ double cst_atof(const char *str)
 {
     return atof(str);
 }
-#endif /* WinCE */
 
 cst_string *cst_strdup(const cst_string *str)
 {

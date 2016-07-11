@@ -42,12 +42,6 @@
 
 #include <string.h>
 
-#if defined(UNDER_CE) && (UNDER_CE < 300)
-#define isalnum(a) iswalnum((wint_t)(a))
-#define isupper(a) iswupper((wint_t)(a))
-#define islower(a) iswlower((wint_t)(a))
-#endif
-
 /* typedef unsigned char cst_string; */
 typedef char cst_string;
 

@@ -66,13 +66,6 @@
 #define SPEED_HACK
 #endif
 
-#ifdef UNDER_CE
-#define SPEED_HACK
-/* This is one of those other things you shouldn't do, but it makes
-   CG voices in flowm fast enough on my phone */
-#define double float
-#endif
-
 #include "cst_vc.h"
 #include "cst_cg.h"
 #include "cst_mlsa.h"

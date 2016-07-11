@@ -42,7 +42,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#ifdef UNDER_WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <signal.h>
@@ -59,7 +59,7 @@ void cst_alloc_debug_summary();
 void usenglish_init(cst_voice *v);
 cst_lexicon *cmu_lex_init(void);
 
-#ifdef UNDER_WINDOWS
+#ifdef _WIN32
 BOOL WINAPI windows_signal_handler(DWORD signum)
 {
     shutdown_audio(signum);
@@ -224,11 +224,11 @@ int main(int argc, char **argv)
     cst_audio_streaming_info *asi;
 
     // Set signal handler to shutdown any playing audio on SIGINT
-#ifdef UNDER_WINDOWS
+#ifdef _WIN32
     SetConsoleCtrlHandler(windows_signal_handler, TRUE);
 #else
     signal(SIGINT, sigint_handler);
-#endif //UNDER_WINDOWS
+#endif //_WIN32
     filename = 0;
     outtype = "play";           /* default is to play */
     mimic_verbose = FALSE;

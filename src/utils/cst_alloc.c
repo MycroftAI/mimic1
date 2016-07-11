@@ -41,10 +41,6 @@
 #include "cst_alloc.h"
 #include "cst_error.h"
 
-#ifdef UNDER_CE
-#include <windows.h>
-#endif /* UNDER_CE */
-
 /* define this if you want to trace memory usage */
 /* #define CST_DEBUG_MALLOC */
 /* #define CST_DEBUG_MALLOC_TRACE */
@@ -86,11 +82,7 @@ void *cst_safe_alloc(int size)
     size += 2 * sizeof(int);
 #endif
 
-#ifdef UNDER_CE
-    p = (void *) LocalAlloc(LPTR, size);
-#else
     p = (void *) calloc(size, 1);
-#endif
 
 #ifdef CST_DEBUG_MALLOC
 #ifdef CST_DEBUG_MALLOC_TRACE
@@ -136,11 +128,7 @@ void *cst_safe_realloc(void *p, int size)
     if (p == NULL)
         np = cst_safe_alloc(size);
     else
-#ifdef UNDER_CE
-        np = LocalReAlloc((HLOCAL) p, size, LMEM_MOVEABLE | LMEM_ZEROINIT);
-#else
         np = realloc(p, size);
-#endif
 
     if (np == NULL)
     {
@@ -172,16 +160,7 @@ void cst_free(void *p)
         p = (int *) p - 2;
 #endif
 #ifndef CST_DEBUG_MALLOC_TRACE
-#ifdef UNDER_CE
-        if (LocalFree(p) != NULL)
-        {
-            cst_errmsg("LocalFree(%p) failed with code %x\n",
-                       p, GetLastError());
-            cst_error();
-        }
-#else
         free(p);
-#endif
 #endif
     }
 }
@@ -211,45 +190,5 @@ void cst_alloc_debug_summary()
     printf("allocated %d freed %d max %d imax %d calls %d out %d\n",
            cst_allocated, cst_freed, cst_alloc_max,
            cst_alloc_imax, cst_alloc_num_calls, cst_alloc_out);
-}
-#endif
-
-#ifdef UNDER_CE
-cst_alloc_context new_alloc_context(int size)
-{
-    HANDLE h;
-
-    h = HeapCreate(0, size, 0);
-    return (cst_alloc_context) h;
-}
-
-void delete_alloc_context(cst_alloc_context ctx)
-{
-    HANDLE h;
-
-    h = (HANDLE) ctx;
-    HeapDestroy(h);
-}
-
-void *cst_local_alloc(cst_alloc_context ctx, int size)
-{
-    HANDLE h;
-
-    h = (HANDLE) ctx;
-    if (h)
-        return HeapAlloc(h, HEAP_ZERO_MEMORY, size);
-    else
-        return LocalAlloc(LPTR, size);
-}
-
-void cst_local_free(cst_alloc_context ctx, void *p)
-{
-    HANDLE h;
-
-    h = (HANDLE) ctx;
-    if (h)
-        HeapFree(h, 0, p);
-    else
-        LocalFree(p);
 }
 #endif

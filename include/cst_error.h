@@ -43,19 +43,13 @@
 #include <stdlib.h>
 
 #ifdef DIE_ON_ERROR
-#ifdef UNDER_CE
-#define cst_error() *(int *)0=0
-#else
 #define cst_error() abort()
-#endif
 #else /* not DIE_ON_ERROR */
 #include <setjmp.h>
 extern jmp_buf *cst_errjmp;
 #define cst_error() (cst_errjmp ? longjmp(*cst_errjmp,1) : exit(-1))
 #endif
 
-/* WinCE sometimes doesn't have stdio, so this is a wrapper for
-   fprintf(stderr, ...) */
 int cst_errmsg(const char *fmt, ...);
 #define cst_dbgmsg cst_errmsg
 

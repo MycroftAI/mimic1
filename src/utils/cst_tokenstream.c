@@ -467,11 +467,9 @@ cst_tokenstream *ts_open(const char *filename,
                                           prepunct,
                                           postpunct);
 
-#ifndef UNDER_CE
     if (cst_streq("-", filename))
         ts->fd = stdin;
     else
-#endif
         ts->fd = cst_fopen(filename, CST_OPEN_READ | CST_OPEN_BINARY);
     ts_getc(ts);
 
@@ -547,9 +545,7 @@ void ts_close(cst_tokenstream *ts)
 {
     if (ts->fd != NULL)
     {
-#ifndef UNDER_CE
         if (ts->fd != stdin)
-#endif
             cst_fclose(ts->fd);
         ts->fd = NULL;          /* just in case close gets called twice */
     }
