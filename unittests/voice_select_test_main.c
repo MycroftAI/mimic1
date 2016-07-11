@@ -28,12 +28,10 @@ void common_init(void)
 
 void test_no_voice_list(void)
 {
-    const char *test_url = "http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_rms.flitevox";
     mimic_init();
     mimic_set_lang_list();
     TEST_CHECK(mimic_voice_select("rms") == NULL);
     TEST_CHECK(mimic_voice_select(NULL) == NULL);
-    TEST_CHECK(mimic_voice_select(test_url) != NULL);
     TEST_CHECK(mimic_voice_select(A_VOICE) == NULL);
 }
 
@@ -64,6 +62,7 @@ void test_url_voice(void)
     TEST_CHECK(mimic_voice_select
                ("http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_rms.flitevox")
                != NULL);
+     
 }
 
 void test_invalid_url(void)
@@ -88,6 +87,19 @@ TEST_LIST =
     {"empty string", test_empty_string},
     {"NULL", test_null},
     {"illegal voice url", test_invalid_url},
-    {"voice url", test_url_voice},
+    /* Skip test that requires internet connection.
+     * This test requires the download of several MB from a 3rd party server in a
+     * non secure connection. This is bad because:
+     * - It may add unexpected traffic on the festvox servers
+     * - It downloads a significant amount of information. Users with limited
+     *   data per month may suffer unadvertedly.
+     * - If there is a bug in mimic that allows for arbitrary code execution
+     *   when loading a flitevox file, a malicious user might exploit it by
+     *   using non-https connections.
+     *
+     * As a proper solution a local http server could be setup when testing this
+     * or we could simply comment out the test:
+     */
+    /*{"voice url", test_url_voice},*/
     {0}
 };
