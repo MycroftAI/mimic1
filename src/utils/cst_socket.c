@@ -37,7 +37,9 @@
 /*  Some generic socket client/server code                               */
 /*                                                                       */
 /*************************************************************************/
-#ifdef CST_NO_SOCKETS
+#include "config.h"
+
+#if HAVE_SYS_SOCKET_H == 0
 
 int cst_socket_open(const char *host, int port)
 {

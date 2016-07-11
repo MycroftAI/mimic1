@@ -38,6 +38,8 @@
 /*                                                                       */
 /*************************************************************************/
 
+#ifdef CST_AUDIO_SUNOS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -186,3 +188,5 @@ int audio_drain_sun(cst_audiodev *ad)
 {
     return ioctl((int) ad->platform_data, AUDIO_DRAIN, 0);
 }
+
+#endif //CST_AUDIO_SUNOS

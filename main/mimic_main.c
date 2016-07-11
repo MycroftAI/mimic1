@@ -49,7 +49,6 @@
 #endif
 
 #include "mimic.h"
-#include "mimic_version.h"
 
 cst_val *mimic_set_voice_list(const char *voxdir);
 void *mimic_set_lang_list(void);
@@ -76,13 +75,12 @@ void sigint_handler(int signum)
 }
 #endif
 
-
 static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
-    printf("  version: %s-%s-%s %s (http://cmuflite.org)\n",
-           MIMIC_PROJECT_PREFIX, MIMIC_PROJECT_VERSION, MIMIC_PROJECT_STATE,
-           MIMIC_PROJECT_DATE);
+    printf("  mimic developers, Copyright (c) 2016, all rights reserved\n");
+    printf("  version: %s-%s (%s)\n",
+           PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_URL);
 }
 
 static void mimic_usage()

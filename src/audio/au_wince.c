@@ -37,6 +37,8 @@
 /*                                                                       */
 /*************************************************************************/
 
+#ifdef CST_AUDIO_WINCE
+
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -264,3 +266,5 @@ int audio_exit_wince()
 {
     return 0;
 }
+
+#endif //CST_AUDIO_WINCE

@@ -36,6 +36,11 @@
 /*                                                                       */
 /*************************************************************************/
 
+#include "config.h"
+
+#if (MMAP_TYPE == MMAP_TYPE_WIN32)
+
+
 #include <windows.h>
 
 #ifndef MEM_TOP_DOWN
@@ -152,3 +157,5 @@ int cst_free_part_file(cst_filemap *fmap)
     cst_free(fmap);
     return 0;
 }
+
+#endif

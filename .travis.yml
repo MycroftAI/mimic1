@@ -24,7 +24,9 @@ addons:
     - libasound2-dev
     - autoconf
     - automake
+    - libtool
     - pkg-config
+    - autotools-dev
   coverity_scan:
     project:
       name: "MycroftAI/mimic"

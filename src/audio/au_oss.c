@@ -40,6 +40,10 @@
 /*                                                                       */
 /*************************************************************************/
 
+#ifdef CST_AUDIO_FREEBSD
+/* probably Net and Open too */
+#include <machine/soundcard.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -48,10 +52,6 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
-#ifdef CST_AUDIO_FREEBSD
-/* probably Net and Open too */
-#include <machine/soundcard.h>
-#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 
@@ -203,3 +203,5 @@ int audio_drain_oss(cst_audiodev *ad)
 {
     return ioctl((int) ad->platform_data, SNDCTL_DSP_RESET, NULL);
 }
+
+#endif // CST_AUDIO_FREEBSD

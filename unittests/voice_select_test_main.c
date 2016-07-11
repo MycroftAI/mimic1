@@ -4,6 +4,15 @@
 #include <stdbool.h>
 #include "cst_tokenstream.h"
 #include <mimic.h>
+
+#ifndef VOICE_LIST_DIR
+  #define VOICE_LIST_DIR "../voices"
+#endif
+
+#ifndef A_VOICE
+  #define A_VOICE "../voices/cmu_us_rms.flitevox"
+#endif
+
 cst_val *mimic_set_voice_list(const char *voxdir);
 
 void *mimic_set_lang_list(void);
@@ -14,7 +23,7 @@ void common_init(void)
     mimic_set_lang_list();
 
     if (mimic_voice_list == NULL)
-        mimic_set_voice_list("../voices");
+        mimic_set_voice_list(VOICE_LIST_DIR);
 }
 
 void test_no_voice_list(void)
@@ -25,7 +34,7 @@ void test_no_voice_list(void)
     TEST_CHECK(mimic_voice_select("rms") == NULL);
     TEST_CHECK(mimic_voice_select(NULL) == NULL);
     TEST_CHECK(mimic_voice_select(test_url) != NULL);
-    TEST_CHECK(mimic_voice_select("../voices/cmu_us_rms.flitevox") != NULL);
+    TEST_CHECK(mimic_voice_select(A_VOICE) == NULL);
 }
 
 void test_null(void)
@@ -61,14 +70,14 @@ void test_invalid_url(void)
 {
     common_init();
     TEST_CHECK(mimic_voice_select
-               ("http://www.festvox.org/flite/packed/flite-2.0/voices/invalid.flitevox")
+               ("http://www.example.com/invalid.flitevox")
                == NULL);
 }
 
 void test_file_voice(void)
 {
     common_init();
-    TEST_CHECK(mimic_voice_select("../voices/cmu_us_rms.flitevox") != NULL);
+    TEST_CHECK(mimic_voice_select(A_VOICE) != NULL);
 }
 
 TEST_LIST =

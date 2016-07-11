@@ -40,6 +40,7 @@
 #ifndef _CST_VAL_H__
 #define _CST_VAL_H__
 
+#include "config.h"
 #include "cst_file.h"
 #include "cst_string.h"
 #include "cst_error.h"
