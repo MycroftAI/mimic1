@@ -382,6 +382,11 @@ int main(int argc, char **argv)
     if (desired_voice == 0)
         desired_voice = mimic_voice_select(NULL);
 
+    if (desired_voice == 0)
+    {
+        fprintf(stderr, "No voice given and no voice precompiled\n");
+        return 1;
+    }
     v = desired_voice;
     feat_copy_into(extra_feats, v->features);
     durs = 0.0;
