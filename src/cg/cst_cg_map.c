@@ -82,8 +82,8 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
     db->name = cst_read_string(fd);
     db->types = (const char **) cst_read_db_types(fd);
 
-    db->num_types = cst_read_int(fd);
-    db->sample_rate = cst_read_int(fd);
+    db->num_types = cst_read_int32(fd);
+    db->sample_rate = cst_read_int32(fd);
     db->f0_mean = cst_read_float(fd);
     db->f0_stddev = cst_read_float(fd);
 
@@ -95,7 +95,7 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
     for (i = 0; i < db->num_param_models; i++)
         db->param_trees[i] = (const cst_cart **) cst_read_tree_array(fd);
 
-    db->spamf0 = cst_read_int(fd);
+    db->spamf0 = cst_read_int32(fd);
     if (db->spamf0)
     {
         db->spamf0_accent_tree = cst_read_tree(fd);
@@ -108,8 +108,8 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
         cst_alloc(const unsigned short **, db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
     {
-        db->num_channels[i] = cst_read_int(fd);
-        db->num_frames[i] = cst_read_int(fd);
+        db->num_channels[i] = cst_read_int32(fd);
+        db->num_frames[i] = cst_read_int32(fd);
         db->model_vectors[i] =
             (const unsigned short **) cst_read_2d_array(fd);
     }
@@ -126,8 +126,8 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 
     if (db->spamf0)
     {
-        db->num_channels_spamf0_accent = cst_read_int(fd);
-        db->num_frames_spamf0_accent = cst_read_int(fd);
+        db->num_channels_spamf0_accent = cst_read_int32(fd);
+        db->num_frames_spamf0_accent = cst_read_int32(fd);
         db->spamf0_accent_vectors =
             (const float *const *) cst_read_2d_array(fd);
     }
@@ -149,21 +149,21 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 
     db->phone_states = (const char *const *const *) cst_read_phone_states(fd);
 
-    db->do_mlpg = cst_read_int(fd);
+    db->do_mlpg = cst_read_int32(fd);
     db->dynwin = cst_read_array(fd);
-    db->dynwinsize = cst_read_int(fd);
+    db->dynwinsize = cst_read_int32(fd);
 
     db->mlsa_alpha = cst_read_float(fd);
     db->mlsa_beta = cst_read_float(fd);
 
-    db->multimodel = cst_read_int(fd);
-    db->mixed_excitation = cst_read_int(fd);
+    db->multimodel = cst_read_int32(fd);
+    db->mixed_excitation = cst_read_int32(fd);
 
-    db->ME_num = cst_read_int(fd);
-    db->ME_order = cst_read_int(fd);
+    db->ME_num = cst_read_int32(fd);
+    db->ME_order = cst_read_int32(fd);
     db->me_h = (const double *const *) cst_read_2d_array(fd);
 
-    db->spamf0 = cst_read_int(fd);      /* yes, twice, its above too */
+    db->spamf0 = cst_read_int32(fd);      /* yes, twice, its above too */
     db->gain = cst_read_float(fd);
 
     return db;
@@ -181,7 +181,7 @@ void *cst_read_padded(cst_file fd, int *numbytes)
     void *ret;
     int n;
 
-    *numbytes = cst_read_int(fd);
+    *numbytes = cst_read_int32(fd);
     ret = (void *) cst_alloc(char, *numbytes);
     n = cst_fread(fd, ret, sizeof(char), *numbytes);
     if (n != (*numbytes))
@@ -198,7 +198,7 @@ char **cst_read_db_types(cst_file fd)
     int numtypes;
     int i;
 
-    numtypes = cst_read_int(fd);
+    numtypes = cst_read_int32(fd);
     types = cst_alloc(char *, numtypes + 1);
 
     for (i = 0; i < numtypes; i++)
@@ -218,7 +218,7 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
     short vtype;
     char *str;
 
-    num_nodes = cst_read_int(fd);
+    num_nodes = cst_read_int32(fd);
     nodes = cst_alloc(cst_cart_node, num_nodes + 1);
 
     for (i = 0; i < num_nodes; i++)
@@ -234,11 +234,11 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
             cst_free(str);
         }
         else if (vtype == CST_VAL_TYPE_INT)
-            nodes[i].val = int_val(cst_read_int(fd));
+            nodes[i].val = int_val(cst_read_int32(fd));
         else if (vtype == CST_VAL_TYPE_FLOAT)
             nodes[i].val = float_val(cst_read_float(fd));
         else
-            nodes[i].val = int_val(cst_read_int(fd));
+            nodes[i].val = int_val(cst_read_int32(fd));
     }
     nodes[i].val = NULL;
 
@@ -251,7 +251,7 @@ char **cst_read_tree_feats(cst_file fd)
     int numfeats;
     int i;
 
-    numfeats = cst_read_int(fd);
+    numfeats = cst_read_int32(fd);
     feats = cst_alloc(char *, numfeats + 1);
 
     for (i = 0; i < numfeats; i++)
@@ -278,7 +278,7 @@ cst_cart **cst_read_tree_array(cst_file fd)
     int numtrees;
     int i;
 
-    numtrees = cst_read_int(fd);
+    numtrees = cst_read_int32(fd);
 
     if (numtrees > 0)
     {
@@ -306,7 +306,7 @@ void **cst_read_2d_array(cst_file fd)
     int i;
     void **arrayrows = NULL;
 
-    numrows = cst_read_int(fd);
+    numrows = cst_read_int32(fd);
 
     if (numrows > 0)
     {
@@ -325,7 +325,7 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     int i, temp;
     dur_stat **ds;
 
-    numstats = cst_read_int(fd);
+    numstats = cst_read_int32(fd);
     ds = cst_alloc(dur_stat *, (1 + numstats));
 
     /* load structuer values */
@@ -346,11 +346,11 @@ char ***cst_read_phone_states(cst_file fd)
     int i, j, count1, count2, temp;
     char ***ps;
 
-    count1 = cst_read_int(fd);
+    count1 = cst_read_int32(fd);
     ps = cst_alloc(char **, count1 + 1);
     for (i = 0; i < count1; i++)
     {
-        count2 = cst_read_int(fd);
+        count2 = cst_read_int32(fd);
         ps[i] = cst_alloc(char *, count2 + 1);
         for (j = 0; j < count2; j++)
         {
@@ -370,7 +370,7 @@ void cst_read_voice_feature(cst_file fd, char **fname, char **fval)
     *fval = cst_read_padded(fd, &temp);
 }
 
-int32_t cst_read_int(cst_file fd)
+int32_t cst_read_int32(cst_file fd)
 {
     int32_t val;
     size_t n;

@@ -40,6 +40,7 @@
 #ifndef _CST_CART_H__
 #define _CST_CART_H__
 
+#include <stdint.h>
 #include "cst_file.h"
 #include "cst_val.h"
 #include "cst_features.h"
@@ -59,7 +60,7 @@ typedef struct cst_cart_node_struct {
     unsigned char feat;
     unsigned char op;
     /* yes is always the next node */
-    unsigned short no_node;     /* or answer index */
+    uint16_t no_node;     /* or answer index */
     const cst_val *val;
 } cst_cart_node;
 

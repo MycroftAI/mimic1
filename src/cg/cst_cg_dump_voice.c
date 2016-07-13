@@ -80,8 +80,8 @@ static void cst_cg_write_db_types(cst_file fd, const cst_cg_db *db)
 /* Write the nodes of a cart tree */
 static void cst_cg_write_tree_nodes(cst_file fd, const cst_cart_node * nodes)
 {
-    int num_nodes, i;
-    int an_int;
+    int32_t num_nodes, i;
+    int32_t an_int;
     float a_float;
 
     num_nodes = 0;
@@ -93,7 +93,7 @@ static void cst_cg_write_tree_nodes(cst_file fd, const cst_cart_node * nodes)
     {
         cst_fwrite(fd, &nodes[i].feat, sizeof(char), 1);
         cst_fwrite(fd, &nodes[i].op, sizeof(char), 1);
-        cst_fwrite(fd, &nodes[i].no_node, sizeof(int16_t), 1);
+        cst_fwrite(fd, &nodes[i].no_node, sizeof(uint16_t), 1);
         cst_fwrite(fd, &nodes[i].val->c.a.type, sizeof(int16_t), 1);
         if (nodes[i].val->c.a.type == CST_VAL_TYPE_STRING)
         {
