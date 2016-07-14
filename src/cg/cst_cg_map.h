@@ -68,7 +68,7 @@ dur_stat **cst_read_dur_stats(cst_file fd);
 char ***cst_read_phone_states(cst_file fd);
 
 void cst_read_voice_feature(cst_file fd, char **fname, char **fval);
-int cst_read_int(cst_file fd);
+int cst_read_int32(cst_file fd);
 float cst_read_float(cst_file fd);
 
 extern const char *const cg_voice_header_string;

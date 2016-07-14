@@ -38,32 +38,33 @@
 /*                                                                       */
 /*************************************************************************/
 #include <stdlib.h>
+#include <stdint.h>
 #include "cst_alloc.h"
 #include "cst_endian.h"
 
-const int cst_endian_loc = 1;
+const int32_t cst_endian_loc = 1;
 
-void swap_bytes_short(short *b, int n)
+void swap_bytes_short(int16_t *b, size_t n)
 {
-    int i;
+    size_t i;
 
     for (i = 0; i < n; i++)
-        b[i] = SWAPSHORT(b[i]);
+        b[i] = SWAPINT16(b[i]);
 }
 
 void swapdouble(double *dbl)
 {
     /* cast to int, as access as flt may cause FPE on some machines */
-    int t;
-    int *dd = (int *) dbl;
-    t = SWAPINT(dd[0]);
-    dd[0] = SWAPINT(dd[1]);
+    int32_t t;
+    int32_t *dd = (int32_t *) dbl;
+    t = SWAPINT32(dd[0]);
+    dd[0] = SWAPINT32(dd[1]);
     dd[1] = t;
 }
 
 void swapfloat(float *flt)
 {
     /* cast to int, as access as flt may cause FPE on some machines */
-    int *ff = (int *) flt;
-    ff[0] = SWAPINT(ff[0]);
+    int32_t *ff = (int32_t *) flt;
+    ff[0] = SWAPINT32(ff[0]);
 }

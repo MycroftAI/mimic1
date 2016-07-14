@@ -212,7 +212,7 @@ static cst_lts_phone apply_model(cst_lts_letter * vals, cst_lts_addr start,
             nstate = state.qfalse;
         /* This should really happen at compilation time */
         if (CST_BIG_ENDIAN)
-            nstate = SWAPSHORT(nstate);
+            nstate = SWAPINT16(nstate);
 
         cst_lts_get_state(&state, model, nstate, sizeof_cst_lts_rule);
     }
