@@ -38,6 +38,12 @@ crosscompile()
 }
 
 case "${WHAT_TO_RUN}" in
+  osx)
+    brew install pkg-config portaudio || exit 1
+    ./configure || exit 1
+    make || exit 1
+    make check || exit 1
+    ;;
   coverage)
     ./autogen.sh
     ./configure  CFLAGS="--coverage --no-inline" LDFLAGS="--coverage" || exit 1
