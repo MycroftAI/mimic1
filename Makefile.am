@@ -717,12 +717,11 @@ testsuite_lpc_test_SOURCES = testsuite/lpc_test_main.c
 testsuite_lpc_test_LDADD = libmimic.la
 
 testsuite_multi_thread_SOURCES = testsuite/multi_thread_main.c
-testsuite_multi_thread_CFLAGS = -fopenmp 
+testsuite_multi_thread_CFLAGS = $(OPENMP_CFLAGS)
 testsuite_multi_thread_LDADD = libmimic.la \
                                libmimic_lang_all_langs.la \
                                libmimic_lang_all_voices.la \
-                               libmimic_lang_cmu_us_slt.la \
-                               -lgomp
+                               libmimic_lang_cmu_us_slt.la
 
 testsuite_play_client_SOURCES = testsuite/play_client_main.c
 testsuite_play_client_LDADD = libmimic.la

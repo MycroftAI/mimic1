@@ -30,6 +30,8 @@ dnl to build them.
 LT_INIT([disable-static, disable-shared])
 
 
+dnl openmp support for multi-threaded test:
+AC_OPENMP
 
 dnl
 dnl Does this platform support mmap(2)
