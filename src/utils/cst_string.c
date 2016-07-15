@@ -114,7 +114,7 @@ char *cst_string_before(const char *s, const char *c)
     char *p;
     char *q;
 
-    p = (char *) cst_strstr(s, c);
+    p = strstr(s, c);
     if (p == NULL)
         return NULL;
     q = (char *) cst_strdup((cst_string *) s);

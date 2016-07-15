@@ -56,8 +56,6 @@ double cst_atof(const char *str);
 cst_string *cst_strdup(const cst_string *s);
 cst_string *cst_strchr(const cst_string *s, int c);
 cst_string *cst_strrchr(const cst_string *str, int c);
-#define cst_strstr(h,n) \
-     ((cst_string *)strstr((const char *)h,(const char *)n))
 #define cst_strlen(s) (strlen((const char *)s))
 #define cst_streq(A,B) (strcmp(A,B) == 0)
 #define cst_streqn(A,B,N) (strncmp(A,B,N) == 0)
