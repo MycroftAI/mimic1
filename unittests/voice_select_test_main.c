@@ -32,12 +32,16 @@ void test_no_voice_list(void)
     mimic_set_lang_list();
     TEST_CHECK(mimic_voice_select("rms") == NULL);
     TEST_CHECK(mimic_voice_select(NULL) == NULL);
-    TEST_CHECK(mimic_voice_select(A_VOICE) == NULL);
 }
 
 void test_null(void)
 {
     common_init();
+    if (mimic_voice_list == NULL)
+    {
+        fprintf(stderr, "This test makes sense when voices are compiled\n");
+        return;
+    }
     TEST_CHECK(mimic_voice_select(NULL) ==
                (void *) val_voice(val_car(mimic_voice_list)));
 }
@@ -45,6 +49,11 @@ void test_null(void)
 void test_empty_string(void)
 {
     common_init();
+    if (mimic_voice_list == NULL)
+    {
+        fprintf(stderr, "This test makes sense when voices are compiled\n");
+        return;
+    }
     TEST_CHECK(mimic_voice_select("") != NULL);
 }
 
@@ -52,6 +61,11 @@ void test_local_voice(void)
 {
     const char *name;
     common_init();
+    if (mimic_voice_list == NULL)
+    {
+        fprintf(stderr, "This test makes sense when voices are compiled\n");
+        return;
+    }
     name = val_voice(val_car(mimic_voice_list))->name;
     TEST_CHECK(mimic_voice_select(name) != NULL);
 }

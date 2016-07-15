@@ -81,6 +81,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+target_triplet = @target@
 TESTS = $(am__EXEEXT_2)
 
 ################## START: LANG_USENGLISH #################################
@@ -178,9 +179,10 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/include/config.h.in $(dist_noinst_SCRIPTS) \
 	$(top_srcdir)/config/depcomp $(include_HEADERS) \
 	$(noinst_HEADERS) $(top_srcdir)/config/test-driver COPYING \
-	config/ar-lib config/compile config/config.guess \
-	config/config.sub config/depcomp config/install-sh \
-	config/missing config/ltmain.sh $(top_srcdir)/config/ar-lib \
+	config/ar-lib config/compile config.guess config/config.guess \
+	config.sub config/config.sub config/depcomp install-sh \
+	config/install-sh missing config/missing mkinstalldirs \
+	config/ltmain.sh $(top_srcdir)/config/ar-lib \
 	$(top_srcdir)/config/compile $(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
@@ -1208,7 +1210,11 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
