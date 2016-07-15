@@ -158,6 +158,11 @@ wine ./mimic.exe -t "hello world"
   ```
   $ make
   ```
+  
+- Check
+  ```
+  $ make check
+  ```
 
 ######Note
 
