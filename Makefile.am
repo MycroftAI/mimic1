@@ -668,8 +668,6 @@ check_PROGRAMS += \
   testsuite/play_server \
   testsuite/play_sync \
   testsuite/play_wave \
-  testsuite/record_in_noise \
-  testsuite/record_wave \
   testsuite/rfc
 
 if LEX_CMULEX
@@ -734,12 +732,6 @@ testsuite_play_sync_LDADD = libmimic.la
 
 testsuite_play_wave_SOURCES = testsuite/play_wave_main.c
 testsuite_play_wave_LDADD = libmimic.la
-
-testsuite_record_in_noise_SOURCES = testsuite/record_in_noise_main.c
-testsuite_record_in_noise_LDADD = libmimic.la
-
-testsuite_record_wave_SOURCES = testsuite/record_wave_main.c
-testsuite_record_wave_LDADD = libmimic.la
 
 testsuite_rfc_SOURCES = testsuite/rfc_main.c
 testsuite_rfc_LDADD = libmimic.la

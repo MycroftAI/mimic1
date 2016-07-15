@@ -160,9 +160,7 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	testsuite/lpc_test2$(EXEEXT) testsuite/lpc_test$(EXEEXT) \
 	$(am__EXEEXT_7) testsuite/play_client$(EXEEXT) \
 	testsuite/play_server$(EXEEXT) testsuite/play_sync$(EXEEXT) \
-	testsuite/play_wave$(EXEEXT) \
-	testsuite/record_in_noise$(EXEEXT) \
-	testsuite/record_wave$(EXEEXT) testsuite/rfc$(EXEEXT) \
+	testsuite/play_wave$(EXEEXT) testsuite/rfc$(EXEEXT) \
 	$(am__EXEEXT_8)
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__append_24 = unittests/lex_test unittests/lts_test unittests/nums_test
 @VOICE_CMU_US_KAL_TRUE@am__append_25 = testsuite/by_word
@@ -650,15 +648,6 @@ testsuite_play_sync_DEPENDENCIES = libmimic.la
 am_testsuite_play_wave_OBJECTS = testsuite/play_wave_main.$(OBJEXT)
 testsuite_play_wave_OBJECTS = $(am_testsuite_play_wave_OBJECTS)
 testsuite_play_wave_DEPENDENCIES = libmimic.la
-am_testsuite_record_in_noise_OBJECTS =  \
-	testsuite/record_in_noise_main.$(OBJEXT)
-testsuite_record_in_noise_OBJECTS =  \
-	$(am_testsuite_record_in_noise_OBJECTS)
-testsuite_record_in_noise_DEPENDENCIES = libmimic.la
-am_testsuite_record_wave_OBJECTS =  \
-	testsuite/record_wave_main.$(OBJEXT)
-testsuite_record_wave_OBJECTS = $(am_testsuite_record_wave_OBJECTS)
-testsuite_record_wave_DEPENDENCIES = libmimic.la
 am_testsuite_rfc_OBJECTS = testsuite/rfc_main.$(OBJEXT)
 testsuite_rfc_OBJECTS = $(am_testsuite_rfc_OBJECTS)
 testsuite_rfc_DEPENDENCIES = libmimic.la
@@ -777,11 +766,10 @@ SOURCES = $(libmimic_la_SOURCES) $(libmimic_lang_all_langs_la_SOURCES) \
 	$(testsuite_play_client_SOURCES) \
 	$(testsuite_play_server_SOURCES) \
 	$(testsuite_play_sync_SOURCES) $(testsuite_play_wave_SOURCES) \
-	$(testsuite_record_in_noise_SOURCES) \
-	$(testsuite_record_wave_SOURCES) $(testsuite_rfc_SOURCES) \
-	$(testsuite_utt_test_SOURCES) $(unittests_hrg_test_SOURCES) \
-	$(unittests_lex_test_SOURCES) $(unittests_lts_test_SOURCES) \
-	$(unittests_nums_test_SOURCES) $(unittests_regex_test_SOURCES) \
+	$(testsuite_rfc_SOURCES) $(testsuite_utt_test_SOURCES) \
+	$(unittests_hrg_test_SOURCES) $(unittests_lex_test_SOURCES) \
+	$(unittests_lts_test_SOURCES) $(unittests_nums_test_SOURCES) \
+	$(unittests_regex_test_SOURCES) \
 	$(unittests_token_test_SOURCES) \
 	$(unittests_voice_select_SOURCES) \
 	$(unittests_wave_test_SOURCES)
@@ -814,11 +802,10 @@ DIST_SOURCES = $(libmimic_la_SOURCES) \
 	$(testsuite_play_client_SOURCES) \
 	$(testsuite_play_server_SOURCES) \
 	$(testsuite_play_sync_SOURCES) $(testsuite_play_wave_SOURCES) \
-	$(testsuite_record_in_noise_SOURCES) \
-	$(testsuite_record_wave_SOURCES) $(testsuite_rfc_SOURCES) \
-	$(testsuite_utt_test_SOURCES) $(unittests_hrg_test_SOURCES) \
-	$(unittests_lex_test_SOURCES) $(unittests_lts_test_SOURCES) \
-	$(unittests_nums_test_SOURCES) $(unittests_regex_test_SOURCES) \
+	$(testsuite_rfc_SOURCES) $(testsuite_utt_test_SOURCES) \
+	$(unittests_hrg_test_SOURCES) $(unittests_lex_test_SOURCES) \
+	$(unittests_lts_test_SOURCES) $(unittests_nums_test_SOURCES) \
+	$(unittests_regex_test_SOURCES) \
 	$(unittests_token_test_SOURCES) \
 	$(unittests_voice_select_SOURCES) \
 	$(unittests_wave_test_SOURCES)
@@ -1703,10 +1690,6 @@ testsuite_play_sync_SOURCES = testsuite/play_sync_main.c
 testsuite_play_sync_LDADD = libmimic.la
 testsuite_play_wave_SOURCES = testsuite/play_wave_main.c
 testsuite_play_wave_LDADD = libmimic.la
-testsuite_record_in_noise_SOURCES = testsuite/record_in_noise_main.c
-testsuite_record_in_noise_LDADD = libmimic.la
-testsuite_record_wave_SOURCES = testsuite/record_wave_main.c
-testsuite_record_wave_LDADD = libmimic.la
 testsuite_rfc_SOURCES = testsuite/rfc_main.c
 testsuite_rfc_LDADD = libmimic.la
 testsuite_utt_test_SOURCES = testsuite/utt_test_main.c
@@ -2590,18 +2573,6 @@ testsuite/play_wave_main.$(OBJEXT): testsuite/$(am__dirstamp) \
 testsuite/play_wave$(EXEEXT): $(testsuite_play_wave_OBJECTS) $(testsuite_play_wave_DEPENDENCIES) $(EXTRA_testsuite_play_wave_DEPENDENCIES) testsuite/$(am__dirstamp)
 	@rm -f testsuite/play_wave$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(testsuite_play_wave_OBJECTS) $(testsuite_play_wave_LDADD) $(LIBS)
-testsuite/record_in_noise_main.$(OBJEXT): testsuite/$(am__dirstamp) \
-	testsuite/$(DEPDIR)/$(am__dirstamp)
-
-testsuite/record_in_noise$(EXEEXT): $(testsuite_record_in_noise_OBJECTS) $(testsuite_record_in_noise_DEPENDENCIES) $(EXTRA_testsuite_record_in_noise_DEPENDENCIES) testsuite/$(am__dirstamp)
-	@rm -f testsuite/record_in_noise$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(testsuite_record_in_noise_OBJECTS) $(testsuite_record_in_noise_LDADD) $(LIBS)
-testsuite/record_wave_main.$(OBJEXT): testsuite/$(am__dirstamp) \
-	testsuite/$(DEPDIR)/$(am__dirstamp)
-
-testsuite/record_wave$(EXEEXT): $(testsuite_record_wave_OBJECTS) $(testsuite_record_wave_DEPENDENCIES) $(EXTRA_testsuite_record_wave_DEPENDENCIES) testsuite/$(am__dirstamp)
-	@rm -f testsuite/record_wave$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(testsuite_record_wave_OBJECTS) $(testsuite_record_wave_LDADD) $(LIBS)
 testsuite/rfc_main.$(OBJEXT): testsuite/$(am__dirstamp) \
 	testsuite/$(DEPDIR)/$(am__dirstamp)
 
@@ -2913,8 +2884,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/play_server_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/play_sync_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/play_wave_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/record_in_noise_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/record_wave_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/rfc_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/testsuite_multi_thread-multi_thread_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@testsuite/$(DEPDIR)/utt_test_main.Po@am__quote@
