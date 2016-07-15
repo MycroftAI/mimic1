@@ -61,6 +61,72 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
 
 ###Windows
 
+#### Cross compiling:
+
+The fastest and most straightforward way to build mimic for windows is by
+cross-compilation from linux.
+
+From a debian based linux system, install the `mingw-w64` package.
+
+1. Install dependencies:
+
+   ```
+   sudo apt-get install mingw-w64 make pkg-config
+   ```
+
+2. Create a working directory:
+
+   ```
+   mkdir mimic_windows mimic_windows/install
+   cd mimic_windows
+   WORKDIR="$PWD"
+   ```
+
+3. Download PortAudio and mimic
+
+   ```
+   # PortAudio
+   wget http://www.portaudio.com/archives/pa_stable_v19_20140130.tgz
+   tar xzf pa_stable_v19_20140130.tgz # creates directory "portaudio"
+   # Mimic  
+   git clone git@github.com:MycroftAI/mimic.git --depth=1 # creates directory "mimic"
+   ```
+4. Cross compile PortAudio
+
+   ```
+   mkdir portaudio_build
+   cd portaudio_build
+   ../portaudio/configure  --host=i686-pc-mingw32 --build=x86_64-linux-gnu \
+      CC=i686-w64-mingw32-gcc LD=i686-w64-mingw32-ld \
+      --prefix="$WORKDIR/install"
+   make
+   make install
+   ```
+5. Cross compile mimic
+
+   ```
+   cd "$WORKDIR"
+   mkdir mimic_build
+   cd mimic_build
+   ../mimic/configure --host=i686-pc-mingw32 --build=x86_64-linux-gnu \
+           --with-audio=portaudio \
+           --prefix="$WORKDIR/install" \
+           CC=i686-w64-mingw32-gcc LD=i686-w64-mingw32-ld \
+           PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/"
+   make
+   make install
+   ```
+
+6. Test it
+
+The directory `$WORKDIR/install` will contain `bin/mimic.exe` file
+
+```
+wine ./mimic.exe -t "hello world" 
+```
+
+#### Native Windows building
+
 * A good C compiler (_Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/))
 * GNU Make
 * PortAudio
@@ -69,6 +135,7 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
 - Audio device and audio libraries are optional, as mimic can write its output to a waveform file
 - Some of the source files are quite large, that some C compilers might choke on these. So, *gcc* is recommended.
 - Visual C++ 6.0 is known to fail on the large diphone database files
+- The build process is much slower on Windows.
 
 ##Build
 
