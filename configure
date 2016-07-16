@@ -636,6 +636,17 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+PKGCONFIG_MIMIC_DEPS
+PKGCONFIG_MIMIC_LIBS
+PKGCONFIG_MIMIC_CFLAGS
+LANG_USENGLISH_FALSE
+LANG_USENGLISH_TRUE
+LANG_INDIC_ANALYSIS_FALSE
+LANG_INDIC_ANALYSIS_TRUE
+LEX_INDIC_FALSE
+LEX_INDIC_TRUE
+LEX_CMULEX_FALSE
+LEX_CMULEX_TRUE
 VOICE_VID_GB_AP_FALSE
 VOICE_VID_GB_AP_TRUE
 VOICE_CMU_US_SLT_FALSE
@@ -650,14 +661,6 @@ VOICE_CMU_TIME_AWB_FALSE
 VOICE_CMU_TIME_AWB_TRUE
 VOICE_CMU_US_KAL_FALSE
 VOICE_CMU_US_KAL_TRUE
-LEX_INDIC_FALSE
-LEX_INDIC_TRUE
-LEX_CMULEX_FALSE
-LEX_CMULEX_TRUE
-LANG_INDIC_ANALYSIS_FALSE
-LANG_INDIC_ANALYSIS_TRUE
-LANG_USENGLISH_FALSE
-LANG_USENGLISH_TRUE
 AUDIOLIBS
 AUDIODEFS
 AUDIODRIVER
@@ -667,9 +670,6 @@ PORTAUDIO_LIBS
 PORTAUDIO_CFLAGS
 PULSEAUDIO_LIBS
 PULSEAUDIO_CFLAGS
-LIBMIMIC_USENGLISH_VERSION
-LIBMIMIC_CMULEX_VERSION
-LIBMIMIC_VERSION
 OPENMP_CFLAGS
 OTOOL64
 OTOOL
@@ -12377,16 +12377,6 @@ _ACEOF
 fi
 
 
-
-
-
-LIBMIMIC_VERSION="0:0:0"
-
-LIBMIMIC_CMULEX_VERSION="0:0:0"
-
-LIBMIMIC_USENGLISH_VERSION="0:0:0"
-
-
 for ac_header in sys/socket.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "sys/socket.h" "ac_cv_header_sys_socket_h" "$ac_includes_default"
@@ -12399,6 +12389,11 @@ fi
 
 done
 
+
+
+PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/mimic -I${includedir}/mimic/lang"
+PKGCONFIG_MIMIC_LIBS="-L${libdir}"
+PKGCONFIG_MIMIC_DEPS=
 
 
 
@@ -12696,16 +12691,19 @@ case  ${AUDIODRIVER}  in #(
      AUDIODEFS="${AUDIODEFS_ALSA}"
              AUDIOLIBS="${AUDIOLIBS_ALSA}"
              AUDIODETECTED="${AUDIODETECTED_ALSA}"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} alsa"
             ;; #(
    pulseaudio ) :
      AUDIODEFS="${AUDIODEFS_PULSEAUDIO}"
              AUDIOLIBS="${AUDIOLIBS_PULSEAUDIO}"
              AUDIODETECTED="${AUDIODETECTED_PULSEAUDIO}"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpulse"
             ;; #(
    portaudio ) :
      AUDIODEFS="${AUDIODEFS_PORTAUDIO}"
              AUDIOLIBS="${AUDIOLIBS_PORTAUDIO}"
              AUDIODETECTED="${AUDIODETECTED_PORTAUDIO}"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} portaudio-2.0"
 	    ;; #(
    sun ) :
      AUDIODEFS="${AUDIODEFS_SUN}"
@@ -12909,79 +12907,6 @@ if test "x$enable_vid_gb_ap" != xno; then :
 fi
 
 
- if test "x$enable_usenglish" != xno; then
-  LANG_USENGLISH_TRUE=
-  LANG_USENGLISH_FALSE='#'
-else
-  LANG_USENGLISH_TRUE='#'
-  LANG_USENGLISH_FALSE=
-fi
-
-if test "x$enable_usenglish" != xno ; then :
-
-$as_echo "#define ENABLE_USENGLISH 1" >>confdefs.h
-
-else
-
-$as_echo "#define ENABLE_USENGLISH 0" >>confdefs.h
-
-fi
-
- if test "x$enable_indic_analysis" != xno; then
-  LANG_INDIC_ANALYSIS_TRUE=
-  LANG_INDIC_ANALYSIS_FALSE='#'
-else
-  LANG_INDIC_ANALYSIS_TRUE='#'
-  LANG_INDIC_ANALYSIS_FALSE=
-fi
-
-if test "x$enable_indic_analysis" != xno ; then :
-
-$as_echo "#define ENABLE_INDIC_ANALYSIS 1" >>confdefs.h
-
-else
-
-$as_echo "#define ENABLE_INDIC_ANALYSIS 0" >>confdefs.h
-
-fi
-
- if test "x$enable_cmulex" != xno; then
-  LEX_CMULEX_TRUE=
-  LEX_CMULEX_FALSE='#'
-else
-  LEX_CMULEX_TRUE='#'
-  LEX_CMULEX_FALSE=
-fi
-
-if test "x$enable_cmulex" != xno ; then :
-
-$as_echo "#define ENABLE_CMULEX 1" >>confdefs.h
-
-else
-
-$as_echo "#define ENABLE_CMULEX 0" >>confdefs.h
-
-fi
-
- if test "x$enable_indiclex" != xno; then
-  LEX_INDIC_TRUE=
-  LEX_INDIC_FALSE='#'
-else
-  LEX_INDIC_TRUE='#'
-  LEX_INDIC_FALSE=
-fi
-
-if test "x$enable_indiclex" != xno ; then :
-
-$as_echo "#define ENABLE_INDICLEX 1" >>confdefs.h
-
-else
-
-$as_echo "#define ENABLE_INDICLEX 0" >>confdefs.h
-
-fi
-
-
  if test "x$enable_cmu_us_kal" != xno; then
   VOICE_CMU_US_KAL_TRUE=
   VOICE_CMU_US_KAL_FALSE='#'
@@ -12993,6 +12918,8 @@ fi
 if test "x$enable_cmu_us_kal" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_KAL 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_kal"
 
 else
 
@@ -13012,6 +12939,8 @@ if test "x$enable_cmu_time_awb" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_TIME_AWB 1" >>confdefs.h
 
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_time_awb"
+
 else
 
 $as_echo "#define ENABLE_CMU_TIME_AWB 0" >>confdefs.h
@@ -13029,6 +12958,8 @@ fi
 if test "x$enable_cmu_us_kal16" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_KAL16 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_kal16"
 
 else
 
@@ -13048,6 +12979,8 @@ if test "x$enable_cmu_us_awb" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_AWB 1" >>confdefs.h
 
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_awb"
+
 else
 
 $as_echo "#define ENABLE_CMU_US_AWB 0" >>confdefs.h
@@ -13065,6 +12998,8 @@ fi
 if test "x$enable_cmu_us_rms" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_RMS 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_rms"
 
 else
 
@@ -13084,6 +13019,8 @@ if test "x$enable_cmu_us_slt" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_SLT 1" >>confdefs.h
 
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_slt"
+
 else
 
 $as_echo "#define ENABLE_CMU_US_SLT 0" >>confdefs.h
@@ -13102,15 +13039,105 @@ if test "x$enable_vid_gb_ap" != xno ; then :
 
 $as_echo "#define ENABLE_VID_GB_AP 1" >>confdefs.h
 
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_vid_gb_ap"
+
 else
 
 $as_echo "#define ENABLE_VID_GB_AP 0" >>confdefs.h
 
 fi
 
+ if test "x$enable_cmulex" != xno; then
+  LEX_CMULEX_TRUE=
+  LEX_CMULEX_FALSE='#'
+else
+  LEX_CMULEX_TRUE='#'
+  LEX_CMULEX_FALSE=
+fi
+
+if test "x$enable_cmulex" != xno ; then :
+
+$as_echo "#define ENABLE_CMULEX 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmulex"
+
+else
+
+$as_echo "#define ENABLE_CMULEX 0" >>confdefs.h
+
+fi
+
+ if test "x$enable_indiclex" != xno; then
+  LEX_INDIC_TRUE=
+  LEX_INDIC_FALSE='#'
+else
+  LEX_INDIC_TRUE='#'
+  LEX_INDIC_FALSE=
+fi
+
+if test "x$enable_indiclex" != xno ; then :
+
+$as_echo "#define ENABLE_INDICLEX 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_indic_lex"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_grapheme_lex"
+
+else
+
+$as_echo "#define ENABLE_INDICLEX 0" >>confdefs.h
+
+fi
+
+ if test "x$enable_indic_analysis" != xno; then
+  LANG_INDIC_ANALYSIS_TRUE=
+  LANG_INDIC_ANALYSIS_FALSE='#'
+else
+  LANG_INDIC_ANALYSIS_TRUE='#'
+  LANG_INDIC_ANALYSIS_FALSE=
+fi
+
+if test "x$enable_indic_analysis" != xno ; then :
+
+$as_echo "#define ENABLE_INDIC_ANALYSIS 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_grapheme_lang"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_indic_lang"
+
+else
+
+$as_echo "#define ENABLE_INDIC_ANALYSIS 0" >>confdefs.h
+
+fi
+
+ if test "x$enable_usenglish" != xno; then
+  LANG_USENGLISH_TRUE=
+  LANG_USENGLISH_FALSE='#'
+else
+  LANG_USENGLISH_TRUE='#'
+  LANG_USENGLISH_FALSE=
+fi
+
+if test "x$enable_usenglish" != xno ; then :
+
+$as_echo "#define ENABLE_USENGLISH 1" >>confdefs.h
+
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_usenglish"
+else
+
+$as_echo "#define ENABLE_USENGLISH 0" >>confdefs.h
+
+fi
 
 
-ac_config_files="$ac_config_files Makefile"
+PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_all_langs -lmimic_lang_all_voices -lmimic"
+
+
+
+
+
+
+
+ac_config_files="$ac_config_files Makefile mimic.pc"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -13246,22 +13273,6 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
-if test -z "${LANG_USENGLISH_TRUE}" && test -z "${LANG_USENGLISH_FALSE}"; then
-  as_fn_error $? "conditional \"LANG_USENGLISH\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${LANG_INDIC_ANALYSIS_TRUE}" && test -z "${LANG_INDIC_ANALYSIS_FALSE}"; then
-  as_fn_error $? "conditional \"LANG_INDIC_ANALYSIS\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${LEX_CMULEX_TRUE}" && test -z "${LEX_CMULEX_FALSE}"; then
-  as_fn_error $? "conditional \"LEX_CMULEX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${LEX_INDIC_TRUE}" && test -z "${LEX_INDIC_FALSE}"; then
-  as_fn_error $? "conditional \"LEX_INDIC\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${VOICE_CMU_US_KAL_TRUE}" && test -z "${VOICE_CMU_US_KAL_FALSE}"; then
   as_fn_error $? "conditional \"VOICE_CMU_US_KAL\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -13288,6 +13299,22 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${VOICE_VID_GB_AP_TRUE}" && test -z "${VOICE_VID_GB_AP_FALSE}"; then
   as_fn_error $? "conditional \"VOICE_VID_GB_AP\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LEX_CMULEX_TRUE}" && test -z "${LEX_CMULEX_FALSE}"; then
+  as_fn_error $? "conditional \"LEX_CMULEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LEX_INDIC_TRUE}" && test -z "${LEX_INDIC_FALSE}"; then
+  as_fn_error $? "conditional \"LEX_INDIC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LANG_INDIC_ANALYSIS_TRUE}" && test -z "${LANG_INDIC_ANALYSIS_FALSE}"; then
+  as_fn_error $? "conditional \"LANG_INDIC_ANALYSIS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LANG_USENGLISH_TRUE}" && test -z "${LANG_USENGLISH_FALSE}"; then
+  as_fn_error $? "conditional \"LANG_USENGLISH\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
@@ -14163,6 +14190,7 @@ do
     "include/config.h") CONFIG_HEADERS="$CONFIG_HEADERS include/config.h" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "mimic.pc") CONFIG_FILES="$CONFIG_FILES mimic.pc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

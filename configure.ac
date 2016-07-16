@@ -63,35 +63,15 @@ AS_CASE( [ ${MMAPTYPE} ],
 
 AC_CHECK_FUNCS([pow])
 AC_CHECK_LIB([m], [pow])
-dnl This flag accepts an argument of the form `current[:revision[:age]]'. So, passing `-version-info 3:12:1' sets current to 3, revision to 12, and age to 1.
-
-dnl If either revision or age are omitted, they default to 0. Also note that age must be less than or equal to the current interface number.
-
-dnl Here are a set of rules to help you update your library version information:
-
-dnl   Start with version information of `0:0:0' for each libtool library.
-dnl   Update the version information only immediately before a public 
-dnl      release of your software. More frequent updates are unnecessary, 
-dnl      and only guarantee that the current interface number gets 
-dnl      larger faster.
-dnl   If the library source code has changed at all since the last update, 
-dnl      then increment revision (`c:r:a' becomes `c:r+1:a').
-dnl   If any interfaces have been added, removed, or changed since the 
-dnl      last update, increment current, and set revision to 0.
-dnl   If any interfaces have been added since the last public release,
-dnl      then increment age.
-dnl   If any interfaces have been removed since the last public release,
-dnl      then set age to 0. 
-
-LIBMIMIC_VERSION="0:0:0"
-AC_SUBST(LIBMIMIC_VERSION)
-LIBMIMIC_CMULEX_VERSION="0:0:0"
-AC_SUBST(LIBMIMIC_CMULEX_VERSION)
-LIBMIMIC_USENGLISH_VERSION="0:0:0"
-AC_SUBST(LIBMIMIC_USENGLISH_VERSION)
 
 dnl Whether or not we have sockets (we don't in Windows)
 AC_CHECK_HEADERS([sys/socket.h])
+
+
+dnl: pkg-config mimic.pc file:
+PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/mimic -I${includedir}/mimic/lang"
+PKGCONFIG_MIMIC_LIBS="-L${libdir}"
+PKGCONFIG_MIMIC_DEPS=
 
 
 
@@ -172,16 +152,19 @@ AS_CASE( [ ${AUDIODRIVER} ],
            [ AUDIODEFS="${AUDIODEFS_ALSA}"
              AUDIOLIBS="${AUDIOLIBS_ALSA}"
              AUDIODETECTED="${AUDIODETECTED_ALSA}"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} alsa"
            ],
          [ pulseaudio ],
            [ AUDIODEFS="${AUDIODEFS_PULSEAUDIO}"
              AUDIOLIBS="${AUDIOLIBS_PULSEAUDIO}"
              AUDIODETECTED="${AUDIODETECTED_PULSEAUDIO}"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpulse"
            ],
          [ portaudio ],
            [ AUDIODEFS="${AUDIODEFS_PORTAUDIO}"
              AUDIOLIBS="${AUDIOLIBS_PORTAUDIO}"
              AUDIODETECTED="${AUDIODETECTED_PORTAUDIO}"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} portaudio-2.0"
 	   ],
          [ sun ],
            [ AUDIODEFS="${AUDIODEFS_SUN}"
@@ -367,67 +350,99 @@ AS_IF([test "x$enable_vid_gb_ap" != xno],
   [enable_usenglish="yes"
    enable_cmulex="yes"])
 
-
-AM_CONDITIONAL([LANG_USENGLISH], [test "x$enable_usenglish" != xno])
-AS_IF([test "x$enable_usenglish" != xno ],
-  [ AC_DEFINE([ENABLE_USENGLISH], [1], [Enable US English text analysis]) ],
-  [ AC_DEFINE([ENABLE_USENGLISH], [0], [Enable US English text analysis]) ])
-
-AM_CONDITIONAL([LANG_INDIC_ANALYSIS],
-  [test "x$enable_indic_analysis" != xno])
-AS_IF([test "x$enable_indic_analysis" != xno ],
-  [ AC_DEFINE([ENABLE_INDIC_ANALYSIS], [1], [Enable Indic text analysis]) ],
-  [ AC_DEFINE([ENABLE_INDIC_ANALYSIS], [0], [Enable Indic text analysis]) ])
-
-AM_CONDITIONAL([LEX_CMULEX], [test "x$enable_cmulex" != xno])
-AS_IF([test "x$enable_cmulex" != xno ],
-  [ AC_DEFINE([ENABLE_CMULEX], [1], [Enable CMU US English lexicon]) ],
-  [ AC_DEFINE([ENABLE_CMULEX], [0], [Enable CMU US English lexicon]) ])
-
-AM_CONDITIONAL([LEX_INDIC], [test "x$enable_indiclex" != xno])
-AS_IF([test "x$enable_indiclex" != xno ],
-  [ AC_DEFINE([ENABLE_INDICLEX], [1], [Enable Indic lexicon]) ],
-  [ AC_DEFINE([ENABLE_INDICLEX], [0], [Enable Indic lexicon]) ])
-
+dnl To generate the pkg-config file .pc we want the libraries in the order
+dnl the linker will need them. For that reason, we first list voices, then
+dnl lexicons then languages and we append the lib required on each case.
 
 AM_CONDITIONAL([VOICE_CMU_US_KAL], [test "x$enable_cmu_us_kal" != xno])
 AS_IF([test "x$enable_cmu_us_kal" != xno ],
-  [ AC_DEFINE([ENABLE_CMU_US_KAL], [1], [Enable cmu_us_kal voice]) ],
+  [ AC_DEFINE([ENABLE_CMU_US_KAL], [1], [Enable cmu_us_kal voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_kal"
+  ],
   [ AC_DEFINE([ENABLE_CMU_US_KAL], [0], [Enable cmu_us_kal voice]) ])
 
 AM_CONDITIONAL([VOICE_CMU_TIME_AWB], [test "x$enable_cmu_time_awb" != xno])
 AS_IF([test "x$enable_cmu_time_awb" != xno ],
-  [ AC_DEFINE([ENABLE_CMU_TIME_AWB], [1], [Enable cmu_time_awb voice]) ],
+  [ AC_DEFINE([ENABLE_CMU_TIME_AWB], [1], [Enable cmu_time_awb voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_time_awb"
+  ],
   [ AC_DEFINE([ENABLE_CMU_TIME_AWB], [0], [Enable cmu_time_awb voice]) ])
 
 AM_CONDITIONAL([VOICE_CMU_US_KAL16], [test "x$enable_cmu_us_kal16" != xno])
 AS_IF([test "x$enable_cmu_us_kal16" != xno ],
-  [ AC_DEFINE([ENABLE_CMU_US_KAL16], [1], [Enable cmu_us_kal16 voice]) ],
+  [ AC_DEFINE([ENABLE_CMU_US_KAL16], [1], [Enable cmu_us_kal16 voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_kal16"
+  ],
   [ AC_DEFINE([ENABLE_CMU_US_KAL16], [0], [Enable cmu_us_kal16 voice]) ])
 
 AM_CONDITIONAL([VOICE_CMU_US_AWB], [test "x$enable_cmu_us_awb" != xno])
 AS_IF([test "x$enable_cmu_us_awb" != xno ],
-  [ AC_DEFINE([ENABLE_CMU_US_AWB], [1], [Enable cmu_us_awb voice]) ],
+  [ AC_DEFINE([ENABLE_CMU_US_AWB], [1], [Enable cmu_us_awb voice]) 
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_awb"
+  ],
   [ AC_DEFINE([ENABLE_CMU_US_AWB], [0], [Enable cmu_us_awb voice]) ])
 
 AM_CONDITIONAL([VOICE_CMU_US_RMS], [test "x$enable_cmu_us_rms" != xno])
 AS_IF([test "x$enable_cmu_us_rms" != xno ],
-  [ AC_DEFINE([ENABLE_CMU_US_RMS], [1], [Enable cmu_us_rms voice]) ],
+  [ AC_DEFINE([ENABLE_CMU_US_RMS], [1], [Enable cmu_us_rms voice]) 
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_rms"
+  ],
   [ AC_DEFINE([ENABLE_CMU_US_RMS], [0], [Enable cmu_us_rms voice]) ])
 
 AM_CONDITIONAL([VOICE_CMU_US_SLT], [test "x$enable_cmu_us_slt" != xno])
 AS_IF([test "x$enable_cmu_us_slt" != xno ],
-  [ AC_DEFINE([ENABLE_CMU_US_SLT], [1], [Enable cmu_us_slt voice]) ],
+  [ AC_DEFINE([ENABLE_CMU_US_SLT], [1], [Enable cmu_us_slt voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_slt"
+  ],
   [ AC_DEFINE([ENABLE_CMU_US_SLT], [0], [Enable cmu_us_slt voice]) ])
 
 AM_CONDITIONAL([VOICE_VID_GB_AP], [test "x$enable_vid_gb_ap" != xno])
 AS_IF([test "x$enable_vid_gb_ap" != xno ],
-  [ AC_DEFINE([ENABLE_VID_GB_AP], [1], [Enable vid_gb_ap voice]) ],
+  [ AC_DEFINE([ENABLE_VID_GB_AP], [1], [Enable vid_gb_ap voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_vid_gb_ap"
+  ],
   [ AC_DEFINE([ENABLE_VID_GB_AP], [0], [Enable vid_gb_ap voice]) ])
+
+AM_CONDITIONAL([LEX_CMULEX], [test "x$enable_cmulex" != xno])
+AS_IF([test "x$enable_cmulex" != xno ],
+  [ AC_DEFINE([ENABLE_CMULEX], [1], [Enable CMU US English lexicon])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmulex"
+  ],
+  [ AC_DEFINE([ENABLE_CMULEX], [0], [Enable CMU US English lexicon]) ])
+
+AM_CONDITIONAL([LEX_INDIC], [test "x$enable_indiclex" != xno])
+AS_IF([test "x$enable_indiclex" != xno ],
+  [ AC_DEFINE([ENABLE_INDICLEX], [1], [Enable Indic lexicon])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_indic_lex"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_grapheme_lex"
+  ],
+  [ AC_DEFINE([ENABLE_INDICLEX], [0], [Enable Indic lexicon]) ])
+
+AM_CONDITIONAL([LANG_INDIC_ANALYSIS],
+  [test "x$enable_indic_analysis" != xno])
+AS_IF([test "x$enable_indic_analysis" != xno ],
+  [ AC_DEFINE([ENABLE_INDIC_ANALYSIS], [1], [Enable Indic text analysis])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_grapheme_lang"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_indic_lang"
+  ],
+  [ AC_DEFINE([ENABLE_INDIC_ANALYSIS], [0], [Enable Indic text analysis]) ])
+
+AM_CONDITIONAL([LANG_USENGLISH], [test "x$enable_usenglish" != xno])
+AS_IF([test "x$enable_usenglish" != xno ],
+  [ AC_DEFINE([ENABLE_USENGLISH], [1], [Enable US English text analysis])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_usenglish" ],
+  [ AC_DEFINE([ENABLE_USENGLISH], [0], [Enable US English text analysis]) ])
+
+
+PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_all_langs -lmimic_lang_all_voices -lmimic"
+
+AC_SUBST(PKGCONFIG_MIMIC_CFLAGS)
+AC_SUBST(PKGCONFIG_MIMIC_LIBS)
+AC_SUBST(PKGCONFIG_MIMIC_DEPS)
 
 AC_SUBST(EXEEXT)
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile mimic.pc])
 AC_OUTPUT
 
 AS_IF( [ test "${AUDIODRIVER}" = "none" && test "$with_audio" != "none" ],

@@ -17,6 +17,7 @@
 
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -173,12 +174,13 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3) \
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(top_srcdir)/include/config.h.in $(dist_noinst_SCRIPTS) \
-	$(top_srcdir)/config/depcomp $(include_HEADERS) \
-	$(noinst_HEADERS) $(top_srcdir)/config/test-driver COPYING \
-	config/ar-lib config/compile config/config.guess \
-	config/config.sub config/depcomp config/install-sh \
-	config/missing config/ltmain.sh $(top_srcdir)/config/ar-lib \
+	$(top_srcdir)/include/config.h.in $(srcdir)/mimic.pc.in \
+	$(dist_noinst_SCRIPTS) $(top_srcdir)/config/depcomp \
+	$(langheader_HEADERS) $(noinst_HEADERS) $(pkginclude_HEADERS) \
+	$(top_srcdir)/config/test-driver COPYING config/ar-lib \
+	config/compile config/config.guess config/config.sub \
+	config/depcomp config/install-sh config/missing \
+	config/ltmain.sh $(top_srcdir)/config/ar-lib \
 	$(top_srcdir)/config/compile $(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
@@ -194,7 +196,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/include/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = mimic.pc
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -224,7 +226,8 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(includedir)"
+	"$(DESTDIR)$(pkgconfiginstalldir)" \
+	"$(DESTDIR)$(langheaderdir)" "$(DESTDIR)$(pkgincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libmimic_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -822,7 +825,9 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-HEADERS = $(include_HEADERS) $(noinst_HEADERS)
+DATA = $(pkgconfiginstall_DATA)
+HEADERS = $(langheader_HEADERS) $(noinst_HEADERS) \
+	$(pkginclude_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -1108,9 +1113,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBMIMIC_CMULEX_VERSION = @LIBMIMIC_CMULEX_VERSION@
-LIBMIMIC_USENGLISH_VERSION = @LIBMIMIC_USENGLISH_VERSION@
-LIBMIMIC_VERSION = @LIBMIMIC_VERSION@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -1135,6 +1137,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKGCONFIG_MIMIC_CFLAGS = @PKGCONFIG_MIMIC_CFLAGS@
+PKGCONFIG_MIMIC_DEPS = @PKGCONFIG_MIMIC_DEPS@
+PKGCONFIG_MIMIC_LIBS = @PKGCONFIG_MIMIC_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
@@ -1203,6 +1208,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -I$(top_srcdir)/include
 SUBDIRS = .
+langheaderdir = $(pkgincludedir)/lang/
 EXTRA_DIST = ACKNOWLEDGEMENTS COPYING lang/usenglish/make_us_regexes \
 	lang/usenglish/us_pos.tree \
 	lang/cmu_grapheme_lang/make_grapheme_phoneset \
@@ -1215,15 +1221,9 @@ EXTRA_DIST = ACKNOWLEDGEMENTS COPYING lang/usenglish/make_us_regexes \
 	unittests/data_utf8.txt
 noinst_HEADERS = unittests/cutest.h
 # "testsuite/multi_thread_run.sh"
-include_HEADERS = lang/usenglish/usenglish.h lang/usenglish/us_f0.h \
-	lang/usenglish/us_ffeatures.h lang/usenglish/us_regexes.h \
-	lang/usenglish/us_text.h \
-	lang/cmu_grapheme_lang/cmu_grapheme_lang.h \
-	lang/cmu_indic_lang/cmu_indic_lang.h lang/cmulex/cmu_lex.h \
-	lang/cmu_grapheme_lex/cmu_grapheme_lex.h \
-	lang/cmu_indic_lex/cmu_indic_lex.h include/cst_alloc.h \
-	include/cst_args.h include/cst_audio.h include/cst_cart.h \
-	include/cst_cg.h include/cst_clunits.h include/cst_diphone.h \
+pkginclude_HEADERS = include/cst_alloc.h include/cst_args.h \
+	include/cst_audio.h include/cst_cart.h include/cst_cg.h \
+	include/cst_clunits.h include/config.h include/cst_diphone.h \
 	include/cst_endian.h include/cst_error.h \
 	include/cst_features.h include/cst_ffeatures.h \
 	include/cst_file.h include/cst_hrg.h include/cst_item.h \
@@ -1238,6 +1238,13 @@ include_HEADERS = lang/usenglish/usenglish.h lang/usenglish/us_f0.h \
 	include/cst_val_defs.h include/cst_val.h include/cst_viterbi.h \
 	include/cst_voice.h include/cst_wave.h include/cst_wchar.h \
 	include/mimic.h
+langheader_HEADERS = lang/usenglish/usenglish.h lang/usenglish/us_f0.h \
+	lang/usenglish/us_ffeatures.h lang/usenglish/us_regexes.h \
+	lang/usenglish/us_text.h \
+	lang/cmu_grapheme_lang/cmu_grapheme_lang.h \
+	lang/cmu_indic_lang/cmu_indic_lang.h lang/cmulex/cmu_lex.h \
+	lang/cmu_grapheme_lex/cmu_grapheme_lex.h \
+	lang/cmu_indic_lex/cmu_indic_lex.h
 lib_LTLIBRARIES = libmimic.la $(am__append_1) $(am__append_3) \
 	$(am__append_5) $(am__append_7) $(am__append_9) \
 	$(am__append_11) $(am__append_13) $(am__append_15) \
@@ -1311,6 +1318,8 @@ libmimic_lang_all_voices_la_LDFLAGS = -no-undefined
 libmimic_lang_all_voices_la_LIBADD = libmimic.la $(am__append_10) \
 	$(am__append_12) $(am__append_14) $(am__append_16) \
 	$(am__append_18) $(am__append_20) $(am__append_22)
+pkgconfiginstalldir = $(libdir)/pkgconfig
+pkgconfiginstall_DATA = mimic.pc
 libmimic_lang_usenglish_la_SOURCES = \
   lang/usenglish/us_aswd.c \
   lang/usenglish/us_dur_stats.c \
@@ -1747,6 +1756,8 @@ $(top_srcdir)/include/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f include/config.h include/stamp-h1
+mimic.pc: $(top_builddir)/config.status $(srcdir)/mimic.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -3969,27 +3980,69 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-includeHEADERS: $(include_HEADERS)
+install-pkgconfiginstallDATA: $(pkgconfiginstall_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	@list='$(pkgconfiginstall_DATA)'; test -n "$(pkgconfiginstalldir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(pkgconfiginstalldir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(pkgconfiginstalldir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgconfiginstalldir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgconfiginstalldir)" || exit $$?; \
 	done
 
-uninstall-includeHEADERS:
+uninstall-pkgconfiginstallDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	@list='$(pkgconfiginstall_DATA)'; test -n "$(pkgconfiginstalldir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(pkgconfiginstalldir)'; $(am__uninstall_files_from_dir)
+install-langheaderHEADERS: $(langheader_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(langheader_HEADERS)'; test -n "$(langheaderdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(langheaderdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(langheaderdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(langheaderdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(langheaderdir)" || exit $$?; \
+	done
+
+uninstall-langheaderHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(langheader_HEADERS)'; test -n "$(langheaderdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(langheaderdir)'; $(am__uninstall_files_from_dir)
+install-pkgincludeHEADERS: $(pkginclude_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(pkgincludedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(pkgincludedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(pkgincludedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(pkgincludedir)" || exit $$?; \
+	done
+
+uninstall-pkgincludeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(pkgincludedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -4480,12 +4533,13 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(SCRIPTS) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(SCRIPTS) $(DATA) \
+		$(HEADERS)
 install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgconfiginstalldir)" "$(DESTDIR)$(langheaderdir)" "$(DESTDIR)$(pkgincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -4597,7 +4651,8 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-includeHEADERS
+install-data-am: install-langheaderHEADERS \
+	install-pkgconfiginstallDATA install-pkgincludeHEADERS
 
 install-dvi: install-dvi-recursive
 
@@ -4645,8 +4700,9 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES
+uninstall-am: uninstall-binPROGRAMS uninstall-langheaderHEADERS \
+	uninstall-libLTLIBRARIES uninstall-pkgconfiginstallDATA \
+	uninstall-pkgincludeHEADERS
 
 .MAKE: $(am__recursive_targets) check-am install-am install-strip
 
@@ -4661,16 +4717,18 @@ uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am \
-	install-includeHEADERS install-info install-info-am \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-langheaderHEADERS \
 	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-pkgconfiginstallDATA install-pkgincludeHEADERS \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES
+	uninstall-binPROGRAMS uninstall-langheaderHEADERS \
+	uninstall-libLTLIBRARIES uninstall-pkgconfiginstallDATA \
+	uninstall-pkgincludeHEADERS
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

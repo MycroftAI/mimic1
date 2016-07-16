@@ -4,9 +4,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 SUBDIRS = .
 
+langheaderdir = $(pkgincludedir)/lang/
+
 EXTRA_DIST = ACKNOWLEDGEMENTS COPYING 
 noinst_HEADERS = 
-include_HEADERS =
+pkginclude_HEADERS =
+langheader_HEADERS =
 lib_LTLIBRARIES =
 
 lib_LTLIBRARIES += libmimic.la
@@ -23,6 +26,9 @@ libmimic_lang_all_voices_la_SOURCES = main/mimic_voice_list.c
 libmimic_lang_all_voices_la_LDFLAGS = -no-undefined
 libmimic_lang_all_voices_la_LIBADD = libmimic.la
 TESTS = 
+
+pkgconfiginstalldir = $(libdir)/pkgconfig
+pkgconfiginstall_DATA = mimic.pc
 
 ################## START: LANG_USENGLISH #################################
 if LANG_USENGLISH
@@ -61,7 +67,8 @@ libmimic_lang_usenglish_la_SOURCES = \
 libmimic_lang_usenglish_la_LDFLAGS = -no-undefined
 libmimic_lang_usenglish_la_LIBADD = libmimic.la
 
-include_HEADERS += \
+
+langheader_HEADERS += \
   lang/usenglish/usenglish.h \
   lang/usenglish/us_f0.h \
   lang/usenglish/us_ffeatures.h \
@@ -87,7 +94,7 @@ if LANG_INDIC_ANALYSIS
                                        libmimic_lang_cmu_indic_lang.la
 endif
 
-include_HEADERS += \
+langheader_HEADERS += \
     lang/cmu_grapheme_lang/cmu_grapheme_lang.h
 
 libmimic_lang_cmu_grapheme_lang_la_LDFLAGS = -no-undefined
@@ -101,7 +108,7 @@ libmimic_lang_cmu_grapheme_lang_la_SOURCES = \
 
 EXTRA_DIST += lang/cmu_grapheme_lang/make_grapheme_phoneset
 
-include_HEADERS += \
+langheader_HEADERS += \
   lang/cmu_indic_lang/cmu_indic_lang.h
 
 
@@ -142,7 +149,7 @@ EXTRA_DIST += \
   lang/cmulex/make_cmulex \
   lang/cmulex/make_cmulex_helper.py
  
-include_HEADERS += \
+langheader_HEADERS += \
   lang/cmulex/cmu_lex.h
 
 ############## END: LEX_CMULEX ###########################################
@@ -155,7 +162,7 @@ if LEX_INDIC
                                          libmimic_lang_cmu_grapheme_lex.la
 endif
 
-include_HEADERS += \
+langheader_HEADERS += \
   lang/cmu_grapheme_lex/cmu_grapheme_lex.h
 
 libmimic_lang_cmu_grapheme_lex_la_LDFLAGS = -no-undefined
@@ -176,7 +183,7 @@ libmimic_lang_cmu_indic_lex_la_LIBADD = libmimic.la \
 libmimic_lang_cmu_indic_lex_la_SOURCES = \
   lang/cmu_indic_lex/cmu_indic_lex.c
 
-include_HEADERS += \
+langheader_HEADERS += \
   lang/cmu_indic_lex/cmu_indic_lex.h
 
 # END: Lexicon for indic ####################
@@ -744,13 +751,14 @@ testsuite_utt_test_LDADD = libmimic.la libmimic_lang_all_langs.la libmimic_lang_
 TESTS += $(myunittests)
 # "testsuite/multi_thread_run.sh"
 
-include_HEADERS += \
+pkginclude_HEADERS += \
   include/cst_alloc.h \
   include/cst_args.h \
   include/cst_audio.h \
   include/cst_cart.h \
   include/cst_cg.h \
   include/cst_clunits.h \
+  include/config.h \
   include/cst_diphone.h \
   include/cst_endian.h \
   include/cst_error.h \
