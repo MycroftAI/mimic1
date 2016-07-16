@@ -1238,11 +1238,11 @@ include_HEADERS = lang/usenglish/usenglish.h lang/usenglish/us_f0.h \
 	include/cst_val_defs.h include/cst_val.h include/cst_viterbi.h \
 	include/cst_voice.h include/cst_wave.h include/cst_wchar.h \
 	include/mimic.h
-lib_LTLIBRARIES = libmimic.la libmimic_lang_all_langs.la \
-	libmimic_lang_all_voices.la $(am__append_1) $(am__append_3) \
+lib_LTLIBRARIES = libmimic.la $(am__append_1) $(am__append_3) \
 	$(am__append_5) $(am__append_7) $(am__append_9) \
 	$(am__append_11) $(am__append_13) $(am__append_15) \
-	$(am__append_17) $(am__append_19) $(am__append_21)
+	$(am__append_17) $(am__append_19) $(am__append_21) \
+	libmimic_lang_all_langs.la libmimic_lang_all_voices.la
 
 ###### src/cg ##################
 

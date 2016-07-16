@@ -15,12 +15,10 @@ libmimic_la_CFLAGS =
 libmimic_la_LDFLAGS = -no-undefined
 libmimic_la_LIBADD = 
 
-lib_LTLIBRARIES += libmimic_lang_all_langs.la
 libmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
 libmimic_lang_all_langs_la_LDFLAGS = -no-undefined
 libmimic_lang_all_langs_la_LIBADD = libmimic.la
 
-lib_LTLIBRARIES += libmimic_lang_all_voices.la
 libmimic_lang_all_voices_la_SOURCES = main/mimic_voice_list.c
 libmimic_lang_all_voices_la_LDFLAGS = -no-undefined
 libmimic_lang_all_voices_la_LIBADD = libmimic.la
@@ -568,6 +566,10 @@ mimicvox_info_LDADD = libmimic.la libmimic_lang_all_langs.la libmimic_lang_all_v
 
 ################# END: main ###################
 dist_noinst_SCRIPTS = autogen.sh
+
+lib_LTLIBRARIES += libmimic_lang_all_langs.la
+lib_LTLIBRARIES += libmimic_lang_all_voices.la
+
 
 ########## Unit tests #########################
 myunittests = unittests/hrg_test \
