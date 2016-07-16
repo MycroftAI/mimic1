@@ -36,6 +36,11 @@
 /*                                                                       */
 /*************************************************************************/
 
+#include "config.h"
+
+#if (MMAP_TYPE == MMAP_TYPE_POSIX)
+
+
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -182,3 +187,5 @@ int cst_free_part_file(cst_filemap *fmap)
     cst_free(fmap);
     return 0;
 }
+
+#endif

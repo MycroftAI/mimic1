@@ -38,6 +38,8 @@
 /*                                                                       */
 /*************************************************************************/
 
+#ifdef CST_AUDIO_PORTAUDIO
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -264,3 +266,5 @@ int audio_write_portaudio(cst_audiodev *ad, void *buff, int num_bytes)
     free(data);
     return num_bytes;
 }
+
+#endif //CST_AUDIO_PORTAUDIO

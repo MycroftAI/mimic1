@@ -91,11 +91,10 @@ int relation_save(cst_relation *r, const char *filename)
     cst_file fd;
     cst_item *item;
 
-#ifndef UNDER_CE
     if (cst_streq(filename, "-"))
         fd = stdout;
     else
-#endif
+
     if ((fd = cst_fopen(filename, CST_OPEN_WRITE)) == 0)
     {
         cst_errmsg("relation_save: can't open file \"%s\" for writing\n",
@@ -115,10 +114,8 @@ int relation_save(cst_relation *r, const char *filename)
             cst_fprintf(fd, "%s ", "_");
         cst_fprintf(fd, "\n");
     }
-#ifndef UNDER_CE
     if (fd != stdout)
         cst_fclose(fd);
-#endif
 
     return CST_OK_FORMAT;
 }
