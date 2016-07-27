@@ -82,7 +82,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = $(am__EXEEXT_2)
+TESTS = $(am__EXEEXT_3)
 
 ################## START: LANG_USENGLISH #################################
 @LANG_USENGLISH_TRUE@am__append_1 = libmimic_lang_usenglish.la
@@ -152,10 +152,10 @@ TESTS = $(am__EXEEXT_2)
 bin_PROGRAMS = mimic$(EXEEXT) compile_regexes$(EXEEXT) \
 	mimicvox_info$(EXEEXT) $(am__EXEEXT_1)
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__append_23 = t2p mimic_time
-check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	testsuite/asciiS2U$(EXEEXT) testsuite/asciiU2S$(EXEEXT) \
-	testsuite/bin2ascii$(EXEEXT) $(am__EXEEXT_4) \
-	testsuite/combine_waves$(EXEEXT) \
+@LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__append_24 = unittests/lex_test unittests/lts_test unittests/nums_test
+check_PROGRAMS = $(am__EXEEXT_3) testsuite/asciiS2U$(EXEEXT) \
+	testsuite/asciiU2S$(EXEEXT) testsuite/bin2ascii$(EXEEXT) \
+	$(am__EXEEXT_4) testsuite/combine_waves$(EXEEXT) \
 	testsuite/compare_wave$(EXEEXT) $(am__EXEEXT_5) \
 	$(am__EXEEXT_6) testsuite/lpc_resynth$(EXEEXT) \
 	testsuite/lpc_test2$(EXEEXT) testsuite/lpc_test$(EXEEXT) \
@@ -163,7 +163,6 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	testsuite/play_server$(EXEEXT) testsuite/play_sync$(EXEEXT) \
 	testsuite/play_wave$(EXEEXT) testsuite/rfc$(EXEEXT) \
 	$(am__EXEEXT_8)
-@LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__append_24 = unittests/lex_test unittests/lts_test unittests/nums_test
 @VOICE_CMU_US_KAL_TRUE@am__append_25 = testsuite/by_word
 @VOICE_CMU_US_KAL_TRUE@am__append_26 = testsuite/kal_test
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__append_27 = \
@@ -553,12 +552,13 @@ libmimic_lang_vid_gb_ap_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 @VOICE_VID_GB_AP_TRUE@	$(libdir)
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__EXEEXT_1 = t2p$(EXEEXT) \
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@	mimic_time$(EXEEXT)
-am__EXEEXT_2 = unittests/hrg_test$(EXEEXT) \
-	unittests/regex_test$(EXEEXT) unittests/token_test$(EXEEXT) \
-	unittests/voice_select$(EXEEXT) unittests/wave_test$(EXEEXT)
-@LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__EXEEXT_3 = unittests/lex_test$(EXEEXT) \
+@LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__EXEEXT_2 = unittests/lex_test$(EXEEXT) \
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@	unittests/lts_test$(EXEEXT) \
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@	unittests/nums_test$(EXEEXT)
+am__EXEEXT_3 = unittests/hrg_test$(EXEEXT) \
+	unittests/regex_test$(EXEEXT) unittests/token_test$(EXEEXT) \
+	unittests/voice_select$(EXEEXT) unittests/wave_test$(EXEEXT) \
+	$(am__EXEEXT_2)
 @VOICE_CMU_US_KAL_TRUE@am__EXEEXT_4 = testsuite/by_word$(EXEEXT)
 @VOICE_CMU_US_KAL_TRUE@am__EXEEXT_5 = testsuite/kal_test$(EXEEXT)
 @LANG_USENGLISH_TRUE@@LEX_CMULEX_TRUE@am__EXEEXT_6 = testsuite/lex_lookup$(EXEEXT)
@@ -1219,6 +1219,8 @@ EXTRA_DIST = ACKNOWLEDGEMENTS COPYING lang/usenglish/make_us_regexes \
 	lang/cmulex/cmu_lts_rules.c lang/cmulex/make_cmulex \
 	lang/cmulex/make_cmulex_helper.py unittests/data.one \
 	unittests/data_utf8.txt
+
+########## Unit tests #########################
 noinst_HEADERS = unittests/cutest.h
 # "testsuite/multi_thread_run.sh"
 pkginclude_HEADERS = include/cst_alloc.h include/cst_args.h \
@@ -1604,14 +1606,9 @@ mimicvox_info_LDADD = libmimic.la libmimic_lang_all_langs.la libmimic_lang_all_v
 
 ################# END: main ###################
 dist_noinst_SCRIPTS = autogen.sh
-
-########## Unit tests #########################
-myunittests = unittests/hrg_test \
-              unittests/regex_test \
-              unittests/token_test \
-              unittests/voice_select \
-              unittests/wave_test
-
+myunittests = unittests/hrg_test unittests/regex_test \
+	unittests/token_test unittests/voice_select \
+	unittests/wave_test $(am__append_24)
 unittests_hrg_test_SOURCES = unittests/hrg_test_main.c
 unittests_hrg_test_LDADD = libmimic.la
 unittests_lex_test_SOURCES = unittests/lex_test_main.c
@@ -4322,6 +4319,27 @@ unittests/voice_select.log: unittests/voice_select$(EXEEXT)
 unittests/wave_test.log: unittests/wave_test$(EXEEXT)
 	@p='unittests/wave_test$(EXEEXT)'; \
 	b='unittests/wave_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+unittests/lex_test.log: unittests/lex_test$(EXEEXT)
+	@p='unittests/lex_test$(EXEEXT)'; \
+	b='unittests/lex_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+unittests/lts_test.log: unittests/lts_test$(EXEEXT)
+	@p='unittests/lts_test$(EXEEXT)'; \
+	b='unittests/lts_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+unittests/nums_test.log: unittests/nums_test$(EXEEXT)
+	@p='unittests/nums_test$(EXEEXT)'; \
+	b='unittests/nums_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

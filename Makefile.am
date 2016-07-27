@@ -579,22 +579,24 @@ lib_LTLIBRARIES += libmimic_lang_all_voices.la
 
 
 ########## Unit tests #########################
+noinst_HEADERS += unittests/cutest.h
+
 myunittests = unittests/hrg_test \
               unittests/regex_test \
               unittests/token_test \
               unittests/voice_select \
               unittests/wave_test
 
-check_PROGRAMS = $(myunittests)
-noinst_HEADERS += unittests/cutest.h
 unittests_hrg_test_SOURCES = unittests/hrg_test_main.c
 unittests_hrg_test_LDADD = libmimic.la
 
 if LEX_CMULEX
 if LANG_USENGLISH
-  check_PROGRAMS += unittests/lex_test unittests/lts_test unittests/nums_test
+  myunittests += unittests/lex_test unittests/lts_test unittests/nums_test
 endif
 endif
+
+check_PROGRAMS = $(myunittests)
 
 unittests_lex_test_SOURCES = unittests/lex_test_main.c
 unittests_lex_test_LDADD = libmimic.la \
