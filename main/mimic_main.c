@@ -212,6 +212,7 @@ int main(int argc, char **argv)
     cst_voice *desired_voice = 0;
     const char *voicedir = NULL;
     int i;
+	int err;
     float durs;
     double time_start, time_end;
     int mimic_verbose, mimic_loop, mimic_bench;
@@ -419,20 +420,20 @@ int main(int argc, char **argv)
     time_start = (double) (tv.tv_sec) + (((double) tv.tv_usec) / 1000000.0);
 
     if (explicit_phones)
-        durs = mimic_phones_to_speech(filename, v, outtype);
+        err = mimic_phones_to_speech(filename, v, outtype, &durs);
     else if ((strchr(filename, ' ') && !explicit_filename) || explicit_text)
     {
         if (ssml_mode)
-            durs = mimic_ssml_text_to_speech(filename, v, outtype);
+            err = mimic_ssml_text_to_speech(filename, v, outtype, &durs);
         else
-            durs = mimic_text_to_speech(filename, v, outtype);
+            err = mimic_text_to_speech(filename, v, outtype, &durs);
     }
     else
     {
         if (ssml_mode)
-            durs = mimic_ssml_file_to_speech(filename, v, outtype);
+            err = mimic_ssml_file_to_speech(filename, v, outtype, &durs);
         else
-            durs = mimic_file_to_speech(filename, v, outtype);
+            err = mimic_file_to_speech(filename, v, outtype, &durs);
     }
 
     gettimeofday(&tv, NULL);
@@ -443,7 +444,8 @@ int main(int argc, char **argv)
              durs / (float) (time_end - time_start), durs,
              (float) (time_end - time_start));
 
-    if (mimic_loop || (mimic_bench && bench_iter++ < ITER_MAX))
+    if ((mimic_loop || (mimic_bench && bench_iter++ < ITER_MAX))
+			&& err == 0)
         goto loop;
 
     delete_features(extra_feats);

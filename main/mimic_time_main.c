@@ -63,6 +63,7 @@ int main(int argc, char **argv)
     cst_voice *v;
     char thetime[1024];
     char b[3];
+	float durs;
     int hour, min;
     cst_regex *timex;
     char *output = "play";
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
             time_tod(hour, min));
 
     printf("%s\n", thetime);
-    mimic_text_to_speech(thetime, v, output);
+    mimic_text_to_speech(thetime, v, output, &durs);
 
     mimic_exit();
 

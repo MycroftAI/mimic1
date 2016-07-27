@@ -232,8 +232,8 @@ cst_wave *mimic_text_to_wave(const char *text, cst_voice *voice)
     return w;
 }
 
-float mimic_file_to_speech(const char *filename,
-                           cst_voice *voice, const char *outtype)
+int mimic_file_to_speech(const char *filename, cst_voice *voice,
+                         const char *outtype, float *dur)
 {
     cst_tokenstream *ts;
 
@@ -251,11 +251,11 @@ float mimic_file_to_speech(const char *filename,
         cst_errmsg("failed to open file \"%s\" for reading\n", filename);
         return 1;
     }
-    return mimic_ts_to_speech(ts, voice, outtype);
+    return mimic_ts_to_speech(ts, voice, outtype, dur);
 }
 
-float mimic_ts_to_speech(cst_tokenstream *ts,
-                         cst_voice *voice, const char *outtype)
+int mimic_ts_to_speech(cst_tokenstream *ts, cst_voice *voice,
+                       const char *outtype, float *dur)
 {
     int err;
     cst_utterance *utt;
@@ -352,33 +352,44 @@ float mimic_ts_to_speech(cst_tokenstream *ts,
     if (utt)
         delete_utterance(utt);
     ts_close(ts);
-    return durs;
+    return err;
 }
 
-float mimic_text_to_speech(const char *text,
-                           cst_voice *voice, const char *outtype)
+int mimic_text_to_speech(const char *text, cst_voice *voice,
+                         const char *outtype, float *dur)
 {
-    cst_utterance *u;
-    float dur;
+    int ret;
 
-    u = mimic_synth_text(text, voice);
-    mimic_process_output(u, outtype, FALSE, &dur);
-    delete_utterance(u);
-
-    return dur;
+    if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
+    {
+        ret = -EINVAL;
+    }
+    else
+    {
+        cst_utterance *u;
+        u = mimic_synth_text(text, voice);
+        ret = mimic_process_output(u, outtype, FALSE, dur);
+        delete_utterance(u);
+    }
+    return ret;
 }
 
-float mimic_phones_to_speech(const char *text,
-                             cst_voice *voice, const char *outtype)
+int mimic_phones_to_speech(const char *text, cst_voice *voice,
+                           const char *outtype, float *dur)
 {
-    cst_utterance *u;
-    float dur;
-
-    u = mimic_synth_phones(text, voice);
-    mimic_process_output(u, outtype, FALSE, &dur);
-    delete_utterance(u);
-
-    return dur;
+    int ret;
+    if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
+    {
+        ret = -EINVAL;
+    }
+    else
+    {
+        cst_utterance *u;
+        u = mimic_synth_phones(text, voice);
+        ret = mimic_process_output(u, outtype, FALSE, dur);
+        delete_utterance(u);
+    }
+    return ret;
 }
 
 int mimic_process_output(cst_utterance *u, const char *outtype,
