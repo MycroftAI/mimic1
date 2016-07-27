@@ -109,6 +109,7 @@ int main(int argc, char **argv)
 {
     cst_voice *v;
     cst_audio_streaming_info *asi;
+	float durs;
 
     if (argc != 2)
     {
@@ -124,7 +125,7 @@ int main(int argc, char **argv)
     asi->asc = audio_stream_chunk_by_word;
     feat_set(v->features, "streaming_info", audio_streaming_info_val(asi));
 
-    mimic_file_to_speech(argv[1], v, "none");   /* streaming will play */
+    mimic_file_to_speech(argv[1], v, "none", &durs);  /* streaming will play */
 
     mimic_exit();
     return 0;

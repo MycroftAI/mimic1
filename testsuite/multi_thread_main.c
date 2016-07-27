@@ -70,7 +70,7 @@ void init()
 float synth_text(char *text)
 {
     float dur;
-    dur = mimic_text_to_speech(text, voice, "none");
+    mimic_text_to_speech(text, voice, "none", &dur);
     return dur;
 }
 
