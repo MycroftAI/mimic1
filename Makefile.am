@@ -12,19 +12,19 @@ pkginclude_HEADERS =
 langheader_HEADERS =
 lib_LTLIBRARIES =
 
-lib_LTLIBRARIES += libmimic.la
-libmimic_la_SOURCES = 
-libmimic_la_CFLAGS = 
-libmimic_la_LDFLAGS = -no-undefined
-libmimic_la_LIBADD = 
+lib_LTLIBRARIES += libttsmimic.la
+libttsmimic_la_SOURCES = 
+libttsmimic_la_CFLAGS = 
+libttsmimic_la_LDFLAGS = -no-undefined
+libttsmimic_la_LIBADD = 
 
-libmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
-libmimic_lang_all_langs_la_LDFLAGS = -no-undefined
-libmimic_lang_all_langs_la_LIBADD = libmimic.la
+libttsmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
+libttsmimic_lang_all_langs_la_LDFLAGS = -no-undefined
+libttsmimic_lang_all_langs_la_LIBADD = libttsmimic.la
 
-libmimic_lang_all_voices_la_SOURCES = main/mimic_voice_list.c
-libmimic_lang_all_voices_la_LDFLAGS = -no-undefined
-libmimic_lang_all_voices_la_LIBADD = libmimic.la
+libttsmimic_lang_all_voices_la_SOURCES = main/mimic_voice_list.c
+libttsmimic_lang_all_voices_la_LDFLAGS = -no-undefined
+libttsmimic_lang_all_voices_la_LIBADD = libttsmimic.la
 TESTS = 
 
 pkgconfiginstalldir = $(libdir)/pkgconfig
@@ -32,15 +32,15 @@ pkgconfiginstall_DATA = mimic.pc
 
 ################## START: LANG_USENGLISH #################################
 if LANG_USENGLISH
-    lib_LTLIBRARIES += libmimic_lang_usenglish.la
-    libmimic_lang_all_langs_la_LIBADD += libmimic_lang_usenglish.la
+    lib_LTLIBRARIES += libttsmimic_lang_usenglish.la
+    libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_usenglish.la
 endif
 
 EXTRA_DIST += \
   lang/usenglish/make_us_regexes \
   lang/usenglish/us_pos.tree
 
-libmimic_lang_usenglish_la_SOURCES = \
+libttsmimic_lang_usenglish_la_SOURCES = \
   lang/usenglish/us_aswd.c \
   lang/usenglish/us_dur_stats.c \
   lang/usenglish/us_durz_cart.c \
@@ -64,8 +64,8 @@ libmimic_lang_usenglish_la_SOURCES = \
   lang/usenglish/us_pos_cart.h \
   lang/usenglish/us_text.c
 
-libmimic_lang_usenglish_la_LDFLAGS = -no-undefined
-libmimic_lang_usenglish_la_LIBADD = libmimic.la
+libttsmimic_lang_usenglish_la_LDFLAGS = -no-undefined
+libttsmimic_lang_usenglish_la_LIBADD = libttsmimic.la
 
 
 langheader_HEADERS += \
@@ -88,19 +88,19 @@ langheader_HEADERS += \
 
 #################### START:  LANG_INDIC ##################################
 if LANG_INDIC_ANALYSIS
-  lib_LTLIBRARIES += libmimic_lang_cmu_grapheme_lang.la \
-                     libmimic_lang_cmu_indic_lang.la
-  libmimic_lang_all_langs_la_LIBADD += libmimic_lang_cmu_grapheme_lang.la \
-                                       libmimic_lang_cmu_indic_lang.la
+  lib_LTLIBRARIES += libttsmimic_lang_cmu_grapheme_lang.la \
+                     libttsmimic_lang_cmu_indic_lang.la
+  libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_cmu_grapheme_lang.la \
+                                       libttsmimic_lang_cmu_indic_lang.la
 endif
 
 langheader_HEADERS += \
     lang/cmu_grapheme_lang/cmu_grapheme_lang.h
 
-libmimic_lang_cmu_grapheme_lang_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_grapheme_lang_la_LIBADD = libmimic.la
+libttsmimic_lang_cmu_grapheme_lang_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_grapheme_lang_la_LIBADD = libttsmimic.la
 
-libmimic_lang_cmu_grapheme_lang_la_SOURCES = \
+libttsmimic_lang_cmu_grapheme_lang_la_SOURCES = \
   lang/cmu_grapheme_lang/cmu_grapheme_phrasing_cart.h \
   lang/cmu_grapheme_lang/cmu_grapheme_lang.c \
   lang/cmu_grapheme_lang/cmu_grapheme_phrasing_cart.c \
@@ -112,9 +112,9 @@ langheader_HEADERS += \
   lang/cmu_indic_lang/cmu_indic_lang.h
 
 
-libmimic_lang_cmu_indic_lang_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_indic_lang_la_LIBADD = libmimic.la libmimic_lang_usenglish.la
-libmimic_lang_cmu_indic_lang_la_SOURCES = \
+libttsmimic_lang_cmu_indic_lang_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_indic_lang_la_LIBADD = libttsmimic.la libttsmimic_lang_usenglish.la
+libttsmimic_lang_cmu_indic_lang_la_SOURCES = \
   lang/cmu_indic_lang/cmu_indic_lang.c \
   lang/cmu_indic_lang/cmu_indic_phoneset.c \
   lang/cmu_indic_lang/cmu_indic_phrasing_cart.h \
@@ -125,13 +125,13 @@ libmimic_lang_cmu_indic_lang_la_SOURCES = \
 
 ############## START: LEX_CMULEX #########################################
 if LEX_CMULEX
-    lib_LTLIBRARIES += libmimic_lang_cmulex.la
-    libmimic_lang_all_langs_la_LIBADD += libmimic_lang_cmulex.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmulex.la
+    libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_cmulex.la
 endif
 
-libmimic_lang_cmulex_la_LDFLAGS = -no-undefined
-libmimic_lang_cmulex_la_LIBADD = libmimic.la
-libmimic_lang_cmulex_la_SOURCES = \
+libttsmimic_lang_cmulex_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmulex_la_LIBADD = libttsmimic.la
+libttsmimic_lang_cmulex_la_SOURCES = \
   lang/cmulex/cmu_lex.c \
   lang/cmulex/cmu_lex_data.c \
   lang/cmulex/cmu_lex_entries.c \
@@ -156,18 +156,18 @@ langheader_HEADERS += \
 
 ############# START: Lexicon for indic: #################################
 if LEX_INDIC
-    lib_LTLIBRARIES += libmimic_lang_cmu_indic_lex.la \
-                       libmimic_lang_cmu_grapheme_lex.la
-    libmimic_lang_all_langs_la_LIBADD += libmimic_lang_cmu_indic_lex.la \
-                                         libmimic_lang_cmu_grapheme_lex.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_indic_lex.la \
+                       libttsmimic_lang_cmu_grapheme_lex.la
+    libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_cmu_indic_lex.la \
+                                         libttsmimic_lang_cmu_grapheme_lex.la
 endif
 
 langheader_HEADERS += \
   lang/cmu_grapheme_lex/cmu_grapheme_lex.h
 
-libmimic_lang_cmu_grapheme_lex_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_grapheme_lex_la_LIBADD = libmimic.la
-libmimic_lang_cmu_grapheme_lex_la_SOURCES = \
+libttsmimic_lang_cmu_grapheme_lex_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_grapheme_lex_la_LIBADD = libttsmimic.la
+libttsmimic_lang_cmu_grapheme_lex_la_SOURCES = \
   lang/cmu_grapheme_lex/cmu_grapheme_lex.c \
   lang/cmu_grapheme_lex/grapheme_unitran_tables.c
 
@@ -176,11 +176,11 @@ libmimic_lang_cmu_grapheme_lex_la_SOURCES = \
 #         -b ${TOP}/tools/make_ug.scm \
 #            ${FESTVOXDIR}/src/grapheme/unicode_sampa_mapping.scm '(doit)'
 
-libmimic_lang_cmu_indic_lex_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_indic_lex_la_LIBADD = libmimic.la \
-                                        libmimic_lang_cmulex.la \
-                                        libmimic_lang_cmu_indic_lang.la
-libmimic_lang_cmu_indic_lex_la_SOURCES = \
+libttsmimic_lang_cmu_indic_lex_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_indic_lex_la_LIBADD = libttsmimic.la \
+                                        libttsmimic_lang_cmulex.la \
+                                        libttsmimic_lang_cmu_indic_lang.la
+libttsmimic_lang_cmu_indic_lex_la_SOURCES = \
   lang/cmu_indic_lex/cmu_indic_lex.c
 
 langheader_HEADERS += \
@@ -189,12 +189,12 @@ langheader_HEADERS += \
 # END: Lexicon for indic ####################
 
 if VOICE_CMU_US_KAL
-    lib_LTLIBRARIES += libmimic_lang_cmu_us_kal.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_cmu_us_kal.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_kal.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_kal.la
 endif
 
-libmimic_lang_cmu_us_kal_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_us_kal_la_SOURCES = \
+libttsmimic_lang_cmu_us_kal_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_kal_la_SOURCES = \
   lang/cmu_us_kal/cmu_us_kal.c \
   lang/cmu_us_kal/cmu_us_kal_diphone.c \
   lang/cmu_us_kal/cmu_us_kal_lpc.c \
@@ -203,25 +203,25 @@ libmimic_lang_cmu_us_kal_la_SOURCES = \
   lang/cmu_us_kal/cmu_us_kal_ressize.c \
   lang/cmu_us_kal/voxdefs.h
 
-libmimic_lang_cmu_us_kal_la_CFLAGS = \
+libttsmimic_lang_cmu_us_kal_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
-libmimic_lang_cmu_us_kal_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_cmu_us_kal_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 
 ############
 
 if VOICE_CMU_TIME_AWB
-    lib_LTLIBRARIES += libmimic_lang_cmu_time_awb.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_cmu_time_awb.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_time_awb.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_time_awb.la
 endif
 
-libmimic_lang_cmu_time_awb_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_time_awb_la_SOURCES = \
+libttsmimic_lang_cmu_time_awb_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_time_awb_la_SOURCES = \
   lang/cmu_time_awb/cmu_time_awb.c \
   lang/cmu_time_awb/cmu_time_awb_cart.c \
   lang/cmu_time_awb/cmu_time_awb_clunits.c \
@@ -230,24 +230,24 @@ libmimic_lang_cmu_time_awb_la_SOURCES = \
   lang/cmu_time_awb/cmu_time_awb_mcep.c \
   lang/cmu_time_awb/voxdefs.h
 
-libmimic_lang_cmu_time_awb_la_CFLAGS = \
+libttsmimic_lang_cmu_time_awb_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
-libmimic_lang_cmu_time_awb_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_cmu_time_awb_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 ##########
 
 if VOICE_CMU_US_KAL16
-    lib_LTLIBRARIES += libmimic_lang_cmu_us_kal16.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_cmu_us_kal16.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_kal16.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_kal16.la
 endif
 
-libmimic_lang_cmu_us_kal16_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_us_kal16_la_SOURCES = \
+libttsmimic_lang_cmu_us_kal16_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_kal16_la_SOURCES = \
   lang/cmu_us_kal16/cmu_us_kal16.c \
   lang/cmu_us_kal16/cmu_us_kal16_diphone.c \
   lang/cmu_us_kal16/cmu_us_kal16_lpc.c \
@@ -255,25 +255,25 @@ libmimic_lang_cmu_us_kal16_la_SOURCES = \
   lang/cmu_us_kal16/cmu_us_kal16_residx.c \
   lang/cmu_us_kal16/voxdefs.h
 
-libmimic_lang_cmu_us_kal16_la_CFLAGS = \
+libttsmimic_lang_cmu_us_kal16_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
 
-libmimic_lang_cmu_us_kal16_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_cmu_us_kal16_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 ####################
 
 if VOICE_CMU_US_AWB
-    lib_LTLIBRARIES += libmimic_lang_cmu_us_awb.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_cmu_us_awb.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_awb.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_awb.la
 endif
 
-libmimic_lang_cmu_us_awb_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_us_awb_la_SOURCES = \
+libttsmimic_lang_cmu_us_awb_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_awb_la_SOURCES = \
   lang/cmu_us_awb/cmu_us_awb.c \
   lang/cmu_us_awb/cmu_us_awb_cg.c \
   lang/cmu_us_awb/cmu_us_awb_cg_durmodel.c \
@@ -291,25 +291,25 @@ libmimic_lang_cmu_us_awb_la_SOURCES = \
   lang/cmu_us_awb/cmu_us_awb_spamf0_phrase.h \
   lang/cmu_us_awb/voxdefs.h
 
-libmimic_lang_cmu_us_awb_la_CFLAGS = \
+libttsmimic_lang_cmu_us_awb_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
-libmimic_lang_cmu_us_awb_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_cmu_us_awb_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 
 ###########
 
 if VOICE_CMU_US_RMS
-    lib_LTLIBRARIES += libmimic_lang_cmu_us_rms.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_cmu_us_rms.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_rms.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_rms.la
 endif
 
-libmimic_lang_cmu_us_rms_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_us_rms_la_SOURCES = \
+libttsmimic_lang_cmu_us_rms_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_rms_la_SOURCES = \
   lang/cmu_us_rms/cmu_us_rms.c \
   lang/cmu_us_rms/cmu_us_rms_cg.c \
   lang/cmu_us_rms/cmu_us_rms_cg_durmodel.c \
@@ -327,24 +327,24 @@ libmimic_lang_cmu_us_rms_la_SOURCES = \
   lang/cmu_us_rms/cmu_us_rms_spamf0_phrase.h \
   lang/cmu_us_rms/voxdefs.h
 
-libmimic_lang_cmu_us_rms_la_CFLAGS = \
+libttsmimic_lang_cmu_us_rms_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
-libmimic_lang_cmu_us_rms_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_cmu_us_rms_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 ###############
 
 if VOICE_CMU_US_SLT
-    lib_LTLIBRARIES += libmimic_lang_cmu_us_slt.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_cmu_us_slt.la
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_slt.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_slt.la
 endif
 
-libmimic_lang_cmu_us_slt_la_LDFLAGS = -no-undefined
-libmimic_lang_cmu_us_slt_la_SOURCES = \
+libttsmimic_lang_cmu_us_slt_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_slt_la_SOURCES = \
   lang/cmu_us_slt/cmu_us_slt.c \
   lang/cmu_us_slt/cmu_us_slt_cg.c \
   lang/cmu_us_slt/cmu_us_slt_cg_durmodel.c \
@@ -362,25 +362,25 @@ libmimic_lang_cmu_us_slt_la_SOURCES = \
   lang/cmu_us_slt/cmu_us_slt_spamf0_phrase.h \
   lang/cmu_us_slt/voxdefs.h
 
-libmimic_lang_cmu_us_slt_la_CFLAGS = \
+libttsmimic_lang_cmu_us_slt_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
-libmimic_lang_cmu_us_slt_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_cmu_us_slt_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 
 ###########
 
 if VOICE_VID_GB_AP
-    lib_LTLIBRARIES += libmimic_lang_vid_gb_ap.la
-    libmimic_lang_all_voices_la_LIBADD += libmimic_lang_vid_gb_ap.la
+    lib_LTLIBRARIES += libttsmimic_lang_vid_gb_ap.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_vid_gb_ap.la
 endif
 
-libmimic_lang_vid_gb_ap_la_LDFLAGS = -no-undefined
-libmimic_lang_vid_gb_ap_la_SOURCES = \
+libttsmimic_lang_vid_gb_ap_la_LDFLAGS = -no-undefined
+libttsmimic_lang_vid_gb_ap_la_SOURCES = \
   lang/vid_gb_ap/vid_gb_ap.c \
   lang/vid_gb_ap/vid_gb_ap_cg_01_mcep_trees.c \
   lang/vid_gb_ap/vid_gb_ap_cg_01_mcep_trees.h \
@@ -403,14 +403,14 @@ libmimic_lang_vid_gb_ap_la_SOURCES = \
   lang/vid_gb_ap/vid_gb_ap_cg_phonestate.c \
   lang/vid_gb_ap/voxdefs.h
 
-libmimic_lang_vid_gb_ap_la_CFLAGS = \
+libttsmimic_lang_vid_gb_ap_la_CFLAGS = \
   -I$(top_srcdir)/lang/usenglish \
   -I$(top_srcdir)/lang/cmulex
 
-libmimic_lang_vid_gb_ap_la_LIBADD = \
-  libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la
+libttsmimic_lang_vid_gb_ap_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
 
 ######### END VOICES ######################################
 
@@ -432,13 +432,13 @@ src_audio_SOURCES = \
   src/audio/au_wince.c \
   src/audio/native_audio.h
 
-libmimic_la_CFLAGS += $(AUDIODEFS)
-libmimic_la_SOURCES += $(src_audio_SOURCES)
+libttsmimic_la_CFLAGS += $(AUDIODEFS)
+libttsmimic_la_SOURCES += $(src_audio_SOURCES)
 
-libmimic_la_LIBADD += $(AUDIOLIBS)
+libttsmimic_la_LIBADD += $(AUDIOLIBS)
 
 ###### src/cg ##################
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/cg/cst_mlsa.h \
   src/cg/cst_mlpg.h \
   src/cg/cst_vc.h \
@@ -454,7 +454,7 @@ libmimic_la_SOURCES += \
   src/cg/cst_spamf0.c
 
 ####### src/hrg ###############
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/hrg/cst_utterance.c \
   src/hrg/cst_relation.c \
   src/hrg/cst_item.c \
@@ -463,14 +463,14 @@ libmimic_la_SOURCES += \
 
 ###### src/lexicon #########
 
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/lexicon/cst_lexicon.c \
   src/lexicon/cst_lts.c \
   src/lexicon/cst_lts_rewrites.c
 
 
 ###### src/regex ########
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/regex/cst_regex.c \
   src/regex/cst_regex_defs.h \
   src/regex/regexp.c \
@@ -480,7 +480,7 @@ libmimic_la_SOURCES += \
 #	./make_cst_regexes $(BINDIR) >cst_regex_defs.h
 
 ###### src/speech #########
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/speech/cst_lpcres.c \
   src/speech/cst_track.c \
   src/speech/cst_track_io.c \
@@ -495,13 +495,13 @@ libmimic_la_SOURCES += \
   src/speech/rateconv.c
 
 ###### src/stats #########
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/stats/cst_cart.c \
   src/stats/cst_ss.c \
   src/stats/cst_viterbi.c
 
 ###### src/synth #########
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/synth/cst_ffeatures.c \
   src/synth/cst_phoneset.c \
   src/synth/cst_ssml.c \
@@ -511,7 +511,7 @@ libmimic_la_SOURCES += \
   src/synth/mimic.c
 
 ###### src/utils #########
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/utils/cst_alloc.c \
   src/utils/cst_args.c \
   src/utils/cst_endian.c \
@@ -531,7 +531,7 @@ libmimic_la_SOURCES += \
   src/utils/cst_wchar.c
 
 ###### src/wavesynth #########
-libmimic_la_SOURCES += \
+libttsmimic_la_SOURCES += \
   src/wavesynth/cst_clunits.c \
   src/wavesynth/cst_diphone.c \
   src/wavesynth/cst_reflpc.c \
@@ -541,7 +541,7 @@ libmimic_la_SOURCES += \
 
 ###############################
 
-libmimic_la_LIBADD += $(AUDIOLIBS) -lm
+libttsmimic_la_LIBADD += $(AUDIOLIBS) -lm
 
 
 ################# main ########################
@@ -554,28 +554,28 @@ endif
 endif
 
 mimic_SOURCES = main/mimic_main.c
-mimic_LDADD = libmimic_lang_all_langs.la libmimic_lang_all_voices.la libmimic.la -lm
+mimic_LDADD = libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la libttsmimic.la -lm
 
 compile_regexes_SOURCES = main/compile_regexes.c
-compile_regexes_LDADD = libmimic.la
+compile_regexes_LDADD = libttsmimic.la
 t2p_SOURCES = main/t2p_main.c
-t2p_LDADD = libmimic.la libmimic_lang_cmulex.la libmimic_lang_usenglish.la
+t2p_LDADD = libttsmimic.la libttsmimic_lang_cmulex.la libttsmimic_lang_usenglish.la
 
 mimic_time_SOURCES = main/mimic_time_main.c
-mimic_time_LDADD = libmimic.la \
-  libmimic_lang_cmulex.la \
-  libmimic_lang_usenglish.la \
-  libmimic_lang_cmu_time_awb.la
+mimic_time_LDADD = libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la \
+  libttsmimic_lang_cmu_time_awb.la
 
 mimicvox_info_SOURCES = \
   main/mimicvox_info_main.c
-mimicvox_info_LDADD = libmimic.la libmimic_lang_all_langs.la libmimic_lang_all_voices.la
+mimicvox_info_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la
 
 ################# END: main ###################
 dist_noinst_SCRIPTS = autogen.sh
 
-lib_LTLIBRARIES += libmimic_lang_all_langs.la
-lib_LTLIBRARIES += libmimic_lang_all_voices.la
+lib_LTLIBRARIES += libttsmimic_lang_all_langs.la
+lib_LTLIBRARIES += libttsmimic_lang_all_voices.la
 
 
 ########## Unit tests #########################
@@ -588,7 +588,7 @@ myunittests = unittests/hrg_test \
               unittests/wave_test
 
 unittests_hrg_test_SOURCES = unittests/hrg_test_main.c
-unittests_hrg_test_LDADD = libmimic.la
+unittests_hrg_test_LDADD = libttsmimic.la
 
 if LEX_CMULEX
 if LANG_USENGLISH
@@ -599,39 +599,39 @@ endif
 check_PROGRAMS = $(myunittests)
 
 unittests_lex_test_SOURCES = unittests/lex_test_main.c
-unittests_lex_test_LDADD = libmimic.la \
-                           libmimic_lang_cmulex.la \
-                           libmimic_lang_all_langs.la
+unittests_lex_test_LDADD = libttsmimic.la \
+                           libttsmimic_lang_cmulex.la \
+                           libttsmimic_lang_all_langs.la
 
 unittests_lts_test_SOURCES = unittests/lts_test_main.c
-unittests_lts_test_LDADD = libmimic.la \
-                           libmimic_lang_cmulex.la \
-                           libmimic_lang_all_langs.la
+unittests_lts_test_LDADD = libttsmimic.la \
+                           libttsmimic_lang_cmulex.la \
+                           libttsmimic_lang_all_langs.la
 
 unittests_nums_test_SOURCES = unittests/nums_test_main.c
 unittests_nums_test_CFLAGS = -I$(top_srcdir)/lang/usenglish
-unittests_nums_test_LDADD = libmimic.la \
-                            libmimic_lang_cmulex.la \
-                            libmimic_lang_usenglish.la \
-                            libmimic_lang_all_langs.la
+unittests_nums_test_LDADD = libttsmimic.la \
+                            libttsmimic_lang_cmulex.la \
+                            libttsmimic_lang_usenglish.la \
+                            libttsmimic_lang_all_langs.la
 
 unittests_regex_test_SOURCES = unittests/regex_test_main.c
-unittests_regex_test_LDADD = libmimic.la
+unittests_regex_test_LDADD = libttsmimic.la
 
 unittests_token_test_SOURCES = unittests/token_test_main.c
 unittests_token_test_CFLAGS = -DTEST_FILE=\"$(top_srcdir)/unittests/data.one\" \
                               -DTEST_FILE_UTF8=\"$(top_srcdir)/unittests/data_utf8.txt\"
-unittests_token_test_LDADD = libmimic.la
+unittests_token_test_LDADD = libttsmimic.la
 
 unittests_voice_select_SOURCES = unittests/voice_select_test_main.c
 unittests_voice_select_CFLAGS = -DVOICE_LIST_DIR=\"$(top_srcdir)/voices\" \
                                 -DA_VOICE=\"$(top_srcdir)/voices/cmu_us_rms.flitevox\" 
-unittests_voice_select_LDADD = libmimic.la libmimic_lang_all_langs.la libmimic_lang_all_voices.la
+unittests_voice_select_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la
 
 unittests_wave_test_SOURCES = unittests/wave_test_main.c
-unittests_wave_test_LDADD = libmimic.la \
-                            libmimic_lang_all_langs.la \
-                            libmimic_lang_all_voices.la
+unittests_wave_test_LDADD = libttsmimic.la \
+                            libttsmimic_lang_all_langs.la \
+                            libttsmimic_lang_all_voices.la
 unittests_wave_test_CFLAGS = -DVOICE_LIST_DIR=\"$(top_srcdir)/voices\" \
                              -DA_VOICE=\"$(top_srcdir)/voices/cmu_us_rms.flitevox\" 
 
@@ -685,70 +685,70 @@ if LEX_CMULEX
   check_PROGRAMS += testsuite/utt_test
 endif
 testsuite_asciiS2U_SOURCES = testsuite/asciiS2U_main.c
-testsuite_asciiS2U_LDADD = libmimic.la
+testsuite_asciiS2U_LDADD = libttsmimic.la
 
 testsuite_asciiU2S_SOURCES = testsuite/asciiU2S_main.c
-testsuite_asciiU2S_LDADD = libmimic.la
+testsuite_asciiU2S_LDADD = libttsmimic.la
 
 testsuite_bin2ascii_SOURCES = testsuite/bin2ascii_main.c
-testsuite_bin2ascii_LDADD = libmimic.la
+testsuite_bin2ascii_LDADD = libttsmimic.la
 
 testsuite_by_word_SOURCES = testsuite/by_word_main.c
-testsuite_by_word_LDADD = libmimic.la \
-                          libmimic_lang_all_langs.la \
-                          libmimic_lang_all_voices.la \
-                          libmimic_lang_cmu_us_kal.la
+testsuite_by_word_LDADD = libttsmimic.la \
+                          libttsmimic_lang_all_langs.la \
+                          libttsmimic_lang_all_voices.la \
+                          libttsmimic_lang_cmu_us_kal.la
 
 testsuite_combine_waves_SOURCES = testsuite/combine_waves_main.c
-testsuite_combine_waves_LDADD = libmimic.la
+testsuite_combine_waves_LDADD = libttsmimic.la
 
 testsuite_compare_wave_SOURCES = testsuite/compare_wave_main.c
-testsuite_compare_wave_LDADD = libmimic.la
+testsuite_compare_wave_LDADD = libttsmimic.la
 
 testsuite_kal_test_SOURCES = testsuite/kal_test_main.c
-testsuite_kal_test_LDADD = libmimic.la \
-                           libmimic_lang_all_langs.la \
-                           libmimic_lang_all_voices.la \
-                           libmimic_lang_cmu_us_kal.la
+testsuite_kal_test_LDADD = libttsmimic.la \
+                           libttsmimic_lang_all_langs.la \
+                           libttsmimic_lang_all_voices.la \
+                           libttsmimic_lang_cmu_us_kal.la
 
 testsuite_lex_lookup_SOURCES = testsuite/lex_lookup_main.c
-testsuite_lex_lookup_LDADD = libmimic.la libmimic_lang_all_langs.la \
-                             libmimic_lang_cmulex.la \
-                             libmimic_lang_usenglish.la
+testsuite_lex_lookup_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la \
+                             libttsmimic_lang_cmulex.la \
+                             libttsmimic_lang_usenglish.la
 
 testsuite_lpc_resynth_SOURCES = testsuite/lpc_resynth_main.c
-testsuite_lpc_resynth_LDADD = libmimic.la
+testsuite_lpc_resynth_LDADD = libttsmimic.la
 
 testsuite_lpc_test2_SOURCES = testsuite/lpc_test2_main.c
-testsuite_lpc_test2_LDADD = libmimic.la
+testsuite_lpc_test2_LDADD = libttsmimic.la
 
 testsuite_lpc_test_SOURCES = testsuite/lpc_test_main.c
-testsuite_lpc_test_LDADD = libmimic.la
+testsuite_lpc_test_LDADD = libttsmimic.la
 
 testsuite_multi_thread_SOURCES = testsuite/multi_thread_main.c
 testsuite_multi_thread_CFLAGS = $(OPENMP_CFLAGS)
-testsuite_multi_thread_LDADD = libmimic.la \
-                               libmimic_lang_all_langs.la \
-                               libmimic_lang_all_voices.la \
-                               libmimic_lang_cmu_us_slt.la
+testsuite_multi_thread_LDADD = libttsmimic.la \
+                               libttsmimic_lang_all_langs.la \
+                               libttsmimic_lang_all_voices.la \
+                               libttsmimic_lang_cmu_us_slt.la
 
 testsuite_play_client_SOURCES = testsuite/play_client_main.c
-testsuite_play_client_LDADD = libmimic.la
+testsuite_play_client_LDADD = libttsmimic.la
 
 testsuite_play_server_SOURCES = testsuite/play_server_main.c
-testsuite_play_server_LDADD = libmimic.la
+testsuite_play_server_LDADD = libttsmimic.la
 
 testsuite_play_sync_SOURCES = testsuite/play_sync_main.c
-testsuite_play_sync_LDADD = libmimic.la
+testsuite_play_sync_LDADD = libttsmimic.la
 
 testsuite_play_wave_SOURCES = testsuite/play_wave_main.c
-testsuite_play_wave_LDADD = libmimic.la
+testsuite_play_wave_LDADD = libttsmimic.la
 
 testsuite_rfc_SOURCES = testsuite/rfc_main.c
-testsuite_rfc_LDADD = libmimic.la
+testsuite_rfc_LDADD = libttsmimic.la
 
 testsuite_utt_test_SOURCES = testsuite/utt_test_main.c
-testsuite_utt_test_LDADD = libmimic.la libmimic_lang_all_langs.la libmimic_lang_cmulex.la
+testsuite_utt_test_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmimic_lang_cmulex.la
 
 TESTS += $(myunittests)
 # "testsuite/multi_thread_run.sh"
