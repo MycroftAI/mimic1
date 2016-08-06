@@ -1,9 +1,53 @@
 #!/bin/sh
 
 WHAT_TO_RUN="$1"
-HOST_TRIPLET="$PWD/config/config.guess"
 WORKDIR="$PWD"
 export MANIFEST_TOOL=:
+
+crosscompile_icu()
+{
+    # Download & Extract icu
+    if [ ! -e "icu4c-57_1-src.tgz" ]; then 
+        wget "http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz"
+    fi
+    echo "976734806026a4ef8bdd17937c8898b9  icu4c-57_1-src.tgz" | md5sum -c || exit 1
+    tar xzf "icu4c-57_1-src.tgz" # creates directory "icu"
+
+    # We have to build icu twice: Once for the build system and once for the
+    # host system. First the build system:
+    mkdir icu_build_build
+    cd icu_build_build
+    ../icu/source/configure "$@" || exit 1
+    make || exit 1
+
+    # Now the host system:
+    cd "${WORKDIR}"
+    mkdir icu_build_host
+    cd icu_build_host
+
+    ../icu/source/configure --host=${HOST_TRIPLET} --build=${BUILD_TRIPLET} \
+                            --with-cross-build="${WORKDIR}/icu_build_build" \
+                            --prefix="${WORKDIR}/install" \
+                            CC=${HOST_TRIPLET}-gcc \
+                            CXX=${HOST_TRIPLET}-g++ \
+                            LD=${HOST_TRIPLET}-ld \
+                            RANLIB=${HOST_TRIPLET}-ranlib \
+                            AR=${HOST_TRIPLET}-ar \
+                            "$@"  || exit 1
+    make || exit 1
+    make install || exit 1
+    cd "${WORKDIR}"
+}
+
+fix_icu_dll_filenames()
+{
+    # The linker will fail to find icu*.dll files if they don't start with lib
+    # An easy workaround is to have a copy of each dll (or a soft link) with
+    # a different name: icuuc57.dll -> libicuuc57.dll 
+    cd "$WORKDIR/install/lib"
+    for file in `ls icu*.dll`; do ln -s "$file" "lib"$file; done
+    cd "$WORKDIR"
+}
 
 crosscompile_portaudio()
 {
@@ -16,86 +60,119 @@ crosscompile_portaudio()
     # Cross compile portaudio:
     mkdir portaudio_build
     cd portaudio_build
-    ../portaudio/configure --build="`${HOST_TRIPLET}`" \
+    ../portaudio/configure --build="${BUILD_TRIPLET}" \
+                           --host="${HOST_TRIPLET}" \
                            --prefix="$WORKDIR/install" \
-                            "$@" || exit 1
+                           CC=${HOST_TRIPLET}-gcc \
+                           CXX=${HOST_TRIPLET}-g++ \
+                           LD=${HOST_TRIPLET}-ld \
+                           RANLIB=${HOST_TRIPLET}-ranlib \
+                           AR=${HOST_TRIPLET}-ar \
+                           "$@" || exit 1
     make || exit 1
     make install || exit 1
+    cd "${WORKDIR}"
 }
 
-crosscompile() 
+crosscompile_mimic() 
 {
     # Cross compile mimic:
     cd "$WORKDIR" || exit 1
-    export PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/"
     mkdir mimic_build || exit 1
     cd mimic_build || exit 1
-    ../configure --build="`${HOST_TRIPLET}`" \
+    ../configure --build="${BUILD_TRIPLET}" \
+                 --host="${HOST_TRIPLET}" \
                  --prefix="$WORKDIR/install" \
+                 CC=${HOST_TRIPLET}-gcc \
+                 LD=${HOST_TRIPLET}-ld \
+                 RANLIB=${HOST_TRIPLET}-ranlib \
+                 AR=${HOST_TRIPLET}-ar \
+                 PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/" \
                  "$@" || exit 1
     make || exit 1
     make install || exit 1
+    cd "${WORKDIR}"
 }
+
+put_dll_in_bindir()
+{
+    cd "${WORKDIR}"
+    # This one is needed from the mingw32-runtime package
+    if [ -f /usr/share/doc/mingw32-runtime/mingwm10.dll.gz ]; then
+        cat /usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll" || exit 1
+    else
+        # it seems travis does not find it, so we get it directly from the package
+        apt-get download mingw32-runtime || exit 1
+        ar p mingw32-runtime*.deb data.tar.gz | tar zx || exit 1
+        cat usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll"
+        
+    fi
+    # ICU libraries are installed into lib. wine can't find them.
+    cp "${WORKDIR}/install/lib/"*.dll "${WORKDIR}/install/bin/"
+    cd "${WORKDIR}"
+}
+
 
 case "${WHAT_TO_RUN}" in
   osx)
-    brew install pkg-config libtool portaudio || exit 1
+    brew install pkg-config libtool portaudio icu4c || exit 1
     ./autogen.sh
-    ./configure || exit 1
+    ./configure ICU_CFLAGS="-I/usr/local/opt/icu4c/include" \
+                ICU_LIBS="-L/usr/local/opt/icu4c/lib -licui18n -licuuc -licudata" || exit 1
     make || exit 1
     make check || exit 1
     ;;
   coverage)
     ./autogen.sh
-    ./configure  CFLAGS="--coverage --no-inline" LDFLAGS="--coverage" || exit 1
+    # for ubuntu precise in travis, that does not provide pkg-config:
+    pkg-config --exists icu-i18n || export CFLAGS="$CFLAGS -I/usr/include/x86_64-linux-gnu"
+    pkg-config --exists icu-i18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
+    ./configure  CFLAGS="$CFLAGS --coverage --no-inline" LDFLAGS="$LDFLAGS --coverage" || exit 1
     make || exit 1
     make check || exit 1
     ./do_gcov.sh
     ;;
   shared)
     ./autogen.sh
+    # for ubuntu precise in travis, that does not provide pkg-config:
+    pkg-config --exists icui18n || export CFLAGS="$CFLAGS -I/usr/include/x86_64-linux-gnu"
+    pkg-config --exists icui18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
     ./configure  --enable-shared || exit 1
     make || exit 1
     make check || exit 1
     ;;
   arm-linux-gnueabihf-gcc)
-    export CC=arm-linux-gnueabihf-gcc
-    export LD=arm-linux-gnueabihf-ld
-    export RANLIB=arm-linux-gnueabihf-ranlib
-    export AR=arm-linux-gnueabihf-ar
-    #export AS=arm-linux-gnueabihf-as
     ./autogen.sh
-    crosscompile --host=arm-linux-gnueabihf --with-audio=none    
+    export BUILD_TRIPLET=`sh ./config/config.guess`
+    export HOST_TRIPLET="arm-linux-gnueabihf"
+    crosscompile_icu
+    crosscompile_mimic --with-audio=none    
     ;;
   winbuild)
-    export CC=i586-mingw32msvc-gcc
-    export LD=i586-mingw32msvc-ld
-    export RANLIB=i586-mingw32msvc-ranlib
-    export AR=i586-mingw32msvc-ar
-    #export CC=i686-w64-mingw32-gcc
-    #export LD=i686-w64-mingw32-ld
-    # --host=i686-w64-mingw32
     ./autogen.sh
-    #crosscompile_portaudio --host=i586-mingw32msvc --enable-shared
-    crosscompile --host=i586-mingw32msvc --with-audio=none
+    export BUILD_TRIPLET=`sh ./config/config.guess`
+    export HOST_TRIPLET="i586-mingw32msvc"
+    # export HOST_TRIPLET="i686-w64-mingw32" # issues in travis
+    crosscompile_icu
+    #crosscompile_portaudio --host=${HOST_TRIPLET} --enable-shared
+    crosscompile_mimic --with-audio=none
     # Test mimic:
     cd "$WORKDIR" || exit 1
-    wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav"
+    xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
     ;;
   winbuild_shared)
-    export CC=i586-mingw32msvc-gcc
-    export LD=i586-mingw32msvc-ld
-    export RANLIB=i586-mingw32msvc-ranlib
-    export AR=i586-mingw32msvc-ar
-    #export CC=i686-w64-mingw32-gcc
-    #export LD=i686-w64-mingw32-ld
-    # --host=i686-w64-mingw32
     ./autogen.sh
-    #crosscompile_portaudio --host=i586-mingw32msvc --enable-shared
-    crosscompile --host=i586-mingw32msvc --enable-shared --with-audio=none
+    export BUILD_TRIPLET=`sh ./config/config.guess`
+    export HOST_TRIPLET="i586-mingw32msvc"
+    # export HOST_TRIPLET="i686-w64-mingw32" # issues in travis
+    crosscompile_icu --enable-shared
+    fix_icu_dll_filenames
+    #crosscompile_portaudio --host=${HOST_TRIPLET} --enable-shared
+    crosscompile_mimic --enable-shared --with-audio=none
+    put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1
-    wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav"
+    xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
     ;;
   *)
     echo "Unknown WHAT_TO_RUN: ${WHAT_TO_RUN}"

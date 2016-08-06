@@ -16,8 +16,8 @@ lib_LTLIBRARIES =
 
 lib_LTLIBRARIES += libttsmimic.la
 libttsmimic_la_SOURCES = 
-libttsmimic_la_CFLAGS = 
-libttsmimic_la_LDFLAGS = -no-undefined
+libttsmimic_la_CFLAGS =  $(ICU_CFLAGS)
+libttsmimic_la_LDFLAGS = -no-undefined $(ICU_LIBS)
 libttsmimic_la_LIBADD = 
 
 libttsmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
@@ -527,6 +527,7 @@ libttsmimic_la_SOURCES += \
   src/utils/cst_string.c \
   src/utils/cst_tokenstream.c \
   src/utils/cst_url.c \
+  src/utils/cst_icu.c \
   src/utils/cst_val.c \
   src/utils/cst_val_const.c \
   src/utils/cst_val_user.c \
@@ -585,6 +586,7 @@ noinst_HEADERS += unittests/cutest.h
 
 myunittests = unittests/hrg_test \
               unittests/regex_test \
+              unittests/string_test \
               unittests/token_test \
               unittests/voice_select \
               unittests/wave_test
@@ -619,6 +621,11 @@ unittests_nums_test_LDADD = libttsmimic.la \
 
 unittests_regex_test_SOURCES = unittests/regex_test_main.c
 unittests_regex_test_LDADD = libttsmimic.la
+
+unittests_string_test_SOURCES = unittests/string_test_main.c
+unittests_string_test_CFLAGS = $(ICU_CFLAGS)
+unittests_string_test_LDADD = libttsmimic.la $(ICU_LIBS)
+
 
 unittests_token_test_SOURCES = unittests/token_test_main.c
 unittests_token_test_CFLAGS = -DTEST_FILE=\"$(top_srcdir)/unittests/data.one\" \
@@ -770,6 +777,7 @@ headers_HEADERS += \
   include/cst_ffeatures.h \
   include/cst_file.h \
   include/cst_hrg.h \
+  include/cst_icu.h \
   include/cst_item.h \
   include/cst_lexicon.h \
   include/cst_lts.h \
