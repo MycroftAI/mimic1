@@ -4,11 +4,13 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 SUBDIRS = .
 
-langheaderdir = $(pkgincludedir)/lang/
+# instead of pkgincludedir we will use $(includedir)/ttsmimic
+headersdir = $(includedir)/ttsmimic/
+langheaderdir = $(headersdir)/lang/
 
 EXTRA_DIST = ACKNOWLEDGEMENTS COPYING 
 noinst_HEADERS = 
-pkginclude_HEADERS =
+headers_HEADERS =
 langheader_HEADERS =
 lib_LTLIBRARIES =
 
@@ -753,7 +755,7 @@ testsuite_utt_test_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmi
 TESTS += $(myunittests)
 # "testsuite/multi_thread_run.sh"
 
-pkginclude_HEADERS += \
+headers_HEADERS += \
   include/cst_alloc.h \
   include/cst_args.h \
   include/cst_audio.h \

@@ -175,7 +175,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(top_srcdir)/include/config.h.in $(srcdir)/mimic.pc.in \
 	$(dist_noinst_SCRIPTS) $(top_srcdir)/config/depcomp \
-	$(langheader_HEADERS) $(noinst_HEADERS) $(pkginclude_HEADERS) \
+	$(headers_HEADERS) $(langheader_HEADERS) $(noinst_HEADERS) \
 	$(top_srcdir)/config/test-driver COPYING config/ar-lib \
 	config/compile config/config.guess config/config.sub \
 	config/depcomp config/install-sh config/missing \
@@ -225,8 +225,8 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(pkgconfiginstalldir)" \
-	"$(DESTDIR)$(langheaderdir)" "$(DESTDIR)$(pkgincludedir)"
+	"$(DESTDIR)$(pkgconfiginstalldir)" "$(DESTDIR)$(headersdir)" \
+	"$(DESTDIR)$(langheaderdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libttsmimic_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -836,8 +836,7 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(pkgconfiginstall_DATA)
-HEADERS = $(langheader_HEADERS) $(noinst_HEADERS) \
-	$(pkginclude_HEADERS)
+HEADERS = $(headers_HEADERS) $(langheader_HEADERS) $(noinst_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -1218,7 +1217,10 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -I$(top_srcdir)/include
 SUBDIRS = .
-langheaderdir = $(pkgincludedir)/lang/
+
+# instead of pkgincludedir we will use $(includedir)/ttsmimic
+headersdir = $(includedir)/ttsmimic/
+langheaderdir = $(headersdir)/lang/
 EXTRA_DIST = ACKNOWLEDGEMENTS COPYING lang/usenglish/make_us_regexes \
 	lang/usenglish/us_pos.tree \
 	lang/cmu_grapheme_lang/make_grapheme_phoneset \
@@ -1233,7 +1235,7 @@ EXTRA_DIST = ACKNOWLEDGEMENTS COPYING lang/usenglish/make_us_regexes \
 ########## Unit tests #########################
 noinst_HEADERS = unittests/cutest.h
 # "testsuite/multi_thread_run.sh"
-pkginclude_HEADERS = include/cst_alloc.h include/cst_args.h \
+headers_HEADERS = include/cst_alloc.h include/cst_args.h \
 	include/cst_audio.h include/cst_cart.h include/cst_cg.h \
 	include/cst_clunits.h include/config.h include/cst_diphone.h \
 	include/cst_endian.h include/cst_error.h \
@@ -4014,6 +4016,27 @@ uninstall-pkgconfiginstallDATA:
 	@list='$(pkgconfiginstall_DATA)'; test -n "$(pkgconfiginstalldir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pkgconfiginstalldir)'; $(am__uninstall_files_from_dir)
+install-headersHEADERS: $(headers_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(headers_HEADERS)'; test -n "$(headersdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(headersdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(headersdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(headersdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(headersdir)" || exit $$?; \
+	done
+
+uninstall-headersHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(headers_HEADERS)'; test -n "$(headersdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(headersdir)'; $(am__uninstall_files_from_dir)
 install-langheaderHEADERS: $(langheader_HEADERS)
 	@$(NORMAL_INSTALL)
 	@list='$(langheader_HEADERS)'; test -n "$(langheaderdir)" || list=; \
@@ -4035,27 +4058,6 @@ uninstall-langheaderHEADERS:
 	@list='$(langheader_HEADERS)'; test -n "$(langheaderdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(langheaderdir)'; $(am__uninstall_files_from_dir)
-install-pkgincludeHEADERS: $(pkginclude_HEADERS)
-	@$(NORMAL_INSTALL)
-	@list='$(pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(pkgincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(pkgincludedir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(pkgincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(pkgincludedir)" || exit $$?; \
-	done
-
-uninstall-pkgincludeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(pkgincludedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -4573,7 +4575,7 @@ install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgconfiginstalldir)" "$(DESTDIR)$(langheaderdir)" "$(DESTDIR)$(pkgincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgconfiginstalldir)" "$(DESTDIR)$(headersdir)" "$(DESTDIR)$(langheaderdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -4685,8 +4687,8 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-langheaderHEADERS \
-	install-pkgconfiginstallDATA install-pkgincludeHEADERS
+install-data-am: install-headersHEADERS install-langheaderHEADERS \
+	install-pkgconfiginstallDATA
 
 install-dvi: install-dvi-recursive
 
@@ -4734,9 +4736,9 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-langheaderHEADERS \
-	uninstall-libLTLIBRARIES uninstall-pkgconfiginstallDATA \
-	uninstall-pkgincludeHEADERS
+uninstall-am: uninstall-binPROGRAMS uninstall-headersHEADERS \
+	uninstall-langheaderHEADERS uninstall-libLTLIBRARIES \
+	uninstall-pkgconfiginstallDATA
 
 .MAKE: $(am__recursive_targets) check-am install-am install-strip
 
@@ -4751,18 +4753,18 @@ uninstall-am: uninstall-binPROGRAMS uninstall-langheaderHEADERS \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-langheaderHEADERS \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-pkgconfiginstallDATA install-pkgincludeHEADERS \
+	install-exec-am install-headersHEADERS install-html \
+	install-html-am install-info install-info-am \
+	install-langheaderHEADERS install-libLTLIBRARIES install-man \
+	install-pdf install-pdf-am install-pkgconfiginstallDATA \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-langheaderHEADERS \
-	uninstall-libLTLIBRARIES uninstall-pkgconfiginstallDATA \
-	uninstall-pkgincludeHEADERS
+	uninstall-binPROGRAMS uninstall-headersHEADERS \
+	uninstall-langheaderHEADERS uninstall-libLTLIBRARIES \
+	uninstall-pkgconfiginstallDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -69,7 +69,7 @@ AC_CHECK_HEADERS([sys/socket.h])
 
 
 dnl: pkg-config mimic.pc file:
-PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/mimic -I${includedir}/mimic/lang"
+PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/ttsmimic -I${includedir}/ttsmimic/lang"
 PKGCONFIG_MIMIC_LIBS="-L${libdir}"
 PKGCONFIG_MIMIC_DEPS=
 
