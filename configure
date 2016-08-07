@@ -12391,7 +12391,7 @@ done
 
 
 
-PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/mimic -I${includedir}/mimic/lang"
+PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/ttsmimic -I${includedir}/ttsmimic/lang"
 PKGCONFIG_MIMIC_LIBS="-L${libdir}"
 PKGCONFIG_MIMIC_DEPS=
 
@@ -12919,7 +12919,7 @@ if test "x$enable_cmu_us_kal" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_KAL 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_kal"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_kal"
 
 else
 
@@ -12939,7 +12939,7 @@ if test "x$enable_cmu_time_awb" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_TIME_AWB 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_time_awb"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_time_awb"
 
 else
 
@@ -12959,7 +12959,7 @@ if test "x$enable_cmu_us_kal16" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_KAL16 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_kal16"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_kal16"
 
 else
 
@@ -12979,7 +12979,7 @@ if test "x$enable_cmu_us_awb" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_AWB 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_awb"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_awb"
 
 else
 
@@ -12999,7 +12999,7 @@ if test "x$enable_cmu_us_rms" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_RMS 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_rms"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_rms"
 
 else
 
@@ -13019,7 +13019,7 @@ if test "x$enable_cmu_us_slt" != xno ; then :
 
 $as_echo "#define ENABLE_CMU_US_SLT 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_us_slt"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_slt"
 
 else
 
@@ -13039,7 +13039,7 @@ if test "x$enable_vid_gb_ap" != xno ; then :
 
 $as_echo "#define ENABLE_VID_GB_AP 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_vid_gb_ap"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_vid_gb_ap"
 
 else
 
@@ -13059,7 +13059,7 @@ if test "x$enable_cmulex" != xno ; then :
 
 $as_echo "#define ENABLE_CMULEX 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmulex"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmulex"
 
 else
 
@@ -13079,8 +13079,8 @@ if test "x$enable_indiclex" != xno ; then :
 
 $as_echo "#define ENABLE_INDICLEX 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_indic_lex"
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_grapheme_lex"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_indic_lex"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_grapheme_lex"
 
 else
 
@@ -13100,8 +13100,8 @@ if test "x$enable_indic_analysis" != xno ; then :
 
 $as_echo "#define ENABLE_INDIC_ANALYSIS 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_grapheme_lang"
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_cmu_indic_lang"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_grapheme_lang"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_indic_lang"
 
 else
 
@@ -13121,7 +13121,7 @@ if test "x$enable_usenglish" != xno ; then :
 
 $as_echo "#define ENABLE_USENGLISH 1" >>confdefs.h
 
-    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_usenglish"
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_usenglish"
 else
 
 $as_echo "#define ENABLE_USENGLISH 0" >>confdefs.h
@@ -13129,7 +13129,7 @@ $as_echo "#define ENABLE_USENGLISH 0" >>confdefs.h
 fi
 
 
-PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lmimic_lang_all_langs -lmimic_lang_all_voices -lmimic"
+PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_all_langs -lttsmimic_lang_all_voices -lttsmimic"
 
 
 
