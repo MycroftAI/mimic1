@@ -37,7 +37,13 @@ tags
 # Configure Generated Files/Directories 
 config.log
 config.status
+config/*
+configure
+aclocal.m4
 autom4te.cache
+Makefile.in
+m4/*
+include/config.in
 
 # Building Process Files/Directories
 *.deps

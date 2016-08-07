@@ -1,4 +1,7 @@
 #!/bin/sh
-aclocal \
+mkdir -p "m4" "config"
+libtoolize --copy \
+&& aclocal \
+&& autoheader \
 && automake --add-missing \
 && autoconf
