@@ -39,7 +39,8 @@ crosscompile()
 
 case "${WHAT_TO_RUN}" in
   osx)
-    brew install pkg-config portaudio || exit 1
+    brew install pkg-config libtool portaudio || exit 1
+    ./autogen.sh
     ./configure || exit 1
     make || exit 1
     make check || exit 1
