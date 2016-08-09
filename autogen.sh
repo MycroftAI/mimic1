@@ -1,7 +1,8 @@
 #!/bin/sh
 mkdir -p "m4" "config"
-libtoolize --copy \
-&& aclocal \
+case `uname` in Darwin*) glibtoolize --copy ;;
+  *) libtoolize --copy ;; esac
+aclocal \
 && autoheader \
 && automake --add-missing \
 && autoconf
