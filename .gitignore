@@ -43,7 +43,7 @@ aclocal.m4
 autom4te.cache
 Makefile.in
 m4/*
-include/config.in
+include/config.h.in
 
 # Building Process Files/Directories
 *.deps
