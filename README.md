@@ -28,16 +28,17 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 
 - A good C compiler (_Recommended:_ gcc or clang)
 - GNU make
+- automake and libtool
 - pkg-config
 - ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
 
 ####Instructions
 
-- Install *gcc*, *make*, *pkg-config* and *ALSA*
+- Install *gcc*, *make*, *automake*, *libtool*, *pkg-config* and *ALSA*
 
 #####On Debian/Ubuntu
 ```
-$ sudo apt-get install gcc make pkg-config libasound2-dev
+$ sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
 ```
 
 ###Mac OSX
@@ -147,6 +148,11 @@ wine ./mimic.exe -t "hello world"
 - Navigate to mimic directory
   ```
   $ cd mimic
+  ```
+
+- Generate build scripts
+  ```
+  $ ./autogen.sh
   ```
   
 - Configure

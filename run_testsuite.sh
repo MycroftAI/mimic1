@@ -1,7 +1,7 @@
 #!/bin/sh
 
 WHAT_TO_RUN="$1"
-HOST_TRIPLET=`./config/config.guess`
+HOST_TRIPLET="$PWD/config/config.guess"
 WORKDIR="$PWD"
 export MANIFEST_TOOL=:
 
@@ -16,7 +16,7 @@ crosscompile_portaudio()
     # Cross compile portaudio:
     mkdir portaudio_build
     cd portaudio_build
-    ../portaudio/configure --build="${HOST_TRIPLET}" \
+    ../portaudio/configure --build="`${HOST_TRIPLET}`" \
                            --prefix="$WORKDIR/install" \
                             "$@" || exit 1
     make || exit 1
@@ -30,7 +30,7 @@ crosscompile()
     export PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/"
     mkdir mimic_build || exit 1
     cd mimic_build || exit 1
-    ../configure --build="${HOST_TRIPLET}" \
+    ../configure --build="`${HOST_TRIPLET}`" \
                  --prefix="$WORKDIR/install" \
                  "$@" || exit 1
     make || exit 1
@@ -39,7 +39,8 @@ crosscompile()
 
 case "${WHAT_TO_RUN}" in
   osx)
-    brew install pkg-config portaudio || exit 1
+    brew install pkg-config libtool portaudio || exit 1
+    ./autogen.sh
     ./configure || exit 1
     make || exit 1
     make check || exit 1
