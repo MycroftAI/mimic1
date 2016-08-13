@@ -31,14 +31,15 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 - automake and libtool
 - pkg-config
 - ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
+- ICU library and headers
 
 ####Instructions
 
-- Install *gcc*, *make*, *automake*, *libtool*, *pkg-config* and *ALSA*
+- Install *gcc*, *make*, *automake*, *libtool*, *pkg-config*, *libicu-dev* and *ALSA*
 
 #####On Debian/Ubuntu
 ```
-$ sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
+$ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound2-dev
 ```
 
 ###Mac OSX
@@ -47,6 +48,7 @@ $ sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
 - GNU make
 - pkg-config
 - PortAudio
+- ICU library
 
 ####Instructions
 
@@ -55,9 +57,9 @@ $ sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
   $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   ```
 
-- Install *pkg-config* and *PortAudio*
+- Install *pkg-config*, *libtool*, *icu* and *PortAudio*
   ```
-  $ brew install pkg-config portaudio
+  $ brew install pkg-config libtool portaudio icu4c
   ```
 
 ###Windows
@@ -67,70 +69,40 @@ $ sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
 The fastest and most straightforward way to build mimic for windows is by
 cross-compilation from linux.
 
-From a debian based linux system, install the `mingw-w64` package.
+From a debian based linux system, install the dependencies, including mingw32
+packages. Install `wine` too for testing
 
 1. Install dependencies:
 
-   ```
-   sudo apt-get install mingw-w64 make pkg-config
-   ```
+```
+sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 mingw32-runtime wine
+```
 
-2. Create a working directory:
+2. Run the windows build script:
+```
+./run_testsuite.sh winbuild
+```
 
-   ```
-   mkdir mimic_windows mimic_windows/install
-   cd mimic_windows
-   WORKDIR="$PWD"
-   ```
+3. Test it
 
-3. Download PortAudio and mimic
-
-   ```
-   # PortAudio
-   wget http://www.portaudio.com/archives/pa_stable_v19_20140130.tgz
-   tar xzf pa_stable_v19_20140130.tgz # creates directory "portaudio"
-   # Mimic  
-   git clone git@github.com:MycroftAI/mimic.git --depth=1 # creates directory "mimic"
-   ```
-4. Cross compile PortAudio
-
-   ```
-   mkdir portaudio_build
-   cd portaudio_build
-   ../portaudio/configure  --host=i686-pc-mingw32 --build=x86_64-linux-gnu \
-      CC=i686-w64-mingw32-gcc LD=i686-w64-mingw32-ld \
-      --prefix="$WORKDIR/install"
-   make
-   make install
-   ```
-5. Cross compile mimic
-
-   ```
-   cd "$WORKDIR"
-   mkdir mimic_build
-   cd mimic_build
-   ../mimic/configure --host=i686-pc-mingw32 --build=x86_64-linux-gnu \
-           --with-audio=portaudio \
-           --prefix="$WORKDIR/install" \
-           CC=i686-w64-mingw32-gcc LD=i686-w64-mingw32-ld \
-           PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/"
-   make
-   make install
-   ```
-
-6. Test it
-
-The directory `$WORKDIR/install` will contain `bin/mimic.exe` file
+The directory `install` will contain `bin/mimic.exe` file
 
 ```
 wine ./mimic.exe -t "hello world" 
 ```
+
+4. Distribute it
+
+You can distribute the compiled mimic by adding to a zip file everything in the
+`install/bin` directory.
+
 
 #### Native Windows building
 
 * A good C compiler (_Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/))
 * GNU Make
 * PortAudio
+* ICU
 
 ######Note
 - Audio device and audio libraries are optional, as mimic can write its output to a waveform file

@@ -47,13 +47,16 @@ addons:
     - libtool
     - pkg-config
     - libasound2-dev
+    - libicu-dev
     - binutils-arm-linux-gnueabihf
     - gcc-arm-linux-gnueabihf
+    - g++-arm-linux-gnueabihf
     - libc6-dev-armhf-cross
     - pkg-config-arm-linux-gnueabihf
     - mingw32
     - mingw32-runtime
     - wine
+    - xvfb
   coverity_scan:
     project:
       name: "MycroftAI/mimic"
