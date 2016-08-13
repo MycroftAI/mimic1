@@ -1,7 +1,7 @@
 #!/bin/sh
 
 WHAT_TO_RUN="$1"
-WORKDIR="$PWD"
+WORKDIR=`pwd`
 export MANIFEST_TOOL=:
 
 crosscompile_icu()
@@ -107,11 +107,17 @@ put_dll_in_bindir()
         cat usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll"
         
     fi
-    # ICU libraries are installed into lib. wine can't find them.
+    # ICU and portaudio libraries are installed into lib. wine can't find them.
     cp "${WORKDIR}/install/lib/"*.dll "${WORKDIR}/install/bin/"
     cd "${WORKDIR}"
 }
 
+fix_portaudio_pc_file()
+{
+    # this is a hack
+    # uuid is not a dll in mingw. I just remove it and hope mimic still works.
+    sed -i -e 's:-luuid::g' "${WORKDIR}/install/lib/pkgconfig/portaudio-2.0.pc"
+}
 
 case "${WHAT_TO_RUN}" in
   osx)
@@ -152,10 +158,10 @@ case "${WHAT_TO_RUN}" in
     ./autogen.sh
     export BUILD_TRIPLET=`sh ./config/config.guess`
     export HOST_TRIPLET="i586-mingw32msvc"
-    # export HOST_TRIPLET="i686-w64-mingw32" # issues in travis
     crosscompile_icu
-    #crosscompile_portaudio --host=${HOST_TRIPLET} --enable-shared
-    crosscompile_mimic --with-audio=none
+    crosscompile_portaudio
+    crosscompile_mimic --with-audio=portaudio
+    put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1
     xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
@@ -164,11 +170,11 @@ case "${WHAT_TO_RUN}" in
     ./autogen.sh
     export BUILD_TRIPLET=`sh ./config/config.guess`
     export HOST_TRIPLET="i586-mingw32msvc"
-    # export HOST_TRIPLET="i686-w64-mingw32" # issues in travis
     crosscompile_icu --enable-shared
     fix_icu_dll_filenames
-    #crosscompile_portaudio --host=${HOST_TRIPLET} --enable-shared
-    crosscompile_mimic --enable-shared --with-audio=none
+    crosscompile_portaudio --enable-shared
+    fix_portaudio_pc_file
+    crosscompile_mimic --enable-shared --with-audio=portaudio
     put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1

@@ -49,7 +49,7 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
-#ifndef CST_NO_SOCKETS
+#if HAVE_SYS_SOCKET_H == 1
 
 #include <unistd.h>
 
