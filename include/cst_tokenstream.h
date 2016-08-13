@@ -127,7 +127,7 @@ typedef struct cst_tokenstream_struct {
  * @return Returns 0 if the given character does not belong to the given
  *         class. It returns the class otherwise.
  */
-int ts_charclass(const cst_string *const utf8char, int class, cst_tokenstream *ts);
+int ts_charclass(const cst_string *const utf8char, int cclass, cst_tokenstream *ts);
 
 extern const cst_string *const cst_ts_default_whitespacesymbols;
 extern const cst_string *const cst_ts_default_prepunctuationsymbols;
