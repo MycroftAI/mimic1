@@ -34,8 +34,12 @@
 #include "cst_icu.h"
 #include "cst_alloc.h"
 #include "cst_string.h"
+#include "cst_error.h"
 
-cst_string *cst_tolower_l(const cst_string *in, const char *locale)
+static cst_string *cst_to_l(const cst_string *in, const char *locale,
+                            int32_t (*func)(const UCaseMap *, char *, int32_t,
+                                            const char *, int32_t,
+                                            UErrorCode *))
 {
     if (locale == NULL)
     {
@@ -50,13 +54,13 @@ cst_string *cst_tolower_l(const cst_string *in, const char *locale)
     UCaseMap *csm;
     UErrorCode status = U_ZERO_ERROR;
     csm = ucasemap_open(locale, 0, &status);
-    output_size = ucasemap_utf8ToLower(csm, NULL, 0, in, -1, &status);
+    output_size = func(csm, NULL, 0, in, -1, &status);
     if (status == U_BUFFER_OVERFLOW_ERROR)
     {
         status = U_ZERO_ERROR;
     }
     output = cst_alloc(char, output_size + 1);
-    ucasemap_utf8ToLower(csm, output, output_size + 1, in, -1, &status);
+    func(csm, output, output_size + 1, in, -1, &status);
     ucasemap_close(csm);
     if (U_FAILURE(status))
     {
@@ -70,39 +74,14 @@ cst_string *cst_tolower_l(const cst_string *in, const char *locale)
 }
 
 
+cst_string *cst_tolower_l(const cst_string *in, const char *locale)
+{
+    return cst_to_l(in, locale, ucasemap_utf8ToLower);
+}
+
 cst_string *cst_toupper_l(const cst_string *in, const char *locale)
 {
-    if (locale == NULL)
-    {
-        locale = "C";
-    }
-    if (in == NULL)
-    {
-        return NULL;
-    }
-    cst_string *output = NULL;
-    int32_t output_size;
-    UCaseMap *csm;
-    UErrorCode status = U_ZERO_ERROR;
-    csm = ucasemap_open(locale, 0, &status);
-    output_size = ucasemap_utf8ToUpper(csm, NULL, 0, in, -1, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR)
-    {
-        status = U_ZERO_ERROR;
-    }
-    output = cst_alloc(char, output_size + 1);
-    ucasemap_utf8ToUpper(csm, output, output_size + 1, in, -1, &status);
-    ucasemap_close(csm);
-    if (U_FAILURE(status))
-    {
-        cst_free(output);
-        cst_errmsg
-            ("Error uppering (with locale %s) the string %s.\nError message: %s",
-             locale, in, u_errorName(status));
-        return NULL;
-    }
-
-    return output;
+    return cst_to_l(in, locale, ucasemap_utf8ToUpper);
 }
 
 /* Compile regex */
