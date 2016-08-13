@@ -32,6 +32,7 @@
  */
 #include <stdio.h>
 #include "cst_icu.h"
+#include "cst_alloc.h"
 
 #include "cutest.h"
 
@@ -52,6 +53,9 @@ void test_uregex_match()
     TEST_CHECK(match == 1);
     match = cst_uregex_match(uregex, "😀 is not a koala");
     TEST_CHECK(match == 0);
+    delete_cst_uregex(uregex);
+    uregex = new_cst_uregex(NULL, 0);
+    TEST_CHECK(uregex == NULL);
     return;
 }
 
@@ -62,9 +66,28 @@ void test_change_case_l()
     out = cst_tolower_l(in, "es_ES");
     printf("in: %s\nout: %s\n", in, out);
     TEST_CHECK(cst_streq(out, "¡hola mundo!"));
+    cst_free(out);
     out = cst_toupper_l(in, "es_ES");
     printf("in: %s\nout: %s\n", in, out);
     TEST_CHECK(cst_streq(out, "¡HOLA MUNDO!"));
+    cst_free(out);
+    // Test NULL locale
+    out = cst_tolower_l("TEST", NULL);
+    printf("in: %s\nout: %s\n", "TEST", out);
+    TEST_CHECK(cst_streq(out, "test"));
+    cst_free(out);
+    // Test invalid locale
+    out = cst_tolower_l("TEST", "asdf_asdf");
+    TEST_CHECK(cst_streq(out, "test"));
+    cst_free(out);
+    // Test NULL input
+    out = cst_tolower_l(NULL, "es_ES");
+    TEST_CHECK(out == NULL);
+    // Test empty input
+    out = cst_toupper_l("", "es_ES");
+    printf("in: %s\nout: %s\n", "", out);
+    TEST_CHECK(cst_streq(out, ""));
+    cst_free(out);
     return;
 }
 
