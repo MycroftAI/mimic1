@@ -51,7 +51,7 @@ const cst_string *const cst_ts_default_postpunctuationsymbols =
 static void ts_getc(cst_tokenstream *ts);
 static void internal_ts_getc(cst_tokenstream *ts);
 
-int ts_charclass(const cst_string *const utf8char, int class,
+int ts_charclass(const cst_string *const utf8char, int cclass,
                  cst_tokenstream *ts)
 {
     unsigned char c1, c2, c3, c4;
@@ -60,7 +60,7 @@ int ts_charclass(const cst_string *const utf8char, int class,
     {
     case 1:
         /* 1-byte must be [0, 128), we mask with b01111111 = 0x7f */
-        return (ts->charclass[c[0] & 0x7f] & class);
+        return (ts->charclass[c[0] & 0x7f] & cclass);
     case 2:
         /* 1st byte must be 110xxxxx so we mask with b00011111 = 0x1f */
         c1 = c[0] & 0x1f;
@@ -68,7 +68,7 @@ int ts_charclass(const cst_string *const utf8char, int class,
         c2 = c[1] & 0x3f;
         if (ts->charclass2[c1] != NULL)
         {
-            return (ts->charclass2[c1][c2] & class);
+            return (ts->charclass2[c1][c2] & cclass);
         }
         else
         {
@@ -83,7 +83,7 @@ int ts_charclass(const cst_string *const utf8char, int class,
         c3 = c[2] & 0x3f;
         if (ts->charclass3[c1] != NULL && ts->charclass3[c1][c2] != NULL)
         {
-            return (ts->charclass3[c1][c2][c3] & class);
+            return (ts->charclass3[c1][c2][c3] & cclass);
         }
         else
         {
@@ -102,7 +102,7 @@ int ts_charclass(const cst_string *const utf8char, int class,
             ts->charclass4[c1][c2] != NULL &&
             ts->charclass4[c1][c2][c3] != NULL)
         {
-            return (ts->charclass4[c1][c2][c3][c4] & class);
+            return (ts->charclass4[c1][c2][c3][c4] & cclass);
         }
         else
         {
