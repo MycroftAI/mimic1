@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include $(ICU_CFLAGS)
 
 SUBDIRS = .
 
@@ -16,9 +16,9 @@ lib_LTLIBRARIES =
 
 lib_LTLIBRARIES += libttsmimic.la
 libttsmimic_la_SOURCES = 
-libttsmimic_la_CFLAGS =  $(ICU_CFLAGS)
-libttsmimic_la_LDFLAGS = -no-undefined $(ICU_LIBS)
-libttsmimic_la_LIBADD = 
+libttsmimic_la_CFLAGS =
+libttsmimic_la_LDFLAGS = -no-undefined
+libttsmimic_la_LIBADD = $(ICU_LIBS)
 
 libttsmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
 libttsmimic_lang_all_langs_la_LDFLAGS = -no-undefined
@@ -623,7 +623,6 @@ unittests_regex_test_SOURCES = unittests/regex_test_main.c
 unittests_regex_test_LDADD = libttsmimic.la
 
 unittests_string_test_SOURCES = unittests/string_test_main.c
-unittests_string_test_CFLAGS = $(ICU_CFLAGS)
 unittests_string_test_LDADD = libttsmimic.la $(ICU_LIBS)
 
 

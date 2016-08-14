@@ -80,6 +80,14 @@ crosscompile_mimic()
     cd "$WORKDIR" || exit 1
     mkdir mimic_build || exit 1
     cd mimic_build || exit 1
+    # Ubuntu precise & trusty bug (inherited from debian):
+    # ${HOST_TRIPLET}-pkg-config ignores PKG_CONFIG_PATH
+    # We need PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/"
+    # so we use pkg-config without the triplet.
+    # and we set PKG_CONFIG_PATH manually to the right search paths
+    # pkg-config in Debian stretch and in Ubuntu xenial has this bug fixed so
+    # in the future the ${HOST_TRIPLET}-pkg-config can be used with a simple
+    # PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/"
     ../configure --build="${BUILD_TRIPLET}" \
                  --host="${HOST_TRIPLET}" \
                  --prefix="$WORKDIR/install" \
@@ -87,7 +95,8 @@ crosscompile_mimic()
                  LD=${HOST_TRIPLET}-ld \
                  RANLIB=${HOST_TRIPLET}-ranlib \
                  AR=${HOST_TRIPLET}-ar \
-                 PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/" \
+                 PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
+                 PKG_CONFIG=`which pkg-config` \
                  "$@" || exit 1
     make || exit 1
     make install || exit 1
