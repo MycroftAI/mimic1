@@ -230,6 +230,11 @@ AC_ARG_ENABLE([lang-indic],
   [],
   [enable_lang_indic=${enable_lang_all}])
 
+AC_ARG_ENABLE([lang-es],
+  [AS_HELP_STRING([--disable-lang-es],
+      [disable Spanish language support])],
+  [],
+  [enable_lang_es=${enable_lang_all}])
 
 dnl -------------------- Language analysis ---------------------------
 dnl For US English en-us:
@@ -245,6 +250,12 @@ AC_ARG_ENABLE([indic_analysis],
       [disable indic text analysis support])],
   [],
   [enable_indic_analysis=${enable_lang_indic}])
+
+AC_ARG_ENABLE([es_analysis],
+  [AS_HELP_STRING([--disable-es-analysis],
+      [disable Spanish text analysis support])],
+  [],
+  [enable_es_analysis=${enable_lang_es}])
 
 
 dnl ------------------- Lexicons ------------------------------
@@ -438,6 +449,12 @@ AS_IF([test "x$enable_usenglish" != xno ],
   [ AC_DEFINE([ENABLE_USENGLISH], [1], [Enable US English text analysis])
     PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_usenglish" ],
   [ AC_DEFINE([ENABLE_USENGLISH], [0], [Enable US English text analysis]) ])
+
+AM_CONDITIONAL([LANG_ES_ANALYSIS], [test "x$enable_es_analysis" != xno])
+AS_IF([test "x$enable_es_analysis" != xno ],
+  [ AC_DEFINE([ENABLE_ES_ANALYSIS], [1], [Enable Spanish text analysis])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_es" ],
+  [ AC_DEFINE([ENABLE_ES_ANALYSIS], [0], [Enable Spanish text analysis]) ])
 
 
 PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_all_langs -lttsmimic_lang_all_voices -lttsmimic"

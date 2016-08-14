@@ -125,6 +125,25 @@ libttsmimic_lang_cmu_indic_lang_la_SOURCES = \
 
 ################# END: LANG_INDIC ########################################
 
+############## START: LANG_ES_ANALYSIS #################################
+if LANG_ES_ANALYSIS
+    lib_LTLIBRARIES += libttsmimic_lang_es.la
+    libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_es.la
+endif
+
+libttsmimic_lang_es_la_LDFLAGS = -no-undefined
+libttsmimic_lang_es_la_LIBADD = libttsmimic.la
+libttsmimic_lang_es_la_SOURCES = \
+  lang/es_lang/es_init.c \
+  lang/es_lang/es_lang.h \
+  lang/es_lang/es_text_analysis.c \
+  lang/es_lang/es_tokenizer.c
+
+langheader_HEADERS += \
+  lang/es_lang/es_lang.h
+
+############## END: LANG_ES_ANALYSIS  ##################################
+
 ############## START: LEX_CMULEX #########################################
 if LEX_CMULEX
     lib_LTLIBRARIES += libttsmimic_lang_cmulex.la
@@ -599,6 +618,17 @@ if LANG_USENGLISH
   myunittests += unittests/lex_test unittests/lts_test unittests/nums_test
 endif
 endif
+
+if LANG_ES_ANALYSIS
+  myunittests += unittests/es_tokenstream_test
+  unittests_es_tokenstream_test_SOURCES = unittests/es_tokenstream_test_main.c
+  unittests_es_tokenstream_test_CFLAGS = \
+    -DTEST_FILE=\"$(top_srcdir)/unittests/es_text.txt\" \
+    -I$(top_srcdir)/lang/es_lang
+  unittests_es_tokenstream_test_LDADD = libttsmimic.la \
+                                        libttsmimic_lang_es.la
+endif
+
 
 check_PROGRAMS = $(myunittests)
 
