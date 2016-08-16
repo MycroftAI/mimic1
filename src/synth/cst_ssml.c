@@ -311,7 +311,7 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts, cst_voice *voice,
     int ssml_eou = 0;
     const cst_wave *wave;
     cst_wave *w;
-    int err;
+    int err = 0;
 
     if ((durs == NULL) || (voice == NULL) || (ts == NULL) || (outtype == NULL))
     {

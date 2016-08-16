@@ -11,43 +11,43 @@ extern const cst_cart * const vid_gb_ap_f0_carts[];
 extern const cst_cart * const vid_gb_ap_17_mcep_carts[];
 #define vid_gb_ap_17_num_channels 174
 #define vid_gb_ap_17_num_frames 63610
-extern const unsigned short * const vid_gb_ap_17_model_vectors[];
+extern uint16_t * vid_gb_ap_17_model_vectors[];
 
 extern const cst_cart * const vid_gb_ap_12_mcep_carts[];
 #define vid_gb_ap_12_num_channels 174
 #define vid_gb_ap_12_num_frames 64087
-extern const unsigned short * const vid_gb_ap_12_model_vectors[];
+extern uint16_t * vid_gb_ap_12_model_vectors[];
 
 extern const cst_cart * const vid_gb_ap_01_mcep_carts[];
 #define vid_gb_ap_01_num_channels 174
 #define vid_gb_ap_01_num_frames 62802
-extern const unsigned short * const vid_gb_ap_01_model_vectors[];
+extern uint16_t * vid_gb_ap_01_model_vectors[];
 #define vid_gb_ap_num_param_models 3
-const int vid_gb_ap_num_channels_table[] = {
+int vid_gb_ap_num_channels_table[] = {
    vid_gb_ap_17_num_channels,
    vid_gb_ap_12_num_channels,
    vid_gb_ap_01_num_channels,
 0};
-const int vid_gb_ap_num_frames_table[] = {
+int vid_gb_ap_num_frames_table[] = {
    vid_gb_ap_17_num_frames,
    vid_gb_ap_12_num_frames,
    vid_gb_ap_01_num_frames,
 0};
-const unsigned short **vid_gb_ap_model_vectors_table[] = {
+uint16_t **vid_gb_ap_model_vectors_table[] = {
    vid_gb_ap_17_model_vectors,
    vid_gb_ap_12_model_vectors,
    vid_gb_ap_01_model_vectors,
 NULL};
-const cst_cart **vid_gb_ap_mcep_carts_table[] = {
+const cst_cart * const *vid_gb_ap_mcep_carts_table[] = {
    vid_gb_ap_17_mcep_carts,
    vid_gb_ap_12_mcep_carts,
    vid_gb_ap_01_mcep_carts,
 NULL};
-extern const dur_stat * const vid_gb_ap_cg_08_dur_stats[];
+extern const dur_stat * vid_gb_ap_cg_08_dur_stats[];
 extern const cst_cart vid_gb_ap_cg_08_dur_cart;
-extern const dur_stat * const vid_gb_ap_cg_10_dur_stats[];
+extern const dur_stat * vid_gb_ap_cg_10_dur_stats[];
 extern const cst_cart vid_gb_ap_cg_10_dur_cart;
-extern const dur_stat * const vid_gb_ap_cg_17_dur_stats[];
+extern const dur_stat * vid_gb_ap_cg_17_dur_stats[];
 extern const cst_cart vid_gb_ap_cg_17_dur_cart;
 #define vid_gb_ap_num_dur_models 3
 const dur_stat **vid_gb_ap_dur_stats_table[] = {
@@ -542,7 +542,7 @@ const float vid_gb_ap_model_range[] = {
    10.000000,
    5.163980,
 };
-const float vid_gb_ap_dynwin[] = { -0.5, 0.0, 0.5 };
+float vid_gb_ap_dynwin[] = { -0.5, 0.0, 0.5 };
 #define vid_gb_ap_dynwinsize 3
 const double vid_gb_ap_me_filter_0[] = {
 0.000000, 0.000007, 0.000026, 0.000049, 0.000065, 0.000062, 0.000028, -0.000052, -0.000189, -0.000393, -0.000670, -0.001020, -0.001439, -0.001914, -0.002426, -0.002948, -0.003448, -0.003883, -0.004211, -0.004381, -0.004344, -0.004051, -0.003453, -0.002511, -0.001190, 0.000535, 0.002674, 0.005227, 0.008178, 0.011497, 0.015138, 0.019040, 0.023132, 0.027330, 0.031542, 0.035670, 0.039614, 0.043274, 0.046556, 0.049373, 0.051649, 0.053321, 0.054344, 0.054688, 0.054344, 0.053321, 0.051649

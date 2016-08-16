@@ -16,8 +16,8 @@ extern const float * const cmu_us_awb_spamf0_accent_vectors[];
 extern const cst_cart * const cmu_us_awb_single_mcep_carts[];
 #define cmu_us_awb_single_num_channels 114
 #define cmu_us_awb_single_num_frames 8855
-extern const unsigned short * const cmu_us_awb_single_model_vectors[];
-extern const dur_stat * const cmu_us_awb_dur_stats[];
+extern uint16_t *cmu_us_awb_single_model_vectors[];
+extern const dur_stat * cmu_us_awb_dur_stats[];
 extern const cst_cart cmu_us_awb_dur_cart;
 extern const char * const *cmu_us_awb_phone_states[];
 
@@ -381,7 +381,7 @@ const float cmu_us_awb_model_range[] = {
    10.000000,
    5.050760,
 };
-const float cmu_us_awb_dynwin[] = { -0.5, 0.0, 0.5 };
+float cmu_us_awb_dynwin[] = { -0.5, 0.0, 0.5 };
 #define cmu_us_awb_dynwinsize 3
 const double cmu_us_awb_me_filter_0[] = {
 -0.000399, -0.000699, -0.001099, -0.001637, -0.002312, -0.003074, -0.003809, -0.004351, -0.004484, -0.003962, -0.002541, -0.000000, 0.003823, 0.009004, 0.015512, 0.023196, 0.031787, 0.040907, 0.050093, 0.058835, 0.066610, 0.072934, 0.077398, 0.079708, 0.079708, 0.077398, 0.072934, 0.066610, 0.058835, 0.050093, 0.040907, 0.031787, 0.023196, 0.015512, 0.009004, 0.003823, -0.000000, -0.002541, -0.003962, -0.004484, -0.004351, -0.003809, -0.003074, -0.002312, -0.001637, -0.001099, -0.000699, -0.000399
@@ -408,16 +408,16 @@ const double * const cmu_us_awb_me_h[] = {
 
 #define cmu_us_awb_num_dur_models 1
 #define cmu_us_awb_num_param_models 1
-const int cmu_us_awb_num_channels[] = {
+int cmu_us_awb_num_channels[] = {
     cmu_us_awb_single_num_channels
 };
-const int cmu_us_awb_num_frames[] = {
+int cmu_us_awb_num_frames[] = {
     cmu_us_awb_single_num_frames
 };
-const unsigned short **cmu_us_awb_model_vectors[] = {
+uint16_t **cmu_us_awb_model_vectors[] = {
     cmu_us_awb_single_model_vectors
 };
-const cst_cart **cmu_us_awb_mcep_carts[] = {
+const cst_cart * const *cmu_us_awb_mcep_carts[] = {
     cmu_us_awb_single_mcep_carts
 };
 const dur_stat **cmu_us_awb_dur_stats_table[] = {

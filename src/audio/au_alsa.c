@@ -43,6 +43,8 @@
 
 #ifdef CST_AUDIO_ALSA
 
+#define _BSD_SOURCE /* usleep */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>

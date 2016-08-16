@@ -73,7 +73,7 @@ int audio_stream_chunk(const cst_wave *w, int start, int size,
     /* This is really just and example that you can copy for you streaming */
     /* function */
     /* This particular example is *not* thread safe */
-
+    (void) asi;
     static cst_audiodev *ad = 0;
 
     if (start == 0)
