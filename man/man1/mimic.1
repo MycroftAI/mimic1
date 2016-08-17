@@ -1,0 +1,51 @@
+.TH mimic 1 "2016-08-07" "" "Mimic Text To Speech"
+.SH NAME
+mimic \- a text to speech tool
+.SH SYNOPSIS
+.B mimic
+[\fIoptions\fR] \fItext-file [\fIoutfile.wav]
+
+.B mimic
+\fB\-t \fB"Hello there"\fR [\fIwavefile]
+
+.SH DESCRIPTION
+Mimic is a command line tool for synthesizing speech from text. If \fIoutfile.wav\R is omitted mimic will speak the result out loud.
+
+.SH OPTIONS
+.TP
+\fB\-t "\fIText\fR"
+Create speech from \fIText\fR.
+.TP
+\fB\-f \fItextfile
+Set input file.
+.TP
+\fB\-o \fIwavefile
+Set output file.
+.TP
+\fB\-lv
+List included voices
+.TP
+\fB\-voice \fIvoice\fR
+Set mimic to speak with \fIvoice\fR, this can either be one of the included voices or a .flitevox-file.
+.TP
+\fB\--help
+List usage.
+.TP
+\fB\-ssml
+Read input/file in ssml mode.
+.TP
+\fB\-pw
+Print words to stdout before they are spoken.
+.TP
+\fB\-ps
+Print phoneme segments to stdout before they are spoken.
+.TP
+\fB\-psdur
+Print segments and their end-time to stdout before they are spoken.
+.TP
+\fB\-pr \fIRelName\fR
+Print relation to stdout before they are spoken.
+\fB\-p "\fIPhonemes\fR"
+Create speech from the phoneme string \fIPhonemes\fR.
+.TP
+
