@@ -131,10 +131,10 @@ static int set_charclass_table_symbol(cst_tokenstream *ts,
     unsigned char c1;
     int utf8char_len;
 
-    cst_string *cl1;
-    cst_string **cl2;
-    cst_string ***cl3;
-    cst_string ****cl4;
+    cst_string *cl1 = NULL;
+    cst_string **cl2 = NULL;
+    cst_string ***cl3 = NULL;
+    cst_string ****cl4 = NULL;
     int idx;
     utflets = cst_utf8_explode(symbols);
     /* For each UTF-8 character */
