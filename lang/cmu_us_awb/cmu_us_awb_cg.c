@@ -461,5 +461,6 @@ const cst_cg_db cmu_us_awb_cg_db = {
   5,48, /* filter sizes */
   cmu_us_awb_me_h,
   0, /* 1, */ /* cg:spamf0 */
-  1.5 /* gain */
+  1.5, /* gain */
+  0 /* freeable */
 };

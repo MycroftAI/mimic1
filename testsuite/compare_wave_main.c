@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     int i1, i2, l;
     double d, s;
     double b;
-    int best, x, y;
+    int best, x=0, y;
     const char *f1, *f2;
     float v1, v2, v3, c;
     float xsum, xsumsq, xcount;

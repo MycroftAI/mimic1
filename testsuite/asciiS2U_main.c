@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include "cst_wave.h"
 
-int main(int argc, char **argv)
+int main()
 {
     int s;
 

@@ -74,6 +74,9 @@ cst_val *cmu_grapheme_lex_lts_function(const struct lexicon_struct *l,
                                        const char *word, const char *pos,
                                        const cst_features *feats)
 {
+    (void) l;
+    (void) pos;
+    (void) feats;
     cst_val *phones = 0;
     cst_val *utflets = 0;
     const cst_val *v;

@@ -172,6 +172,7 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 
 void cst_cg_free_db(cst_file fd, cst_cg_db *db)
 {
+    (void) fd;
     /* Only gets called when this isn't populated : I think */
     cst_free(db);
 }

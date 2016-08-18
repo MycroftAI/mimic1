@@ -227,6 +227,7 @@ static int no_syl_boundaries(const cst_item *i, const cst_val *p)
 int in_lex(const cst_lexicon *l, const char *word, const char *pos,
            const cst_features *feats)
 {
+    (void) feats;
     /* return TRUE is its in the lexicon */
     int r = FALSE, i;
     char *wp;

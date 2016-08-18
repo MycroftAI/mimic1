@@ -462,5 +462,6 @@ const cst_cg_db cmu_us_rms_cg_db = {
   5,48, /* filter sizes */
   cmu_us_rms_me_h,
   1, // cg:spamf0
-  1.5 /* gain */
+  1.5, /* gain */
+  0 /* freeable */
 };

@@ -41,6 +41,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "mimic.h"
 
 cst_voice *register_cmu_us_kal();
@@ -90,8 +91,13 @@ int audio_stream_chunk_by_word(const cst_wave *w, int start, int size,
         }
 
     }
-    n = audio_write(ad, &w->samples[start], size * sizeof(short));
+    n = audio_write(ad, &w->samples[start], size * sizeof(int16_t));
 
+    if ((size_t) n != size * sizeof(int16_t))
+    {
+        fprintf(stderr, "Error in audio_write unexpected number of bytes written\n");
+        return CST_AUDIO_STREAM_CONT;
+    }
     if (last == 1)
     {
         audio_close(ad);

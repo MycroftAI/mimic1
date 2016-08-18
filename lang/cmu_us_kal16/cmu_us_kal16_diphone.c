@@ -23,7 +23,8 @@ cst_sts_list cmu_us_kal16_sts = {
   16,
   16000,
   -8.104089,
-  15.868238
+  15.868238,
+  NULL
 };
 
 static const cst_diphone_entry cmu_us_kal16_index[] = { 
