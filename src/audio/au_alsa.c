@@ -43,13 +43,14 @@
 
 #ifdef CST_AUDIO_ALSA
 
-#define _BSD_SOURCE /* usleep */
+#define _BSD_SOURCE /* alsa alloca stuff and nanosleep */
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <assert.h>
 #include <errno.h>
+#include <time.h>
 
 #include "cst_string.h"
 #include "cst_wave.h"
@@ -327,19 +328,22 @@ int audio_flush_alsa(cst_audiodev *ad)
     int result;
     snd_pcm_t *pcm_handle = (snd_pcm_t *) ad->platform_data;
     snd_pcm_sframes_t delay = -1, prev_delay;
-    long int microseconds_per_frame = 1E6 / ad->real_sps;
+    long int nanoseconds_per_frame = 1E9 / ad->real_sps;
 
     /* Sleeping for a while is needed to prevent PulseAudio blocking for few
        seconds... according to:
        http://mailman.alsa-project.org/pipermail/alsa-devel/2012-November/057129.html
      */
+    struct timespec sleep;
+    sleep.tv_sec = 0;
     do
     {
-        long sleep;
         prev_delay = delay;
         snd_pcm_delay(pcm_handle, &delay);
-        sleep = delay * microseconds_per_frame;
-        usleep(sleep < 300000 ? sleep : 300000);        // never sleep longer than 300 ms
+        sleep.tv_nsec = delay * nanoseconds_per_frame;
+        /* never sleep longer than 300 ms */
+        sleep.tv_nsec = (sleep.tv_nsec < 300000000 ? sleep.tv_nsec : 300000000);
+        nanosleep(&sleep, NULL);
     }
     while (delay != prev_delay);        // delay is changing
 
