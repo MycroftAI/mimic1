@@ -888,7 +888,6 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
             if (5 >= ts->token_max)
                 extend_buffer(&ts->token, &ts->token_max);
             strcpy(ts->token, ts->current_char);
-            p += strlen(ts->current_char);
             ts_getc(ts);
         }
         else
@@ -898,7 +897,6 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
         /* Get postpunctuation */
         get_token_postpunctuation(ts);
     }
-
     return ts->token;
 }
 
