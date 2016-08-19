@@ -425,6 +425,7 @@ static double mlsadf(double x, double *b, int m, double a, int pd, double *d,
 static double mlsadf1(double x, double *b, int m, double a, int pd, double *d,
                       VocoderSetup *vs)
 {
+    (void) m;
     double v, out = 0.0, *pt, aa;
     register int i;
 

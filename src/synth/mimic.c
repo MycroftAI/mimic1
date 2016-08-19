@@ -257,7 +257,8 @@ int mimic_file_to_speech(const char *filename, cst_voice *voice,
 int mimic_ts_to_speech(cst_tokenstream *ts, cst_voice *voice,
                        const char *outtype, float *dur)
 {
-    int err;
+    (void) dur;
+    int err = 0;
     cst_utterance *utt;
     const char *token;
     cst_item *t;

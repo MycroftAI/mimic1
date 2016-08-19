@@ -108,6 +108,7 @@ int main(int argc, char **argv)
 
 static const char *time_approx(int hour, int minute)
 {
+    (void) hour;
     int mm;
 
     mm = minute % 5;
@@ -124,6 +125,7 @@ static const char *time_approx(int hour, int minute)
 
 static const char *time_min(int hour, int minute)
 {
+    (void) hour;
     int mm;
 
     mm = minute / 5;

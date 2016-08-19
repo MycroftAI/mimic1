@@ -50,6 +50,7 @@ cst_voice *cmu_us_kal_diphone = NULL;
 
 cst_voice *register_cmu_us_kal(const char *voxdir)
 {
+    (void) voxdir;
     cst_voice *v;
     cst_lexicon *lex;
 

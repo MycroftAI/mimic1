@@ -72,6 +72,7 @@ int grapheme_utt_break(cst_tokenstream *ts,
                     const char *token,
                     cst_relation *tokens)
 {
+    (void) token;
     /* We'll respect Latin punctuation */
     const char *postpunct = item_feat_string(relation_tail(tokens), "punc");
     /* const char *ltoken = item_name(relation_tail(tokens)); */

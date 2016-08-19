@@ -252,7 +252,7 @@ static cst_val *us_tokentowords_one(cst_item *token, const char *name)
 {
     /* Return list of words that expand token/name */
     char *p, *aaa, *bbb, *ccc;
-    int i,j,k,l;
+    size_t i,j,k,l;
     cst_val *r, *s, *ss;
     const cst_val *rr;
     const char *nsw = "";

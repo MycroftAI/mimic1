@@ -50,7 +50,7 @@ void cmu_lex_init();
 static int bbb_relation_load(cst_relation *r, const char *filename);
 static int WordSylSeg(cst_utterance *u);
 
-int main(int argc, char **argv)
+int main()
 {
     cst_utterance *u;
     cst_relation *r;
@@ -93,6 +93,7 @@ static int WordSylSeg(cst_utterance *u)
     cst_item *ssword, *segitem;
 
     syl = utt_relation_create(u, "Syllable");
+    (void) syl;
     sylstructure = utt_relation_create(u, "SylStructure");
     seg = utt_relation_create(u, "Segment");
 

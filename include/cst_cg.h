@@ -69,7 +69,7 @@ typedef struct cst_cg_db_struct {
     const cst_cart *const *f0_trees;
 
     int32_t num_param_models;
-    const cst_cart ***param_trees;
+    const cst_cart * const **param_trees;
 
     const cst_cart *spamf0_accent_tree; /* spam accent tree */
     const cst_cart *spamf0_phrase_tree; /* spam phrase tree */
@@ -77,7 +77,7 @@ typedef struct cst_cg_db_struct {
     /* Model params e.g. mceps, deltas intersliced with stddevs */
     int32_t *num_channels;
     int32_t *num_frames;
-    const uint16_t ***model_vectors;
+    uint16_t ***model_vectors;
 
     int32_t num_channels_spamf0_accent;
     int32_t num_frames_spamf0_accent;

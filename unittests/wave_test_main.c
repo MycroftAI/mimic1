@@ -52,7 +52,7 @@ void test_copy(void)
 
 void test_concat(void)
 {
-   unsigned int original_len;
+   int original_len;
    cst_wave *w1, *w2;
    cst_voice *v;
    common_init();

@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(ICU_CFLAGS)
+AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(ICU_CFLAGS)
 
 SUBDIRS = .
 

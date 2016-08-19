@@ -40,6 +40,7 @@
 
 #if (MMAP_TYPE == MMAP_TYPE_POSIX)
 
+# define _POSIX_C_SOURCE 200809L
 
 #include <sys/types.h>
 #include <sys/mman.h>
@@ -51,13 +52,6 @@
 #include "cst_error.h"
 #include "cst_alloc.h"
 
-#ifdef __QNXNTO__
-#include <sys/syspage.h>
-#define getpagesize() (SYSPAGE_ENTRY( system_private )->pagesize)
-#else
-#define MAP_NOSYNCFILE 0
-#endif
-
 cst_filemap *cst_mmap_file(const char *path)
 {
     cst_filemap *fmap = NULL;
@@ -65,7 +59,7 @@ cst_filemap *cst_mmap_file(const char *path)
     struct stat buf;
     int fd;
 
-    pgsize = getpagesize();
+    pgsize = sysconf(_SC_PAGESIZE);
 
     if ((fd = open(path, O_RDONLY)) < 0)
     {
@@ -81,8 +75,8 @@ cst_filemap *cst_mmap_file(const char *path)
     fmap->fd = fd;
     fmap->mapsize = (buf.st_size + pgsize - 1) / pgsize * pgsize;
     if ((fmap->mem = mmap(0, fmap->mapsize, PROT_READ,
-                          MAP_SHARED | MAP_NOSYNCFILE, fd,
-                          0)) == (caddr_t) - 1)
+                          MAP_PRIVATE, fd,
+                          0)) == MAP_FAILED)
     {
         perror("cst_mmap_file: mmap() failed");
         cst_free(fmap);
@@ -129,9 +123,9 @@ cst_filemap *cst_read_whole_file(const char *path)
     fmap->fd = fd;
     fmap->mapsize = buf.st_size;
     fmap->mem = cst_alloc(char, fmap->mapsize);
-    if (read(fmap->fd, fmap->mem, fmap->mapsize) < fmap->mapsize)
+    if (read(fmap->fd, fmap->mem, fmap->mapsize) < (ssize_t) fmap->mapsize)
     {
-        perror("cst_read_whole_fiel: read() failed");
+        perror("cst_read_whole_file: read() failed");
         close(fmap->fd);
         cst_free(fmap->mem);
         cst_free(fmap);

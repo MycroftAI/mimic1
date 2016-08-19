@@ -21,6 +21,7 @@
 /* This is an altered version.  It has been modified by David
    Huggins-Daines <dhd@cepstral.com> on 2001-10-23 to use a different
    API and be re-entrant and safe and all that good stuff. */
+#include <stdint.h>
 #include "cst_regex.h"
 #include "cst_string.h"
 #include "cst_error.h"
@@ -80,7 +81,7 @@ size_t cst_regsub(const cst_regstate *state, const char *in, char *out,
             count += len;
         }
     }
-    if (out && dst - out + 1 < max)
+    if (out && ((size_t) (dst - out + 1)) < max)
         *dst++ = '\0';
 
     return count;

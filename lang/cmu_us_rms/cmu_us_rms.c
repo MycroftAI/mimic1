@@ -51,6 +51,7 @@ cst_voice *cmu_us_rms_cg = NULL;
 
 cst_voice *register_cmu_us_rms(const char *voxdir)
 {
+    (void) voxdir;
     cst_voice *vox;
     cst_lexicon *lex;
 

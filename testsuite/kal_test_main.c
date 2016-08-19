@@ -51,7 +51,6 @@ int main(int argc, char **argv)
     cst_utterance *u;
     int i;
     float durs;
-    int *fff;
 
 /*    putenv("MALLOC_TRACE=mallfile");
       mtrace(); */

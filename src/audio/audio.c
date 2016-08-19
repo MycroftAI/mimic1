@@ -48,6 +48,7 @@ cst_audiodev *ad_playing = NULL;
 
 void shutdown_audio(int signum)
 {
+    (void) signum;
     shutdown_request = 1;
     if (ad_playing != NULL)
         audio_drain(ad_playing);

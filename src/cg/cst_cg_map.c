@@ -91,7 +91,7 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 
     db->num_param_models =
         get_param_int(vox->features, "num_param_models", 3);
-    db->param_trees = cst_alloc(const cst_cart **, db->num_param_models);
+    db->param_trees = cst_alloc(const cst_cart * const *, db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
         db->param_trees[i] = (const cst_cart **) cst_read_tree_array(fd);
 
@@ -102,16 +102,16 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
         db->spamf0_phrase_tree = cst_read_tree(fd);
     }
 
-    db->num_channels = cst_alloc(int, db->num_param_models);
-    db->num_frames = cst_alloc(int, db->num_param_models);
+    db->num_channels = cst_alloc(int32_t, db->num_param_models);
+    db->num_frames = cst_alloc(int32_t, db->num_param_models);
     db->model_vectors =
-        cst_alloc(const unsigned short **, db->num_param_models);
+        cst_alloc(uint16_t **, db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
     {
         db->num_channels[i] = cst_read_int32(fd);
         db->num_frames[i] = cst_read_int32(fd);
         db->model_vectors[i] =
-            (const unsigned short **) cst_read_2d_array(fd);
+            (uint16_t **) cst_read_2d_array(fd);
     }
     /* In voices that were built before, they might have NULLs as the */
     /* the vectors ratehr than a real model, so adjust the num_param_models */
@@ -172,6 +172,7 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 
 void cst_cg_free_db(cst_file fd, cst_cg_db *db)
 {
+    (void) fd;
     /* Only gets called when this isn't populated : I think */
     cst_free(db);
 }

@@ -131,10 +131,10 @@ static int set_charclass_table_symbol(cst_tokenstream *ts,
     unsigned char c1;
     int utf8char_len;
 
-    cst_string *cl1;
-    cst_string **cl2;
-    cst_string ***cl3;
-    cst_string ****cl4;
+    cst_string *cl1 = NULL;
+    cst_string **cl2 = NULL;
+    cst_string ***cl3 = NULL;
+    cst_string ****cl4 = NULL;
     int idx;
     utflets = cst_utf8_explode(symbols);
     /* For each UTF-8 character */
@@ -888,7 +888,6 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
             if (5 >= ts->token_max)
                 extend_buffer(&ts->token, &ts->token_max);
             strcpy(ts->token, ts->current_char);
-            p += strlen(ts->current_char);
             ts_getc(ts);
         }
         else
@@ -898,7 +897,6 @@ const cst_string *ts_get_quoted_token(cst_tokenstream *ts,
         /* Get postpunctuation */
         get_token_postpunctuation(ts);
     }
-
     return ts->token;
 }
 

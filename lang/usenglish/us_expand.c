@@ -203,7 +203,7 @@ cst_val *en_exp_ordinal(const char *rawnumstring)
     const char *l;
     const char *ord;
     char *numstring;
-    int i,j;
+    size_t i,j;
 
     numstring = cst_strdup(rawnumstring);
     for (j=i=0; i < cst_strlen(rawnumstring); i++)
