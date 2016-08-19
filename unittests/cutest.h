@@ -2,21 +2,25 @@
  * CUTest -- C/C++ Unit Test facility
  * <http://github.com/mity/cutest>
  *
- * Copyright (c) 2013-2015 Martin Mitas
+ * Copyright (c) 2013-2016 Martin Mitas
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 
 #ifndef CUTEST_H__
@@ -29,7 +33,7 @@
 
 /* By default, <cutest.h> provides the main program entry point (function
  * main()). However, if the test suite is composed of multiple source files
- * which include <cutest.h>, then this brings a problem of multiple main()
+ * which include <cutest.h>, then this causes a problem of multiple main()
  * definitions. To avoid this problem, #define macro TEST_NO_MAIN in all
  * compilation units but one.
  */
@@ -45,10 +49,10 @@
  *       { 0 }
  *   };
  *
- * The list specifies names of each tests (must be unique) and pointer to
+ * The list specifies names of each test (must be unique) and pointer to
  * a function implementing it. The function does not take any arguments
- * and have no return values, i.e. the test functions should have this
- * prototype:
+ * and has no return values, i.e. every test function has tp be compatible
+ * with this prototype:
  *
  *   void test_func(void);
  */
@@ -66,7 +70,7 @@
  * return non-zero (condition passes) or 0 (condition fails).
  *
  * That can be useful when more conditions should be checked only if some
- * preceding condition passes, as illustrated here:
+ * preceding condition passes, as illustrated in this code snippet:
  *
  *   SomeStruct* ptr = allocate_some_struct();
  *   if(TEST_CHECK(ptr != NULL)) {
@@ -109,7 +113,7 @@
 #endif
 
 
-/* Note our global private identifiers end with '__' to minimize risk of clash
+/* Note our global private identifiers end with '__' to mitigate risk of clash
  * with the unit tests implementation. */
 
 
@@ -314,6 +318,10 @@ test_do_run__(const struct test__* test)
     try {
 #endif
 
+        /* This is good to do for case the test unit e.g. crashes. */
+        fflush(stdout);
+        fflush(stderr);
+
         test->func();
 
 #ifdef __cplusplus
@@ -345,27 +353,29 @@ test_do_run__(const struct test__* test)
 }
 
 /* Called if anything goes bad in cutest, or if the unit test ends in other
- * way then by returning from tis function (e.g. exception or child process
- * termination). */
+ * way then by normal returning from its function (e.g. exception or some
+ * abnormal child process termination). */
 static void
 test_error__(const char* fmt, ...)
 {
     va_list args;
 
-    if(!test_current_already_logged__  &&  test_current_unit__ != NULL) {
+    if(test_verbose_level__ == 0)
+        return;
+
+    if(test_verbose_level__ <= 2  &&  !test_current_already_logged__  &&  test_current_unit__ != NULL) {
         printf("[ ");
         test_print_in_color__(CUTEST_COLOR_RED_INTENSIVE__, "FAILED");
         printf(" ]\n");
     }
 
-    if(test_verbose_level__ < 2)
-        return;
-
-    test_print_in_color__(CUTEST_COLOR_RED_INTENSIVE__, "  Error: ");
-    va_start(args, fmt);
-    vprintf(fmt, args);
-    va_end(args);
-    printf("\n");
+    if(test_verbose_level__ >= 2) {
+        test_print_in_color__(CUTEST_COLOR_RED_INTENSIVE__, "  Error: ");
+        va_start(args, fmt);
+        vprintf(fmt, args);
+        va_end(args);
+        printf("\n");
+    }
 }
 
 /* Trigger the unit test. If possible (and not suppressed) it starts a child
@@ -450,7 +460,7 @@ test_run__(const struct test__* test)
 
 #else
 
-        /* A platform where we do not know to run child process. */
+        /* A platform where we don't know how to run child process. */
         failed = (test_do_run__(test) != 0);
 
 #endif
@@ -495,7 +505,11 @@ test_help__(void)
     printf("      --no-summary      Suppress printing of test results summary\n");
     printf("  -l, --list            List unit tests in the suite and exit\n");
     printf("  -v, --verbose         Enable more verbose output\n");
-    printf("      --verbose=LEVEL   Set verbose level to LEVEL (small integer)\n");
+    printf("      --verbose=LEVEL   Set verbose level to LEVEL:\n");
+    printf("                          0 ... Be silent\n");
+    printf("                          1 ... Output one line per test (and summary)\n");
+    printf("                          2 ... As 1 and failed conditions (this is default)\n");
+    printf("                          3 ... As 1 and all conditions (and extended summary)\n");
     printf("      --color=WHEN      Enable colorized output (WHEN is one of 'auto', 'always', 'never')\n");
     printf("  -h, --help            Display this help and exit\n");
     printf("\n");
@@ -636,3 +650,4 @@ main(int argc, char** argv)
 
 
 #endif  /* #ifndef CUTEST_H__ */
+
