@@ -14,12 +14,12 @@ AC_CANONICAL_BUILD
 AM_INIT_AUTOMAKE([-Wall foreign subdir-objects])
 AC_PROG_CC
 AM_PROG_AR
-AC_PROG_RANLIB
+LT_INIT([dlopen win32-dll disable-static disable-shared])
 AM_SILENT_RULES([yes])
 AC_PROG_INSTALL
 AC_CONFIG_SRCDIR([include/mimic.h])
 AC_CONFIG_HEADERS([include/config.h])
-LT_PREREQ([2.2])
+LT_PREREQ([2.2.6])
 AC_C_BIGENDIAN
 
 PKG_PROG_PKG_CONFIG
@@ -27,7 +27,6 @@ PKG_PROG_PKG_CONFIG
 dnl By default disable building static and shared libraries.
 dnl use ./configure --enable-shared (or --enable-static or both)
 dnl to build them.
-LT_INIT([disable-static, disable-shared])
 
 
 dnl openmp support for multi-threaded test:
