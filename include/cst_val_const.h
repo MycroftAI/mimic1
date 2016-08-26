@@ -48,11 +48,11 @@
 /*  will use this code as exemplars of why this should be done in C++, I */
 /*  say good luck to them with their 4M footprint while I go for my      */
 /*  50K footprint.  But I *will* do cst_vals in 8 bytes and I *will*     */
-/*  have them defined const so they are in the text segment              */
+/*  have them defined const so they are in the text segment.             */
 /*                                                                       */
 /*  The problem here is that there is not yet a standard way to do       */
 /*  initialization of unions.  There is one in the C99 standard and GCC  */
-/*  already supports it, but other compilers do not so I can't use that  */
+/*  already supports it, but other compilers do not so I can't use that. */
 /*                                                                       */
 /*  So I need a way to make an object that will have the right 8 bytes   */
 /*  for ints, floats, strings and cons cells that will work on any C     */
@@ -82,7 +82,7 @@
 /*  preprocessor that could convert that.  You could make atoms always   */
 /*  have a pointer to another piece of memory, but that would take up    */
 /*  another 4 bytes not just for these constants but all other cst_vals  */
-/*  create                                                               */
+/*  create.                                                              */
 /*                                                                       */
 /*  So you could do                                                      */
 /*                                                                       */
@@ -102,7 +102,7 @@
 /*  At this moment, I think the second version is the least problematic  */
 /*  though it makes defining val_consts more unpleasant than they should */
 /*  be and forces changes elsewhere in the code even when the compiler   */
-/*  does support initialization of unions                                */
+/*  does support initialization of unions.                               */
 /*                                                                       */
 /*                                                                       */
 /*************************************************************************/
