@@ -44,7 +44,8 @@
 #include "config.h"
 
 #ifdef OPTIMIZE_VOICE_LOADING
-   #define cst_malloc(x, y) malloc(sizeof(x) * y)
+//   #define cst_malloc(x, y) malloc(sizeof(x) * y)
+   #define cst_malloc(x, y) cst_alloc(x, y)
    #define OPTIMIZE_DURS
    #define OPTIMIZE_LOAD_DB
    #define OPTIMIZE_DB_READ
@@ -80,34 +81,22 @@ int cst_cg_read_header(cst_file fd)
 }
 
 char *cst_read_string(cst_file fd)
-#ifdef OPTIMIZE_READ_STRING
-{
-    char *ret;
-    int n, numbytes;
-    numbytes = cst_read_int32(fd);
-    ret = cst_malloc(char, numbytes);
-    n = cst_fread(fd, ret, sizeof(char), numbytes);
-    if (n != numbytes)
-    {
-        cst_free(ret);
-        return NULL;
-    }
- 
-    return (char *) cst_read_padded(fd, &numbytes);
-}
-#else
 {
     int numbytes;
 
     return (char *) cst_read_padded(fd, &numbytes);
 }
-#endif
+
 cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 {
     cst_cg_db *db = cst_malloc(cst_cg_db, 1);
     int i;
+#ifdef OPTIMIZE_DB_READ
     uint32_t elements[2];
+#endif
+#ifdef OPTIMIZE_LOAD_DB
     uint32_t buff[4];
+#endif
     db->freeable = 1;           /* somebody can free this if they want */
     db->name = cst_read_string(fd);
     db->types = (const char **) cst_read_db_types(fd);
@@ -244,6 +233,7 @@ void *cst_read_padded(cst_file fd, int *numbytes)
     return ret;
 }
 #endif
+
 char **cst_read_db_types(cst_file fd)
 {
     char **types;
@@ -269,7 +259,9 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
     int i, num_nodes;
     short vtype;
     char *str;
+#ifdef OPTIMIZE_READ_NODES
     uint16_t buff[3];
+#endif
     num_nodes = cst_read_int32(fd);
     nodes = cst_malloc(cst_cart_node, num_nodes + 1);
 
@@ -383,7 +375,9 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     int numstats;
     int i, temp;
     dur_stat **ds;
+#ifdef OPTIMIZE_DURS
     float elements[2];
+#endif
     numstats = cst_read_int32(fd);
     ds = cst_malloc(dur_stat *, (1 + numstats));
 
