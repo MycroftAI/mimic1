@@ -42,8 +42,10 @@
 #include "cst_cg.h"
 #include "cst_cg_map.h"
 #include "cst_alloc.h"
-#define OPTIMIZE
-#ifdef OPTIMIZE
+
+#include "config.h"
+
+#ifdef OPTIMIZE_VOICE_LOADING
 #define OPTIMIZE_IOBUFF
 #endif
 

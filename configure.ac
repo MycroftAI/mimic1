@@ -111,6 +111,20 @@ PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} icu-i18n"
 
 
 dnl
+dnl enable voice loading optimization
+dnl
+
+AC_ARG_ENABLE([voice_load_opt],
+  [AS_HELP_STRING([--enable-voice-load-opt],
+       [enable optimized voice loading routines])],
+  [enable_voice_load_opt, 1],
+  [])
+AS_IF([test "x$enable_voice_load_opt" = xyes ],
+   [ AC_DEFINE([OPTIMIZE_VOICE_LOADING], [1], [Enable optimization of voice loading])
+   ],
+   [])
+
+dnl
 dnl determine audio type or use none if none supported on this platform
 dnl
 AUDIODRIVER=none

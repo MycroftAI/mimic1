@@ -41,8 +41,9 @@
 #include "cst_string.h"
 #include "cst_cg_map.h"
 
-#define OPTIMIZE
-#ifdef OPTIMIZE
+#include "config.h"
+
+#ifdef OPTIMIZE_VOICE_LOADING
    #define cst_malloc(x, y) malloc(sizeof(x) * y)
    #define OPTIMIZE_DURS
    #define OPTIMIZE_LOAD_DB
