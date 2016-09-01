@@ -617,7 +617,7 @@ libttsmimic_la_LIBADD += $(AUDIOLIBS) -lm
 
 ################# main ########################
 
-bin_PROGRAMS = mimic compile_regexes mimicvox_info mimic_voice_test
+bin_PROGRAMS = mimic compile_regexes mimicvox_info
 if LANG_USENGLISH
 if LEX_CMULEX
   bin_PROGRAMS += t2p mimic_time
@@ -631,10 +631,6 @@ compile_regexes_SOURCES = main/compile_regexes.c
 compile_regexes_LDADD = libttsmimic.la
 t2p_SOURCES = main/t2p_main.c
 t2p_LDADD = libttsmimic.la libttsmimic_lang_cmulex.la libttsmimic_lang_usenglish.la
-
-mimic_voice_test_SOURCES = main/mimic_test_voice_load.c
-mimic_voice_test_LDADD = libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la libttsmimic.la -lm -lrt
-mimic_voice_test_LDFLAGS = -pg
 
 mimic_time_SOURCES = main/mimic_time_main.c
 mimic_time_LDADD = libttsmimic.la \
@@ -770,7 +766,8 @@ check_PROGRAMS += \
   testsuite/play_server \
   testsuite/play_sync \
   testsuite/play_wave \
-  testsuite/rfc
+  testsuite/rfc \
+  testsuite/time_voice_load
 
 if LEX_CMULEX
   check_PROGRAMS += testsuite/utt_test
@@ -840,6 +837,10 @@ testsuite_rfc_LDADD = libttsmimic.la
 
 testsuite_utt_test_SOURCES = testsuite/utt_test_main.c
 testsuite_utt_test_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmimic_lang_cmulex.la
+
+testsuite_time_voice_load_SOURCES = testsuite/time_voice_load.c
+testsuite_time_voice_load_LDADD = libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la libttsmimic.la -lm -lrt
+testsuite_time_voice_load_LDFLAGS = -pg
 
 TESTS += $(myunittests)
 # "testsuite/multi_thread_run.sh"
