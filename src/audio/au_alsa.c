@@ -293,7 +293,7 @@ int audio_write_alsa(cst_audiodev *ad, void *samples, int num_bytes)
     char *buf = (char *) samples;
 
     /* Determine frame size in bytes */
-    frame_size = audio_bps(ad->real_fmt) * ad->real_channels;
+    frame_size = mimic_audio_bps(ad->real_fmt) * ad->real_channels;
     /* Require that only complete frames are handed in */
     assert((num_bytes % frame_size) == 0);
     num_frames = num_bytes / frame_size;

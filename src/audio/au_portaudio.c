@@ -241,7 +241,7 @@ int audio_write_portaudio(cst_audiodev *ad, void *buff, int num_bytes)
     data->num_frames = num_frames;
     data->channels = ad->channels;
     data->bufpos = 0;
-    data->sample_size = audio_bps(ad->fmt);
+    data->sample_size = mimic_audio_bps(ad->fmt);
     data->abort_requested = 0;
     hdl->cd = data;
     /* Stream */

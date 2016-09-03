@@ -55,14 +55,14 @@ int mimic_lang_list_length = 0;
 int mimic_init()
 {
     cst_regex_init();
-    audio_init();
+    mimic_audio_init();
 
     return 0;
 }
 
 int mimic_exit()
 {
-    audio_exit();
+    mimic_audio_exit();
     return 0;
 }
 
@@ -408,7 +408,7 @@ int mimic_process_output(cst_utterance *u, const char *outtype,
 
     if (cst_streq(outtype, "play"))
     {
-        if (play_wave(w) == EINTR)
+        if (mimic_play_wave(w) == EINTR)
             return -EINTR;
     }
     else if (cst_streq(outtype, "stream"))

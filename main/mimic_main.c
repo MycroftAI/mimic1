@@ -62,7 +62,7 @@ cst_lexicon *cmu_lex_init(void);
 #ifdef _WIN32
 BOOL WINAPI windows_signal_handler(DWORD signum)
 {
-    shutdown_audio(signum);
+    mimic_audio_shutdown(signum);
     if (signum == CTRL_C_EVENT)
         return TRUE;
     else
@@ -71,7 +71,7 @@ BOOL WINAPI windows_signal_handler(DWORD signum)
 #else
 void sigint_handler(int signum)
 {
-    shutdown_audio(signum);
+    mimic_audio_shutdown(signum);
 }
 #endif
 
