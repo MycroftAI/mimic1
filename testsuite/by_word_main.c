@@ -63,7 +63,7 @@ int audio_stream_chunk_by_word(const cst_wave *w, int start, int size,
     /*    printf("in by word streaming\n"); */
 
     if (start == 0)
-        ad = audio_open(w->sample_rate, w->num_channels, CST_AUDIO_LINEAR16);
+        ad = mimic_audio_open(w->sample_rate, w->num_channels, CST_AUDIO_LINEAR16);
 
     if (asi->item == NULL)
         asi->item = relation_head(utt_relation(asi->utt, "Token"));
@@ -91,16 +91,16 @@ int audio_stream_chunk_by_word(const cst_wave *w, int start, int size,
         }
 
     }
-    n = audio_write(ad, &w->samples[start], size * sizeof(int16_t));
+    n = mimic_audio_write(ad, &w->samples[start], size * sizeof(int16_t));
 
     if ((size_t) n != size * sizeof(int16_t))
     {
-        fprintf(stderr, "Error in audio_write unexpected number of bytes written\n");
+        fprintf(stderr, "Error in mimic_audio_write unexpected number of bytes written\n");
         return CST_AUDIO_STREAM_CONT;
     }
     if (last == 1)
     {
-        audio_close(ad);
+        mimic_audio_close(ad);
         asi->item = NULL;
         ad = NULL;
     }

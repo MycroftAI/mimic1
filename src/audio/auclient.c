@@ -53,7 +53,7 @@
 
 #include <unistd.h>
 
-int play_wave_client(cst_wave *w, const char *servername, int port,
+int mimic_play_wave_client(cst_wave *w, const char *servername, int port,
                      const char *encoding)
 {
     int audiofd, q, i, n, r;

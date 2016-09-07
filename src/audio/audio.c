@@ -46,15 +46,15 @@
 volatile int shutdown_request = 0;
 cst_audiodev *ad_playing = NULL;
 
-void shutdown_audio(int signum)
+void mimic_audio_shutdown(int signum)
 {
     (void) signum;
     shutdown_request = 1;
     if (ad_playing != NULL)
-        audio_drain(ad_playing);
+        mimic_audio_drain(ad_playing);
 }
 
-int audio_bps(cst_audiofmt fmt)
+int mimic_audio_bps(cst_audiofmt fmt)
 {
     switch (fmt)
     {
@@ -67,7 +67,7 @@ int audio_bps(cst_audiofmt fmt)
     return 0;
 }
 
-cst_audiodev *audio_open(int sps, int channels, cst_audiofmt fmt)
+cst_audiodev *mimic_audio_open(int sps, int channels, cst_audiofmt fmt)
 {
     cst_audiodev *ad;
     int up, down;
@@ -85,7 +85,7 @@ cst_audiodev *audio_open(int sps, int channels, cst_audiofmt fmt)
     return ad;
 }
 
-int audio_close(cst_audiodev *ad)
+int mimic_audio_close(cst_audiodev *ad)
 {
     if (ad->rateconv)
         delete_rateconv(ad->rateconv);
@@ -93,7 +93,7 @@ int audio_close(cst_audiodev *ad)
     return AUDIO_CLOSE_NATIVE(ad);
 }
 
-int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
+int mimic_audio_write(cst_audiodev *ad, void *buff, int num_bytes)
 {
     void *abuf = buff, *nbuf = NULL;
     int rv, i, real_num_bytes = num_bytes;
@@ -134,11 +134,11 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
         if (ad->real_channels != 2 || ad->channels != 1)
         {
             cst_errmsg
-                ("audio_write: unsupported channel mapping requested (%d => %d).\n",
+                ("mimic_audio_write: unsupported channel mapping requested (%d => %d).\n",
                  ad->channels, ad->real_channels);
         }
 
-        if (audio_bps(ad->fmt) == 2)
+        if (mimic_audio_bps(ad->fmt) == 2)
         {
             for (i = 0; i < real_num_bytes / 2; ++i)
             {
@@ -146,7 +146,7 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
                 ((short *) nbuf)[i * 2 + 1] = ((short *) abuf)[i];
             }
         }
-        else if (audio_bps(ad->fmt) == 1)
+        else if (mimic_audio_bps(ad->fmt) == 1)
         {
             for (i = 0; i < real_num_bytes / 2; ++i)
             {
@@ -157,7 +157,7 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
         }
         else
         {
-            cst_errmsg("audio_write: unknown format %d\n", ad->fmt);
+            cst_errmsg("mimic_audio_write: unknown format %d\n", ad->fmt);
             cst_free(nbuf);
             if (abuf != buff)
                 cst_free(abuf);
@@ -200,7 +200,7 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
         else
         {
             cst_errmsg
-                ("audio_write: unknown format conversion (%d => %d) requested.\n",
+                ("mimic_audio_write: unknown format conversion (%d => %d) requested.\n",
                  ad->fmt, ad->real_fmt);
             if ((abuf != nbuf) && (abuf != buff))
                 cst_free(abuf);
@@ -211,7 +211,7 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
             cst_free(abuf);
         abuf = nbuf;
     }
-    if (ad->byteswap && audio_bps(ad->real_fmt) == 2)
+    if (ad->byteswap && mimic_audio_bps(ad->real_fmt) == 2)
         swap_bytes_short((short *) abuf, real_num_bytes / 2);
 
     if (real_num_bytes)
@@ -227,36 +227,36 @@ int audio_write(cst_audiodev *ad, void *buff, int num_bytes)
     return (rv == real_num_bytes) ? num_bytes : 0;
 }
 
-int audio_init()
+int mimic_audio_init()
 {
     return AUDIO_INIT_NATIVE();
 }
 
-int audio_exit()
+int mimic_audio_exit()
 {
     return AUDIO_EXIT_NATIVE();
 }
 
-int audio_drain(cst_audiodev *ad)
+int mimic_audio_drain(cst_audiodev *ad)
 {
     return AUDIO_DRAIN_NATIVE(ad);
 }
 
-int audio_flush(cst_audiodev *ad)
+int mimic_audio_flush(cst_audiodev *ad)
 {
     return AUDIO_FLUSH_NATIVE(ad);
 }
 
-static void audio_write_buffer(cst_audiodev *ad, void *buff,
+static void mimic_audio_write_buffer(cst_audiodev *ad, void *buff,
                                int num_samples, int num_channels)
 {
     int n, r, i;
     int num_shorts = num_samples * num_channels;
-    int bytes_per_short = audio_bps(ad->fmt);
+    int bytes_per_short = mimic_audio_bps(ad->fmt);
     int num_bytes = num_shorts * bytes_per_short;
     if (CST_AUDIOBUFFSIZE <= 0)
     {
-        r = audio_write(ad, buff, num_bytes);
+        r = mimic_audio_write(ad, buff, num_bytes);
         if (r <= 0)
         {
             cst_errmsg("failed to write %d samples\n", num_shorts);
@@ -272,7 +272,7 @@ static void audio_write_buffer(cst_audiodev *ad, void *buff,
                 n = num_shorts - i;
             /* buff casted to char because a 1 unit buff increment must
              * be one byte */
-            r = audio_write(ad, ((char*)buff) + i * bytes_per_short, n * 2);
+            r = mimic_audio_write(ad, ((char*)buff) + i * bytes_per_short, n * 2);
             if (r <= 0)
             {
                 cst_errmsg("failed to write %d samples\n", n);
@@ -286,18 +286,18 @@ static void audio_write_buffer(cst_audiodev *ad, void *buff,
 }
 
 
-int play_wave(cst_wave *w)
+int mimic_play_wave(cst_wave *w)
 {
     if (!w)
         return CST_ERROR_FORMAT;
 
-    if ((ad_playing = audio_open(w->sample_rate, w->num_channels,
+    if ((ad_playing = mimic_audio_open(w->sample_rate, w->num_channels,
                                  /* FIXME: should be able to determine this somehow */
                                  CST_AUDIO_LINEAR16)) == NULL)
         return CST_ERROR_FORMAT;
-    audio_write_buffer(ad_playing, w->samples, w->num_samples,
+    mimic_audio_write_buffer(ad_playing, w->samples, w->num_samples,
                        w->num_channels);
-    audio_close(ad_playing);
+    mimic_audio_close(ad_playing);
     if (shutdown_request)
     {
         cst_errmsg("Shutdown requested!\n");
@@ -307,7 +307,7 @@ int play_wave(cst_wave *w)
         return CST_OK_FORMAT;
 }
 
-int play_wave_sync(cst_wave *w, cst_relation *rel,
+int mimic_play_wave_sync(cst_wave *w, cst_relation *rel,
                    int (*call_back) (cst_item *))
 {
     int q, i, n, r;
@@ -317,14 +317,14 @@ int play_wave_sync(cst_wave *w, cst_relation *rel,
 
     if (CST_AUDIOBUFFSIZE <= 0)
     {
-        cst_errmsg("play_wave_sync not compatible with PortAudio\n");
+        cst_errmsg("mimic_play_wave_sync not compatible with PortAudio\n");
         return -1;
     }
 
     if (!w)
         return CST_ERROR_FORMAT;
 
-    if ((ad = audio_open(w->sample_rate, w->num_channels,
+    if ((ad = mimic_audio_open(w->sample_rate, w->num_channels,
                          CST_AUDIO_LINEAR16)) == NULL)
         return CST_ERROR_FORMAT;
 
@@ -335,7 +335,7 @@ int play_wave_sync(cst_wave *w, cst_relation *rel,
     {
         if (i >= r_pos)
         {
-            audio_flush(ad);
+            mimic_audio_flush(ad);
             if ((*call_back) (item) != CST_OK_FORMAT)
                 break;
             item = item_next(item);
@@ -349,13 +349,13 @@ int play_wave_sync(cst_wave *w, cst_relation *rel,
         else
             n = w->num_samples - i;
 
-        r = audio_write(ad, &w->samples[i], n * 2);
+        r = mimic_audio_write(ad, &w->samples[i], n * 2);
         q += r;
         if (r <= 0)
             cst_errmsg("failed to write %d samples\n", n);
     }
 
-    audio_close(ad);
+    mimic_audio_close(ad);
 
     return CST_OK_FORMAT;
 }

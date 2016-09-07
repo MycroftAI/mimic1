@@ -79,7 +79,7 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
         cst_errmsg("could not open tmp/awb.wav for writing");
         return -1;
     }
-    if ((audio_device = audio_open(header->sample_rate, 1,
+    if ((audio_device = mimic_audio_open(header->sample_rate, 1,
                                    (header->encoding == CST_SND_SHORT) ?
                                    CST_AUDIO_LINEAR16 : CST_AUDIO_LINEAR8)) ==
         NULL)
@@ -122,7 +122,7 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
         if (r <= 0)
         {                       /* I'm not getting any data from the server */
             cst_fclose(fff);
-            audio_close(audio_device);
+            mimic_audio_close(audio_device);
             free(bytes);
             free(shorts);
             return CST_ERROR_FORMAT;
@@ -130,19 +130,19 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
 
         for (q = r; q > 0; q -= n)
         {
-            n = audio_write(audio_device, shorts, q);
+            n = mimic_audio_write(audio_device, shorts, q);
             cst_fwrite(fff, shorts, 2, q);
             if (n <= 0)
             {
                 cst_fclose(fff);
-                audio_close(audio_device);
+                mimic_audio_close(audio_device);
                 free(bytes);
                 free(shorts);
                 return CST_ERROR_FORMAT;
             }
         }
     }
-    audio_close(audio_device);
+    mimic_audio_close(audio_device);
     cst_fclose(fff);
     free(bytes);
     free(shorts);
