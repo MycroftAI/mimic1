@@ -44,16 +44,11 @@
 #include "config.h"
 
 #ifdef OPTIMIZE_VOICE_LOADING
-//   #define cst_malloc(x, y) malloc(sizeof(x) * y)
-   #define cst_malloc(x, y) cst_alloc(x, y)
    #define OPTIMIZE_DURS
-   #define OPTIMIZE_LOAD_DB
+   #define OPTIMIZE_DB_LOAD
    #define OPTIMIZE_DB_READ
    #define OPTIMIZE_READ_NODES
    #define OPTIMIZE_PADDED
-#else
-   #define cst_malloc(x, y) cst_alloc(x, y)
-
 #endif
 
 const char *const cg_voice_header_string = "CMU_FLITE_CG_VOXDATA-v2.0";
@@ -89,23 +84,24 @@ char *cst_read_string(cst_file fd)
 
 cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 {
-    cst_cg_db *db = cst_malloc(cst_cg_db, 1);
+    cst_cg_db *db = cst_alloc(cst_cg_db, 1);
     int i;
 #ifdef OPTIMIZE_DB_READ
     uint32_t elements[2];
 #endif
-#ifdef OPTIMIZE_LOAD_DB
-    uint32_t buff[4];
+#ifdef OPTIMIZE_DB_LOAD
+    uint32_t load_buff[4];
 #endif
     db->freeable = 1;           /* somebody can free this if they want */
     db->name = cst_read_string(fd);
     db->types = (const char **) cst_read_db_types(fd);
-#ifdef OPTIMIZE_LOAD_DB
-    cst_fread(fd, buff, sizeof(uint32_t) * 4, 1);
-    db->num_types = buff[0];
-    db->sample_rate = buff[1];
-    db->f0_mean = ((float *)buff)[2];
-    db->f0_stddev = ((float *)buff)[3];
+
+#ifdef OPTIMIZE_DB_LOAD
+    cst_fread(fd, load_buff, sizeof(uint32_t) * 4, 1);
+    db->num_types = load_buff[0];
+    db->sample_rate = load_buff[1];
+    db->f0_mean = ((float *)load_buff)[2];
+    db->f0_stddev = ((float *)load_buff)[3];
 #else
     db->num_types = cst_read_int32(fd);
     db->sample_rate = cst_read_int32(fd);
@@ -116,7 +112,7 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 
     db->num_param_models =
         get_param_int(vox->features, "num_param_models", 3);
-    db->param_trees = cst_malloc(const cst_cart * const *,
+    db->param_trees = cst_alloc(const cst_cart * const *,
                                  db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
         db->param_trees[i] = (const cst_cart **) cst_read_tree_array(fd);
@@ -128,10 +124,10 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
         db->spamf0_phrase_tree = cst_read_tree(fd);
     }
 
-    db->num_channels = cst_malloc(int32_t, db->num_param_models);
-    db->num_frames = cst_malloc(int32_t, db->num_param_models);
+    db->num_channels = cst_alloc(int32_t, db->num_param_models);
+    db->num_frames = cst_alloc(int32_t, db->num_param_models);
     db->model_vectors =
-        cst_malloc(uint16_t **, db->num_param_models);
+        cst_alloc(uint16_t **, db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
     {
 #ifdef OPTIMIZE_DB_READ
@@ -170,8 +166,8 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
     db->frame_advance = cst_read_float(fd);
 
     db->num_dur_models = get_param_int(vox->features, "num_dur_models", 1);
-    db->dur_stats = cst_malloc(const dur_stat **, db->num_dur_models);
-    db->dur_cart = cst_malloc(const cst_cart *, db->num_dur_models);
+    db->dur_stats = cst_alloc(const dur_stat **, db->num_dur_models);
+    db->dur_cart = cst_alloc(const cst_cart *, db->num_dur_models);
 
     for (i = 0; i < db->num_dur_models; i++)
     {
@@ -214,7 +210,7 @@ void *cst_read_padded(cst_file fd, int *numbytes)
 {
     void *ret;
     *numbytes = cst_read_int32(fd);
-    ret = (void *) cst_malloc(char, *numbytes);
+    ret = (void *) cst_alloc(char, *numbytes);
     cst_fread(fd, ret, sizeof(char), *numbytes);
     return ret;
 }
@@ -222,8 +218,9 @@ void *cst_read_padded(cst_file fd, int *numbytes)
 {
     void *ret;
     int n;
+
     *numbytes = cst_read_int32(fd);
-    ret = (void *) cst_malloc(char, *numbytes);
+    ret = (void *) cst_alloc(char, *numbytes);
     n = cst_fread(fd, ret, sizeof(char), *numbytes);
     if (n != (*numbytes))
     {
@@ -241,7 +238,7 @@ char **cst_read_db_types(cst_file fd)
     int i;
 
     numtypes = cst_read_int32(fd);
-    types = cst_malloc(char *, numtypes + 1);
+    types = cst_alloc(char *, numtypes + 1);
 
     for (i = 0; i < numtypes; i++)
     {
@@ -263,7 +260,7 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
     uint16_t buff[3];
 #endif
     num_nodes = cst_read_int32(fd);
-    nodes = cst_malloc(cst_cart_node, num_nodes + 1);
+    nodes = cst_alloc(cst_cart_node, num_nodes + 1);
 
     for (i = 0; i < num_nodes; i++)
     {
@@ -302,14 +299,16 @@ char **cst_read_tree_feats(cst_file fd)
     char **feats;
     int numfeats;
     int i;
+
     numfeats = cst_read_int32(fd);
-    feats = cst_malloc(char *, numfeats + 1);
-    
+    feats = cst_alloc(char *, numfeats + 1);
+
     for (i = 0; i < numfeats; i++)
     {
         feats[i] = (char *)cst_read_string(fd);
     }
     feats[i] = 0;
+
     return feats;
 }
 
@@ -317,7 +316,7 @@ cst_cart *cst_read_tree(cst_file fd)
 {
     cst_cart *tree;
 
-    tree = cst_malloc(cst_cart, 1);
+    tree = cst_alloc(cst_cart, 1);
     tree->rule_table = cst_read_tree_nodes(fd);
     tree->feat_table = (const char *const *) cst_read_tree_feats(fd);
 
@@ -334,7 +333,7 @@ cst_cart **cst_read_tree_array(cst_file fd)
 
     if (numtrees > 0)
     {
-        trees = cst_malloc(cst_cart *, numtrees + 1);
+        trees = cst_alloc(cst_cart *, numtrees + 1);
 
         for (i = 0; i < numtrees; i++)
             trees[i] = cst_read_tree(fd);
@@ -357,16 +356,19 @@ void **cst_read_2d_array(cst_file fd)
     int numrows;
     int i;
     void **arrayrows = NULL;
+
     numrows = cst_read_int32(fd);
+
     if (numrows > 0)
     {
-        arrayrows = cst_malloc(void *, numrows);
+        arrayrows = cst_alloc(void *, numrows);
 
         for (i = 0; i < numrows; i++)
         {
             arrayrows[i] = cst_read_array(fd);
         }
     }
+
     return arrayrows;
 }
 
@@ -379,12 +381,12 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     float elements[2];
 #endif
     numstats = cst_read_int32(fd);
-    ds = cst_malloc(dur_stat *, (1 + numstats));
+    ds = cst_alloc(dur_stat *, (1 + numstats));
 
     /* load structuer values */
     for (i = 0; i < numstats; i++)
     {
-        ds[i] = cst_malloc(dur_stat, 1);
+        ds[i] = cst_alloc(dur_stat, 1);
 #ifdef OPTIMIZE_DURS
         cst_fread(fd, elements, sizeof(uint32_t), 2);
         ds[i]->mean = elements[0];
@@ -396,6 +398,7 @@ dur_stat **cst_read_dur_stats(cst_file fd)
         ds[i]->phone = cst_read_padded(fd, &temp);
     }
     ds[i] = NULL;
+
     return ds;
 }
 
@@ -403,12 +406,13 @@ char ***cst_read_phone_states(cst_file fd)
 {
     int i, j, count1, count2, temp;
     char ***ps;
+
     count1 = cst_read_int32(fd);
-    ps = cst_malloc(char **, count1 + 1);
+    ps = cst_alloc(char **, count1 + 1);
     for (i = 0; i < count1; i++)
     {
         count2 = cst_read_int32(fd);
-        ps[i] = cst_malloc(char *, count2 + 1);
+        ps[i] = cst_alloc(char *, count2 + 1);
         for (j = 0; j < count2; j++)
         {
             ps[i][j] = cst_read_padded(fd, &temp);

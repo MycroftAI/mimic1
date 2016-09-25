@@ -61,6 +61,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
     char *fname;
     char *fval;
     cst_file vd;
+
 #ifdef OPTIMIZE_IOBUFF
     char *vd_buff;
     vd_buff = cst_alloc(char, 64 * 1024);
