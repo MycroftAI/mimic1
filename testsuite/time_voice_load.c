@@ -5,6 +5,7 @@
 
 void mimic_set_lang_list();
 
+
 void print_usage(char *prog_name)
 {
     printf("%s voice-file [number of loads]\n", prog_name);
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
     cst_voice * v = NULL;
     mimic_init();
     mimic_set_lang_list();
-    if (argc < 2)
+    if (argc < 3)
     {
         print_usage(argv[0]);
         return -1;
