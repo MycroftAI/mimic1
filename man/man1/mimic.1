@@ -9,7 +9,9 @@ mimic \- a text to speech tool
 \fB\-t \fB"Hello there"\fR [\fIwavefile]
 
 .SH DESCRIPTION
-Mimic is a command line tool for synthesizing speech from text. If \fIoutfile.wav\R is omitted mimic will speak the result out loud.
+Mimic is a command line tool for synthesizing speech from text. If \fIoutfile.wav\fR is omitted mimic will output the utterance using the computer sound card.
+.TP
+Mandatory arguments to long options are mandatory for short options too.
 
 .SH OPTIONS
 .TP
@@ -28,6 +30,12 @@ List included voices
 \fB\-voice \fIvoice\fR
 Set mimic to speak with \fIvoice\fR, this can either be one of the included voices or a .flitevox-file.
 .TP
+\fB\-v
+Verbose mode, print extended output.
+.TP
+\fB\-l
+Loop output endlessly.
+.TP
 \fB\--help
 List usage.
 .TP
@@ -44,8 +52,20 @@ Print phoneme segments to stdout before they are spoken.
 Print segments and their end-time to stdout before they are spoken.
 .TP
 \fB\-pr \fIRelName\fR
-Print relation to stdout before they are spoken.
+Get information for \fIRelName\fR from the utterance and print it to stdout.
+.TP
 \fB\-p "\fIPhonemes\fR"
 Create speech from the phoneme string \fIPhonemes\fR.
 .TP
-
+\fB\-seti \fIFeature=Int\fR
+Set voice \fIfeature\fR to integer value.
+.TP
+\fB\-setf \fIFeature=Float\fR
+Set voice \fIfeature\fR to float value.
+.TP
+\fB\-sets \fIFeature=String\fR
+Set voice \fIfeature\fR to string value.
+.TP
+\fB\-s\fR, \fB\-set \fIFeature=Int\fR
+Set voice \fIfeature\fR and try to guess the type from the input.
+.TP
