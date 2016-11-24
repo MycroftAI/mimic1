@@ -138,7 +138,7 @@ int cst_wave_save_raw(cst_wave *w, const char *filename)
 int cst_wave_save_raw_fd(cst_wave *w, cst_file fd)
 {
     if (cst_fwrite(fd, cst_wave_samples(w),
-                   sizeof(short),
+                   sizeof(int16_t),
                    cst_wave_num_samples(w)) == cst_wave_num_samples(w))
         return 0;
     else
@@ -190,18 +190,18 @@ int cst_wave_append_riff(cst_wave *w, const char *filename)
                 cst_wave_num_samples(w));
         swap_bytes_short(xdata,
                          cst_wave_num_channels(w) * cst_wave_num_samples(w));
-        n = cst_fwrite(fd, xdata, sizeof(short),
+        n = cst_fwrite(fd, xdata, sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
         cst_free(xdata);
     }
     else
     {
-        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(short),
+        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
     }
 
     cst_fseek(fd, 4, CST_SEEK_ABSOLUTE);
-    num_bytes = hdr.num_bytes + (n * sizeof(short));
+    num_bytes = hdr.num_bytes + (n * sizeof(int16_t));
     if (CST_BIG_ENDIAN)
         num_bytes = SWAPINT(num_bytes);
     cst_fwrite(fd, &num_bytes, 4, 1);   /* num bytes in whole file */
@@ -302,13 +302,13 @@ int cst_wave_save_riff_fd(cst_wave *w, cst_file fd)
                 cst_wave_num_samples(w));
         swap_bytes_short(xdata,
                          cst_wave_num_channels(w) * cst_wave_num_samples(w));
-        n = cst_fwrite(fd, xdata, sizeof(short),
+        n = cst_fwrite(fd, xdata, sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
         cst_free(xdata);
     }
     else
     {
-        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(short),
+        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
     }
 
@@ -344,9 +344,9 @@ int cst_wave_load_raw_fd(cst_wave *w, cst_file fd,
     long size;
 
     /* Won't work on pipes, tough luck... */
-    size = cst_filesize(fd) / sizeof(short);
+    size = cst_filesize(fd) / sizeof(int16_t);
     cst_wave_resize(w, size, 1);
-    if (cst_fread(fd, w->samples, sizeof(short), size) != size)
+    if (cst_fread(fd, w->samples, sizeof(int16_t), size) != size)
         return -1;
 
     w->sample_rate = sample_rate;
@@ -484,7 +484,7 @@ int cst_wave_load_riff_fd(cst_wave *w, cst_file fd)
     cst_wave_resize(w, samples / hdr.num_channels, hdr.num_channels);
 
     if ((d =
-         cst_fread(fd, w->samples, sizeof(short),
+         cst_fread(fd, w->samples, sizeof(int16_t),
                    data_length)) != data_length)
     {
         cst_errmsg

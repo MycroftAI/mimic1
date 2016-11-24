@@ -269,7 +269,9 @@ static void audio_write_buffer(cst_audiodev *ad, void *buff,
                 n = CST_AUDIOBUFFSIZE;
             else
                 n = num_shorts - i;
-            r = audio_write(ad, buff + i * bytes_per_short, n * 2);
+            /* buff casted to char because a 1 unit buff increment must
+             * be one byte */
+            r = audio_write(ad, ((char*)buff) + i * bytes_per_short, n * 2);
             if (r <= 0)
             {
                 cst_errmsg("failed to write %d samples\n", n);

@@ -97,7 +97,7 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
     num_samples = header->data_size / sample_width;
     /* we naively let the num_channels sort itself out */
     bytes = cst_alloc(unsigned char, CST_AUDIOBUFFSIZE);
-    shorts = cst_alloc(short, CST_AUDIOBUFFSIZE);
+    shorts = cst_alloc(int16_t, CST_AUDIOBUFFSIZE);
     for (i = 0; i < num_samples; i += r / 2)
     {
         if (num_samples > i + CST_AUDIOBUFFSIZE)
