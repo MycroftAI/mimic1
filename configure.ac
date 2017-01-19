@@ -74,7 +74,14 @@ PKGCONFIG_MIMIC_DEPS=
 
 dnl Check ICU
 PKG_CHECK_MODULES([ICU], [icu-i18n],
-                  [m4_ignore], [m4_ignore])
+                  [found_icu=yes; break;], [m4_ignore])
+AC_CHECK_HEADER(unicode/ustring.h,
+                [found_ustring=yes; break;])
+AS_IF([test "x$found_ustring" != "xyes" && test "x$found_icu" != "xyes"],
+                [AC_MSG_ERROR([Unable to detect ICU installation])])
+AS_IF([test "x$found_icu" != "xyes"],
+                [AC_MSG_WARN([ICU was only partially detected and may be missing])])
+
 AC_DEFINE([U_CHARSET_IS_UTF8], [1], [mimic accepts UTF-8 only])
 
 PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} icu-i18n"
