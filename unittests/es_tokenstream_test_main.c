@@ -104,11 +104,4 @@ void test_es_tokenizer(void)
     delete_voice(v);
 }
 
-TEST_LIST =
-{
-    {
-    "Spanish token to words", test_es_tokenizer}
-    ,
-    {
-    0}
-};
+TEST_LIST = {{"Spanish token to words", test_es_tokenizer}, {0}};
