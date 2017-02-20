@@ -231,10 +231,10 @@ AC_ARG_ENABLE([lang-indic],
   [enable_lang_indic=${enable_lang_all}])
 
 AC_ARG_ENABLE([lang-es],
-  [AS_HELP_STRING([--disable-lang-es],
-      [disable Spanish language support])],
+  [AS_HELP_STRING([--enable-lang-es],
+      [(NOT WORKING YET) enable Spanish language support])],
   [],
-  [enable_lang_es=${enable_lang_all}])
+  [enable_lang_es=no])
 
 dnl -------------------- Language analysis ---------------------------
 dnl For US English en-us:
