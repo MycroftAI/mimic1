@@ -73,6 +73,7 @@ static cst_val *es_tokentowords_one(cst_item *token, const char *name)
         list_of_words = val_append(list_of_words,
                                    cons_val(string_val("por"),
                                             cons_val(string_val("ciento"), NULL)));
+        cst_free(name_mod);
     } else if (strcmp(name, "17") == 0) /* TO DO: Handle all numbers */
     {
         list_of_words = cons_val(string_val("diecisiete"), NULL);       
