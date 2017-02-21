@@ -64,6 +64,7 @@ cst_voice *cmu_time_awb_ldom = NULL;
 
 cst_voice *register_cmu_time_awb(const char *voxdir)
 {
+    (void) voxdir;
     cst_voice *v = new_voice();
 
     v->name = "awb_time";

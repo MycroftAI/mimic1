@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
     if (argc != 3)
     {
-        fprintf(stderr, "usage: play_wave_sync WAVEFILE LABELFILE\n");
+        fprintf(stderr, "usage: mimic_play_wave_sync WAVEFILE LABELFILE\n");
         return 1;
     }
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     if (relation_load(r, argv[2]) != CST_OK_FORMAT)
         return -1;
 
-    play_wave_sync(w, r, my_call_back);
+    mimic_play_wave_sync(w, r, my_call_back);
 
     return 0;
 }

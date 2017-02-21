@@ -548,6 +548,7 @@ static const char * const eng_to_indic[99][3] =
 cst_val *map_english_to_indic_phones(const char *indic_variant,
                                      const cst_val *english_phones)
 {
+    (void) indic_variant;
     /* Map English (radio) phones to their Indic equivalent */
     cst_val *ip = NULL;
     const cst_val *v;
@@ -635,6 +636,7 @@ cst_val *cmu_indic_lex_lts_function(const struct lexicon_struct *l,
                                     const char *word, const char *pos,
                                     const cst_features *feats)
 {
+    (void) l;
     cst_val *utflets = 0;
     cst_val *ords = 0;
 

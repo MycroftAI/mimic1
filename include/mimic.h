@@ -44,6 +44,7 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
+#include "config.h"
 #include "cst_string.h"
 #include "cst_regex.h"
 #include "cst_val.h"
@@ -76,16 +77,16 @@ extern "C" {
     cst_voice *mimic_voice_select(const char *name);
     cst_voice *mimic_voice_load(const char *voice_filename);
     int mimic_voice_dump(cst_voice *voice, const char *voice_filename);
-    float mimic_file_to_speech(const char *filename,
-                               cst_voice *voice, const char *outtype);
-    float mimic_text_to_speech(const char *text,
-                               cst_voice *voice, const char *outtype);
-    float mimic_phones_to_speech(const char *text,
-                                 cst_voice *voice, const char *outtype);
-    float mimic_ssml_file_to_speech(const char *filename,
-                                    cst_voice *voice, const char *outtype);
-    float mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
-                                    const char *outtype);
+    int mimic_file_to_speech(const char *filename, cst_voice *voice,
+                             const char *outtype, float *dur);
+    int mimic_text_to_speech(const char *text, cst_voice *voice,
+                             const char *outtype, float *dur);
+    int mimic_phones_to_speech(const char *text, cst_voice *voice,
+                               const char *outtype, float *dur);
+    int mimic_ssml_file_to_speech(const char *filename, cst_voice *voice,
+                                    const char *outtype, float *dur);
+    int mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
+                                    const char *outtype, float *dur);
     int mimic_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile);
 
 /* Lower lever user functions */
@@ -93,8 +94,8 @@ extern "C" {
     cst_utterance *mimic_synth_text(const char *text, cst_voice *voice);
     cst_utterance *mimic_synth_phones(const char *phones, cst_voice *voice);
 
-    float mimic_ts_to_speech(cst_tokenstream *ts,
-                             cst_voice *voice, const char *outtype);
+    int mimic_ts_to_speech(cst_tokenstream *ts, cst_voice *voice,
+                           const char *outtype, float *dur);
     cst_utterance *mimic_do_synth(cst_utterance *u,
                                   cst_voice *voice, cst_uttfunc synth);
     int mimic_process_output(cst_utterance *u,

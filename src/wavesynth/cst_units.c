@@ -38,6 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 
+#include <stdint.h>
 #include <math.h>
 #include "cst_hrg.h"
 #include "cst_utt_utils.h"
@@ -595,12 +596,13 @@ void add_residual_vuv(int targ_size, unsigned char *targ_residual,
 void add_residual_pulse(int targ_size, unsigned char *targ_residual,
                         int unit_size, const unsigned char *unit_residual)
 {
-    int p, i, m;
+    int i, m;
+    intptr_t p;
     /* Unit residual isn't a pointer its a number, the power for the 
        the sts, yes this is hackily casting the address to a number */
 
     /* Need voiced and unvoiced model */
-    p = (int) unit_residual;    /* I know the compiler will complain about this */
+    p = (intptr_t) unit_residual;
 
     if (p > 7000)               /* voiced */
     {

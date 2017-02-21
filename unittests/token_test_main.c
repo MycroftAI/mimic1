@@ -5,12 +5,22 @@
 #include "cst_tokenstream.h"
 #include "cst_lexicon.h"
 
+#ifndef TEST_FILE
+ #define TEST_FILE "data.one"
+#endif
+
+#ifndef TEST_FILE_UTF8
+ #define TEST_FILE_UTF8 "data_utf8.txt"
+#endif
+
+
 void test_token(void)
 {
     cst_tokenstream *fd;
     const char *token;
 
-    fd = ts_open("data.one", " \n\t", NULL, "\"!", NULL);
+    fd = ts_open(TEST_FILE, " \n\t", NULL, "\"!", NULL);
+    TEST_CHECK(fd != NULL);
 
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "Hello") == 0);
@@ -45,7 +55,8 @@ void test_token_utf8(void)
     const char *singl = "€(){}[]😊";    /* EURO SIGN + defaults + emoji */
     const char *prepunc = "¿¡\"!";    /* INVERTED QUESTION MARK, INV. EXCL. MARK, ", ! */
     const char *postpunc = "\"'`.,:;!?(){}[]";
-    fd = ts_open("data_utf8.txt", " \n\t", singl, prepunc, postpunc);
+    fd = ts_open(TEST_FILE_UTF8, " \n\t", singl, prepunc, postpunc);
+    TEST_CHECK(fd != NULL);
 
     token = ts_get(fd);
     TEST_CHECK(strcmp(token, "Hello") == 0);

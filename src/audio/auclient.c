@@ -49,11 +49,11 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
-#ifndef CST_NO_SOCKETS
+#if HAVE_SYS_SOCKET_H == 1
 
 #include <unistd.h>
 
-int play_wave_client(cst_wave *w, const char *servername, int port,
+int mimic_play_wave_client(cst_wave *w, const char *servername, int port,
                      const char *encoding)
 {
     int audiofd, q, i, n, r;
@@ -68,7 +68,7 @@ int play_wave_client(cst_wave *w, const char *servername, int port,
     if ((audiofd = cst_socket_open(servername, port)) < 0)
         return CST_ERROR_FORMAT;
 
-    header.magic = (unsigned int) 0x2e736e64;
+    header.magic = (uint32_t) 0x2e736e64;
     header.hdr_size = sizeof(header);
     if (cst_streq(encoding, "ulaw"))
     {
@@ -90,12 +90,12 @@ int play_wave_client(cst_wave *w, const char *servername, int port,
     header.channels = w->num_channels;
     if (CST_LITTLE_ENDIAN)
     {                           /* If I'm intel etc swap things, so "network byte order" */
-        header.magic = SWAPINT(header.magic);
-        header.hdr_size = SWAPINT(header.hdr_size);
-        header.data_size = SWAPINT(header.data_size);
-        header.encoding = SWAPINT(header.encoding);
-        header.sample_rate = SWAPINT(header.sample_rate);
-        header.channels = SWAPINT(header.channels);
+        header.magic = SWAPINT32(header.magic);
+        header.hdr_size = SWAPINT32(header.hdr_size);
+        header.data_size = SWAPINT32(header.data_size);
+        header.encoding = SWAPINT32(header.encoding);
+        header.sample_rate = SWAPINT32(header.sample_rate);
+        header.channels = SWAPINT32(header.channels);
     }
 
     if (write(audiofd, &header, sizeof(header)) != sizeof(header))
@@ -106,7 +106,7 @@ int play_wave_client(cst_wave *w, const char *servername, int port,
     }
     const int buffsize = 128;
     bytes = cst_alloc(unsigned char, buffsize);
-    shorts = cst_alloc(short, buffsize);
+    shorts = cst_alloc(int16_t, buffsize);
 
     for (i = 0; i < w->num_samples; i += r)
     {
@@ -124,7 +124,7 @@ int play_wave_client(cst_wave *w, const char *servername, int port,
         {
             for (q = 0; q < n; q++)
                 if (CST_LITTLE_ENDIAN)
-                    shorts[q] = SWAPSHORT(w->samples[i + q]);
+                    shorts[q] = SWAPINT16(w->samples[i + q]);
                 else
                     shorts[q] = w->samples[i + q];
             r = write(audiofd, shorts, n * 2);

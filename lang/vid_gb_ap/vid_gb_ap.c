@@ -50,6 +50,7 @@ cst_voice *vid_gb_ap_cg = NULL;
 
 cst_voice *register_vid_gb_ap(const char *voxdir)
 {
+    (void) voxdir;
     cst_voice *vox;
     cst_lexicon *lex;
 

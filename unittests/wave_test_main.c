@@ -1,9 +1,20 @@
-#include "cutest.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include <cst_wave.h>
-#include <mimic.h>
+
+#include "cst_wave.h"
+#include "mimic.h"
+
+#include "cutest.h"
+
+#ifndef VOICE_LIST_DIR
+  #define VOICE_LIST_DIR "../voices"
+#endif
+
+#ifndef A_VOICE
+  #define A_VOICE "../voices/cmu_us_rms.flitevox"
+#endif
+
 
 cst_val *mimic_set_voice_list(const char *voxdir);
 
@@ -15,7 +26,7 @@ void common_init(void)
     mimic_set_lang_list();
 
     if (mimic_voice_list == NULL)
-        mimic_set_voice_list("../voices");
+        mimic_set_voice_list(VOICE_LIST_DIR);
 }
 
 
@@ -24,7 +35,7 @@ void test_copy(void)
    cst_voice *v = NULL;
    cst_wave *w1, *w2;
    common_init();
-   v = mimic_voice_select("rms");
+   v = mimic_voice_select(A_VOICE);
    w1 = mimic_text_to_wave("Hello", v);
    w2 = copy_wave(w1);
    TEST_CHECK(w1 != w2);
@@ -41,11 +52,11 @@ void test_copy(void)
 
 void test_concat(void)
 {
-   unsigned int original_len;
+   int original_len;
    cst_wave *w1, *w2;
    cst_voice *v;
    common_init();
-   v = mimic_voice_select("rms");
+   v = mimic_voice_select(A_VOICE);
    w1 = mimic_text_to_wave("Hello", v);
    w2 = mimic_text_to_wave("There", v);
    original_len = w1->num_samples;

@@ -43,8 +43,8 @@
 
 float decode_time(const char *ctime)
 {
+    (void) ctime;
     /* return number of seconds from time */
-
     return 0.0;
 }
 
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
                  "-itype <string>  Input type, raw or headered\n"
                  "-wavelist <string>  File containing times and wave filenames\n",
                  args);
-
+    (void) files;
     wavelist = get_wavelist(get_param_string(args, "-wavelist", "-"));
 
     if (wavelist == 0)

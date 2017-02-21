@@ -37,7 +37,9 @@
 /*  Some generic socket client/server code                               */
 /*                                                                       */
 /*************************************************************************/
-#ifdef CST_NO_SOCKETS
+#include "config.h"
+
+#if HAVE_SYS_SOCKET_H == 0
 
 int cst_socket_open(const char *host, int port)
 {
@@ -94,7 +96,7 @@ int cst_socket_open(const char *host, int port)
         return -1;
     }
     memset(&serv_addr, 0, sizeof(serv_addr));
-    if ((serv_addr.sin_addr.s_addr = inet_addr(host)) == -1)
+    if ((serv_addr.sin_addr.s_addr = inet_addr(host)) == INADDR_NONE)
     {
         /* its a name rather than an ipnum */
         serverhost = gethostbyname(host);

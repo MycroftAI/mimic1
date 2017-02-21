@@ -79,7 +79,7 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
         cst_errmsg("could not open tmp/awb.wav for writing");
         return -1;
     }
-    if ((audio_device = audio_open(header->sample_rate, 1,
+    if ((audio_device = mimic_audio_open(header->sample_rate, 1,
                                    (header->encoding == CST_SND_SHORT) ?
                                    CST_AUDIO_LINEAR16 : CST_AUDIO_LINEAR8)) ==
         NULL)
@@ -97,7 +97,7 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
     num_samples = header->data_size / sample_width;
     /* we naively let the num_channels sort itself out */
     bytes = cst_alloc(unsigned char, CST_AUDIOBUFFSIZE);
-    shorts = cst_alloc(short, CST_AUDIOBUFFSIZE);
+    shorts = cst_alloc(int16_t, CST_AUDIOBUFFSIZE);
     for (i = 0; i < num_samples; i += r / 2)
     {
         if (num_samples > i + CST_AUDIOBUFFSIZE)
@@ -116,13 +116,13 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
             r = read(audiostream, shorts, n * 2);
             if (CST_LITTLE_ENDIAN)
                 for (q = 0; q < r / 2; q++)
-                    shorts[q] = SWAPSHORT(shorts[q]);
+                    shorts[q] = SWAPINT16(shorts[q]);
         }
 
         if (r <= 0)
         {                       /* I'm not getting any data from the server */
             cst_fclose(fff);
-            audio_close(audio_device);
+            mimic_audio_close(audio_device);
             free(bytes);
             free(shorts);
             return CST_ERROR_FORMAT;
@@ -130,19 +130,19 @@ static int play_wave_from_socket(snd_header * header, int audiostream)
 
         for (q = r; q > 0; q -= n)
         {
-            n = audio_write(audio_device, shorts, q);
+            n = mimic_audio_write(audio_device, shorts, q);
             cst_fwrite(fff, shorts, 2, q);
             if (n <= 0)
             {
                 cst_fclose(fff);
-                audio_close(audio_device);
+                mimic_audio_close(audio_device);
                 free(bytes);
                 free(shorts);
                 return CST_ERROR_FORMAT;
             }
         }
     }
-    audio_close(audio_device);
+    mimic_audio_close(audio_device);
     cst_fclose(fff);
     free(bytes);
     free(shorts);
@@ -166,12 +166,12 @@ static int auserver_process_client(int client_name, int fd)
     }
     if (CST_LITTLE_ENDIAN)
     {
-        header.magic = SWAPINT(header.magic);
-        header.hdr_size = SWAPINT(header.hdr_size);
-        header.data_size = SWAPINT(header.data_size);
-        header.encoding = SWAPINT(header.encoding);
-        header.sample_rate = SWAPINT(header.sample_rate);
-        header.channels = SWAPINT(header.channels);
+        header.magic = SWAPINT32(header.magic);
+        header.hdr_size = SWAPINT32(header.hdr_size);
+        header.data_size = SWAPINT32(header.data_size);
+        header.encoding = SWAPINT32(header.encoding);
+        header.sample_rate = SWAPINT32(header.sample_rate);
+        header.channels = SWAPINT32(header.channels);
     }
 
     if (header.magic != CST_SND_MAGIC)

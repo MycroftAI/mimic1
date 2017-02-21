@@ -37,17 +37,20 @@ tags
 # Configure Generated Files/Directories 
 config.log
 config.status
-config/config
-config/system.mak
+config/*
+configure
 aclocal.m4
 autom4te.cache
+Makefile.in
+m4/*
+include/config.h.in
+
 # Building Process Files/Directories
-build/
-bin/
-include/mimic_version.h
-main/mimic_lang_list.c
-main/mimic_voice_list.c
-.build_lib
+*.deps
+*.dirstamp
+Makefile
+include/config.h
+include/stamp-h1
 
 # Test suite executables
 testsuite/play_client
@@ -79,6 +82,7 @@ unittests/nums_test
 unittests/voice_select_test
 unittests/lts_test
 unittests/wave_test
+
 # temporary files for building cmulex
 _festsuite
 lang/cmulex/festival

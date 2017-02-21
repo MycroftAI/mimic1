@@ -55,14 +55,14 @@ int mimic_lang_list_length = 0;
 int mimic_init()
 {
     cst_regex_init();
-    audio_init();
+    mimic_audio_init();
 
     return 0;
 }
 
 int mimic_exit()
 {
-    audio_exit();
+    mimic_audio_exit();
     return 0;
 }
 
@@ -127,29 +127,30 @@ cst_voice *mimic_voice_select(const char *name)
 {
     const cst_val *v;
     cst_voice *voice;
-
-    if (mimic_voice_list == NULL)
-        return NULL;            /* oops, not good */
-    if (name == NULL)
-        return val_voice(val_car(mimic_voice_list));
-
-    for (v = mimic_voice_list; v; v = val_cdr(v))
+    if ((name == NULL) && (mimic_voice_list != NULL))
     {
-        voice = val_voice(val_car(v));
-        if (cst_streq(name, voice->name))       /* short name */
-            return voice;
-        if (cst_streq(name, get_param_string(voice->features, "name", "")))
-            /* longer name */
-            return voice;
-        if (cst_streq
-            (name, get_param_string(voice->features, "pathname", "")))
-            /* even longer name (url) */
-            return voice;
+        return val_voice(val_car(mimic_voice_list));
+    }
+    if (mimic_voice_list != NULL)
+    {
+        for (v = mimic_voice_list; v; v = val_cdr(v))
+        {
+            voice = val_voice(val_car(v));
+            if (cst_streq(name, voice->name))       /* short name */
+                return voice;
+            if (cst_streq(name, get_param_string(voice->features, "name", "")))
+                /* longer name */
+                return voice;
+            if (cst_streq
+                    (name, get_param_string(voice->features, "pathname", "")))
+                /* even longer name (url) */
+                return voice;
+        }
     }
 
-    if (cst_urlp(name)        /* naive check if its a url */
-        || cst_strchr(name, '/')
-        || cst_strchr(name, '\\'))
+    if (name && (cst_urlp(name) ||      /* naive check if its a url */
+            cst_strchr(name, '/') ||
+            cst_strchr(name, '\\')))
     {
         voice = mimic_voice_load(name);
         if (!voice)
@@ -158,8 +159,7 @@ cst_voice *mimic_voice_select(const char *name)
         mimic_add_voice(voice);
         return voice;
     }
-    return mimic_voice_select(NULL);
-
+    return NULL;
 }
 
 int mimic_voice_add_lex_addenda(cst_voice *v, const cst_string *lexfile)
@@ -232,8 +232,8 @@ cst_wave *mimic_text_to_wave(const char *text, cst_voice *voice)
     return w;
 }
 
-float mimic_file_to_speech(const char *filename,
-                           cst_voice *voice, const char *outtype)
+int mimic_file_to_speech(const char *filename, cst_voice *voice,
+                         const char *outtype, float *dur)
 {
     cst_tokenstream *ts;
 
@@ -251,13 +251,14 @@ float mimic_file_to_speech(const char *filename,
         cst_errmsg("failed to open file \"%s\" for reading\n", filename);
         return 1;
     }
-    return mimic_ts_to_speech(ts, voice, outtype);
+    return mimic_ts_to_speech(ts, voice, outtype, dur);
 }
 
-float mimic_ts_to_speech(cst_tokenstream *ts,
-                         cst_voice *voice, const char *outtype)
+int mimic_ts_to_speech(cst_tokenstream *ts, cst_voice *voice,
+                       const char *outtype, float *dur)
 {
-    int err;
+    (void) dur;
+    int err = 0;
     cst_utterance *utt;
     const char *token;
     cst_item *t;
@@ -352,33 +353,44 @@ float mimic_ts_to_speech(cst_tokenstream *ts,
     if (utt)
         delete_utterance(utt);
     ts_close(ts);
-    return durs;
+    return err;
 }
 
-float mimic_text_to_speech(const char *text,
-                           cst_voice *voice, const char *outtype)
+int mimic_text_to_speech(const char *text, cst_voice *voice,
+                         const char *outtype, float *dur)
 {
-    cst_utterance *u;
-    float dur;
+    int ret;
 
-    u = mimic_synth_text(text, voice);
-    mimic_process_output(u, outtype, FALSE, &dur);
-    delete_utterance(u);
-
-    return dur;
+    if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
+    {
+        ret = -EINVAL;
+    }
+    else
+    {
+        cst_utterance *u;
+        u = mimic_synth_text(text, voice);
+        ret = mimic_process_output(u, outtype, FALSE, dur);
+        delete_utterance(u);
+    }
+    return ret;
 }
 
-float mimic_phones_to_speech(const char *text,
-                             cst_voice *voice, const char *outtype)
+int mimic_phones_to_speech(const char *text, cst_voice *voice,
+                           const char *outtype, float *dur)
 {
-    cst_utterance *u;
-    float dur;
-
-    u = mimic_synth_phones(text, voice);
-    mimic_process_output(u, outtype, FALSE, &dur);
-    delete_utterance(u);
-
-    return dur;
+    int ret;
+    if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
+    {
+        ret = -EINVAL;
+    }
+    else
+    {
+        cst_utterance *u;
+        u = mimic_synth_phones(text, voice);
+        ret = mimic_process_output(u, outtype, FALSE, dur);
+        delete_utterance(u);
+    }
+    return ret;
 }
 
 int mimic_process_output(cst_utterance *u, const char *outtype,
@@ -396,7 +408,7 @@ int mimic_process_output(cst_utterance *u, const char *outtype,
 
     if (cst_streq(outtype, "play"))
     {
-        if (play_wave(w) == EINTR)
+        if (mimic_play_wave(w) == EINTR)
             return -EINTR;
     }
     else if (cst_streq(outtype, "stream"))

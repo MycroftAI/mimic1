@@ -51,7 +51,6 @@ int main(int argc, char **argv)
     cst_utterance *u;
     int i;
     float durs;
-    int *fff;
 
 /*    putenv("MALLOC_TRACE=mallfile");
       mtrace(); */
@@ -74,7 +73,7 @@ int main(int argc, char **argv)
         durs += (float) w->num_samples / (float) w->sample_rate;
 
         if (cst_streq(argv[2], "play"))
-            play_wave(w);
+            mimic_play_wave(w);
         else if (!cst_streq(argv[2], "none"))
             cst_wave_save_riff(w, argv[2]);
         delete_utterance(u);

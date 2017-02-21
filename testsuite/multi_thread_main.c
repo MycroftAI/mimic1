@@ -40,7 +40,10 @@
 /*                                                                       */
 /*************************************************************************/
 #include <stdio.h>
-#include <omp.h>
+
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 #include <mimic.h>
 
@@ -67,10 +70,11 @@ void init()
 float synth_text(char *text)
 {
     float dur;
-    dur = mimic_text_to_speech(text, voice, "none");
+    mimic_text_to_speech(text, voice, "none", &dur);
     return dur;
 }
 
+#ifdef _OPENMP
 int main()
 {
     init();
@@ -84,3 +88,9 @@ int main()
     mimic_exit();
     return 0;
 }
+#else
+int main()
+{
+    return 0;
+}
+#endif

@@ -42,14 +42,13 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#ifdef UNDER_WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <signal.h>
 #endif
 
 #include "mimic.h"
-#include "mimic_version.h"
 
 cst_val *mimic_set_voice_list(const char *voxdir);
 void *mimic_set_lang_list(void);
@@ -60,10 +59,10 @@ void cst_alloc_debug_summary();
 void usenglish_init(cst_voice *v);
 cst_lexicon *cmu_lex_init(void);
 
-#ifdef UNDER_WINDOWS
+#ifdef _WIN32
 BOOL WINAPI windows_signal_handler(DWORD signum)
 {
-    shutdown_audio(signum);
+    mimic_audio_shutdown(signum);
     if (signum == CTRL_C_EVENT)
         return TRUE;
     else
@@ -72,17 +71,16 @@ BOOL WINAPI windows_signal_handler(DWORD signum)
 #else
 void sigint_handler(int signum)
 {
-    shutdown_audio(signum);
+    mimic_audio_shutdown(signum);
 }
 #endif
-
 
 static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
-    printf("  version: %s-%s-%s %s (http://cmuflite.org)\n",
-           MIMIC_PROJECT_PREFIX, MIMIC_PROJECT_VERSION, MIMIC_PROJECT_STATE,
-           MIMIC_PROJECT_DATE);
+    printf("  mimic developers, Copyright (c) 2016, all rights reserved\n");
+    printf("  version: %s-%s (%s)\n",
+           PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_URL);
 }
 
 static void mimic_usage()
@@ -214,6 +212,7 @@ int main(int argc, char **argv)
     cst_voice *desired_voice = 0;
     const char *voicedir = NULL;
     int i;
+	int err;
     float durs;
     double time_start, time_end;
     int mimic_verbose, mimic_loop, mimic_bench;
@@ -226,11 +225,11 @@ int main(int argc, char **argv)
     cst_audio_streaming_info *asi;
 
     // Set signal handler to shutdown any playing audio on SIGINT
-#ifdef UNDER_WINDOWS
+#ifdef _WIN32
     SetConsoleCtrlHandler(windows_signal_handler, TRUE);
 #else
     signal(SIGINT, sigint_handler);
-#endif //UNDER_WINDOWS
+#endif //_WIN32
     filename = 0;
     outtype = "play";           /* default is to play */
     mimic_verbose = FALSE;
@@ -382,6 +381,11 @@ int main(int argc, char **argv)
     if (desired_voice == 0)
         desired_voice = mimic_voice_select(NULL);
 
+    if (desired_voice == 0)
+    {
+        fprintf(stderr, "No voice given and no voice precompiled\n");
+        return 1;
+    }
     v = desired_voice;
     feat_copy_into(extra_feats, v->features);
     durs = 0.0;
@@ -416,20 +420,20 @@ int main(int argc, char **argv)
     time_start = (double) (tv.tv_sec) + (((double) tv.tv_usec) / 1000000.0);
 
     if (explicit_phones)
-        durs = mimic_phones_to_speech(filename, v, outtype);
+        err = mimic_phones_to_speech(filename, v, outtype, &durs);
     else if ((strchr(filename, ' ') && !explicit_filename) || explicit_text)
     {
         if (ssml_mode)
-            durs = mimic_ssml_text_to_speech(filename, v, outtype);
+            err = mimic_ssml_text_to_speech(filename, v, outtype, &durs);
         else
-            durs = mimic_text_to_speech(filename, v, outtype);
+            err = mimic_text_to_speech(filename, v, outtype, &durs);
     }
     else
     {
         if (ssml_mode)
-            durs = mimic_ssml_file_to_speech(filename, v, outtype);
+            err = mimic_ssml_file_to_speech(filename, v, outtype, &durs);
         else
-            durs = mimic_file_to_speech(filename, v, outtype);
+            err = mimic_file_to_speech(filename, v, outtype, &durs);
     }
 
     gettimeofday(&tv, NULL);
@@ -440,7 +444,8 @@ int main(int argc, char **argv)
              durs / (float) (time_end - time_start), durs,
              (float) (time_end - time_start));
 
-    if (mimic_loop || (mimic_bench && bench_iter++ < ITER_MAX))
+    if ((mimic_loop || (mimic_bench && bench_iter++ < ITER_MAX))
+			&& err == 0)
         goto loop;
 
     delete_features(extra_feats);

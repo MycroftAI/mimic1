@@ -99,6 +99,7 @@ int indic_utt_break(cst_tokenstream *ts,
                     const char *token,
                     cst_relation *tokens)
 {
+  (void) token;
   const char *postpunct = item_feat_string(relation_tail(tokens), "punc");
   const char *ltoken = item_name(relation_tail(tokens));
 

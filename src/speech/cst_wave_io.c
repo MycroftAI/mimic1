@@ -138,7 +138,7 @@ int cst_wave_save_raw(cst_wave *w, const char *filename)
 int cst_wave_save_raw_fd(cst_wave *w, cst_file fd)
 {
     if (cst_fwrite(fd, cst_wave_samples(w),
-                   sizeof(short),
+                   sizeof(int16_t),
                    cst_wave_num_samples(w)) == cst_wave_num_samples(w))
         return 0;
     else
@@ -152,8 +152,9 @@ int cst_wave_append_riff(cst_wave *w, const char *filename)
     cst_file fd;
     cst_wave_header hdr;
     char info[4];
-    int d_int;
-    int rv, num_bytes, n, sample_rate;
+    int32_t d_int;
+    int32_t num_bytes, n, sample_rate;
+    int rv;
 
     if ((fd =
          cst_fopen(filename,
@@ -173,50 +174,50 @@ int cst_wave_append_riff(cst_wave *w, const char *filename)
     cst_fread(fd, info, 1, 4);
     cst_fread(fd, &d_int, 4, 1);
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
-    hdr.num_samples = d_int / sizeof(short);
+        d_int = SWAPINT32(d_int);
+    hdr.num_samples = d_int / sizeof(int16_t);
 
     cst_fseek(fd,
               cst_ftell(fd) + (hdr.hsize - 16) +
-              (hdr.num_samples * hdr.num_channels * sizeof(short)),
+              (hdr.num_samples * hdr.num_channels * sizeof(int16_t)),
               CST_SEEK_ABSOLUTE);
 
     if (CST_BIG_ENDIAN)
     {
-        short *xdata = cst_alloc(short, cst_wave_num_channels(w) *
+        int16_t *xdata = cst_alloc(int16_t, cst_wave_num_channels(w) *
                                  cst_wave_num_samples(w));
         memmove(xdata, cst_wave_samples(w),
-                sizeof(short) * cst_wave_num_channels(w) *
+                sizeof(int16_t) * cst_wave_num_channels(w) *
                 cst_wave_num_samples(w));
         swap_bytes_short(xdata,
                          cst_wave_num_channels(w) * cst_wave_num_samples(w));
-        n = cst_fwrite(fd, xdata, sizeof(short),
+        n = cst_fwrite(fd, xdata, sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
         cst_free(xdata);
     }
     else
     {
-        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(short),
+        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
     }
 
     cst_fseek(fd, 4, CST_SEEK_ABSOLUTE);
-    num_bytes = hdr.num_bytes + (n * sizeof(short));
+    num_bytes = hdr.num_bytes + (n * sizeof(int16_t));
     if (CST_BIG_ENDIAN)
-        num_bytes = SWAPINT(num_bytes);
+        num_bytes = SWAPINT32(num_bytes);
     cst_fwrite(fd, &num_bytes, 4, 1);   /* num bytes in whole file */
     cst_fseek(fd, 4 + 4 + 4 + 4 + 4 + 2 + 2, CST_SEEK_ABSOLUTE);
     sample_rate = w->sample_rate;
     if (CST_BIG_ENDIAN)
-        sample_rate = SWAPINT(sample_rate);
+        sample_rate = SWAPINT32(sample_rate);
     cst_fwrite(fd, &sample_rate, 4, 1); /* sample rate */
     cst_fseek(fd, 4 + 4 + 4 + 4 + 4 + 2 + 2 + 4 + 4 + 2 + 2 + 4,
               CST_SEEK_ABSOLUTE);
     num_bytes =
-        (sizeof(short) * cst_wave_num_channels(w) * cst_wave_num_samples(w)) +
-        (sizeof(short) * hdr.num_channels * hdr.num_samples);
+        (sizeof(int16_t) * cst_wave_num_channels(w) * cst_wave_num_samples(w)) +
+        (sizeof(int16_t) * hdr.num_channels * hdr.num_samples);
     if (CST_BIG_ENDIAN)
-        num_bytes = SWAPINT(num_bytes);
+        num_bytes = SWAPINT32(num_bytes);
     cst_fwrite(fd, &num_bytes, 4, 1);   /* num bytes in data */
     cst_fclose(fd);
 
@@ -243,16 +244,16 @@ int cst_wave_save_riff(cst_wave *w, const char *filename)
 int cst_wave_save_riff_fd(cst_wave *w, cst_file fd)
 {
     const char *info;
-    short d_short;
-    int d_int, n;
-    int num_bytes;
+    int16_t d_short;
+    int32_t d_int, n;
+    int32_t num_bytes;
 
     info = "RIFF";
     cst_fwrite(fd, info, 4, 1);
     num_bytes = (cst_wave_num_samples(w)
-                 * cst_wave_num_channels(w) * sizeof(short)) + 8 + 16 + 12;
+                 * cst_wave_num_channels(w) * sizeof(int16_t)) + 8 + 16 + 12;
     if (CST_BIG_ENDIAN)
-        num_bytes = SWAPINT(num_bytes);
+        num_bytes = SWAPINT32(num_bytes);
     cst_fwrite(fd, &num_bytes, 4, 1);   /* num bytes in whole file */
     info = "WAVE";
     cst_fwrite(fd, info, 1, 4);
@@ -260,37 +261,37 @@ int cst_wave_save_riff_fd(cst_wave *w, cst_file fd)
     cst_fwrite(fd, info, 1, 4);
     num_bytes = 16;             /* size of header */
     if (CST_BIG_ENDIAN)
-        num_bytes = SWAPINT(num_bytes);
+        num_bytes = SWAPINT32(num_bytes);
     cst_fwrite(fd, &num_bytes, 4, 1);
     d_short = RIFF_FORMAT_PCM;  /* sample type */
     if (CST_BIG_ENDIAN)
-        d_short = SWAPSHORT(d_short);
+        d_short = SWAPINT16(d_short);
     cst_fwrite(fd, &d_short, 2, 1);
     d_short = cst_wave_num_channels(w); /* number of channels */
     if (CST_BIG_ENDIAN)
-        d_short = SWAPSHORT(d_short);
+        d_short = SWAPINT16(d_short);
     cst_fwrite(fd, &d_short, 2, 1);
     d_int = cst_wave_sample_rate(w);    /* sample rate */
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
+        d_int = SWAPINT32(d_int);
     cst_fwrite(fd, &d_int, 4, 1);
-    d_int = (cst_wave_sample_rate(w) * cst_wave_num_channels(w) * sizeof(short));       /* average bytes per second */
+    d_int = (cst_wave_sample_rate(w) * cst_wave_num_channels(w) * sizeof(int16_t));       /* average bytes per second */
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
+        d_int = SWAPINT32(d_int);
     cst_fwrite(fd, &d_int, 4, 1);
-    d_short = (cst_wave_num_channels(w) * sizeof(short));       /* block align */
+    d_short = (cst_wave_num_channels(w) * sizeof(int16_t));       /* block align */
     if (CST_BIG_ENDIAN)
-        d_short = SWAPSHORT(d_short);
+        d_short = SWAPINT16(d_short);
     cst_fwrite(fd, &d_short, 2, 1);
     d_short = 2 * 8;            /* bits per sample */
     if (CST_BIG_ENDIAN)
-        d_short = SWAPSHORT(d_short);
+        d_short = SWAPINT16(d_short);
     cst_fwrite(fd, &d_short, 2, 1);
     info = "data";
     cst_fwrite(fd, info, 1, 4);
-    d_int = (cst_wave_num_channels(w) * cst_wave_num_samples(w) * sizeof(short));       /* bytes in data */
+    d_int = (cst_wave_num_channels(w) * cst_wave_num_samples(w) * sizeof(int16_t));       /* bytes in data */
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
+        d_int = SWAPINT32(d_int);
     cst_fwrite(fd, &d_int, 4, 1);
 
     if (CST_BIG_ENDIAN)
@@ -302,13 +303,13 @@ int cst_wave_save_riff_fd(cst_wave *w, cst_file fd)
                 cst_wave_num_samples(w));
         swap_bytes_short(xdata,
                          cst_wave_num_channels(w) * cst_wave_num_samples(w));
-        n = cst_fwrite(fd, xdata, sizeof(short),
+        n = cst_fwrite(fd, xdata, sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
         cst_free(xdata);
     }
     else
     {
-        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(short),
+        n = cst_fwrite(fd, cst_wave_samples(w), sizeof(int16_t),
                        cst_wave_num_channels(w) * cst_wave_num_samples(w));
     }
 
@@ -344,9 +345,9 @@ int cst_wave_load_raw_fd(cst_wave *w, cst_file fd,
     long size;
 
     /* Won't work on pipes, tough luck... */
-    size = cst_filesize(fd) / sizeof(short);
+    size = cst_filesize(fd) / sizeof(int16_t);
     cst_wave_resize(w, size, 1);
-    if (cst_fread(fd, w->samples, sizeof(short), size) != size)
+    if (cst_fread(fd, w->samples, sizeof(int16_t), size) != size)
         return -1;
 
     w->sample_rate = sample_rate;
@@ -379,8 +380,8 @@ int cst_wave_load_riff(cst_wave *w, const char *filename)
 int cst_wave_load_riff_header(cst_wave_header *header, cst_file fd)
 {
     char info[4];
-    short d_short;
-    int d_int;
+    int16_t d_short;
+    int32_t d_int;
 
     if (cst_fread(fd, info, 1, 4) != 4)
         return CST_WRONG_FORMAT;
@@ -389,7 +390,7 @@ int cst_wave_load_riff_header(cst_wave_header *header, cst_file fd)
 
     cst_fread(fd, &d_int, 4, 1);
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
+        d_int = SWAPINT32(d_int);
     header->num_bytes = d_int;
 
     if ((cst_fread(fd, info, 1, 4) != 4) || (strncmp(info, "WAVE", 4) != 0))
@@ -400,11 +401,11 @@ int cst_wave_load_riff_header(cst_wave_header *header, cst_file fd)
 
     cst_fread(fd, &d_int, 4, 1);
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
+        d_int = SWAPINT32(d_int);
     header->hsize = d_int;
     cst_fread(fd, &d_short, 2, 1);
     if (CST_BIG_ENDIAN)
-        d_short = SWAPSHORT(d_short);
+        d_short = SWAPINT16(d_short);
 
     if (d_short != RIFF_FORMAT_PCM)
     {
@@ -413,13 +414,13 @@ int cst_wave_load_riff_header(cst_wave_header *header, cst_file fd)
     }
     cst_fread(fd, &d_short, 2, 1);
     if (CST_BIG_ENDIAN)
-        d_short = SWAPSHORT(d_short);
+        d_short = SWAPINT16(d_short);
 
     header->num_channels = d_short;
 
     cst_fread(fd, &d_int, 4, 1);
     if (CST_BIG_ENDIAN)
-        d_int = SWAPINT(d_int);
+        d_int = SWAPINT32(d_int);
     header->sample_rate = d_int;
     cst_fread(fd, &d_int, 4, 1);        /* avg bytes per second */
     cst_fread(fd, &d_short, 2, 1);      /* block align */
@@ -433,9 +434,9 @@ int cst_wave_load_riff_fd(cst_wave *w, cst_file fd)
     cst_wave_header hdr;
     int rv;
     char info[4];
-    int d_int, d;
-    int data_length;
-    int samples;
+    int32_t d_int, d;
+    int32_t data_length;
+    int32_t samples;
 
     rv = cst_wave_load_riff_header(&hdr, fd);
     if (rv != CST_OK_FORMAT)
@@ -452,22 +453,22 @@ int cst_wave_load_riff_fd(cst_wave *w, cst_file fd)
         {
             cst_fread(fd, &d_int, 4, 1);
             if (CST_BIG_ENDIAN)
-                d_int = SWAPINT(d_int);
-            samples = d_int / sizeof(short);
+                d_int = SWAPINT32(d_int);
+            samples = d_int / sizeof(int16_t);
             break;
         }
         else if (strncmp(info, "fact", 4) == 0)
         {
             cst_fread(fd, &d_int, 4, 1);
             if (CST_BIG_ENDIAN)
-                d_int = SWAPINT(d_int);
+                d_int = SWAPINT32(d_int);
             cst_fseek(fd, cst_ftell(fd) + d_int, CST_SEEK_ABSOLUTE);
         }
         else if (strncmp(info, "clm ", 4) == 0)
         {                       /* another random chunk type -- resample puts this one in */
             cst_fread(fd, &d_int, 4, 1);
             if (CST_BIG_ENDIAN)
-                d_int = SWAPINT(d_int);
+                d_int = SWAPINT32(d_int);
             cst_fseek(fd, cst_ftell(fd) + d_int, CST_SEEK_ABSOLUTE);
         }
         else
@@ -484,7 +485,7 @@ int cst_wave_load_riff_fd(cst_wave *w, cst_file fd)
     cst_wave_resize(w, samples / hdr.num_channels, hdr.num_channels);
 
     if ((d =
-         cst_fread(fd, w->samples, sizeof(short),
+         cst_fread(fd, w->samples, sizeof(int16_t),
                    data_length)) != data_length)
     {
         cst_errmsg

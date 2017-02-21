@@ -61,6 +61,7 @@
 
 #include "mimic.h"
 #include "cst_tokenstream.h"
+#include "errno.h"
 
 static const char *const ssml_singlecharsymbols_general = "<>&/\";";
 static const char *const ssml_singlecharsymbols_inattr = "=>;/\"";
@@ -288,8 +289,8 @@ static cst_utterance *ssml_apply_tag(const char *tag,
     return u;
 }
 
-static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
-                                     cst_voice *voice, const char *outtype)
+static float mimic_ssml_to_speech_ts(cst_tokenstream *ts, cst_voice *voice,
+                                     const char *outtype, float *durs)
 {
     /* This is a very ugly function, that might be better written with gotos */
     /* This just doesn't seem to be properly functions -- perhaps a proper */
@@ -305,14 +306,17 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
     int num_tokens;
     cst_breakfunc breakfunc = default_utt_break;
     cst_uttfunc utt_user_callback = 0;
-    float durs = 0.0;
     cst_item *t;
     cst_voice *current_voice;
     int ssml_eou = 0;
     const cst_wave *wave;
     cst_wave *w;
-    int err;
+    int err = 0;
 
+    if ((durs == NULL) || (voice == NULL) || (ts == NULL) || (outtype == NULL))
+    {
+        return -EINVAL;
+    }
     ssml_feats = new_features();
     feat_set(ssml_feats, "current_voice", userdata_val(voice));
     feat_set(ssml_feats, "default_voice", userdata_val(voice));
@@ -410,7 +414,7 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
                 err = mimic_process_output(utt, outtype, TRUE, &new_durs);
                 if (err < 0)
                     goto cleanup;
-                durs += new_durs;
+                *durs += new_durs;
                 delete_utterance(utt);
                 utt = NULL;
             }
@@ -441,7 +445,7 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
             mimic_process_output(utt, outtype, TRUE, &new_durs);
             if (err < 0)
                 goto cleanup;
-            durs += new_durs;
+            *durs += new_durs;
             delete_utterance(utt);
             utt = NULL;
 
@@ -474,17 +478,22 @@ static float mimic_ssml_to_speech_ts(cst_tokenstream *ts,
     delete_utterance(utt);
     delete_features(ssml_feats);
     delete_features(ssml_word_feats);
-    return durs;
+    return err;
 }
 
-float mimic_ssml_file_to_speech(const char *filename,
-                                cst_voice *voice, const char *outtype)
+int mimic_ssml_file_to_speech(const char *filename, cst_voice *voice,
+                                 const char *outtype, float *dur)
 {
     cst_tokenstream *ts;
     int fp;
+    int err;
     cst_wave *w;
-    float d;
 
+    if ((dur == NULL) || (voice == NULL)
+            || (filename == NULL) || (outtype == NULL))
+    {
+        return -EINVAL;
+    }
     if ((ts = ts_open(filename,
                       get_param_string(voice->features, "text_whitespace",
                                        NULL),
@@ -497,7 +506,7 @@ float mimic_ssml_file_to_speech(const char *filename,
                                        NULL))) == NULL)
     {
         cst_errmsg("failed to open file \"%s\" for ssml reading\n", filename);
-        return 1;
+        return -ENOENT;
     }
     fp = get_param_int(voice->features, "file_start_position", 0);
     if (fp > 0)
@@ -517,21 +526,26 @@ float mimic_ssml_file_to_speech(const char *filename,
         delete_wave(w);
     }
 
-    d = mimic_ssml_to_speech_ts(ts, voice, outtype);
+    err = mimic_ssml_to_speech_ts(ts, voice, outtype, dur);
 
     ts_close(ts);
 
-    return d;
+    return err;
 
 }
 
-float mimic_ssml_text_to_speech(const char *text,
-                                cst_voice *voice, const char *outtype)
+int mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
+                                const char *outtype, float *dur)
 {
     cst_tokenstream *ts;
     int fp;
+    int err;
     cst_wave *w;
-    float d;
+
+    if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
+    {
+        return -EINVAL;
+    }
 
     if ((ts = ts_open_string(text,
                              get_param_string(voice->features,
@@ -544,7 +558,7 @@ float mimic_ssml_text_to_speech(const char *text,
                                               "text_postpunctuation",
                                               NULL))) == NULL)
     {
-        return 1;
+        return -EINVAL;
     }
     fp = get_param_int(voice->features, "file_start_position", 0);
     if (fp > 0)
@@ -564,10 +578,10 @@ float mimic_ssml_text_to_speech(const char *text,
         delete_wave(w);
     }
 
-    d = mimic_ssml_to_speech_ts(ts, voice, outtype);
+    err = mimic_ssml_to_speech_ts(ts, voice, outtype, dur);
 
     ts_close(ts);
 
-    return d;
+    return err;
 
 }

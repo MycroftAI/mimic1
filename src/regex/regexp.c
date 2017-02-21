@@ -802,10 +802,6 @@ STATIC int regtry(cst_regstate *state, const char *string, char *prog);
 STATIC int regmatch(cst_regstate *state, char *scan);
 STATIC int regrepeat(cst_regstate *state, char *p);
 
-#ifdef UNDER_CE
-#undef DEBUG                    /* Just does not work on WinCE... */
-#endif
-
 #ifdef DEBUG
 #define regnarrate stdout
 void regdump();

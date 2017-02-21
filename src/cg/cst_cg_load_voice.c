@@ -147,5 +147,6 @@ cst_voice *cst_cg_load_voice(const char *filename,
 
 void cst_cg_unload_voice(cst_voice *vox, cst_val *voice_list)
 {
+    (void) voice_list;
     delete_voice(vox);
 }

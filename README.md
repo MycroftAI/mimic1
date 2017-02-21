@@ -28,16 +28,18 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 
 - A good C compiler (_Recommended:_ gcc or clang)
 - GNU make
+- automake and libtool
 - pkg-config
 - ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
+- ICU library and headers
 
 ####Instructions
 
-- Install *gcc*, *make*, *pkg-config* and *ALSA*
+- Install *gcc*, *make*, *automake*, *libtool*, *pkg-config*, *libicu-dev* and *ALSA*
 
 #####On Debian/Ubuntu
 ```
-$ sudo apt-get install gcc make pkg-config libasound2-dev
+$ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound2-dev
 ```
 
 ###Mac OSX
@@ -46,6 +48,7 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
 - GNU make
 - pkg-config
 - PortAudio
+- ICU library
 
 ####Instructions
 
@@ -54,21 +57,58 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
   $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   ```
 
-- Install *pkg-config* and *PortAudio*
+- Install *pkg-config*, *libtool*, *icu* and *PortAudio*
   ```
-  $ brew install pkg-config portaudio
+  $ brew install pkg-config libtool portaudio icu4c
   ```
 
 ###Windows
 
+#### Cross compiling:
+
+The fastest and most straightforward way to build mimic for windows is by
+cross-compilation from linux.
+
+From a debian based linux system, install the dependencies, including mingw32
+packages. Install `wine` too for testing
+
+1. Install dependencies:
+
+```
+sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 mingw32-runtime wine
+```
+
+2. Run the windows build script:
+```
+./run_testsuite.sh winbuild
+```
+
+3. Test it
+
+The directory `install` will contain `bin/mimic.exe` file
+
+```
+wine ./mimic.exe -t "hello world" 
+```
+
+4. Distribute it
+
+You can distribute the compiled mimic by adding to a zip file everything in the
+`install/bin` directory.
+
+
+#### Native Windows building
+
 * A good C compiler (_Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/))
 * GNU Make
 * PortAudio
+* ICU
 
 ######Note
 - Audio device and audio libraries are optional, as mimic can write its output to a waveform file
 - Some of the source files are quite large, that some C compilers might choke on these. So, *gcc* is recommended.
 - Visual C++ 6.0 is known to fail on the large diphone database files
+- The build process is much slower on Windows.
 
 ##Build
 
@@ -81,6 +121,11 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
   ```
   $ cd mimic
   ```
+
+- Generate build scripts
+  ```
+  $ ./autogen.sh
+  ```
   
 - Configure
   ```
@@ -90,6 +135,11 @@ $ sudo apt-get install gcc make pkg-config libasound2-dev
 - Build
   ```
   $ make
+  ```
+  
+- Check
+  ```
+  $ make check
   ```
 
 ######Note

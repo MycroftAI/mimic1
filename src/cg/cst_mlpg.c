@@ -172,6 +172,7 @@ static double get_like_pdfseq_vit(int dim, int dim2, int dnum, int clsnum,
                                   MLPGPARA param, float **model,
                                   XBOOL dia_flag)
 {
+    (void) clsnum;
     long d, c, k, l, j;
     double sumgauss;
     double like = 0.0;
@@ -357,6 +358,7 @@ static void get_dltmat(DMATRIX mat, DWin * dw, int dno, DMATRIX dmat)
 
 static double *dcalloc(int x, int xoff)
 {
+    (void) xoff;
     double *ptr;
 
     ptr = mlpg_alloc(x, double);
@@ -366,6 +368,7 @@ static double *dcalloc(int x, int xoff)
 
 static double **ddcalloc(int x, int y, int xoff, int yoff)
 {
+    (void) xoff;
     double **ptr;
     register int i;
 

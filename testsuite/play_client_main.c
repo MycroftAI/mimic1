@@ -125,11 +125,11 @@ int main(int argc, char **argv)
         if (cst_wave_load_riff(w, argv[i]) != CST_OK_FORMAT)
         {
             fprintf(stderr,
-                    "play_wave: can't read file or wrong format \"%s\"\n",
+                    "mimic_play_wave: can't read file or wrong format \"%s\"\n",
                     argv[i]);
             continue;
         }
-        play_wave_client(w, server, port, encoding);
+        mimic_play_wave_client(w, server, port, encoding);
         delete_wave(w);
     }
 

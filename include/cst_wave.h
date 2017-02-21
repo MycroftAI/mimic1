@@ -56,11 +56,11 @@ typedef struct cst_wave_struct {
 
 typedef struct cst_wave_header_struct {
     const char *type;
-    int hsize;
-    int num_bytes;
-    int sample_rate;
-    int num_samples;
-    int num_channels;
+    int32_t hsize;
+    int32_t num_bytes;
+    int32_t sample_rate;
+    int32_t num_samples;
+    int32_t num_channels;
 } cst_wave_header;
 
 cst_wave *new_wave();
@@ -135,22 +135,22 @@ int cst_rateconv_out(cst_rateconv *filt, short *outptr, int max);
 
 /* Sun/Next header, short and sweet, note its always BIG_ENDIAN though */
 typedef struct {
-    unsigned int magic;         /* magic number */
-    unsigned int hdr_size;      /* size of this header */
-    int data_size;              /* length of data (optional) */
-    unsigned int encoding;      /* data encoding format */
-    unsigned int sample_rate;   /* samples per second */
-    unsigned int channels;      /* number of interleaved channels */
+    uint32_t magic;         /* magic number */
+    uint32_t hdr_size;      /* size of this header */
+    int32_t data_size;              /* length of data (optional) */
+    uint32_t encoding;      /* data encoding format */
+    uint32_t sample_rate;   /* samples per second */
+    uint32_t channels;      /* number of interleaved channels */
 } snd_header;
 
-#define CST_SND_MAGIC (unsigned int)0x2e736e64
+#define CST_SND_MAGIC (uint32_t)0x2e736e64
 #define CST_SND_ULAW  1
 #define CST_SND_UCHAR 2
 #define CST_SND_SHORT 3
 
 /* Convertion functions */
-unsigned char cst_short_to_ulaw(short sample);
-short cst_ulaw_to_short(unsigned char ulawbyte);
+unsigned char cst_short_to_ulaw(int16_t sample);
+int16_t cst_ulaw_to_short(unsigned char ulawbyte);
 
 #define CST_G721_LEADIN 8
 unsigned char *cst_g721_decode(int *actual_size, int size,

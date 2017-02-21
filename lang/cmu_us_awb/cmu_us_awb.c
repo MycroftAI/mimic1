@@ -51,6 +51,7 @@ cst_voice *cmu_us_awb_cg = NULL;
 
 cst_voice *register_cmu_us_awb(const char *voxdir)
 {
+    (void) voxdir;
     cst_voice *vox;
     cst_lexicon *lex;
 
