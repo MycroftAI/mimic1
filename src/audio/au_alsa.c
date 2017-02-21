@@ -43,7 +43,7 @@
 
 #ifdef CST_AUDIO_ALSA
 
-#define _BSD_SOURCE /* alsa alloca stuff and nanosleep */
+#define _POSIX_C_SOURCE 200112L
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -56,6 +56,9 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
+/* alloca.h is not C99 compliant nor POSIX compliant, but alsa needs it and does not include it */
+/* See similar patch: https://lists.mplayerhq.hu/pipermail/mplayer-dev-eng/2008-July/058080.html */
+#include <alloca.h>
 #include <alsa/asoundlib.h>
 
 int audio_flush_alsa(cst_audiodev *ad);

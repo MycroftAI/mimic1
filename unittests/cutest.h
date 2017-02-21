@@ -87,13 +87,12 @@
  **********************/
 
 /* The unit test files should not rely on anything below. */
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(unix) || defined(__unix__) || defined(__unix) || defined(__APPLE__)
+#if (defined(unix) || defined(__unix__) || defined(__unix) || defined(__APPLE__)) && !defined(__STRICT_ANSI__)
     #define CUTEST_UNIX__    1
     #include <errno.h>
     #include <unistd.h>
@@ -102,10 +101,14 @@
     #include <signal.h>
 #endif
 
-#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+#if (defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)) && !defined(__STRICT_ANSI__)
     #define CUTEST_WIN__     1
     #include <windows.h>
     #include <io.h>
+#endif
+
+#if defined(__STRICT_ANSI__)
+    #define CUTEST_ANSI__    1
 #endif
 
 #ifdef __cplusplus
@@ -162,16 +165,16 @@ test_print_in_color__(int color, const char* fmt, ...)
     {
         const char* col_str;
         switch(color) {
-            case CUTEST_COLOR_GREEN__:             col_str = "\e[0;32m"; break;
-            case CUTEST_COLOR_RED__:               col_str = "\e[0;31m"; break;
-            case CUTEST_COLOR_GREEN_INTENSIVE__:   col_str = "\e[1;32m"; break;
-            case CUTEST_COLOR_RED_INTENSIVE__:     col_str = "\e[1;30m"; break;
-            case CUTEST_COLOR_DEFAULT_INTENSIVE__: col_str = "\e[1m"; break;
-            default:                               col_str = "\e[0m"; break;
+            case CUTEST_COLOR_GREEN__:             col_str = "\033[0;32m"; break;
+            case CUTEST_COLOR_RED__:               col_str = "\033[0;31m"; break;
+            case CUTEST_COLOR_GREEN_INTENSIVE__:   col_str = "\033[1;32m"; break;
+            case CUTEST_COLOR_RED_INTENSIVE__:     col_str = "\033[1;30m"; break;
+            case CUTEST_COLOR_DEFAULT_INTENSIVE__: col_str = "\033[1m"; break;
+            default:                               col_str = "\033[0m"; break;
         }
         printf("%s", col_str);
         n = printf("%s", buffer);
-        printf("\e[0m");
+        printf("\033[0m");
         return n;
     }
 #elif defined CUTEST_WIN__
@@ -352,9 +355,10 @@ test_do_run__(const struct test__* test)
     return (test_current_failures__ == 0) ? 0 : -1;
 }
 
+#if !defined(CUTEST_ANSI__)
 /* Called if anything goes bad in cutest, or if the unit test ends in other
  * way then by normal returning from its function (e.g. exception or some
- * abnormal child process termination). */
+ * abnormal child process termination). On CUTEST_ANSI__ this is not used so we don't define it*/
 static void
 test_error__(const char* fmt, ...)
 {
@@ -377,6 +381,7 @@ test_error__(const char* fmt, ...)
         printf("\n");
     }
 }
+#endif
 
 /* Trigger the unit test. If possible (and not suppressed) it starts a child
  * process who calls test_do_run__(), otherwise it calls test_do_run__()
@@ -458,7 +463,7 @@ test_run__(const struct test__* test)
             failed = 1;
         }
 
-#else
+#else /* CUTEST_ANSI__ */
 
         /* A platform where we don't know how to run child process. */
         failed = (test_do_run__(test) != 0);
@@ -650,4 +655,3 @@ main(int argc, char** argv)
 
 
 #endif  /* #ifndef CUTEST_H__ */
-
