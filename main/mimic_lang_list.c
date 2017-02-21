@@ -18,6 +18,11 @@ cst_lexicon *cmu_indic_lex_init(void);
 cst_lexicon *cmu_grapheme_lex_init(void);
 #endif
 
+#if ENABLE_ES_ANALYSIS
+#include "lang/es_lang/es_lang.h"
+#endif
+
+
 void mimic_set_lang_list(void)
 {
    #if (ENABLE_USENGLISH & ENABLE_CMULEX)
@@ -28,5 +33,9 @@ void mimic_set_lang_list(void)
    mimic_add_lang("cmu_indic_lang",cmu_indic_lang_init,cmu_indic_lex_init);
    mimic_add_lang("cmu_grapheme_lang",cmu_grapheme_lang_init,cmu_grapheme_lex_init);
    #endif
+   #if ENABLE_ES_ANALYSIS
+   mimic_add_lang("es", es_init, NULL);
+   #endif
+
 }
 
