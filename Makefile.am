@@ -834,3 +834,6 @@ headers_HEADERS += \
   include/cst_wchar.h \
   include/mimic.h
 
+# Documentation
+dist_man1_MANS = man/man1/mimic.1
+
