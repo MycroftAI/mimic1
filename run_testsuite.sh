@@ -57,11 +57,11 @@ fix_icu_dll_filenames()
 crosscompile_portaudio()
 {
     # Download & Extract portaudio
-    if [ ! -e "pa_stable_v19_20140130.tgz" ]; then 
-        wget "http://www.portaudio.com/archives/pa_stable_v19_20140130.tgz"
+    if [ ! -e "pa_stable_v190600_20161030.tgz" ]; then 
+        wget "http://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz"
     fi
-    echo "7f220406902af9dca009668e198cbd23  pa_stable_v19_20140130.tgz" | md5sum -c || exit 1
-    tar xzf "pa_stable_v19_20140130.tgz" # creates directory "portaudio"
+    echo "4df8224e047529ca9ad42f0521bf81a8  pa_stable_v190600_20161030.tgz" | md5sum -c || exit 1
+    tar xzf "pa_stable_v190600_20161030.tgz" # creates directory "portaudio"
     # Cross compile portaudio:
     mkdir portaudio_build
     cd portaudio_build
