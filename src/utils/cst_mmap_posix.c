@@ -40,7 +40,7 @@
 
 #if (MMAP_TYPE == MMAP_TYPE_POSIX)
 
-# define _POSIX_C_SOURCE 200809L
+# define _POSIX_C_SOURCE 200112L
 
 #include <sys/types.h>
 #include <sys/mman.h>

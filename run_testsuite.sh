@@ -152,6 +152,18 @@ case "${WHAT_TO_RUN}" in
     # for ubuntu precise in travis, that does not provide pkg-config:
     pkg-config --exists icui18n || export CFLAGS="$CFLAGS -I/usr/include/x86_64-linux-gnu"
     pkg-config --exists icui18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
+    export CFLAGS="$CFLAGS --std=c99"
+    ./configure  --enable-shared || exit 1
+    make || exit 1
+    make check || exit 1
+    ;;
+  gcc6)
+    ./autogen.sh
+    # for ubuntu precise in travis, that does not provide pkg-config:
+    pkg-config --exists icui18n || export CFLAGS="$CFLAGS -I/usr/include/x86_64-linux-gnu"
+    pkg-config --exists icui18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
+    export CC="/usr/bin/gcc-6"
+    export CXX="/usr/bin/g++-6"
     ./configure  --enable-shared || exit 1
     make || exit 1
     make check || exit 1

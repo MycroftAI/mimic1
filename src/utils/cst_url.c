@@ -41,6 +41,9 @@
 /*  Only support http: if sockets are available                          */
 /*                                                                       */
 /*************************************************************************/
+
+#define _POSIX_C_SOURCE 200112L
+
 #include <math.h>
 #include "cst_file.h"
 #include "cst_string.h"
