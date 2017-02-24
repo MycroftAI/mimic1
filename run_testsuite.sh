@@ -4,6 +4,11 @@ WHAT_TO_RUN="$1"
 WORKDIR=`pwd`
 export MANIFEST_TOOL=:
 
+if [ "x${NCORES}" = "x" ]; then
+    NCORES=1
+fi
+
+
 crosscompile_icu()
 {
     # Download & Extract icu
@@ -18,7 +23,7 @@ crosscompile_icu()
     mkdir icu_build_build
     cd icu_build_build
     ../icu/source/configure "$@" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
 
     # Now the host system:
     cd "${WORKDIR}"
@@ -34,7 +39,7 @@ crosscompile_icu()
                             RANLIB=${HOST_TRIPLET}-ranlib \
                             AR=${HOST_TRIPLET}-ar \
                             "$@"  || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make install || exit 1
     cd "${WORKDIR}"
 }
@@ -69,7 +74,7 @@ crosscompile_portaudio()
                            RANLIB=${HOST_TRIPLET}-ranlib \
                            AR=${HOST_TRIPLET}-ar \
                            "$@" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make install || exit 1
     cd "${WORKDIR}"
 }
@@ -98,7 +103,7 @@ crosscompile_mimic()
                  PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
                  PKG_CONFIG=`which pkg-config` \
                  "$@" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make install || exit 1
     cd "${WORKDIR}"
 }
@@ -134,7 +139,7 @@ case "${WHAT_TO_RUN}" in
     ./autogen.sh
     ./configure ICU_CFLAGS="-I/usr/local/opt/icu4c/include" \
                 ICU_LIBS="-L/usr/local/opt/icu4c/lib -licui18n -licuuc -licudata" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ;;
   coverage)
@@ -143,7 +148,7 @@ case "${WHAT_TO_RUN}" in
     pkg-config --exists icu-i18n || export CFLAGS="$CFLAGS -I/usr/include/x86_64-linux-gnu"
     pkg-config --exists icu-i18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
     ./configure  CFLAGS="$CFLAGS --coverage --no-inline" LDFLAGS="$LDFLAGS --coverage" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ./do_gcov.sh
     ;;
@@ -165,7 +170,7 @@ case "${WHAT_TO_RUN}" in
     export CC="/usr/bin/gcc-6"
     export CXX="/usr/bin/g++-6"
     ./configure  --enable-shared || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ;;
   arm-linux-gnueabihf-gcc)
