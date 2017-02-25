@@ -126,7 +126,7 @@ put_dll_in_bindir()
       fi
     fi
     # ICU and portaudio libraries are installed into lib. wine can't find them.
-    cp "${WORKDIR}/install/lib/"*.dll "${WORKDIR}/install/bin/"
+    for file in `ls "${WORKDIR}/install/lib/"*.dll`; do cp "$file" "${WORKDIR}/install/bin/"; done
     cd "${WORKDIR}"
 }
 
@@ -203,7 +203,11 @@ case "${WHAT_TO_RUN}" in
     put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1
-    xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
+    if [ "x${DISPLAY}" = "x" ]; then
+      xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
+    else
+      wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
+    fi
     echo "fbe80cc64ed244c0ee02c62a8489f182  hello_world_winbuild.wav" | md5sum -c || exit 1
     ;;
   winbuild_shared)
@@ -225,7 +229,11 @@ case "${WHAT_TO_RUN}" in
     put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1
-    xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
+    if [ "x${DISPLAY}" = "x" ]; then
+      xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
+    else
+      wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
+    fi
     ;;
   *)
     echo "Unknown WHAT_TO_RUN: ${WHAT_TO_RUN}"
