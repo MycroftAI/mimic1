@@ -74,6 +74,14 @@ packages. Install `wine` too for testing
 
 1. Install dependencies:
 
+On Ubuntu 16.04 (xenial):
+```
+sudo apt-get install gcc make pkg-config automake libtool libicu-dev wine binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686 g++-mingw-w64-i686
+
+```
+
+On Ubuntu 14.04 (trusty):
+
 ```
 sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 mingw32-runtime wine
 ```
