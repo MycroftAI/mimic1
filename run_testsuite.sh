@@ -4,6 +4,11 @@ WHAT_TO_RUN="$1"
 WORKDIR=`pwd`
 export MANIFEST_TOOL=:
 
+if [ "x${NCORES}" = "x" ]; then
+    NCORES=1
+fi
+
+
 crosscompile_icu()
 {
     # Download & Extract icu
@@ -18,7 +23,7 @@ crosscompile_icu()
     mkdir icu_build_build
     cd icu_build_build
     ../icu/source/configure "$@" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
 
     # Now the host system:
     cd "${WORKDIR}"
@@ -34,7 +39,7 @@ crosscompile_icu()
                             RANLIB=${HOST_TRIPLET}-ranlib \
                             AR=${HOST_TRIPLET}-ar \
                             "$@"  || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make install || exit 1
     cd "${WORKDIR}"
 }
@@ -52,11 +57,13 @@ fix_icu_dll_filenames()
 crosscompile_portaudio()
 {
     # Download & Extract portaudio
-    if [ ! -e "pa_stable_v19_20140130.tgz" ]; then 
-        wget "http://www.portaudio.com/archives/pa_stable_v19_20140130.tgz"
+    if [ ! -e "pa_stable_v190600_20161030.tgz" ]; then 
+        wget "http://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz"
     fi
-    echo "7f220406902af9dca009668e198cbd23  pa_stable_v19_20140130.tgz" | md5sum -c || exit 1
-    tar xzf "pa_stable_v19_20140130.tgz" # creates directory "portaudio"
+    echo "4df8224e047529ca9ad42f0521bf81a8  pa_stable_v190600_20161030.tgz" | md5sum -c || exit 1
+    tar xzf "pa_stable_v190600_20161030.tgz" # creates directory "portaudio"
+    # http://sites.music.columbia.edu/pipermail/portaudio/2014-April/016026.html
+    sed -i -e 's:src/hostapi/wmme \\:src/hostapi/wmme src/hostapi/skeleton \\:' portaudio/Makefile.in || exit 1
     # Cross compile portaudio:
     mkdir portaudio_build
     cd portaudio_build
@@ -69,7 +76,7 @@ crosscompile_portaudio()
                            RANLIB=${HOST_TRIPLET}-ranlib \
                            AR=${HOST_TRIPLET}-ar \
                            "$@" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make install || exit 1
     cd "${WORKDIR}"
 }
@@ -98,7 +105,7 @@ crosscompile_mimic()
                  PKG_CONFIG_PATH="$WORKDIR/install/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
                  PKG_CONFIG=`which pkg-config` \
                  "$@" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make install || exit 1
     cd "${WORKDIR}"
 }
@@ -106,26 +113,30 @@ crosscompile_mimic()
 put_dll_in_bindir()
 {
     cd "${WORKDIR}"
-    # This one is needed from the mingw32-runtime package
-    if [ -f /usr/share/doc/mingw32-runtime/mingwm10.dll.gz ]; then
-        cat /usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll" || exit 1
-    else
-        # it seems travis does not find it, so we get it directly from the package
-        apt-get download mingw32-runtime || exit 1
-        ar p mingw32-runtime*.deb data.tar.gz | tar zx || exit 1
-        cat usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll"
-        
+    # if mingw32, then copy a DLL: (not needed with mingw-w64)
+    if [ "x${HOST_TRIPLET}" = "xi586-mingw32msvc" ]; then
+      # This one is needed from the mingw32-runtime package
+      if [ -f /usr/share/doc/mingw32-runtime/mingwm10.dll.gz ]; then
+          cat /usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll" || exit 1
+      else
+          # it seems travis does not find it, so we get it directly from the package
+          apt-get download mingw32-runtime || exit 1
+          ar p mingw32-runtime*.deb data.tar.gz | tar zx || exit 1
+          cat usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "$WORKDIR/install/bin/mingwm10.dll"
+      fi
     fi
     # ICU and portaudio libraries are installed into lib. wine can't find them.
-    cp "${WORKDIR}/install/lib/"*.dll "${WORKDIR}/install/bin/"
+    for file in `ls "${WORKDIR}/install/lib/"*.dll`; do cp "$file" "${WORKDIR}/install/bin/"; done
     cd "${WORKDIR}"
 }
 
 fix_portaudio_pc_file()
 {
-    # this is a hack
-    # uuid is not a dll in mingw. I just remove it and hope mimic still works.
-    sed -i -e 's:-luuid::g' "${WORKDIR}/install/lib/pkgconfig/portaudio-2.0.pc"
+    # this is a hack not needed with mingw-w64
+    if [ "x${HOST_TRIPLET}" = "xi586-mingw32msvc" ]; then
+      # uuid is not a dll in mingw. I just remove it and hope mimic still works.
+      sed -i -e 's:-luuid::g' "${WORKDIR}/install/lib/pkgconfig/portaudio-2.0.pc"
+    fi
 }
 
 case "${WHAT_TO_RUN}" in
@@ -134,7 +145,7 @@ case "${WHAT_TO_RUN}" in
     ./autogen.sh
     ./configure ICU_CFLAGS="-I/usr/local/opt/icu4c/include" \
                 ICU_LIBS="-L/usr/local/opt/icu4c/lib -licui18n -licuuc -licudata" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ;;
   coverage)
@@ -143,7 +154,7 @@ case "${WHAT_TO_RUN}" in
     pkg-config --exists icu-i18n || export CFLAGS="$CFLAGS -I/usr/include/x86_64-linux-gnu"
     pkg-config --exists icu-i18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
     ./configure  CFLAGS="$CFLAGS --coverage --no-inline" LDFLAGS="$LDFLAGS --coverage" || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ./do_gcov.sh
     ;;
@@ -154,7 +165,7 @@ case "${WHAT_TO_RUN}" in
     pkg-config --exists icui18n || export LDFLAGS="$LDFLAGS -licui18n -licuuc -licudata"
     export CFLAGS="$CFLAGS --std=c99"
     ./configure  --enable-shared || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ;;
   gcc6)
@@ -165,7 +176,7 @@ case "${WHAT_TO_RUN}" in
     export CC="/usr/bin/gcc-6"
     export CXX="/usr/bin/g++-6"
     ./configure  --enable-shared || exit 1
-    make || exit 1
+    make -j ${NCORES} || exit 1
     make check || exit 1
     ;;
   arm-linux-gnueabihf-gcc)
@@ -178,19 +189,38 @@ case "${WHAT_TO_RUN}" in
   winbuild)
     ./autogen.sh
     export BUILD_TRIPLET=`sh ./config/config.guess`
-    export HOST_TRIPLET="i586-mingw32msvc"
-    crosscompile_icu
-    crosscompile_portaudio
-    crosscompile_mimic --with-audio=portaudio
+    if [ `which i586-mingw32msvc-gcc` ]; then
+        export HOST_TRIPLET="i586-mingw32msvc"
+    elif [ `which i686-w64-mingw32-gcc` ]; then
+        export HOST_TRIPLET="i686-w64-mingw32"
+    else
+        echo "No windows cross-compiler found"
+        exit 1
+    fi
+    crosscompile_icu --disable-shared --enable-static
+    crosscompile_portaudio --disable-shared --enable-static
+    crosscompile_mimic  --disable-shared --enable-static --with-audio=portaudio
     put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1
-    xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
+    if [ "x${DISPLAY}" = "x" ]; then
+      xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
+    else
+      wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild.wav" || exit 1
+    fi
+    echo "fbe80cc64ed244c0ee02c62a8489f182  hello_world_winbuild.wav" | md5sum -c || exit 1
     ;;
   winbuild_shared)
     ./autogen.sh
     export BUILD_TRIPLET=`sh ./config/config.guess`
-    export HOST_TRIPLET="i586-mingw32msvc"
+    if [ `which i586-mingw32msvc-gcc` ]; then
+        export HOST_TRIPLET="i586-mingw32msvc"
+    elif [ `which i686-w64-mingw32-gcc` ]; then
+        export HOST_TRIPLET="i686-w64-mingw32"
+    else
+        echo "No windows cross-compiler found"
+        exit 1
+    fi
     crosscompile_icu --enable-shared
     fix_icu_dll_filenames
     crosscompile_portaudio --enable-shared
@@ -199,7 +229,11 @@ case "${WHAT_TO_RUN}" in
     put_dll_in_bindir
     # Test mimic:
     cd "$WORKDIR" || exit 1
-    xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
+    if [ "x${DISPLAY}" = "x" ]; then
+      xvfb-run wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
+    else
+      wine "install/bin/mimic.exe" -voice ap -t "hello world" "hello_world_winbuild_shared.wav" || exit 1
+    fi
     ;;
   *)
     echo "Unknown WHAT_TO_RUN: ${WHAT_TO_RUN}"
