@@ -11,43 +11,44 @@ extern const cst_cart * const vid_gb_ap_f0_carts[];
 extern const cst_cart * const vid_gb_ap_17_mcep_carts[];
 #define vid_gb_ap_17_num_channels 174
 #define vid_gb_ap_17_num_frames 63610
-extern const unsigned short * const vid_gb_ap_17_model_vectors[];
+extern uint16_t * vid_gb_ap_17_model_vectors[];
 
 extern const cst_cart * const vid_gb_ap_12_mcep_carts[];
 #define vid_gb_ap_12_num_channels 174
 #define vid_gb_ap_12_num_frames 64087
-extern const unsigned short * const vid_gb_ap_12_model_vectors[];
+extern uint16_t * vid_gb_ap_12_model_vectors[];
 
 extern const cst_cart * const vid_gb_ap_01_mcep_carts[];
 #define vid_gb_ap_01_num_channels 174
 #define vid_gb_ap_01_num_frames 62802
-extern const unsigned short * const vid_gb_ap_01_model_vectors[];
+extern uint16_t * vid_gb_ap_01_model_vectors[];
+
 #define vid_gb_ap_num_param_models 3
-const int vid_gb_ap_num_channels_table[] = {
+int vid_gb_ap_num_channels_table[] = {
    vid_gb_ap_17_num_channels,
    vid_gb_ap_12_num_channels,
    vid_gb_ap_01_num_channels,
 0};
-const int vid_gb_ap_num_frames_table[] = {
+int vid_gb_ap_num_frames_table[] = {
    vid_gb_ap_17_num_frames,
    vid_gb_ap_12_num_frames,
    vid_gb_ap_01_num_frames,
 0};
-const unsigned short **vid_gb_ap_model_vectors_table[] = {
+uint16_t **vid_gb_ap_model_vectors_table[] = {
    vid_gb_ap_17_model_vectors,
    vid_gb_ap_12_model_vectors,
    vid_gb_ap_01_model_vectors,
 NULL};
-const cst_cart **vid_gb_ap_mcep_carts_table[] = {
+const cst_cart * const *vid_gb_ap_mcep_carts_table[] = {
    vid_gb_ap_17_mcep_carts,
    vid_gb_ap_12_mcep_carts,
    vid_gb_ap_01_mcep_carts,
 NULL};
-extern const dur_stat * const vid_gb_ap_cg_08_dur_stats[];
+extern const dur_stat * vid_gb_ap_cg_08_dur_stats[];
 extern const cst_cart vid_gb_ap_cg_08_dur_cart;
-extern const dur_stat * const vid_gb_ap_cg_10_dur_stats[];
+extern const dur_stat * vid_gb_ap_cg_10_dur_stats[];
 extern const cst_cart vid_gb_ap_cg_10_dur_cart;
-extern const dur_stat * const vid_gb_ap_cg_17_dur_stats[];
+extern const dur_stat * vid_gb_ap_cg_17_dur_stats[];
 extern const cst_cart vid_gb_ap_cg_17_dur_cart;
 #define vid_gb_ap_num_dur_models 3
 const dur_stat **vid_gb_ap_dur_stats_table[] = {
@@ -589,7 +590,7 @@ const cst_cg_db vid_gb_ap_cg_db = {
   vid_gb_ap_dur_cart_table,
   vid_gb_ap_phone_states,
   1, /* 1 if mlpg required */
-  vid_gb_ap_dynwin,
+  (float *)vid_gb_ap_dynwin,
   vid_gb_ap_dynwinsize,
   0.544000, /* mlsa_alpha */
   0.400000, /* mlsa_beta */
