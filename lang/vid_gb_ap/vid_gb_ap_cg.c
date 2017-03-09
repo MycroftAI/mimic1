@@ -22,7 +22,6 @@ extern const cst_cart * const vid_gb_ap_01_mcep_carts[];
 #define vid_gb_ap_01_num_channels 174
 #define vid_gb_ap_01_num_frames 62802
 extern uint16_t * vid_gb_ap_01_model_vectors[];
-
 #define vid_gb_ap_num_param_models 3
 int vid_gb_ap_num_channels_table[] = {
    vid_gb_ap_17_num_channels,
