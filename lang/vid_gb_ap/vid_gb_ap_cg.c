@@ -598,5 +598,6 @@ const cst_cg_db vid_gb_ap_cg_db = {
   5,48, /* filter sizes */
   vid_gb_ap_me_h, 
   0, // cg:spamf0
-  1.5 /* gain */
+  1.5, /* gain */
+  0 /* freeable */
 };
