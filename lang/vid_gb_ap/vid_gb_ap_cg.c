@@ -589,7 +589,7 @@ const cst_cg_db vid_gb_ap_cg_db = {
   vid_gb_ap_dur_cart_table,
   vid_gb_ap_phone_states,
   1, /* 1 if mlpg required */
-  (float *)vid_gb_ap_dynwin,
+  vid_gb_ap_dynwin,
   vid_gb_ap_dynwinsize,
   0.544000, /* mlsa_alpha */
   0.400000, /* mlsa_beta */
