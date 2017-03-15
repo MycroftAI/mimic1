@@ -99,7 +99,7 @@ typedef struct cst_cg_db_struct {
 
     /* Other parameters */
     int32_t do_mlpg;       /* implies deltas are in the model_vectors */
-    float *dynwin;
+    const float *dynwin;
     int32_t dynwinsize;
 
     float mlsa_alpha;
