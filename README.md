@@ -1,4 +1,4 @@
-#Mimic - The Mycroft TTS Engine
+# Mimic - The Mycroft TTS Engine
 
 [![Stories in Ready](https://badge.waffle.io/MycroftAI/mimic.png?label=ready&title=Ready)](https://waffle.io/MycroftAI/mimic)
 [![Build Status](https://travis-ci.org/MycroftAI/mimic.svg?branch=development)](https://travis-ci.org/MycroftAI/mimic)
@@ -7,10 +7,10 @@
 
 Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](https://mycroft.ai/) and [VocaliD](https://vocalid.co/), based on Carnegie Mellon University’s [Flite (Festival-Lite)](http://www.festvox.org/flite) software. Mimic takes in text and reads it out loud to create a high quality voice. 
 
-######Official project site: [mimic.mycroft.ai](https://mimic.mycroft.ai/)
+###### Official project site: [mimic.mycroft.ai](https://mimic.mycroft.ai/)
 
 
-##Supported platforms
+## Supported platforms
 
 - Linux (ARM & Intel architectures)
 - Mac OS X
@@ -22,35 +22,41 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 **Future**
 - iOS
 
-##Requirements
+## Requirements
 
-###Linux
+This is the list of requirements. Below there is the commands needed on the most
+popular distributions and supported OS.
 
-- A good C compiler (_Recommended:_ gcc or clang)
-- GNU make
-- automake and libtool
+- A good C compiler:
+  * Linux or Mac OSX: _Recommended:_ gcc or clang
+  * Windows: _Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/)
+- GNU make, automake and libtool
 - pkg-config
-- ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
 - ICU library and headers
+- An audio engine:
+  * Linux: ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
+  * Mac OSX: PortAudio
+  * Windows: PortAudio
 
-####Instructions
+### Linux
 
-- Install *gcc*, *make*, *automake*, *libtool*, *pkg-config*, *libicu-dev* and *ALSA*
-
-#####On Debian/Ubuntu
+##### On Debian/Ubuntu
 ```
 $ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound2-dev
 ```
 
-###Mac OSX
+##### On Fedora
+```
+$ sudo dnf install gcc make pkgconfig automake libtool libicu-devel alsa-lib-devel
+```
 
-- A good C compiler. (_Recommended:_ gcc or clang)
-- GNU make
-- pkg-config
-- PortAudio
-- ICU library
+##### On Arch
+```
+$ sudo pacman -S --needed install gcc make pkg-config automake libtool icu alsa-lib
+```
 
-####Instructions
+
+### Mac OSX
 
 - Install *Brew*
   ```
@@ -62,17 +68,13 @@ $ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound
   $ brew install pkg-config libtool portaudio icu4c
   ```
 
-###Windows
+### Windows
 
 #### Cross compiling:
 
 The fastest and most straightforward way to build mimic for windows is by
-cross-compilation from linux.
-
-From a debian based linux system, install the dependencies, including mingw32
-packages. Install `wine` too for testing
-
-1. Install dependencies:
+cross-compilation from linux. This requires some additional packages to be
+installed.
 
 On Ubuntu 16.04 (xenial):
 ```
@@ -86,39 +88,18 @@ On Ubuntu 14.04 (trusty):
 sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 mingw32-runtime wine
 ```
 
-2. Run the windows build script:
-```
-./run_testsuite.sh winbuild
-```
-
-3. Test it
-
-The directory `install` will contain `bin/mimic.exe` file
-
-```
-wine ./mimic.exe -t "hello world" 
-```
-
-4. Distribute it
-
-You can distribute the compiled mimic by adding to a zip file everything in the
-`install/bin` directory.
-
 
 #### Native Windows building
 
-* A good C compiler (_Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/))
-* GNU Make
-* PortAudio
-* ICU
-
-######Note
-- Audio device and audio libraries are optional, as mimic can write its output to a waveform file
+- Audio device and audio libraries are optional, as mimic can write its output to a waveform file.
 - Some of the source files are quite large, that some C compilers might choke on these. So, *gcc* is recommended.
 - Visual C++ 6.0 is known to fail on the large diphone database files
-- The build process is much slower on Windows.
+- The build process is **MUCH** slower on Windows.
 
-##Build
+
+## Build
+
+### On a native build (not cross-compilation)
 
 - Clone the repository
   ```
@@ -135,7 +116,8 @@ You can distribute the compiled mimic by adding to a zip file everything in the
   $ ./autogen.sh
   ```
   
-- Configure
+- Configure.
+
   ```
   $ ./configure
   ```
@@ -150,166 +132,189 @@ You can distribute the compiled mimic by adding to a zip file everything in the
   $ make check
   ```
 
-######Note
+### Cross compilation:
 
-- If changes were made to the _compile flags_ after building, run `make clean` before recompiling with `make`.
+- Run the windows build script:
+
+```
+./run_testsuite.sh winbuild
+```
+
+- Test it: The directory `install` will contain `bin/mimic.exe` file
+
+```
+wine ./mimic.exe -t "hello world" 
+```
+
+- Distribute it
+
+You can distribute the compiled mimic by adding to a zip file everything in the
+`install/bin` directory.
 
 
-##Usage
+## Usage
 
-####Read text
+By default mimic will play the text using an audio device. Alternatively it can
+output the wave file in RIFF format (often called `.wav`).
+
+#### Read text
 
 - To an audio device
   ```
-  $ mimic -t TEXT
+  $ ./mimic -t TEXT
   ```
   
   **_Example_**
   ```
-  $ ./bin/mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow."
+  $ ./mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow."
   ```
 
 - To an audio file
   ```
-  $ mimic -t TEXT -o WAVEFILE
+  $ ./mimic -t TEXT -o WAVEFILE
   ```
   
   **_Example_**
   ```
-  $ ./bin/mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow." -o hello.wav
+  $ ./mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow." -o hello.wav
   ```
 
-######Note
-
-- Wave file will be an 8KHz _riff_ headered waveform file. _riff_ is Microsoft's wave format often called .WAV)
-
-
-####Read text from file
+#### Read text from file
 
 - To an audio device
   ```
-  $ mimic -f TEXTFILE
+  $ ./mimic -f TEXTFILE
   ```
   
   **_Example_**
   ```
-  $ ./bin/mimic -f doc/alice
+  $ ./mimic -f doc/alice
   ```
 
 - To an audio file
   ```
-  $ mimic -f TEXTFILE -o WAVEFILE`
+  $ ./mimic -f TEXTFILE -o WAVEFILE`
   ```
   **_Example_**
   ```
-  $ ./bin/mimic -f doc/alice -o hello.wav
+  $ ./mimic -f doc/alice -o hello.wav
   ```
 
-######Note
-- Wave file will be an 8KHz _riff_ headered waveform file. _riff_ is Microsoft's wave format often called .WAV)
-
-
-####Change voice
+#### Change voice
 
 - List available internal voices
   ```
-  $ mimic -lv
+  $ ./mimic -lv
   ```
 
 - Use an internal voice
   ```
-  $ mimic -t TEXT -voice VOICE
+  $ ./mimic -t TEXT -voice VOICE
   ```
   
   **_Example_**
   ```
-  $ ./bin/mimic -t "Hello" -voice slt
+  $ ./mimic -t "Hello" -voice slt
   ```
 
 - Use an external voice file
   ```
-  $ mimic -t TEXT -voice VOICEFILE
+  $ ./mimic -t TEXT -voice VOICEFILE
   ```
   
   **_Example_**
   ```
-  $ ./bin/mimic -t "Hello" -voice voices/cmu_us_slt.flitevox
+  $ ./mimic -t "Hello" -voice voices/cmu_us_slt.flitevox
   ```
 
 - Use an external voice url
   ```
-  $ mimic -t TEXT -voice VOICEURL
+  $ ./mimic -t TEXT -voice VOICEURL
   ```
   
   **_Example_**
   ```
-  $ ./bin/mimic -t "Hello" -voice http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_ksp.flitevox
+  $ ./mimic -t "Hello" -voice http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_ksp.flitevox
   ```
 
-######Note
-- `kal` (diphone) voice is a different technology from the others and is much less computationally expensive but more robotic
-- Voice names are identified as loadable files if the name includes a "`/`" (slash) otherwise they are treated as internal names
-- The `voices/` directory contains several flitevox voices. Existing Flite voices can be found here: [http://www.festvox.org/flite/packed/flite-2.0/voices/](http://www.festvox.org/flite/packed/flite-2.0/voices/)
-- The voice referenced via an url will be downloaded on the fly
-- For each voice additional binaries that contain only that voice are created in ./bin/mimic_FULLVOICENAME, e.g. ./bin/mimic_cmu_us_awb . By default, `-g` is on so it will be bigger than is actually required
+###### Note
 
-####Other options
-If no argument or "play" is given, it will attempt to write directly to the audio device (if supported).  if "none"
-is given the audio is simply thrown away (used for benchmarking). Explicit options are also available.
-  ```
-  ./bin/mimic -v doc/alice none
-  ```
-  will synthesize the file without playing the audio and give a summary of the speed.
+- mimic offers several voices that can use different speech modelling techniques
+  (diphone, clustergen). Voices can differ a lot on size, naturalness and
+  intelligibility.
 
-An additional set of feature setting options are available, these are *debug* options, Voices are represented as sets of feature values (see `lang/cmu_us_kal/cmu_us_kal.c`) and you can override values on the command line.  This can stop mimic from working if malicious values are set and therefore this facility is not intended to be made available for standard users.  But these are useful for debugging.  Some typical examples are
+  * Diphone voices are less computationally expensive and quite intelligible but
+    they lack naturalness (sound more robotic). e.g. `./mimic -t "Hello world" -voice kal16`
+
+  * clustergen voices can sound more natural and intelligible at the expense of
+    size and computational requirements. e.g.:  e.g. `./mimic -t "Hello world" -voice slt`, `./mimic -t "Hello world" -voice ap`
+
+- Voice names are identified as loadable files if the name includes a "`/`" 
+  (slash) otherwise they are treated as internal names
+
+- The `voices/` directory contains several flitevox voices. Existing Flite voices
+  can be found here: [http://www.festvox.org/flite/packed/flite-2.0/voices/](http://www.festvox.org/flite/packed/flite-2.0/voices/)
+
+- The voice referenced via an url will be downloaded on the fly.
+
+
+#### Other options
+
+Voices accept additional *debug* options. specified as `--setf feature=value` in the
+command line. Wrong values can prevent mimic from working. Some speech modelling
+techniques may not implement support for changing these features so at some point
+some voices may not provide support for these options. Here are some examples:
 
 - Use simple concatenation of diphones without prosodic modification
   ```
-  ./bin/mimic --sets join_type=simple_join doc/intro.txt
+  ./mimic --sets join_type=simple_join doc/intro.txt
   ```
 
 - Print sentences as they are said
   ```
-  ./bin/mimic -pw doc/alice
+  ./mimic -pw doc/alice
   ```
 
 - Make it speak slower
   ```
-  ./bin/mimic --setf duration_stretch=1.5 doc/alice
+  ./mimic --setf duration_stretch=1.5 doc/alice
+  ```
+
+- Make it speak faster
+  ```
+  ./mimic --setf duration_stretch=0.8 doc/alice
   ```
 
 - Make it speak higher
   ```
-  ./bin/mimic --setf int_f0_target_mean=145 doc/alice
+  ./mimic --setf int_f0_target_mean=145 doc/alice
   ```
 
-- The talking clock is an example talking clode as discussed on http://festvox.org/ldom it requires a single argument HH:MM.
-Under Unix you can call it
+See `lang/cmu_us_kal/cmu_us_kal.c`) to see some other features and values.
+
+
+#### Say the hour
+
+- The talking clock requires a single argument HH:MM. Under Unix you can call it
   ```
-  ./bin/mimic_time `date +%H:%M` 
+  ./mimic_time `date +%H:%M` 
   ```
 
-##Debugging
+#### Benchmarking
 
-The debug flag `-g` is already set when compiling. (This should probably be removed on release build)
+- For benchmarking, "none" can be used to discard the generated audio and give a summary of the speed:
+  ```
+  ./mimic -f doc/alice none
+  ```
 
-######Note
-Currently the configure script enables compiler optimizations. These optimizations are the reason for any weird behavior while stepping through the code. (Due to the fact that the compiler has reordered/removed many lines of code.) 
+## How to Contribute 
 
-For now to disable optimizations edit the file `mimic/config/config` by hand. Near the top of the file change: `CFLAGS   = -g -O2 -Wall` to read: `CFLAGS   = -g -O0 -Wall`  (You can also put any other debug flags here that you wish)  Keep in mind that this file is auto generated by the `configure`  script and will be overwritten if the script is run. Run `make clean` and then `make` to rebuild with the new flags.
-
-Now, Run the program in the debugger
-```
-gdb --args ./bin/mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow."
-```
-
-##How to Contribute 
-  For those who wish to help contribute to the development of mimic there are a few things to keep in mind. 
+For those who wish to help contribute to the development of mimic there are a few things to keep in mind. 
   
-####Git branching structure
-We will be using a branching struture similar to the one described in this article: http://nvie.com/posts/a-successful-git-branching-model/ (a very interesting read)
+#### Git branching structure
+We will be using a branching struture similar to the one described in [this article](http://nvie.com/posts/a-successful-git-branching-model/)
   
-#####In short
+##### In short
 
 - `master` branch is for stable releases, 
   
@@ -321,7 +326,7 @@ We will be using a branching struture similar to the one described in this artic
   then work can continue on `development` for the next release. 
 
 
-####Coding Style Requirements
+#### Coding Style Requirements
 To keep the code in mimic coherent a simple coding style/guide is used. It should be noted that the current codebase as a whole does not meet some of these guidlines,this is a result of coming from the flite codebase. As different parts of the codebase are touched, it is the hope that these inconsistancies will diminish as time goes on.
 
 - **Indentation**
@@ -333,6 +338,7 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
   Braces always comes on the line following the statement.
 
   **_Example_**
+
   ```c
   void cool_function(void)
   {
@@ -353,6 +359,7 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
   Always use curly braces.
   
   **_Example_**
+
   ```c
   if(condition)
   {                             /*always use curly braces even if the 'if' only has one statement*/
@@ -382,6 +389,7 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
   Always keep the break statement last in the case, after any code blocks.
 
   **_Example_**
+
   ```c
   switch(state)
   {
@@ -418,9 +426,10 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
 
   There's no hard limit but if possible keep lines shorter than *80 characters*.
 
-#####Vimrc 
+##### Vimrc 
 
  For those of you who use vim, add this to your vimrc to ensure proper indenting.
+
  ```vimrc
 "####Indentation settings
 :filetype plugin indent on
@@ -441,7 +450,8 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
 "for more indent options
  ```
 
-#####Indent command (currently does not indent switch/cases properly)
+##### Indent command (currently does not indent switch/cases properly)
+
 ```
 indent [FILE] -npcs -i4 -bl -Tcst_wave -Tcst_wave_header -Tcst_rateconv \
       -Tcst_voice -Tcst_item -Tcst_features -Tcst_val -Tcst_va -Tcst_viterbi \
@@ -456,8 +466,9 @@ indent [FILE] -npcs -i4 -bl -Tcst_wave -Tcst_wave_header -Tcst_rateconv \
       -Tcst_audiodev -TVocoderSetup -npsl -brs -bli0 -nut
 ```
 
-##Acknowledgements
+## Acknowledgements
 see [ACKNOWLEDGEMENTS](https://github.com/MycroftAI/mimic/blob/master/ACKNOWLEDGEMENTS)
 
-##License
+## License
 See [COPYING](https://github.com/MycroftAI/mimic/blob/master/COPYING)
+
