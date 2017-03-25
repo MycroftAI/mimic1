@@ -149,7 +149,7 @@ wine ./mimic.exe -t "hello world"
 - Distribute it
 
 You can distribute the compiled mimic by adding to a zip file everything in the
-`install/bin` directory.
+`install/winbuild/bin` directory.
 
 
 ## Usage
