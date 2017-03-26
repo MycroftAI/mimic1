@@ -84,17 +84,57 @@ cst_string *cst_toupper_l(const cst_string *in, const char *locale)
     return cst_to_l(in, locale, ucasemap_utf8ToUpper);
 }
 
+static UChar *new_uchar(cst_string *in, UErrorCode* pErrorCode)
+{
+    UChar *output = NULL;
+    int32_t output_num_uchar = 0;
+    /* If there was an error we don't interfere */
+    if (U_FAILURE(*pErrorCode))
+    {
+        return NULL;
+    }
+    u_strFromUTF8(NULL, 0, &output_num_uchar, (const char*) in, -1, pErrorCode);
+    /* Using u_strFromUTF8 for pre-flighting sets pError code because output
+       buffer is NULL. We just want the number of units, we can clear the error */
+    *pErrorCode = U_ZERO_ERROR;
+    output = cst_alloc(UChar, output_num_uchar + 1);
+    if (output == NULL)
+    {
+        cst_errmsg("Error allocating UChar*.\n");
+        return NULL;
+    }
+    u_strFromUTF8Lenient(output, output_num_uchar + 1, &output_num_uchar,
+                         (const char*) in, -1, pErrorCode);
+    if (U_FAILURE(*pErrorCode))
+    {
+        cst_errmsg("Error creating UChar*: %s\n", u_errorName(*pErrorCode));
+        cst_free(output);
+        return NULL;
+    }
+    output[output_num_uchar] = 0;
+    return output;
+}
+
 /* Compile regex */
 URegularExpression *new_cst_uregex(cst_string *pattern, uint32_t flags)
 {
     URegularExpression *output;
     UErrorCode status = U_ZERO_ERROR;
-    output = uregex_openC((const char *) pattern, flags, NULL, &status);
-    if (U_FAILURE(status))
+    UChar *pattern_uchar = new_uchar(pattern, &status);
+    if (pattern_uchar == NULL)
     {
-        cst_errmsg("Error creating uregex: %s", u_errorName(status));
+        cst_errmsg("Error creating uregex: Could not create UChar.\n");
         return NULL;
     }
+    /* Create regex */
+    output = uregex_open(pattern_uchar, -1, flags, NULL, &status);
+    if (U_FAILURE(status))
+    {
+        cst_errmsg("Error creating uregex: %s\n", u_errorName(status));
+        cst_free(pattern_uchar);
+        return NULL;
+    }
+    cst_free(pattern_uchar);
     return output;
 }
 
@@ -117,7 +157,7 @@ int cst_uregex_match(URegularExpression * uregex, const cst_string *str)
     uregex_reset(uregex, 0, &status);
     if (U_FAILURE(status))
     {
-        cst_errmsg("Error cst_uregex_match: %s", u_errorName(status));
+        cst_errmsg("Error cst_uregex_match: %s\n", u_errorName(status));
         return -1;
     }
     return ((int) ismatch);
