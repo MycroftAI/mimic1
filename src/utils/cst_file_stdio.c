@@ -48,6 +48,7 @@
 cst_file cst_fopen(const char *path, int mode)
 {
     char cmode[4];
+    cmode[0] = '\0';
 
     if (cst_urlp(path))
         return cst_url_open(path);

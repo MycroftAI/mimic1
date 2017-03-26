@@ -351,7 +351,7 @@ AS_IF([test "x$enable_cmu_us_rms" != xno],
 dnl cmu_us_slt
 AC_ARG_ENABLE([cmu_us_slt],
   [AS_HELP_STRING([--disable-cmu_us_slt],
-       [disable cmu_us_slt clustergem voice])],
+       [disable cmu_us_slt clustergen voice])],
   [],
   [enable_cmu_us_slt=${enable_voices_english}])
 
