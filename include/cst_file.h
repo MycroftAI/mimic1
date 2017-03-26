@@ -81,6 +81,7 @@ int cst_fprintf(cst_file fh, const char *fmt, ...);
 int cst_sprintf(char *s, const char *fmt, ...);
 int cst_fclose(cst_file fh);
 int cst_fgetc(cst_file fh);
+int cst_file_exists(const char *path);
 
 /* These aren't LFS-compliant.  I don't think we'll need >2G files. */
 long cst_ftell(cst_file fh);
