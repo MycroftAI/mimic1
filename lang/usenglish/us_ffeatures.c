@@ -39,6 +39,50 @@
 /*  semantics follow them                                                */
 /*************************************************************************/
 
+/* ----------------------------------------------------------------- */
+/*           The English TTS System "Flite+hts_engine"               */
+/*           developed by HTS Working Group                          */
+/*           http://hts-engine.sourceforge.net/                      */
+/* ----------------------------------------------------------------- */
+/*                                                                   */
+/*  Copyright (c) 2005-2016  Nagoya Institute of Technology          */
+/*                           Department of Computer Science          */
+/*                                                                   */
+/*                2005-2008  Tokyo Institute of Technology           */
+/*                           Interdisciplinary Graduate School of    */
+/*                           Science and Engineering                 */
+/*                                                                   */
+/* All rights reserved.                                              */
+/*                                                                   */
+/* Redistribution and use in source and binary forms, with or        */
+/* without modification, are permitted provided that the following   */
+/* conditions are met:                                               */
+/*                                                                   */
+/* - Redistributions of source code must retain the above copyright  */
+/*   notice, this list of conditions and the following disclaimer.   */
+/* - Redistributions in binary form must reproduce the above         */
+/*   copyright notice, this list of conditions and the following     */
+/*   disclaimer in the documentation and/or other materials provided */
+/*   with the distribution.                                          */
+/* - Neither the name of the HTS working group nor the names of its  */
+/*   contributors may be used to endorse or promote products derived */
+/*   from this software without specific prior written permission.   */
+/*                                                                   */
+/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND            */
+/* CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,       */
+/* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF          */
+/* MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE          */
+/* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS */
+/* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,          */
+/* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED   */
+/* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     */
+/* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON */
+/* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,   */
+/* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    */
+/* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
+/* POSSIBILITY OF SUCH DAMAGE.                                       */
+/* ----------------------------------------------------------------- */
+
 #include "cst_hrg.h"
 #include "cst_phoneset.h"
 #include "cst_regex.h"
@@ -202,6 +246,261 @@ const cst_val *cg_content_words_in_phrase(const cst_item *p)
 	return float_val(ffeature_float(p,"R:SylStructure.parent.parent.R:Word.content_words_in") + ffeature_float(p,"R:SylStructure.parent.parent.R:Word.content_words_out")) ;//- (strcmp(ffeature_string(p,"R:SylStructure.parent.parent.R:Word.gpos"),"content")==0?1:0));
 }
 
+/* HTS features
+
+  HTS voices use a model with more contextual features, such as the total
+  number of words in the sentence, or the total number of syllables. The
+  following functions extract those features for US English texts.
+ */
+
+int item_after_length(const cst_item *n)
+{
+    int i = 0;
+    if (n == NULL)
+        return 0;
+    for (; n; n = n->n, i++);
+    return i;
+}
+
+const cst_item *item_first(const cst_item *n)
+{
+    if (n == 0)
+        return 0;
+    for (; n->p != 0; n = n->p);
+    return n;
+}
+
+/* 21 by Toda-san */
+static const cst_val *lisp_distance_to_p_stress(const cst_item *syl)
+{
+    const cst_item *s, *fs;
+    int c;
+
+    s = item_as(syl, "Syllable");
+    fs = path_to_item(syl,
+                      "R:SylStructure.parent.R:Phrase.parent.daughter.R:SylStructure.daughter");
+    if (item_equal(s, fs))
+        return val_string_n(0);
+    s = item_prev(s);
+    for (c = 1; s && (!item_equal(s, fs)); s = item_prev(s), c++)
+        if (strcmp("1", ffeature_string(s, "stress")) == 0)
+            return val_string_n(c);
+    if (strcmp("1", ffeature_string(s, "stress")) == 0)
+        return val_string_n(c);
+    else
+        return val_string_n(0);
+}
+
+/* 22 by Toda-san */
+static const cst_val *lisp_distance_to_n_stress(const cst_item *syl)
+{
+    const cst_item *s, *fs;
+    int c;
+
+    s = item_as(syl, "Syllable");
+    fs = path_to_item(syl,
+                      "R:SylStructure.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern");
+    if (item_equal(s, fs))
+        return val_string_n(0);
+    s = item_next(s);
+    for (c = 1; s && (!item_equal(s, fs)); s = item_next(s), c++)
+        if (strcmp("1", ffeature_string(s, "stress")) == 0)
+            return val_string_n(c);
+    if (strcmp("1", ffeature_string(s, "stress")) == 0)
+        return val_string_n(c);
+    else
+        return val_string_n(0);
+}
+
+/* 23 by Toda-san */
+static const cst_val *lisp_distance_to_p_accent(const cst_item *syl)
+{
+    const cst_item *s, *fs;
+    int c;
+
+    s = item_as(syl, "Syllable");
+    fs = path_to_item(syl,
+                      "R:SylStructure.parent.R:Phrase.parent.daughter.R:SylStructure.daughter");
+    if (item_equal(s, fs))
+        return val_string_n(0);
+    s = item_prev(s);
+    for (c = 1; s && (!item_equal(s, fs)); s = item_prev(s), c++)
+        if (val_int(accented(s)))
+            return val_string_n(c);
+    if (val_int(accented(s)))
+        return val_string_n(c);
+    else
+        return val_string_n(0);
+}
+
+/* 24 by Toda-san */
+static const cst_val *lisp_distance_to_n_accent(const cst_item *syl)
+{
+    const cst_item *s, *fs;
+    int c;
+
+    s = item_as(syl, "Syllable");
+    fs = path_to_item(syl,
+                      "R:SylStructure.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern");
+    if (item_equal(s, fs))
+        return val_string_n(0);
+    s = item_next(s);
+    for (c = 1; s && (!item_equal(s, fs)); s = item_next(s), c++)
+        if (val_int(accented(s)))
+            return val_string_n(c);
+    if (val_int(accented(s)))
+        return val_string_n(c);
+    else
+        return val_string_n(0);
+}
+
+/* 36 */
+static const cst_val *lisp_distance_to_p_content(const cst_item *p)
+{
+    const cst_item *s;
+    int i = 0;
+    p = item_as(p, "Word");
+    s = item_as(path_to_item(p, "R:SylStructure.R:Phrase.parent.daughter1"),
+                "Word");
+
+    if (item_equal(p, s))
+        return val_string_n(0);
+
+    for (p = item_prev(p); p; p = item_prev(p))
+    {
+        if (!strcmp(ffeature_string(p, "gpos"), "content"))
+        {
+            i++;
+            break;
+        }
+        if (item_equal(p, s))
+            return val_string_n(0);
+        i++;
+    }
+    return val_string_n(i);
+}
+
+/* 37 */
+static const cst_val *lisp_distance_to_n_content(const cst_item *p)
+{
+    const cst_item *s;
+    int i = 0;
+    p = item_as(p, "Word");
+    s = item_as(path_to_item(p, "R:SylStructure.R:Phrase.parent.daughtern"),
+                "Word");
+
+    if (item_equal(p, s))
+        return val_string_n(0);
+
+    for (p = item_next(p); p; p = item_next(p))
+    {
+        if (!strcmp(ffeature_string(p, "gpos"), "content"))
+        {
+            i++;
+            break;
+        }
+        if (item_equal(p, s))
+            return val_string_n(0);
+        i++;
+    }
+    return val_string_n(i);
+}
+
+/* 38 39 40 59 60 by Toda-san */
+static const cst_val *lisp_num_syls_in_phrase(const cst_item *phrase)
+{
+    const cst_item *sw, *fw;
+    int c;
+
+    sw = path_to_item(phrase, "daughter");
+    fw = path_to_item(phrase, "daughtern");
+
+    for (c = 0; sw && (!item_equal(sw, fw)) && (c < CST_CONST_INT_MAX);
+         sw = item_next(sw))
+        c += ffeature_int(sw, "word_numsyls");
+    c += ffeature_int(sw, "word_numsyls");
+
+    return val_string_n(c);
+}
+
+/* 41 42 43 61 62 by Toda-san */
+static const cst_val *lisp_num_words_in_phrase(const cst_item *phrase)
+{
+    const cst_item *sw, *fw;
+    int c;
+
+    sw = path_to_item(phrase, "daughter");
+    fw = path_to_item(phrase, "daughtern");
+
+    for (c = 1; sw && (!item_equal(sw, fw)) && (c < CST_CONST_INT_MAX);
+         sw = item_next(sw))
+        c++;
+
+    return val_string_n(c);
+}
+
+/* 46 by Toda-san */
+static const cst_val *lisp_total_syls(const cst_item *phrase)
+{
+    const cst_item *sp, *fp;
+    int c;
+
+    sp = phrase;
+    while (item_prev(sp) != NULL)
+        sp = item_prev(sp);
+    fp = phrase;
+    while (item_next(fp) != NULL)
+        fp = item_next(fp);
+
+    for (c = 0; sp && (!item_equal(sp, fp)) && (c < CST_CONST_INT_MAX);
+         sp = item_next(sp))
+        c += ffeature_int(sp, "lisp_num_syls_in_phrase");
+    c += ffeature_int(sp, "lisp_num_syls_in_phrase");
+    return val_string_n(c);
+}
+
+/* 47 by Toda-san */
+static const cst_val *lisp_total_words(const cst_item *phrase)
+{
+    const cst_item *sp, *fp;
+    int c;
+
+    sp = phrase;
+    while (item_prev(sp) != NULL)
+        sp = item_prev(sp);
+    fp = phrase;
+    while (item_next(fp) != NULL)
+        fp = item_next(fp);
+
+    for (c = 0; sp && (!item_equal(sp, fp)) && (c < CST_CONST_INT_MAX);
+         sp = item_next(sp))
+        c += ffeature_int(sp, "lisp_num_words_in_phrase");
+    c += ffeature_int(sp, "lisp_num_words_in_phrase");
+    return val_string_n(c);
+}
+
+/* 48 by Toda-san */
+static const cst_val *lisp_total_phrases(const cst_item *phrase)
+{
+    const cst_item *sp, *fp;
+    int c;
+
+    sp = phrase;
+    while (item_prev(sp) != NULL)
+        sp = item_prev(sp);
+    fp = phrase;
+    while (item_next(fp) != NULL)
+        fp = item_next(fp);
+
+    for (c = 1; sp && (!item_equal(sp, fp)) && (c < CST_CONST_INT_MAX);
+         sp = item_next(sp))
+        c++;
+
+    return val_string_n(c);
+}
+
+
+       /* HTS feature extraction function definition finishes here */
 
 void us_ff_register(cst_features *ffunctions)
 {
@@ -217,4 +516,17 @@ void us_ff_register(cst_features *ffunctions)
     ff_register(ffunctions, "content_words_out",content_words_out);
     ff_register(ffunctions, "lisp_cg_content_words_in_phrase",cg_content_words_in_phrase);
 
+    /* Register HTS features */
+    ff_register(ffunctions, "lisp_distance_to_p_stress", lisp_distance_to_p_stress);    /* 21 */
+    ff_register(ffunctions, "lisp_distance_to_n_stress", lisp_distance_to_n_stress);    /* 22 */
+    ff_register(ffunctions, "lisp_distance_to_p_accent", lisp_distance_to_p_accent);    /* 23 */
+    ff_register(ffunctions, "lisp_distance_to_n_accent", lisp_distance_to_n_accent);    /* 24 */
+    ff_register(ffunctions, "lisp_distance_to_p_content", lisp_distance_to_p_content);  /* 36 */
+    ff_register(ffunctions, "lisp_distance_to_n_content", lisp_distance_to_n_content);  /* 37 */
+    ff_register(ffunctions, "lisp_num_syls_in_phrase", lisp_num_syls_in_phrase);        /* 38 39 40 59 60 */
+    ff_register(ffunctions, "lisp_num_words_in_phrase", lisp_num_words_in_phrase);      /* 41 42 43 61 62 */
+    ff_register(ffunctions, "lisp_total_syls", lisp_total_syls);        /* 46 */
+    ff_register(ffunctions, "lisp_total_words", lisp_total_words);      /* 47 */
+    ff_register(ffunctions, "lisp_total_phrases", lisp_total_phrases);  /* 48 */
+    /* HTS feature extraction registration finishes here */
 }
