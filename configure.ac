@@ -73,18 +73,22 @@ AC_ARG_WITH([hts],
     [disable hts speech synthesis capabilities (for hts voices)])],
   [],
   [with_hts=yes])
+AM_CONDITIONAL([HTSEngine], [test "x$with_hts" != xno])
   
 HTS_LIBS=
+with_hts_bundled="no"
 AS_IF([test "x$with_hts" != "xno"],
-  [AC_CHECK_LIB([HTSEngine], [HTS_Engine_initialize],
-    [AC_SUBST([HTS_LIBS], ["-lHTSEngine"])
-     AC_DEFINE([HAVE_HTSENGINE], [1],
-               [Define if you have hts_engine])
-    ],
-    [AC_MSG_FAILURE(
-       [hts_engine test failed (--without-hts to disable)])],
-    [])])
-AM_CONDITIONAL([HTSEngine], [test "x$with_hts" != xno])
+  [AC_DEFINE([HAVE_HTSENGINE], [1], [Define if you have hts_engine])
+      AC_CHECK_LIB([HTSEngine],
+                [HTS_Engine_initialize],
+                [AC_SUBST([HTS_LIBS], ["-lHTSEngine"])
+                ],
+                [with_hts_bundled="yes"
+                                 AC_MSG_NOTICE([HTSEngine was not detected, using bundled HTSEngine])
+                ],
+                [])
+  ])
+AM_CONDITIONAL([HTSEngineBundled], [test "x$with_hts_bundled" != "xno"])
 
 
 

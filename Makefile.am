@@ -513,6 +513,24 @@ libttsmimic_la_SOURCES += \
 libttsmimic_la_SOURCES += \
   src/hts/flite_hts_engine.c
 
+if HTSEngineBundled
+  AM_CPPFLAGS += -I$(top_srcdir)/src/hts/hts_engine_API/include
+  headers_HEADERS +=src/hts/hts_engine_API/include/HTS_engine.h
+  libttsmimic_la_SOURCES += \
+    src/hts/hts_engine_API/lib/HTS_audio.c \
+    src/hts/hts_engine_API/lib/HTS_engine.c \
+    src/hts/hts_engine_API/lib/HTS_hidden.h \
+    src/hts/hts_engine_API/lib/HTS_misc.c  \
+    src/hts/hts_engine_API/lib/HTS_pstream.c \
+    src/hts/hts_engine_API/lib/HTS_sstream.c \
+    src/hts/hts_engine_API/lib/HTS_model.c \
+    src/hts/hts_engine_API/lib/HTS_vocoder.c \
+    src/hts/hts_engine_API/lib/HTS_gstream.c \
+    src/hts/hts_engine_API/lib/HTS_label.c
+else
+  libttsmimic_la_LIBADD += $(HTS_LIBS)
+endif
+
 ###### src/lexicon #########
 
 libttsmimic_la_SOURCES += \
