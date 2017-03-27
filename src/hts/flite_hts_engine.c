@@ -533,7 +533,7 @@ char *mimic_hts_get_voice_file(const cst_voice *const v)
         return NULL;
     char *full_file = cst_alloc(char, MAXBUFLEN);
     const char *directories[] =
-        { ".", "voices", "../voices", DATADIR "/mimic/voices/", NULL };
+        { ".", "voices", "../voices", PKGDATADIR "/voices/", NULL };
     for (i = 0; directories[i] != NULL; i++)
     {
         sprintf(full_file, "%s/%s.htsvoice", directories[i], vname);

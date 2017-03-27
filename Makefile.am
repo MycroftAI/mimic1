@@ -480,7 +480,7 @@ src_audio_SOURCES = \
   src/audio/au_wince.c \
   src/audio/native_audio.h
 
-libttsmimic_la_CFLAGS += $(AUDIODEFS) -DDATADIR='"$(datadir)"'
+libttsmimic_la_CFLAGS += $(AUDIODEFS) -DPKGDATADIR='"$(pkgdatadir)"'
 libttsmimic_la_SOURCES += $(src_audio_SOURCES)
 
 libttsmimic_la_LIBADD += $(AUDIOLIBS) $(HTS_LIBS)
