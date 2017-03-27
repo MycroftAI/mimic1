@@ -34,9 +34,10 @@
 /*               Date:  November 2007                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  A hts voice defintion			                 */
+/*  A hts voice defintion			                                     */
 /*                                                                       */
 /*************************************************************************/
+/* mimic adaptations by Sergio Oller, 2017 */
 
 #include <string.h>
 #include "mimic.h"

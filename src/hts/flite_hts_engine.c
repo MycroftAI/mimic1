@@ -41,6 +41,7 @@
 /* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
+/* mimic adaptations by Sergio Oller, 2017 */
 
 #include "config.h"
 #include "cst_synth.h"
