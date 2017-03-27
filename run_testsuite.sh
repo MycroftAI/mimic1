@@ -1,5 +1,16 @@
 #!/bin/sh
 
+if [ "$#" -eq 0 ]; then
+  echo "./run_testsuite.sh requires a task/build target to be done"
+  echo "  - ./run_testsuite.sh osx (OSX install dependencies, build and test)"
+  echo "  - ./run_testsuite.sh coverage (Build with code coverage)"
+  echo "  - ./run_testsuite.sh shared (Build with shared libraries)"
+  echo "  - ./run_testsuite.sh gcc6 (Build using gcc6)"
+  echo "  - ./run_testsuite.sh arm-linux-gnueabihf-gcc (crosscompiling)"
+  echo "  - ./run_testsuite.sh winbuild (crosscompiling)"
+  echo "  - ./run_testsuite.sh winbuild_shared (crosscompiling, with shared libraries)"
+fi 
+
 WHAT_TO_RUN="$1"
 
 MIMIC_TOP_SRCDIR=`dirname \`readlink -f "$0"\``
