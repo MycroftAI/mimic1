@@ -453,10 +453,10 @@ src_audio_SOURCES = \
   src/audio/au_wince.c \
   src/audio/native_audio.h
 
-libttsmimic_la_CFLAGS += $(AUDIODEFS)
+libttsmimic_la_CFLAGS += $(AUDIODEFS) -DDATADIR='"$(datadir)"'
 libttsmimic_la_SOURCES += $(src_audio_SOURCES)
 
-libttsmimic_la_LIBADD += $(AUDIOLIBS)
+libttsmimic_la_LIBADD += $(AUDIOLIBS) $(HTS_LIBS)
 
 ###### src/cg ##################
 libttsmimic_la_SOURCES += \
@@ -481,6 +481,10 @@ libttsmimic_la_SOURCES += \
   src/hrg/cst_item.c \
   src/hrg/cst_ffeature.c \
   src/hrg/cst_rel_io.c
+
+####### src/hts ###############
+libttsmimic_la_SOURCES += \
+  src/hts/flite_hts_engine.c
 
 ###### src/lexicon #########
 
@@ -832,6 +836,7 @@ headers_HEADERS += \
   include/cst_voice.h \
   include/cst_wave.h \
   include/cst_wchar.h \
+  include/flite_hts_engine.h \
   include/mimic.h
 
 # Documentation

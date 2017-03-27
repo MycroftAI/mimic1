@@ -67,6 +67,27 @@ dnl Whether or not we have sockets (we don't in Windows)
 AC_CHECK_HEADERS([sys/socket.h])
 
 
+dnl: Look for htsengine_API headers and library
+AC_ARG_WITH([hts],
+  [AS_HELP_STRING([--without-hts],
+    [disable hts speech synthesis capabilities (for hts voices)])],
+  [],
+  [with_hts=yes])
+  
+HTS_LIBS=
+AS_IF([test "x$with_hts" != "xno"],
+  [AC_CHECK_LIB([HTSEngine], [HTS_Engine_initialize],
+    [AC_SUBST([HTS_LIBS], ["-lHTSEngine"])
+     AC_DEFINE([HAVE_HTSENGINE], [1],
+               [Define if you have hts_engine])
+    ],
+    [AC_MSG_FAILURE(
+       [hts_engine test failed (--without-hts to disable)])],
+    [])])
+AM_CONDITIONAL([HTSEngine], [test "x$with_hts" != xno])
+
+
+
 dnl: pkg-config mimic.pc file:
 PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/ttsmimic -I${includedir}/ttsmimic/lang"
 PKGCONFIG_MIMIC_LIBS="-L${libdir}"
