@@ -382,6 +382,24 @@ AS_IF([test "x$enable_cmu_us_slt" != xno],
    enable_cmulex="yes"])
 
 
+dnl cmu_us_slt_hts
+AC_ARG_ENABLE([cmu_us_slt_hts],
+  [AS_HELP_STRING([--disable-cmu_us_slt_hts],
+       [disable cmu_us_slt_hts hts voice])],
+  [],
+  [enable_cmu_us_slt_hts=${enable_voices_english}])
+
+AS_IF([test "x$enable_cmu_us_slt_hts" != "xno" -a "x$with_hts" = "xno"],
+    [enable_cmu_us_slt_hts="no"
+          AC_MSG_WARN([cmu_us_slt_hts disabled because hts support is not available])],
+    [])
+
+dnl: Dependencies for cmu_us_slt_hts
+AS_IF([test "x$enable_cmu_us_slt_hts" != xno],
+  [enable_usenglish="yes"
+   enable_cmulex="yes"])
+
+
 dnl vid_gb_ap
 AC_ARG_ENABLE([vid_gb_ap],
   [AS_HELP_STRING([--disable-vid_gb_ap],
@@ -439,6 +457,14 @@ AS_IF([test "x$enable_cmu_us_slt" != xno ],
     PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_slt"
   ],
   [ AC_DEFINE([ENABLE_CMU_US_SLT], [0], [Enable cmu_us_slt voice]) ])
+
+AM_CONDITIONAL([VOICE_CMU_US_SLT_HTS], [test "x$enable_cmu_us_slt_hts" != xno])
+AS_IF([test "x$enable_cmu_us_slt_hts" != xno ],
+  [ AC_DEFINE([ENABLE_CMU_US_SLT_HTS], [1], [Enable cmu_us_slt_hts voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_slt_hts"
+  ],
+  [ AC_DEFINE([ENABLE_CMU_US_SLT_HTS], [0], [Enable cmu_us_slt_hts voice]) ])
+
 
 AM_CONDITIONAL([VOICE_VID_GB_AP], [test "x$enable_vid_gb_ap" != xno])
 AS_IF([test "x$enable_vid_gb_ap" != xno ],

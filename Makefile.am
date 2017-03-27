@@ -32,6 +32,9 @@ TESTS =
 pkgconfiginstalldir = $(libdir)/pkgconfig
 pkgconfiginstall_DATA = mimic.pc
 
+voicesinstalldir = $(pkgdatadir)/voices
+voicesinstall_DATA = 
+
 ################## START: LANG_USENGLISH #################################
 if LANG_USENGLISH
     lib_LTLIBRARIES += libttsmimic_lang_usenglish.la
@@ -388,6 +391,30 @@ libttsmimic_lang_cmu_us_slt_la_CFLAGS = \
   -I$(top_srcdir)/lang/cmulex
 
 libttsmimic_lang_cmu_us_slt_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
+
+###############
+
+if VOICE_CMU_US_SLT_HTS
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_slt_hts.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_slt_hts.la
+    voicesinstall_DATA += voices/cmu_us_slt_hts.htsvoice
+else
+    EXTRA_DIST += voices/cmu_us_slt_hts.htsvoice
+endif
+
+libttsmimic_lang_cmu_us_slt_hts_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_slt_hts_la_SOURCES = \
+  lang/cmu_us_slt_hts/cmu_us_slt_hts.c \
+  lang/cmu_us_slt_hts/voxdefs.h
+
+libttsmimic_lang_cmu_us_slt_hts_la_CFLAGS = \
+  -I$(top_srcdir)/lang/usenglish \
+  -I$(top_srcdir)/lang/cmulex
+
+libttsmimic_lang_cmu_us_slt_hts_la_LIBADD = \
   libttsmimic.la \
   libttsmimic_lang_cmulex.la \
   libttsmimic_lang_usenglish.la
