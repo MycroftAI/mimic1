@@ -41,16 +41,6 @@
 #include "cst_string.h"
 #include "cst_cg_map.h"
 
-#include "config.h"
-
-#ifdef OPTIMIZE_VOICE_LOADING
-   #define OPTIMIZE_DURS
-   #define OPTIMIZE_DB_LOAD
-   #define OPTIMIZE_DB_READ
-   #define OPTIMIZE_READ_NODES
-   #define OPTIMIZE_PADDED
-#endif
-
 const char *const cg_voice_header_string = "CMU_FLITE_CG_VOXDATA-v2.0";
 
 int cst_cg_read_header(cst_file fd)
@@ -86,28 +76,17 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 {
     cst_cg_db *db = cst_alloc(cst_cg_db, 1);
     int i;
-#ifdef OPTIMIZE_DB_READ
     uint32_t elements[2];
-#endif
-#ifdef OPTIMIZE_DB_LOAD
     uint32_t load_buff[4];
-#endif
     db->freeable = 1;           /* somebody can free this if they want */
     db->name = cst_read_string(fd);
     db->types = (const char **) cst_read_db_types(fd);
 
-#ifdef OPTIMIZE_DB_LOAD
     cst_fread(fd, load_buff, sizeof(uint32_t) * 4, 1);
     db->num_types = load_buff[0];
     db->sample_rate = load_buff[1];
     db->f0_mean = ((float *)load_buff)[2];
     db->f0_stddev = ((float *)load_buff)[3];
-#else
-    db->num_types = cst_read_int32(fd);
-    db->sample_rate = cst_read_int32(fd);
-    db->f0_mean = cst_read_float(fd);
-    db->f0_stddev = cst_read_float(fd);
-#endif
     db->f0_trees = (const cst_cart **) cst_read_tree_array(fd);
 
     db->num_param_models =
@@ -130,14 +109,9 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
         cst_alloc(uint16_t **, db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
     {
-#ifdef OPTIMIZE_DB_READ
         cst_fread(fd, elements, sizeof(uint32_t) * 2, 1);
         db->num_channels[i] = elements[0];
         db->num_frames[i] = elements[1];
-#else
-        db->num_channels[i] = cst_read_int32(fd);
-        db->num_frames[i] = cst_read_int32(fd);
-#endif
         db->model_vectors[i] =
             (uint16_t **) cst_read_2d_array(fd);
     }
@@ -206,7 +180,6 @@ void cst_cg_free_db(cst_file fd, cst_cg_db *db)
 }
 
 void *cst_read_padded(cst_file fd, int *numbytes)
-#ifdef OPTIMIZE_PADDED
 {
     void *ret;
     *numbytes = cst_read_int32(fd);
@@ -214,22 +187,6 @@ void *cst_read_padded(cst_file fd, int *numbytes)
     cst_fread(fd, ret, sizeof(char), *numbytes);
     return ret;
 }
-#else
-{
-    void *ret;
-    int n;
-
-    *numbytes = cst_read_int32(fd);
-    ret = (void *) cst_alloc(char, *numbytes);
-    n = cst_fread(fd, ret, sizeof(char), *numbytes);
-    if (n != (*numbytes))
-    {
-        cst_free(ret);
-        return NULL;
-    }
-    return ret;
-}
-#endif
 
 char **cst_read_db_types(cst_file fd)
 {
@@ -256,26 +213,17 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
     int i, num_nodes;
     short vtype;
     char *str;
-#ifdef OPTIMIZE_READ_NODES
     uint16_t buff[3];
-#endif
     num_nodes = cst_read_int32(fd);
     nodes = cst_alloc(cst_cart_node, num_nodes + 1);
 
     for (i = 0; i < num_nodes; i++)
     {
-#ifdef OPTIMIZE_READ_NODES
         cst_fread(fd, buff, sizeof(uint16_t) * 3, 1);
         nodes[i].feat = buff[0] & 0xff;
         nodes[i].op = buff[0] >> 8;
         nodes[i].no_node = buff[1];
         vtype = buff[2];
-#else
-        cst_fread(fd, &nodes[i].feat, sizeof(char), 1);
-        cst_fread(fd, &nodes[i].op, sizeof(char), 1);
-        cst_fread(fd, &nodes[i].no_node, sizeof(int16_t), 1);
-        cst_fread(fd, &vtype, sizeof(int16_t), 1);
-#endif
         if (vtype == CST_VAL_TYPE_STRING)
         {
             str = cst_read_padded(fd, &temp);
@@ -377,9 +325,7 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     int numstats;
     int i, temp;
     dur_stat **ds;
-#ifdef OPTIMIZE_DURS
     float elements[2];
-#endif
     numstats = cst_read_int32(fd);
     ds = cst_alloc(dur_stat *, (1 + numstats));
 
@@ -387,14 +333,9 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     for (i = 0; i < numstats; i++)
     {
         ds[i] = cst_alloc(dur_stat, 1);
-#ifdef OPTIMIZE_DURS
         cst_fread(fd, elements, sizeof(uint32_t), 2);
         ds[i]->mean = elements[0];
         ds[i]->stddev = elements[1];
-#else
-        ds[i]->mean = cst_read_float(fd);
-        ds[i]->stddev = cst_read_float(fd);
-#endif
         ds[i]->phone = cst_read_padded(fd, &temp);
     }
     ds[i] = NULL;

@@ -43,12 +43,6 @@
 #include "cst_cg_map.h"
 #include "cst_alloc.h"
 
-#include "config.h"
-
-#ifdef OPTIMIZE_VOICE_LOADING
-#define OPTIMIZE_IOBUFF
-#endif
-
 cst_voice *cst_cg_load_voice(const char *filename,
                              const cst_lang * lang_table)
 {
@@ -62,30 +56,22 @@ cst_voice *cst_cg_load_voice(const char *filename,
     char *fval;
     cst_file vd;
 
-#ifdef OPTIMIZE_IOBUFF
     char *vd_buff;
     vd_buff = cst_alloc(char, 64 * 1024);
-#endif
     vd = cst_fopen(filename, CST_OPEN_READ|CST_OPEN_BINARY);
     if (vd == NULL)
     {
-#ifdef OPTIMIZE_IOBUFF
         cst_free(vd_buff);
-#endif
         cst_errmsg("Error load voice: can't open file %s\n", filename);
         return NULL;
     }
-#ifdef OPTIMIZE_IOBUFF
     setvbuf(vd, vd_buff, _IOFBF, (size_t)64 * 1024);
-#endif
     if (cst_cg_read_header(vd) != 0)
     {
         cst_errmsg("Error load voice: %s does not have expected header\n",
                    filename);
         cst_fclose(vd);
-#ifdef OPTIMIZE_IOBUFF
         cst_free(vd_buff);
-#endif
         return NULL;
     }
 
@@ -115,9 +101,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
     if (cg_db == NULL)
     {
         cst_fclose(vd);
-#ifdef OPTIMIZE_IOBUFF
         cst_free(vd_buff);
-#endif
         return NULL;
     }
 
@@ -139,9 +123,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
         /* Delete allocated memory in cg_db */
         cst_cg_free_db(vd, cg_db);
         cst_fclose(vd);
-#ifdef OPTIMIZE_IOBUFF
         cst_free(vd_buff);
-#endif
         cst_errmsg
             ("Error load voice: lang/lex %s not supported in this binary\n",
              language);
@@ -167,9 +149,7 @@ cst_voice *cst_cg_load_voice(const char *filename,
     mimic_feat_set_int(vox->features, "sample_rate", cg_db->sample_rate);
 
     cst_fclose(vd);
-#ifdef OPTIMIZE_IOBUFF
-        cst_free(vd_buff);
-#endif
+    cst_free(vd_buff);
     return vox;
 }
 
