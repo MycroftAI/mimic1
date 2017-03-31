@@ -1,4 +1,4 @@
-#Mimic - The Mycroft TTS Engine
+# Mimic - The Mycroft TTS Engine
 
 [![Stories in Ready](https://badge.waffle.io/MycroftAI/mimic.png?label=ready&title=Ready)](https://waffle.io/MycroftAI/mimic)
 [![Build Status](https://travis-ci.org/MycroftAI/mimic.svg?branch=development)](https://travis-ci.org/MycroftAI/mimic)
@@ -7,10 +7,10 @@
 
 Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](https://mycroft.ai/) and [VocaliD](https://vocalid.co/), based on Carnegie Mellon University’s [Flite (Festival-Lite)](http://www.festvox.org/flite) software. Mimic takes in text and reads it out loud to create a high quality voice. 
 
-######Official project site: [mimic.mycroft.ai](https://mimic.mycroft.ai/)
+###### Official project site: [mimic.mycroft.ai](https://mimic.mycroft.ai/)
 
 
-##Supported platforms
+## Supported platforms
 
 - Linux (ARM & Intel architectures)
 - Mac OS X
@@ -22,9 +22,9 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 **Future**
 - iOS
 
-##Requirements
+## Requirements
 
-###Linux
+### Linux
 
 - A good C compiler (_Recommended:_ gcc or clang)
 - GNU make
@@ -33,16 +33,16 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 - ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
 - ICU library and headers
 
-####Instructions
+#### Instructions
 
 - Install *gcc*, *make*, *automake*, *libtool*, *pkg-config*, *libicu-dev* and *ALSA*
 
-#####On Debian/Ubuntu
+##### On Debian/Ubuntu
 ```
 $ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound2-dev
 ```
 
-###Mac OSX
+### Mac OSX
 
 - A good C compiler. (_Recommended:_ gcc or clang)
 - GNU make
@@ -50,7 +50,7 @@ $ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound
 - PortAudio
 - ICU library
 
-####Instructions
+#### Instructions
 
 - Install *Brew*
   ```
@@ -62,7 +62,7 @@ $ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound
   $ brew install pkg-config libtool portaudio icu4c
   ```
 
-###Windows
+### Windows
 
 #### Cross compiling:
 
@@ -104,13 +104,13 @@ You can distribute the compiled mimic by adding to a zip file everything in the
 * PortAudio
 * ICU
 
-######Note
+###### Note
 - Audio device and audio libraries are optional, as mimic can write its output to a waveform file
 - Some of the source files are quite large, that some C compilers might choke on these. So, *gcc* is recommended.
 - Visual C++ 6.0 is known to fail on the large diphone database files
 - The build process is much slower on Windows.
 
-##Build
+## Build
 
 - Clone the repository
   ```
@@ -142,14 +142,14 @@ You can distribute the compiled mimic by adding to a zip file everything in the
   $ make check
   ```
 
-######Note
+###### Note
 
 - If changes were made to the _compile flags_ after building, run `make clean` before recompiling with `make`.
 
 
-##Usage
+## Usage
 
-####Read text
+#### Read text
 
 - To an audio device
   ```
@@ -171,12 +171,12 @@ You can distribute the compiled mimic by adding to a zip file everything in the
   $ ./bin/mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow." -o hello.wav
   ```
 
-######Note
+###### Note
 
 - Wave file will be an 8KHz _riff_ headered waveform file. _riff_ is Microsoft's wave format often called .WAV)
 
 
-####Read text from file
+#### Read text from file
 
 - To an audio device
   ```
@@ -197,11 +197,11 @@ You can distribute the compiled mimic by adding to a zip file everything in the
   $ ./bin/mimic -f doc/alice -o hello.wav
   ```
 
-######Note
+###### Note
 - Wave file will be an 8KHz _riff_ headered waveform file. _riff_ is Microsoft's wave format often called .WAV)
 
 
-####Change voice
+#### Change voice
 
 - List available internal voices
   ```
@@ -238,14 +238,14 @@ You can distribute the compiled mimic by adding to a zip file everything in the
   $ ./bin/mimic -t "Hello" -voice http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_ksp.flitevox
   ```
 
-######Note
+###### Note
 - `kal` (diphone) voice is a different technology from the others and is much less computationally expensive but more robotic
 - Voice names are identified as loadable files if the name includes a "`/`" (slash) otherwise they are treated as internal names
 - The `voices/` directory contains several flitevox voices. Existing Flite voices can be found here: [http://www.festvox.org/flite/packed/flite-2.0/voices/](http://www.festvox.org/flite/packed/flite-2.0/voices/)
 - The voice referenced via an url will be downloaded on the fly
 - For each voice additional binaries that contain only that voice are created in ./bin/mimic_FULLVOICENAME, e.g. ./bin/mimic_cmu_us_awb . By default, `-g` is on so it will be bigger than is actually required
 
-####Other options
+#### Other options
 If no argument or "play" is given, it will attempt to write directly to the audio device (if supported).  if "none"
 is given the audio is simply thrown away (used for benchmarking). Explicit options are also available.
   ```
@@ -281,11 +281,11 @@ Under Unix you can call it
   ./bin/mimic_time `date +%H:%M` 
   ```
 
-##Debugging
+## Debugging
 
 The debug flag `-g` is already set when compiling. (This should probably be removed on release build)
 
-######Note
+###### Note
 Currently the configure script enables compiler optimizations. These optimizations are the reason for any weird behavior while stepping through the code. (Due to the fact that the compiler has reordered/removed many lines of code.) 
 
 For now to disable optimizations edit the file `mimic/config/config` by hand. Near the top of the file change: `CFLAGS   = -g -O2 -Wall` to read: `CFLAGS   = -g -O0 -Wall`  (You can also put any other debug flags here that you wish)  Keep in mind that this file is auto generated by the `configure`  script and will be overwritten if the script is run. Run `make clean` and then `make` to rebuild with the new flags.
@@ -295,13 +295,13 @@ Now, Run the program in the debugger
 gdb --args ./bin/mimic -t "Hello. Doctor. Name. Continue. Yesterday. Tomorrow."
 ```
 
-##How to Contribute 
+## How to Contribute 
   For those who wish to help contribute to the development of mimic there are a few things to keep in mind. 
   
-####Git branching structure
+#### Git branching structure
 We will be using a branching struture similar to the one described in this article: http://nvie.com/posts/a-successful-git-branching-model/ (a very interesting read)
   
-#####In short
+##### In short
 
 - `master` branch is for stable releases, 
   
@@ -313,7 +313,7 @@ We will be using a branching struture similar to the one described in this artic
   then work can continue on `development` for the next release. 
 
 
-####Coding Style Requirements
+#### Coding Style Requirements
 To keep the code in mimic coherent a simple coding style/guide is used. It should be noted that the current codebase as a whole does not meet some of these guidlines,this is a result of coming from the flite codebase. As different parts of the codebase are touched, it is the hope that these inconsistancies will diminish as time goes on.
 
 - **Indentation**
@@ -410,7 +410,7 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
 
   There's no hard limit but if possible keep lines shorter than *80 characters*.
 
-#####Vimrc 
+##### Vimrc 
 
  For those of you who use vim, add this to your vimrc to ensure proper indenting.
  ```vimrc
@@ -433,7 +433,7 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
 "for more indent options
  ```
 
-#####Indent command (currently does not indent switch/cases properly)
+##### Indent command (currently does not indent switch/cases properly)
 ```
 indent [FILE] -npcs -i4 -bl -Tcst_wave -Tcst_wave_header -Tcst_rateconv \
       -Tcst_voice -Tcst_item -Tcst_features -Tcst_val -Tcst_va -Tcst_viterbi \
@@ -448,8 +448,8 @@ indent [FILE] -npcs -i4 -bl -Tcst_wave -Tcst_wave_header -Tcst_rateconv \
       -Tcst_audiodev -TVocoderSetup -npsl -brs -bli0 -nut
 ```
 
-##Acknowledgements
+## Acknowledgements
 see [ACKNOWLEDGEMENTS](https://github.com/MycroftAI/mimic/blob/master/ACKNOWLEDGEMENTS)
 
-##License
+## License
 See [COPYING](https://github.com/MycroftAI/mimic/blob/master/COPYING)
