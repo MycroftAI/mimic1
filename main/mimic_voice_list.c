@@ -26,6 +26,10 @@ cst_voice *register_cmu_us_rms(const char *voxdir);
 cst_voice *register_cmu_us_slt(const char *voxdir);
 #endif
 
+#if ENABLE_CMU_US_SLT_HTS
+cst_voice *register_cmu_us_slt_hts(const char *voxdir);
+#endif
+
 #if ENABLE_VID_GB_AP
 cst_voice *register_vid_gb_ap(const char *voxdir);
 #endif
@@ -38,6 +42,9 @@ cst_val *mimic_set_voice_list(const char *voxdir)
    #endif   
    #if ENABLE_CMU_US_SLT
    mimic_voice_list = cons_val(voice_val(register_cmu_us_slt(voxdir)),mimic_voice_list);
+   #endif   
+   #if ENABLE_CMU_US_SLT_HTS
+   mimic_voice_list = cons_val(voice_val(register_cmu_us_slt_hts(voxdir)),mimic_voice_list);
    #endif   
    #if ENABLE_CMU_US_KAL
    mimic_voice_list = cons_val(voice_val(register_cmu_us_kal(voxdir)),mimic_voice_list);

@@ -119,7 +119,7 @@ sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 min
 - Configure.
 
   ```
-  $ ./configure
+  $ ./configure --prefix="/usr/local"
   ```
   
 - Build
@@ -237,10 +237,10 @@ output the wave file in RIFF format (often called `.wav`).
   $ ./mimic -t "Hello" -voice http://www.festvox.org/flite/packed/flite-2.0/voices/cmu_us_ksp.flitevox
   ```
 
-###### Note
+###### Notes
 
 - mimic offers several voices that can use different speech modelling techniques
-  (diphone, clustergen). Voices can differ a lot on size, naturalness and
+  (diphone, clustergen, hts). Voices can differ a lot on size, naturalness and
   intelligibility.
 
   * Diphone voices are less computationally expensive and quite intelligible but
@@ -249,14 +249,23 @@ output the wave file in RIFF format (often called `.wav`).
   * clustergen voices can sound more natural and intelligible at the expense of
     size and computational requirements. e.g.:  e.g. `./mimic -t "Hello world" -voice slt`, `./mimic -t "Hello world" -voice ap`
 
+  * hts voices usually may sound a bit more synthetic than clustergen voices,
+    but have much smaller size. e.g.:  e.g. `./mimic -t "Hello world" -voice slt_hts`
+
+- Voices can be compiled (built-in) into mimic or loaded from a `.flitevox` file.
+  The only exception are hts voices. hts voices combine both a compiled function with
+  a voice data file `.htsvoice`. Mimic will look for the `.htsvoice` file when
+  the hts voice is loaded, looking into the current working directory, 
+  the "voices" subdirectory and the `$prefix/share/mimic/voices` directory if it
+  exists.
+
 - Voice names are identified as loadable files if the name includes a "`/`" 
-  (slash) otherwise they are treated as internal names
+  (slash) otherwise they are treated as internal compiled-in voices.
 
 - The `voices/` directory contains several flitevox voices. Existing Flite voices
   can be found here: [http://www.festvox.org/flite/packed/flite-2.0/voices/](http://www.festvox.org/flite/packed/flite-2.0/voices/)
 
 - The voice referenced via an url will be downloaded on the fly.
-
 
 #### Other options
 

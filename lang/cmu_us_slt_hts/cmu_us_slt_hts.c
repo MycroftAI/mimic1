@@ -2,7 +2,7 @@
 /*                                                                       */
 /*                  Language Technologies Institute                      */
 /*                     Carnegie Mellon University                        */
-/*                        Copyright (c) 1999                             */
+/*                      Copyright (c) 1999-2007                          */
 /*                        All Rights Reserved.                           */
 /*                                                                       */
 /*  Permission is hereby granted, free of charge, to use and distribute  */
@@ -31,73 +31,84 @@
 /*                                                                       */
 /*************************************************************************/
 /*             Author:  Alan W Black (awb@cs.cmu.edu)                    */
-/*               Date:  August 2000                                      */
+/*               Date:  November 2007                                    */
 /*************************************************************************/
 /*                                                                       */
-/*  Some File stuff                                                      */
+/*  A hts voice defintion			                                     */
 /*                                                                       */
 /*************************************************************************/
-#ifndef _CST_FILE_H__
-#define _CST_FILE_H__
+/* mimic adaptations by Sergio Oller, 2017 */
 
-#define CST_WRONG_FORMAT -2
-#define CST_ERROR_FORMAT -1
-#define CST_OK_FORMAT     0
+#include <string.h>
+#include "mimic.h"
 
-#include <stdio.h>
-typedef FILE *cst_file;
+#include "usenglish.h"
+#include "cmu_lex.h"
+#include "flite_hts_engine.h"
 
-/* File mapping stuff */
-#ifdef _WIN32
-#include <windows.h>
-typedef struct cst_filemap_struct {
-    void *mem;
-    cst_file fh;
-    size_t mapsize;
-    HANDLE h;
-} cst_filemap;
-#else
-typedef struct cst_filemap_struct {
-    void *mem;
-    cst_file fh;
-    size_t mapsize;
-    int fd;
-} cst_filemap;
-#endif
+cst_voice *cmu_us_slt_hts = NULL;
 
-#define CST_OPEN_WRITE (1<<0)
-#define CST_OPEN_READ (1<<1)
-#define CST_OPEN_APPEND (1<<2)
-#define CST_OPEN_BINARY (1<<3)
+cst_voice *register_cmu_us_slt_hts(const char *voxdir)
+{
+    (void) voxdir;
+    cst_voice *vox;
+    cst_lexicon *lex;
+    Flite_HTS_Engine *flite_hts = NULL;
 
-#define CST_SEEK_ABSOLUTE 0
-#define CST_SEEK_RELATIVE 1
-#define CST_SEEK_ENDREL 2
 
-cst_file cst_fopen(const char *path, int mode);
-long cst_fwrite(cst_file fh, const void *buf, long size, long count);
-long cst_fread(cst_file fh, void *buf, long size, long count);
-int cst_fprintf(cst_file fh, const char *fmt, ...);
-int cst_sprintf(char *s, const char *fmt, ...);
-int cst_fclose(cst_file fh);
-int cst_fgetc(cst_file fh);
-int cst_file_exists(const char *path);
+    if (cmu_us_slt_hts)
+        return cmu_us_slt_hts;  /* Already registered */
 
-/* These aren't LFS-compliant.  I don't think we'll need >2G files. */
-long cst_ftell(cst_file fh);
-long cst_fseek(cst_file fh, long pos, int whence);
-long cst_filesize(cst_file fh);
+    vox = new_voice();
+    vox->name = "slt_hts";
 
-cst_filemap *cst_mmap_file(const char *path);
-int cst_munmap_file(cst_filemap *map);
+    /* Sets up language specific parameters in the cmu_us_slt_hts. */
+    usenglish_init(vox);
 
-cst_filemap *cst_read_whole_file(const char *path);
-int cst_free_whole_file(cst_filemap *map);
+    /* Things that weren't filled in already. */
+    mimic_feat_set_string(vox->features, "name", "cmu_us_slt_hts");
 
-cst_filemap *cst_read_part_file(const char *path);
-int cst_free_part_file(cst_filemap *map);
+    /* Lexicon */
+    lex = cmu_lex_init();
+    mimic_feat_set(vox->features, "lexicon", lexicon_val(lex));
+    mimic_feat_set(vox->features, "postlex_func", uttfunc_val(lex->postlex));
 
-int cst_urlp(const char *url);
-cst_file cst_url_open(const char *url);
+    /* No standard segment durations are needed as its done at the */
+    /* HMM state level */
+    mimic_feat_set_string(vox->features, "no_segment_duration_model", "1");
+    mimic_feat_set_string(vox->features, "no_f0_target_model", "1");
 
-#endif
+    /* HTS engine */
+    flite_hts = cst_alloc(Flite_HTS_Engine, 1);
+    Flite_HTS_Engine_initialize(flite_hts);
+    /* load HTS voice */
+    char *fn_voice = mimic_hts_get_voice_file(vox);
+    if (fn_voice != NULL)
+    {
+        mimic_feat_set_string(vox->features, "htsvoice_file", fn_voice);
+        cst_free(fn_voice);
+    }
+    else
+    {
+        mimic_feat_set_string(vox->features, "htsvoice_file",
+                              "cmu_us_slt_hts.htsvoice");
+    }
+    mimic_feat_set(vox->features, "flite_hts", flitehtsengine_val(flite_hts));
+
+    /* Waveform synthesis */
+    mimic_feat_set(vox->features, "wave_synth_func", uttfunc_val(&hts_synth));
+    mimic_feat_set_int(vox->features, "sample_rate",
+                       Flite_HTS_Engine_get_sampling_frequency(flite_hts));
+
+    cmu_us_slt_hts = vox;
+
+    return cmu_us_slt_hts;
+}
+
+void unregister_cmu_us_slt_hts(cst_voice *vox)
+{
+    if (vox != cmu_us_slt_hts)
+        return;
+    delete_voice(vox);
+    cmu_us_slt_hts = NULL;
+}

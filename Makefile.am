@@ -32,6 +32,9 @@ TESTS =
 pkgconfiginstalldir = $(libdir)/pkgconfig
 pkgconfiginstall_DATA = mimic.pc
 
+voicesinstalldir = $(pkgdatadir)/voices
+voicesinstall_DATA = 
+
 ################## START: LANG_USENGLISH #################################
 if LANG_USENGLISH
     lib_LTLIBRARIES += libttsmimic_lang_usenglish.la
@@ -392,6 +395,30 @@ libttsmimic_lang_cmu_us_slt_la_LIBADD = \
   libttsmimic_lang_cmulex.la \
   libttsmimic_lang_usenglish.la
 
+###############
+
+if VOICE_CMU_US_SLT_HTS
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_slt_hts.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_slt_hts.la
+    voicesinstall_DATA += voices/cmu_us_slt_hts.htsvoice
+else
+    EXTRA_DIST += voices/cmu_us_slt_hts.htsvoice
+endif
+
+libttsmimic_lang_cmu_us_slt_hts_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_slt_hts_la_SOURCES = \
+  lang/cmu_us_slt_hts/cmu_us_slt_hts.c \
+  lang/cmu_us_slt_hts/voxdefs.h
+
+libttsmimic_lang_cmu_us_slt_hts_la_CFLAGS = \
+  -I$(top_srcdir)/lang/usenglish \
+  -I$(top_srcdir)/lang/cmulex
+
+libttsmimic_lang_cmu_us_slt_hts_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
+
 
 ###########
 
@@ -453,10 +480,10 @@ src_audio_SOURCES = \
   src/audio/au_wince.c \
   src/audio/native_audio.h
 
-libttsmimic_la_CFLAGS += $(AUDIODEFS)
+libttsmimic_la_CFLAGS += $(AUDIODEFS) -DPKGDATADIR='"$(pkgdatadir)"'
 libttsmimic_la_SOURCES += $(src_audio_SOURCES)
 
-libttsmimic_la_LIBADD += $(AUDIOLIBS)
+libttsmimic_la_LIBADD += $(AUDIOLIBS) $(HTS_LIBS)
 
 ###### src/cg ##################
 libttsmimic_la_SOURCES += \
@@ -481,6 +508,28 @@ libttsmimic_la_SOURCES += \
   src/hrg/cst_item.c \
   src/hrg/cst_ffeature.c \
   src/hrg/cst_rel_io.c
+
+####### src/hts ###############
+libttsmimic_la_SOURCES += \
+  src/hts/flite_hts_engine.c
+
+if HTSEngineBundled
+  AM_CPPFLAGS += -I$(top_srcdir)/src/hts/hts_engine_API/include
+  headers_HEADERS +=src/hts/hts_engine_API/include/HTS_engine.h
+  libttsmimic_la_SOURCES += \
+    src/hts/hts_engine_API/lib/HTS_audio.c \
+    src/hts/hts_engine_API/lib/HTS_engine.c \
+    src/hts/hts_engine_API/lib/HTS_hidden.h \
+    src/hts/hts_engine_API/lib/HTS_misc.c  \
+    src/hts/hts_engine_API/lib/HTS_pstream.c \
+    src/hts/hts_engine_API/lib/HTS_sstream.c \
+    src/hts/hts_engine_API/lib/HTS_model.c \
+    src/hts/hts_engine_API/lib/HTS_vocoder.c \
+    src/hts/hts_engine_API/lib/HTS_gstream.c \
+    src/hts/hts_engine_API/lib/HTS_label.c
+else
+  libttsmimic_la_LIBADD += $(HTS_LIBS)
+endif
 
 ###### src/lexicon #########
 
@@ -832,6 +881,7 @@ headers_HEADERS += \
   include/cst_voice.h \
   include/cst_wave.h \
   include/cst_wchar.h \
+  include/flite_hts_engine.h \
   include/mimic.h
 
 # Documentation
