@@ -257,16 +257,26 @@ int item_after_length(const cst_item *n)
 {
     int i = 0;
     if (n == NULL)
+    {
         return 0;
-    for (; n; n = n->n, i++);
+    }
+    for(;n;n=n->n,i++)
+    {
+        /* Do nothing */
+    }
     return i;
 }
 
 const cst_item *item_first(const cst_item *n)
 {
     if (n == 0)
+    {
         return 0;
-    for (; n->p != 0; n = n->p);
+    }
+    for(;n->p != 0;n=n->p)
+    {
+        /* Do nothing */
+    }
     return n;
 }
 

@@ -531,7 +531,8 @@ char *mimic_hts_get_voice_file(const cst_voice *const v)
     size_t i = 0;
     if (vname == NULL)
         return NULL;
-    char *full_file = cst_alloc(char, MAXBUFLEN);
+    /* The "+256" accounts for all the characters like "/mimic/voices/" and ".htsvoice". */
+    char *full_file = cst_alloc(char, strlen(PKGDATADIR) + strlen(vname) + 256);
     const char *directories[] =
         { ".", "voices", "../voices", PKGDATADIR "/voices/", NULL };
     for (i = 0; directories[i] != NULL; i++)
