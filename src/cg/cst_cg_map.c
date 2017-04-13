@@ -76,22 +76,25 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
 {
     cst_cg_db *db = cst_alloc(cst_cg_db, 1);
     int i;
-
+    uint32_t elements[2];
+    uint32_t integer_vals[2];
+    float float_vals[2];
     db->freeable = 1;           /* somebody can free this if they want */
-
     db->name = cst_read_string(fd);
     db->types = (const char **) cst_read_db_types(fd);
 
-    db->num_types = cst_read_int32(fd);
-    db->sample_rate = cst_read_int32(fd);
-    db->f0_mean = cst_read_float(fd);
-    db->f0_stddev = cst_read_float(fd);
-
+    cst_fread(fd, integer_vals, sizeof(integer_vals), 1);
+    cst_fread(fd, float_vals, sizeof(integer_vals), 1);
+    db->num_types = integer_vals[0];
+    db->sample_rate = integer_vals[1];
+    db->f0_mean = float_vals[0];
+    db->f0_stddev = float_vals[1];
     db->f0_trees = (const cst_cart **) cst_read_tree_array(fd);
 
     db->num_param_models =
         get_param_int(vox->features, "num_param_models", 3);
-    db->param_trees = cst_alloc(const cst_cart * const *, db->num_param_models);
+    db->param_trees = cst_alloc(const cst_cart * const *,
+                                 db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
         db->param_trees[i] = (const cst_cart **) cst_read_tree_array(fd);
 
@@ -108,8 +111,9 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
         cst_alloc(uint16_t **, db->num_param_models);
     for (i = 0; i < db->num_param_models; i++)
     {
-        db->num_channels[i] = cst_read_int32(fd);
-        db->num_frames[i] = cst_read_int32(fd);
+        cst_fread(fd, elements, sizeof(uint32_t) * 2, 1);
+        db->num_channels[i] = elements[0];
+        db->num_frames[i] = elements[1];
         db->model_vectors[i] =
             (uint16_t **) cst_read_2d_array(fd);
     }
@@ -180,16 +184,9 @@ void cst_cg_free_db(cst_file fd, cst_cg_db *db)
 void *cst_read_padded(cst_file fd, int *numbytes)
 {
     void *ret;
-    int n;
-
     *numbytes = cst_read_int32(fd);
     ret = (void *) cst_alloc(char, *numbytes);
-    n = cst_fread(fd, ret, sizeof(char), *numbytes);
-    if (n != (*numbytes))
-    {
-        cst_free(ret);
-        return NULL;
-    }
+    cst_fread(fd, ret, sizeof(char), *numbytes);
     return ret;
 }
 
@@ -218,16 +215,17 @@ cst_cart_node *cst_read_tree_nodes(cst_file fd)
     int i, num_nodes;
     short vtype;
     char *str;
-
+    uint16_t buff[3];
     num_nodes = cst_read_int32(fd);
     nodes = cst_alloc(cst_cart_node, num_nodes + 1);
 
     for (i = 0; i < num_nodes; i++)
     {
-        cst_fread(fd, &nodes[i].feat, sizeof(char), 1);
-        cst_fread(fd, &nodes[i].op, sizeof(char), 1);
-        cst_fread(fd, &nodes[i].no_node, sizeof(int16_t), 1);
-        cst_fread(fd, &vtype, sizeof(int16_t), 1);
+        cst_fread(fd, buff, sizeof(uint16_t) * 3, 1);
+        nodes[i].feat = buff[0] & 0xff;
+        nodes[i].op = buff[0] >> 8;
+        nodes[i].no_node = buff[1];
+        vtype = buff[2];
         if (vtype == CST_VAL_TYPE_STRING)
         {
             str = cst_read_padded(fd, &temp);
@@ -256,7 +254,9 @@ char **cst_read_tree_feats(cst_file fd)
     feats = cst_alloc(char *, numfeats + 1);
 
     for (i = 0; i < numfeats; i++)
-        feats[i] = cst_read_string(fd);
+    {
+        feats[i] = (char *)cst_read_string(fd);
+    }
     feats[i] = 0;
 
     return feats;
@@ -314,7 +314,9 @@ void **cst_read_2d_array(cst_file fd)
         arrayrows = cst_alloc(void *, numrows);
 
         for (i = 0; i < numrows; i++)
+        {
             arrayrows[i] = cst_read_array(fd);
+        }
     }
 
     return arrayrows;
@@ -325,7 +327,7 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     int numstats;
     int i, temp;
     dur_stat **ds;
-
+    float elements[2];
     numstats = cst_read_int32(fd);
     ds = cst_alloc(dur_stat *, (1 + numstats));
 
@@ -333,8 +335,9 @@ dur_stat **cst_read_dur_stats(cst_file fd)
     for (i = 0; i < numstats; i++)
     {
         ds[i] = cst_alloc(dur_stat, 1);
-        ds[i]->mean = cst_read_float(fd);
-        ds[i]->stddev = cst_read_float(fd);
+        cst_fread(fd, elements, sizeof(uint32_t), 2);
+        ds[i]->mean = elements[0];
+        ds[i]->stddev = elements[1];
         ds[i]->phone = cst_read_padded(fd, &temp);
     }
     ds[i] = NULL;
@@ -373,22 +376,14 @@ void cst_read_voice_feature(cst_file fd, char **fname, char **fval)
 
 int32_t cst_read_int32(cst_file fd)
 {
-    int32_t val;
-    size_t n;
-
-    n = cst_fread(fd, &val, sizeof(int32_t), 1);
-    if (n != 1)
-        return 0;
+    int32_t val = 0;
+    cst_fread(fd, &val, sizeof(int32_t), 1);
     return val;
 }
 
 float cst_read_float(cst_file fd)
 {
-    float val;
-    int n;
-
-    n = cst_fread(fd, &val, sizeof(float), 1);
-    if (n != 1)
-        return 0;
+    float val = 0;
+    cst_fread(fd, &val, sizeof(float), 1);
     return val;
 }

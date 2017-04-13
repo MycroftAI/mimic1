@@ -766,7 +766,8 @@ check_PROGRAMS += \
   testsuite/play_server \
   testsuite/play_sync \
   testsuite/play_wave \
-  testsuite/rfc
+  testsuite/rfc \
+  testsuite/time_voice_load
 
 if LEX_CMULEX
   check_PROGRAMS += testsuite/utt_test
@@ -836,6 +837,9 @@ testsuite_rfc_LDADD = libttsmimic.la
 
 testsuite_utt_test_SOURCES = testsuite/utt_test_main.c
 testsuite_utt_test_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmimic_lang_cmulex.la
+
+testsuite_time_voice_load_SOURCES = testsuite/time_voice_load.c
+testsuite_time_voice_load_LDADD = libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la libttsmimic.la -lm
 
 TESTS += $(myunittests)
 # "testsuite/multi_thread_run.sh"
