@@ -77,16 +77,18 @@ cst_cg_db *cst_cg_load_db(cst_voice *vox, cst_file fd)
     cst_cg_db *db = cst_alloc(cst_cg_db, 1);
     int i;
     uint32_t elements[2];
-    uint32_t load_buff[4];
+    uint32_t integer_vals[2];
+    float float_vals[2];
     db->freeable = 1;           /* somebody can free this if they want */
     db->name = cst_read_string(fd);
     db->types = (const char **) cst_read_db_types(fd);
 
-    cst_fread(fd, load_buff, sizeof(uint32_t) * 4, 1);
-    db->num_types = load_buff[0];
-    db->sample_rate = load_buff[1];
-    db->f0_mean = ((float *)load_buff)[2];
-    db->f0_stddev = ((float *)load_buff)[3];
+    cst_fread(fd, integer_vals, sizeof(integer_vals), 1);
+    cst_fread(fd, float_vals, sizeof(integer_vals), 1);
+    db->num_types = integer_vals[0];
+    db->sample_rate = integer_vals[1];
+    db->f0_mean = float_vals[0];
+    db->f0_stddev = float_vals[1];
     db->f0_trees = (const cst_cart **) cst_read_tree_array(fd);
 
     db->num_param_models =
