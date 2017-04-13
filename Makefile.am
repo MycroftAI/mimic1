@@ -887,3 +887,8 @@ headers_HEADERS += \
 # Documentation
 dist_man1_MANS = man/man1/mimic.1
 
+clean-local:
+	find . -name '*.gcno' -exec rm {} \;
+	find . -name '*.gcda' -exec rm {} \;
+	find . -name '*.gcov' -exec rm {} \;
+
