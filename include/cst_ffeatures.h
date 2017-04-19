@@ -61,6 +61,8 @@ const cst_val *cg_phone_place(const cst_item *p);
 const cst_val *cg_phone_index(const cst_item *p);
 const cst_val *cg_phone_rindex(const cst_item *p);
 
+const cst_val *generic_gpos(const cst_item *word, const cst_val * const * const lang_gpos[]);
+
 void basic_ff_register(cst_features *ffunctions);
 
 #endif /* _CST_FFEATURES_H */
