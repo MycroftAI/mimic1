@@ -58,6 +58,7 @@
 #include "cst_alloc.h"
 #include "cst_string.h"
 #include <math.h>
+#include <limits.h>
 #include "cst_track.h"
 #include "cst_wave.h"
 #include "cst_audio.h"
@@ -391,8 +392,15 @@ static void vocoder(double p, double *mc,
             x *= exp(vs->c[0]) * gain;
 
         x = mlsadf(x, vs->c, m, cg_db->mlsa_alpha, vs->pd, vs->d1, vs);
-
-        wav->samples[*pos] = (short) x;
+        if (x > SHRT_MAX) {
+            wav->samples[*pos] = SHRT_MAX;
+        }
+        else if (x < SHRT_MIN) {
+            wav->samples[*pos] = SHRT_MIN;
+        }
+        else {
+            wav->samples[*pos] = (short) x;    
+        }        
         *pos += 1;
 
         if (!--i)
