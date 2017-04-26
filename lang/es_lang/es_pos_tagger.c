@@ -1,4 +1,5 @@
-/* Copyright 2017 Sergio Oller
+/* Copyright 2016-2017 Sergio Oller, Barcelona
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -26,6 +27,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "mimic.h"
+#include "cst_utterance.h"
+#include "cst_val.h"
+#include "es_lang_internal.h"
 
-void es_init(cst_voice *v);
+/* The POS tagger will assign a part of speech to a word. Right now it just
+ * uses the guessed POS from es_guess_pos, but with a proper dataset something
+ * more complex can be built if needed, for instance using n-grams.
+ *
+ * Improvements here could be used to work on phonetic disambiguations (not
+ * very common in Spanish) and even to improve intonation, if an intonation
+ * model
+ * that depends on part of speech was built.
+ */
+cst_utterance *es_pos_tagger(cst_utterance *u)
+{
+    cst_item *word;
+
+    for (word = relation_head(utt_relation(u, "Word")); word;
+         word = item_next(word))
+    {
+        /* TODO: Make it smart */
+        item_set_string(word, "pos", val_string(es_guess_pos(word)));
+    }
+    return u;
+}

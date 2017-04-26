@@ -2,13 +2,42 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Mimic
 Source: https://github.com/mycroftai/mimic
 Comment: Mimic is free software
- Most of mimic is licensed under permissive BSD-like licenses.
- Some optional mimic components will depend on GPLv3-licensed libraries, making
- mimic redistributable only under the GPLv3.
- Mimic offers a `--disable-gpl` switch at compile time to create BSD-3-like
- licensed binaries that will disable the GPL-v3 mimic components.
+ Mimic is distributed under a permissive BSD-3-like license.
+ .
+ However, there are some optional mimic modules (for now only Spanish language support)
+ that depend on linguistic resources (the Saga library) that are freely distributed
+ under the GPL-3 license. Unless you have obtained Saga under a different license
+ (commercial options are available), mimic compiled with Spanish support
+ will need to be GPL-3 distributed.
+ .
+ This restriction enforces that all works that link to a GPL-3 mimic must be under
+ a GPL-3 compatible license, so when those works use a GPL-3 mimic version they become
+ effectively GPL-3 distributed.
+ .
+ As a convenience (and without any further legal implications), mimic provides the
+ `--disable-gpl` switch at compile time to disable the functionality that requires
+ GPL-3 mimic dependencies, as well as the mimic_is_gpl() function, that returns 1
+ when mimic is GPL-3 compiled. If you want to avoid GPL-3 at all costs, you can use
+ the mimic_is_gpl() function to check if the "virality" of GPL is being spread by
+ mimic or not.
+
+ https://www.gnu.org/licenses/gpl-faq.html#WhatDoesCompatMean
+
+ Without the Spanish support, mimic binaries are distributable under the BSD-3
+ license as they do not contain GPL-3 code.
  .
  This file lists all the copyrights and licenses of mimic files.
+
+Files: voices/cstr_upc_upm_spanish_hts.htsvoice
+Copyright:
+ 2011  The University of Edinburgh 
+ 2011  Universidad Politecnica de Madrid
+ 2011  Universitat Politecnica de Catalunya 
+License: BSD3
+Comment: The voice can be downloaded from 
+ http://homepages.inf.ed.ac.uk/jyamagis/software/page54/page54.html
+ The voice format was converted from hts-2.1 directory to .htsvoice by
+ Sergio Oller.
 
 Files:
  lang/vid_gb_ap/vid_gb_ap.c
@@ -59,13 +88,21 @@ License: BSD-3-clause
 Files:
  include/cst_uregex.h
  src/utils/cst_uregex.c
+ lang/cstr_upc_upm_spanish_hts/cstr_upc_upm_spanish_hts.c
+ lang/es_lang/es_guess_pos.c
  lang/es_lang/es_init.c
+ lang/es_lang/es_intonation.c
+ lang/es_lang/es_lexical_insertion.c
+ lang/es_lang/es_pos_tagger.c
  lang/es_lang/es_text_analysis.c
  lang/es_lang/es_tokenizer.c
+ lang/es_lang/es_phrasing.c
+ lang/es_lang/es_phoneset.c
  lang/es_lang/es_lang.h
 Copyright:
  2016 Sergio Oller
 License: BSD-3-clause
+
 
 Files:
  autogen.sh

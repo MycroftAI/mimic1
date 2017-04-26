@@ -134,16 +134,24 @@ if LANG_ES_ANALYSIS
     libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_es.la
 endif
 
-libttsmimic_lang_es_la_LDFLAGS = -no-undefined
+libttsmimic_lang_es_la_CFLAGS = $(SAGA_CFLAGS)
+libttsmimic_lang_es_la_LDFLAGS = -no-undefined $(SAGA_LIBS)
 libttsmimic_lang_es_la_LIBADD = libttsmimic.la
 libttsmimic_lang_es_la_SOURCES = \
   lang/es_lang/es_init.c \
+  lang/es_lang/es_intonation.c \
+  lang/es_lang/es_guess_pos.c \
   lang/es_lang/es_lang.h \
+  lang/es_lang/es_lexical_insertion.c \
+  lang/es_lang/es_phrasing.c \
+  lang/es_lang/es_phoneset.c \
+  lang/es_lang/es_pos_tagger.c \
   lang/es_lang/es_text_analysis.c \
   lang/es_lang/es_tokenizer.c
 
 langheader_HEADERS += \
-  lang/es_lang/es_lang.h
+  lang/es_lang/es_lang.h \
+  lang/es_lang/es_lang_internal.h
 
 ############## END: LANG_ES_ANALYSIS  ##################################
 

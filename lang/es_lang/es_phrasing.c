@@ -1,4 +1,5 @@
-/* Copyright 2017 Sergio Oller
+/* Copyright 2016-2017 Sergio Oller, Barcelona
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -28,4 +29,47 @@
  */
 #include "mimic.h"
 
-void es_init(cst_voice *v);
+/* The phrasing function is responsible of defining were
+ * breaks "B" and big breaks "BB" should be.
+ *
+ * A simple usual approach is to add breaks at
+ * "," or  ";" or other punctuation characters and
+ * add big breaks at full stops
+ *
+ * Breaks are defined in the Phrase relation,
+ * that is created here.
+ *
+ */
+cst_utterance *es_phrasing(cst_utterance *u)
+{
+    cst_relation *r;
+    cst_item *w, *p, *lp = NULL;
+
+    r = utt_relation_create(u, "Phrase");
+
+    p = NULL;
+    for (w = relation_head(utt_relation(u, "Word")); w != NULL;
+         w = item_next(w))
+    {
+        if (p == NULL)
+        {
+            /* if p is NULL, add new empty phrase element to the relation */
+            p = relation_append(r, NULL);
+            lp = p;
+            /* Set a break at this phrase element */
+            item_set_string(p, "name", "B");
+        }
+        /* Add current word to our phrase element */
+        item_add_daughter(p, w);
+        /* FIXME:
+     if  ("w is the last word of a token that has post_punctuation and that
+     post_punctuation is a , or a ; or similar...")
+         p = NULL;
+     */
+    }
+
+    if (lp && item_prev(lp)) /* follow festival */
+        item_set_string(lp, "name", "BB");
+
+    return u;
+}

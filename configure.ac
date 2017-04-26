@@ -118,6 +118,14 @@ AS_IF([ test "x${enable_gpl}" = "xyes"],
   [ AC_DEFINE([ENABLE_GPL], [1], [Enable GPL code]) ],
   [ AC_DEFINE([ENABLE_GPL], [0], [Enable GPL code]) ])
  
+dnl Check Saga
+PKG_CHECK_MODULES([SAGA], [saga],
+                  [found_saga=yes
+                                      AC_MSG_WARN([Saga is available and will be used. Mimic must be distributed as GPL-3 if you have a GPL-3 Saga license.])
+                                      break;],
+                  [AC_MSG_WARN([Saga not available. Spanish support disabled.])])
+
+
 dnl
 dnl determine audio type or use none if none supported on this platform
 dnl
@@ -268,10 +276,21 @@ AC_ARG_ENABLE([lang-indic],
   [enable_lang_indic=${enable_lang_all}])
 
 AC_ARG_ENABLE([lang-es],
-  [AS_HELP_STRING([--enable-lang-es],
-      [(NOT WORKING YET) enable Spanish language support])],
-  [],
-  [enable_lang_es=no])
+  [
+        AS_HELP_STRING([--disable-lang-es],
+      [disable Spanish language support])
+  ],
+  [
+        AS_IF([ test "${enable_lang_es}" = "yes" -a "${found_saga}" = "no" ],
+      [AC_MSG_FAILURE([Spanish language support disabled. Reason: Saga was not found.])])
+  ],
+  [
+      enable_lang_es="${enable_lang_all}"
+      AS_IF([ test "${enable_lang_es}" = "yes" -a "${found_saga}" = "no" ],
+      [enable_lang_es="no"
+              AC_MSG_WARN([Spanish language support disabled. Reason: Saga was not found.])
+      ])
+   ])
 
 dnl -------------------- Language analysis ---------------------------
 dnl For US English en-us:
