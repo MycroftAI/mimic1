@@ -705,7 +705,7 @@ cst_val *val_readlist_string(const char *str)
     cst_val *v = NULL;
     const char *p;
 
-    ts = ts_open_string(str, cst_ts_default_whitespacesymbols, "", "", "");
+    ts = ts_open_string(str, cst_ts_default_whitespacesymbols, "", "", "", 0);
 
     while (!ts_eof(ts))
     {

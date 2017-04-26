@@ -78,7 +78,7 @@ cst_val *cst_lex_load_addenda(const cst_lexicon *lex, const char *lexfile)
     cst_val *na = NULL;
     int i;
 
-    lf = ts_open(lexfile, "\n", "", "", "");
+    lf = ts_open(lexfile, "\n", "", "", "", 0);
     if (lf == NULL)
     {
         cst_errmsg("lex_add_addenda: cannot open lexicon file\n");
@@ -120,14 +120,14 @@ cst_val *cst_lex_make_entry(const cst_lexicon *lex, const cst_string *entry)
     cst_string *pos;
     int i;
 
-    e = ts_open_string(entry, cst_ts_default_whitespacesymbols, "", "", "");
+    e = ts_open_string(entry, cst_ts_default_whitespacesymbols, "", "", "", 0);
 
     w = ts_get(e);
     if (w[0] == '"')            /* it was a quoted entry */
     {                           /* so reparse it */
         ts_close(e);
         e = ts_open_string(entry,
-                           cst_ts_default_whitespacesymbols, "", "", "");
+                           cst_ts_default_whitespacesymbols, "", "", "", 0);
         w = ts_get_quoted_token(e, '"', '\\');
     }
 

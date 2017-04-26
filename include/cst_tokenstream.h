@@ -77,6 +77,11 @@ typedef struct cst_tokenstream_struct {
     const cst_string *p_prepunctuationsymbols;
     const cst_string *p_postpunctuationsymbols;
 
+    /* Treat all found emoji characters as single character tokens TS_CHARCLASS_SINGLECHAR.
+   * This is equivalent to adding all emoji characters in p_singlecharsymbols, but more memory
+   * efficient. */
+    int all_emoji_as_singlechars;
+
     /* 1-byte long UTF-8 characters are in [0, 128) */
     cst_string charclass[128];
     /* 2-byte long UTF-8 characters have a first UTF-8 character like
@@ -139,17 +144,20 @@ cst_tokenstream *ts_open(const char *filename,
                          const cst_string *whitespacesymbols,
                          const cst_string *singlecharsymbols,
                          const cst_string *prepunctsymbols,
-                         const cst_string *postpunctsymbols);
+                         const cst_string *postpunctsymbols,
+                         int emoji_as_singlechars);
 cst_tokenstream *ts_open_string(const cst_string *string,
                                 const cst_string *whitespacesymbols,
                                 const cst_string *singlecharsymbols,
                                 const cst_string *prepunctsymbols,
-                                const cst_string *postpunctsymbols);
+                                const cst_string *postpunctsymbols,
+                                int emoji_as_singlechars);
 cst_tokenstream *ts_open_generic(const char *filename,
                                  const cst_string *whitespacesymbols,
                                  const cst_string *singlecharsymbols,
                                  const cst_string *prepunctsymbols,
                                  const cst_string *postpunctsymbols,
+                                 int emoji_as_singlechars,
                                  void *streamtype_data,
                                  int (*open) (cst_tokenstream *ts,
                                               const char *filename),
@@ -173,7 +181,6 @@ void set_charclasses(cst_tokenstream *ts,
                      const cst_string *singlecharsymbols,
                      const cst_string *prepunctuation,
                      const cst_string *postpunctuation);
-
 
 int ts_set_stream_pos(cst_tokenstream *ts, int pos);
 int ts_get_stream_pos(cst_tokenstream *ts);

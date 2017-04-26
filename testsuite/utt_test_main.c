@@ -125,7 +125,7 @@ static int bbb_relation_load(cst_relation *r, const char *filename)
     cst_item *item;
     cst_tokenstream *fd;
 
-    fd = ts_open(filename, "", "", "", "");
+    fd = ts_open(filename, "", "", "", "", 0);
     if (fd == 0)
         return 0;
 
