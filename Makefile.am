@@ -468,6 +468,30 @@ libttsmimic_lang_vid_gb_ap_la_LIBADD = \
   libttsmimic_lang_cmulex.la \
   libttsmimic_lang_usenglish.la
 
+###############
+
+if VOICE_CSTR_UPC_UPM_SPANISH_HTS
+    lib_LTLIBRARIES += libttsmimic_lang_cstr_upc_upm_spanish_hts.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cstr_upc_upm_spanish_hts.la
+    voicesinstall_DATA += voices/cstr_upc_upm_spanish_hts.htsvoice
+else
+    EXTRA_DIST += voices/cstr_upc_upm_spanish_hts.htsvoice
+endif
+
+libttsmimic_lang_cstr_upc_upm_spanish_hts_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cstr_upc_upm_spanish_hts_la_SOURCES = \
+  lang/cstr_upc_upm_spanish_hts/cstr_upc_upm_spanish_hts.c
+
+libttsmimic_lang_cstr_upc_upm_spanish_hts_la_CFLAGS = \
+  -I$(top_srcdir)/lang/es_lang \
+  -I$(top_srcdir)/lang/usenglish \
+  -I$(top_srcdir)/lang/cmulex
+
+libttsmimic_lang_cstr_upc_upm_spanish_hts_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_es.la
+
+
 ######### END VOICES ######################################
 
 ###### src/audio ###############

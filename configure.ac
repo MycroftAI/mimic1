@@ -441,6 +441,19 @@ AS_IF([test "x$enable_vid_gb_ap" != xno],
   [enable_usenglish="yes"
    enable_cmulex="yes"])
 
+dnl cstr_upc_upm_spanish_hts
+AC_ARG_ENABLE([cstr_upc_upm_spanish_hts],
+  [AS_HELP_STRING([--disable-cstr_upc_upm_spanish_hts],
+       [disable cstr_upc_upm_spanish_hts hts voice])],
+  [],
+  [enable_cstr_upc_upm_spanish_hts=${enable_voices_spanish}])
+
+AS_IF([test "x$enable_cstr_upc_upm_spanish_hts" != "xno" && test "x$with_hts" = "xno" -o "x$found_saga" = "xno" ],
+    [enable_cstr_upc_upm_spanish_hts="no"
+          AC_MSG_WARN([enable_cstr_upc_upm_spanish_hts disabled because hts support or saga support are not available])],
+    [])
+
+
 dnl To generate the pkg-config file .pc we want the libraries in the order
 dnl the linker will need them. For that reason, we first list voices, then
 dnl lexicons then languages and we append the lib required on each case.
@@ -501,6 +514,15 @@ AS_IF([test "x$enable_vid_gb_ap" != xno ],
     PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_vid_gb_ap"
   ],
   [ AC_DEFINE([ENABLE_VID_GB_AP], [0], [Enable vid_gb_ap voice]) ])
+
+AM_CONDITIONAL([VOICE_CSTR_UPC_UPM_SPANISH_HTS], [test "x$enable_cstr_upc_upm_spanish_hts" != xno])
+AS_IF([test "x$enable_cstr_upc_upm_spanish_hts" != xno ],
+  [ AC_DEFINE([ENABLE_CSTR_UPC_UPM_SPANISH_HTS], [1], [Enable cstr_upc_upm_spanish_hts voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cstr_upc_upm_spanish_hts"
+  ],
+  [ AC_DEFINE([ENABLE_CSTR_UPC_UPM_SPANISH_HTS], [0], [Enable cstr_upc_upm_spanish_hts voice]) ])
+
+
 
 AM_CONDITIONAL([LEX_CMULEX], [test "x$enable_cmulex" != xno])
 AS_IF([test "x$enable_cmulex" != xno ],

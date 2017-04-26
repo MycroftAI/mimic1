@@ -75,6 +75,11 @@ cst_voice *register_cmu_us_slt_hts(const char *voxdir);
 cst_voice *register_vid_gb_ap(const char *voxdir);
 #endif
 
+#if ENABLE_CSTR_UPC_UPM_SPANISH_HTS
+cst_voice *register_cstr_upc_upm_spanish_hts(const char *voxdir);
+#endif
+
+
 cst_val *mimic_set_voice_list(const char *voxdir)
 {
    /* The first voice here is the default voice for mimic */
@@ -101,6 +106,9 @@ cst_val *mimic_set_voice_list(const char *voxdir)
    #endif   
    #if ENABLE_CMU_TIME_AWB
    mimic_voice_list = cons_val(voice_val(register_cmu_time_awb(voxdir)),mimic_voice_list);
+   #endif   
+   #if ENABLE_CSTR_UPC_UPM_SPANISH_HTS
+   mimic_voice_list = cons_val(voice_val(register_cstr_upc_upm_spanish_hts(voxdir)),mimic_voice_list);
    #endif   
    mimic_voice_list = val_reverse(mimic_voice_list);
    return mimic_voice_list;
