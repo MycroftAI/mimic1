@@ -222,7 +222,9 @@ cst_utterance *default_tokenization(cst_utterance *u)
                                          "text_prepunctuation",
                                          NULL),
                         get_param_string(u->features,
-                                         "text_postpunctuation", NULL));
+                                         "text_postpunctuation", NULL),
+                        get_param_int(u->features,
+                                         "text_emoji_as_singlecharsymbols", 0));
 
     while (!ts_eof(fd))
     {

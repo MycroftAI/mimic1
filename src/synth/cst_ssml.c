@@ -503,7 +503,9 @@ int mimic_ssml_file_to_speech(const char *filename, cst_voice *voice,
                                        NULL),
                       get_param_string(voice->features,
                                        "text_postpunctuation",
-                                       NULL))) == NULL)
+                                       NULL),
+                      get_param_int(voice->features,
+                                       "text_emoji_as_singlecharsymbols", 0))) == NULL)
     {
         cst_errmsg("failed to open file \"%s\" for ssml reading\n", filename);
         return -ENOENT;
@@ -556,7 +558,9 @@ int mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
                                               "text_prepunctuation", NULL),
                              get_param_string(voice->features,
                                               "text_postpunctuation",
-                                              NULL))) == NULL)
+                                              NULL),
+                            get_param_int(voice->features,
+                                       "text_emoji_as_singlecharsymbols", 0))) == NULL)
     {
         return -EINVAL;
     }

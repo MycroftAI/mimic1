@@ -39,6 +39,7 @@
 /*************************************************************************/
 #include "cst_tokenstream.h"
 #include "cst_alloc.h"
+#include <stdint.h>
 
 const cst_string *const cst_ts_default_whitespacesymbols = " \t\n\r";
 const cst_string *const cst_ts_default_singlecharsymbols = "(){}[]";
@@ -51,11 +52,76 @@ const cst_string *const cst_ts_default_postpunctuationsymbols =
 static void ts_getc(cst_tokenstream *ts);
 static void internal_ts_getc(cst_tokenstream *ts);
 
+static uint32_t utf8char_to_cp(const cst_string *const utf8char)
+{
+    unsigned char c1, c2, c3, c4;
+    unsigned char *c = (unsigned char *) utf8char;
+    uint32_t cp;
+    switch (cst_strlen(c))
+    {
+    case 1:
+        /* 1st byte must be 0xxxxxxx so we mask with b01111111 = 0x7f */
+        cp = c[0] & 0x7f;
+        return cp;
+    case 2:
+        /* 1st byte must be 110xxxxx so we mask with b00011111 = 0x1f */
+        c1 = c[0] & 0x1f;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* We shift the bits of c1 6 positions to the left, and fill
+     * those 6 positions with c2 */
+        cp = (c1 << 6) | c2;
+        return cp;
+    case 3:
+        /* 1st byte must be 1110xxxx so we mask with b00011111 = 0x0f */
+        c1 = c[0] & 0x0f;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* 3rd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c3 = c[2] & 0x3f;
+        /* We shift the bits of c1 12 positions to the left, and fill
+     * the 12 positions with 6 bits from c2 and 6 bits from c3 */
+        cp = (c1 << 12) | (c2 << 6) | c3;
+        return cp;
+    case 4:
+        /* 1st byte must be 11110xxx so we mask with b00011111 = 0x07 */
+        c1 = c[0] & 0x07;
+        /* 2nd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c2 = c[1] & 0x3f;
+        /* 3rd byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c3 = c[2] & 0x3f;
+        /* 4th byte must be 10xxxxxx so we mask with b00111111 = 0x3f */
+        c4 = c[3] & 0x3f;
+        cp = (c1 << 18) | (c2 << 12) | (c3 << 6) | c4;
+        return cp;
+    default:
+        return 0xfffd; /* replacement character */
+    }
+}
+
+static int is_emoji(uint32_t cp)
+{
+    /* http://stackoverflow.com/a/39425959/446149 */
+    if (cp == 0x00A9 || cp == 0x00AE || cp == 0x3030 ||  /* Special Characters */
+          (cp >=0x1D000 && cp <=0x1F77F) || /* Emoticons */
+          (cp >=0x2100 && cp <=0x27BF) || /* Misc symbols and Dingbats */
+          (cp >=0xFE00 && cp <=0xFE0F) || /* Variation selectors */
+          (cp >=0x1F900 && cp <=0x1F9FF) /* Supplemental Symbols and Pictographs */
+         )
+        return 1;
+   else
+        return 0;
+}
+
 int ts_charclass(const cst_string *const utf8char, int cclass,
                  cst_tokenstream *ts)
 {
     unsigned char c1, c2, c3, c4;
     unsigned char *c = (unsigned char *) utf8char;
+
+    if (ts->all_emoji_as_singlechars && is_emoji(utf8char_to_cp(utf8char)))
+        return TS_CHARCLASS_SINGLECHAR & cclass;
+
     switch (cst_strlen(c))
     {
     case 1:
@@ -411,7 +477,8 @@ static void extend_buffer(cst_string **buffer, int *buffer_max)
 static cst_tokenstream *new_tokenstream(const cst_string *whitespace,
                                         const cst_string *singlechars,
                                         const cst_string *prepunct,
-                                        const cst_string *postpunct)
+                                        const cst_string *postpunct,
+                                        int emoji_as_singlechar)
 {                               /* Constructor function */
     cst_tokenstream *ts = cst_alloc(cst_tokenstream, 1);
     ts->fd = NULL;
@@ -422,6 +489,13 @@ static cst_tokenstream *new_tokenstream(const cst_string *whitespace,
     ts->token_pos = 0;
     ts->whitespace = cst_alloc(cst_string, TS_BUFFER_SIZE);
     ts->ws_max = TS_BUFFER_SIZE;
+    if (emoji_as_singlechar == 1)
+    {
+        ts->all_emoji_as_singlechars = 1;
+    } else
+    {
+        ts->all_emoji_as_singlechars = 0;
+    }
     if (prepunct && prepunct[0])
     {
         ts->prepunctuation = cst_alloc(cst_string, TS_BUFFER_SIZE);
@@ -460,12 +534,14 @@ cst_tokenstream *ts_open(const char *filename,
                          const cst_string *whitespace,
                          const cst_string *singlechars,
                          const cst_string *prepunct,
-                         const cst_string *postpunct)
+                         const cst_string *postpunct,
+                         int emoji_as_singlechars)
 {
     cst_tokenstream *ts = new_tokenstream(whitespace,
                                           singlechars,
                                           prepunct,
-                                          postpunct);
+                                          postpunct,
+                                          emoji_as_singlechars);
 
     if (cst_streq("-", filename))
         ts->fd = stdin;
@@ -486,12 +562,14 @@ cst_tokenstream *ts_open_string(const cst_string *string,
                                 const cst_string *whitespace,
                                 const cst_string *singlechars,
                                 const cst_string *prepunct,
-                                const cst_string *postpunct)
+                                const cst_string *postpunct,
+                                int emoji_as_singlechars)
 {
     cst_tokenstream *ts = new_tokenstream(whitespace,
                                           singlechars,
                                           prepunct,
-                                          postpunct);
+                                          postpunct,
+                                          emoji_as_singlechars);
 
     ts->string_buffer = cst_strdup(string);
     ts_getc(ts);
@@ -504,6 +582,7 @@ cst_tokenstream *ts_open_generic(const char *filename,
                                  const cst_string *singlecharsymbols,
                                  const cst_string *prepunctsymbols,
                                  const cst_string *postpunctsymbols,
+                                 int emoji_as_singlechars,
                                  void *streamtype_data,
                                  int (*open) (cst_tokenstream *ts,
                                               const char *filename),
@@ -518,7 +597,8 @@ cst_tokenstream *ts_open_generic(const char *filename,
     cst_tokenstream *ts = new_tokenstream(whitespacesymbols,
                                           singlecharsymbols,
                                           prepunctsymbols,
-                                          postpunctsymbols);
+                                          postpunctsymbols,
+                                          emoji_as_singlechars);
 
     ts->streamtype_data = streamtype_data;
     ts->open = open;

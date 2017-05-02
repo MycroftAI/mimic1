@@ -246,7 +246,9 @@ int mimic_file_to_speech(const char *filename, cst_voice *voice,
                                        NULL),
                       get_param_string(voice->features,
                                        "text_postpunctuation",
-                                       NULL))) == NULL)
+                                       NULL),
+                      get_param_int(voice->features,
+                                       "text_emoji_as_singlecharsymbols", 0))) == NULL)
     {
         cst_errmsg("failed to open file \"%s\" for reading\n", filename);
         return 1;

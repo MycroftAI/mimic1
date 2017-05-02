@@ -118,7 +118,7 @@ static void parse_description(const char *description, cst_features *f)
     ts = ts_open_string(description, " \t\r\n", /* whitespace */
                         "{}[]|",        /* singlecharsymbols */
                         "",     /* prepunctuation */
-                        "");    /* postpunctuation */
+                        "", 0);    /* postpunctuation */
     while (!ts_eof(ts))
     {
         op = cst_strdup(ts_get(ts));

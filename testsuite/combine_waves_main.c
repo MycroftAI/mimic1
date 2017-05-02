@@ -55,7 +55,7 @@ cst_val *get_wavelist(const char *wavelistfile)
     const char *token;
     int i = 0;
 
-    ts = ts_open(wavelistfile, " \n\t", "", ".\"", "\".!");
+    ts = ts_open(wavelistfile, " \n\t", "", ".\"", "\".!", 0);
     if (!ts)
     {
         fprintf(stderr, "combine_waves: can't open \"%s\"\n", wavelistfile);

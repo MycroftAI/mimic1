@@ -61,7 +61,7 @@ void test_es_tokenizer(void)
     const char *text_line;
     es_init(v);
     /* Read file line by line. Each ts_get(ts) will return a line */
-    ts = ts_open(TEST_FILE, "\n\r", "", "", "");
+    ts = ts_open(TEST_FILE, "\n\r", "", "", "", 0);
     TEST_CHECK(ts != NULL);
     while (!ts_eof(ts))
     {
