@@ -63,9 +63,9 @@ $ sudo pacman -S --needed install gcc make pkg-config automake libtool icu alsa-
   $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   ```
 
-- Install *pkg-config*, *libtool*, *icu* and *PortAudio*
+- Install *pkg-config*, *automake*, *libtool*, *icu* and *PortAudio*
   ```
-  $ brew install pkg-config libtool portaudio icu4c
+  $ brew install pkg-config automake libtool portaudio icu4c
   ```
 
 ### Windows
