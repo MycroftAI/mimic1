@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(ICU_CFLAGS)
+AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(PCRE2_CFLAGS)
 
 SUBDIRS = .
 
@@ -18,7 +18,7 @@ lib_LTLIBRARIES += libttsmimic.la
 libttsmimic_la_SOURCES = 
 libttsmimic_la_CFLAGS =
 libttsmimic_la_LDFLAGS = -no-undefined
-libttsmimic_la_LIBADD = $(ICU_LIBS)
+libttsmimic_la_LIBADD = $(PCRE2_LIBS)
 
 libttsmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
 libttsmimic_lang_all_langs_la_LDFLAGS = -no-undefined
@@ -594,8 +594,8 @@ libttsmimic_la_SOURCES += \
   src/utils/cst_socket.c \
   src/utils/cst_string.c \
   src/utils/cst_tokenstream.c \
+  src/utils/cst_uregex.c \
   src/utils/cst_url.c \
-  src/utils/cst_icu.c \
   src/utils/cst_val.c \
   src/utils/cst_val_const.c \
   src/utils/cst_val_user.c \
@@ -702,7 +702,7 @@ unittests_regex_test_SOURCES = unittests/regex_test_main.c
 unittests_regex_test_LDADD = libttsmimic.la
 
 unittests_string_test_SOURCES = unittests/string_test_main.c
-unittests_string_test_LDADD = libttsmimic.la $(ICU_LIBS)
+unittests_string_test_LDADD = libttsmimic.la $(PCRE2_LIBS)
 
 
 unittests_token_test_SOURCES = unittests/token_test_main.c
@@ -859,7 +859,6 @@ headers_HEADERS += \
   include/cst_ffeatures.h \
   include/cst_file.h \
   include/cst_hrg.h \
-  include/cst_icu.h \
   include/cst_item.h \
   include/cst_lexicon.h \
   include/cst_lts.h \
@@ -876,6 +875,7 @@ headers_HEADERS += \
   include/cst_tokenstream.h \
   include/cst_track.h \
   include/cst_units.h \
+  include/cst_uregex.h \
   include/cst_utterance.h \
   include/cst_utt_utils.h \
   include/cst_val_const.h \

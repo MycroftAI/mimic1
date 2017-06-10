@@ -25,43 +25,29 @@ fi
 # Assumes MIMIC_INSTALL_DIR points to where mimic will be installed
 # Assumes WORKDIR points to a directory where build items can be placed
 
-crosscompile_icu()
+crosscompile_dependencies()
 {
-    # Download & Extract icu
-    if [ ! -e "${WORKDIR}/icu4c-57_1-src.tgz" ]; then 
-        wget -O "${WORKDIR}/icu4c-57_1-src.tgz" "http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz"
-    fi
-    echo "976734806026a4ef8bdd17937c8898b9  ${WORKDIR}/icu4c-57_1-src.tgz" | md5sum -c || exit 1
-    tar xzf "${WORKDIR}/icu4c-57_1-src.tgz" -C "${WORKDIR}" # creates directory "$WORKDIR/icu"
-
-    # We have to build icu twice: Once for the build system and once for the
-    # host system. First the build system:
-    mkdir -p "${WORKDIR}/icu_build_build"
-    (cd "$WORKDIR/icu_build_build" && ${WORKDIR}/icu/source/configure "$@" && make -j ${NCORES} ) || exit 1
-
-    # Now the host system:
-    mkdir -p "${WORKDIR}/icu_build_host"
-    (cd "${WORKDIR}/icu_build_host" &&  \
-    ../icu/source/configure --host=${HOST_TRIPLET} --build=${BUILD_TRIPLET} \
-                            --with-cross-build="${WORKDIR}/icu_build_build" \
-                            --prefix="${MIMIC_INSTALL_DIR}" \
-                            CC=${HOST_TRIPLET}-gcc \
-                            CXX=${HOST_TRIPLET}-g++ \
-                            LD=${HOST_TRIPLET}-ld \
-                            RANLIB=${HOST_TRIPLET}-ranlib \
-                            AR=${HOST_TRIPLET}-ar \
-                            "$@"  && \
-    make -j ${NCORES} && \
-    make install ) || exit 1
-}
-
-fix_icu_dll_filenames()
-{
-    # The linker will fail to find icu*.dll files if they don't start with lib
-    # An easy workaround is to have a copy of each dll (or a soft link) with
-    # a different name: icuuc57.dll -> libicuuc57.dll 
-   ( cd "${MIMIC_INSTALL_DIR}/lib" && \
-      for file in `ls icu*.dll`; do ln -s "$file" "lib"$file; done )
+    # Ubuntu precise & trusty bug (inherited from debian):
+    # ${HOST_TRIPLET}-pkg-config ignores PKG_CONFIG_PATH
+    # We need PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/"
+    # so we use pkg-config without the triplet.
+    # and we set PKG_CONFIG_PATH manually to the right search paths
+    # pkg-config in Debian stretch and in Ubuntu xenial have this bug fixed so
+    # in the future the ${HOST_TRIPLET}-pkg-config can be used with a simple
+    # PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/"
+    (cd "${WORKDIR}" && \
+      CC=${HOST_TRIPLET}-gcc \
+      LD=${HOST_TRIPLET}-ld \
+      RANLIB=${HOST_TRIPLET}-ranlib \
+      AR=${HOST_TRIPLET}-ar \
+      PKG_CONFIG_LIBDIR="" \
+      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
+      PKG_CONFIG=`which pkg-config` \
+        ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+        --prefix="${MIMIC_INSTALL_DIR}" \
+        --build="${BUILD_TRIPLET}" \
+        --host="${HOST_TRIPLET}" \
+                 "$@" ) || exit 1
 }
 
 crosscompile_portaudio()
@@ -102,7 +88,7 @@ crosscompile_mimic()
     # We need PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/"
     # so we use pkg-config without the triplet.
     # and we set PKG_CONFIG_PATH manually to the right search paths
-    # pkg-config in Debian stretch and in Ubuntu xenial has this bug fixed so
+    # pkg-config in Debian stretch and in Ubuntu xenial have this bug fixed so
     # in the future the ${HOST_TRIPLET}-pkg-config can be used with a simple
     # PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/"
     ${MIMIC_TOP_SRCDIR}/configure --build="${BUILD_TRIPLET}" \
@@ -113,6 +99,7 @@ crosscompile_mimic()
                  RANLIB=${HOST_TRIPLET}-ranlib \
                  AR=${HOST_TRIPLET}-ar \
                  PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
+                 PKG_CONFIG_LIBDIR="" \
                  PKG_CONFIG=`which pkg-config` \
                  "$@" && \
     make -j ${NCORES} &&  make install ) || exit 1
@@ -149,76 +136,77 @@ fix_portaudio_pc_file()
 
 case "${WHAT_TO_RUN}" in
   osx)
-    brew install pkg-config libtool portaudio icu4c
+    brew install pkg-config automake libtool portaudio pcre2
     (cd "${MIMIC_TOP_SRCDIR}" && ./autogen.sh) || exit 1
-    ./configure PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig" || exit 1
+    ./configure || exit 1
     make -j ${NCORES} || exit 1
     make check || exit 1
     ;;
   coverage)
+    MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
     cd "${MIMIC_TOP_SRCDIR}"
+    ./dependencies.sh --prefix="${MIMIC_INSTALL_DIR}" || exit 1
+    PKG_CONFIG_PATH=`pkg-config --variable pc_path pkg-config`
+    PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
     ./autogen.sh || exit 1
-    # for ubuntu precise in travis, that does not provide pkg-config:
-    if [ `lsb_release -sc` = "precise" ]; then
-        export ICU_CFLAGS="-I/usr/include/x86_64-linux-gnu"
-        export ICU_LIBS="-licui18n -licuuc -licudata"
-    fi
-    ./configure  CFLAGS="$CFLAGS --coverage --no-inline" LDFLAGS="$LDFLAGS --coverage" || exit 1
+    ./configure  CFLAGS="$CFLAGS --coverage --no-inline" LDFLAGS="$LDFLAGS --coverage" PKG_CONFIG_PATH="${PKG_CONFIG_PATH}" || exit 1
     make -j ${NCORES} || exit 1
     make check || exit 1
     ./do_gcov.sh
     ;;
   shared)
-  MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
-  WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
-  mkdir -p "${WORKDIR}"
+    MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
+    WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
+    mkdir -p "${MIMIC_INSTALL_DIR}"
+    mkdir -p "${WORKDIR}"
+    (cd "${WORKDIR}" && ${MIMIC_TOP_SRCDIR}/dependencies.sh --prefix="${MIMIC_INSTALL_DIR}") || exit 1
     (cd "${MIMIC_TOP_SRCDIR}" && ./autogen.sh) || exit 1
-    # for ubuntu precise in travis, that does not provide pkg-config:
-    if [ `lsb_release -sc` = "precise" ]; then
-        export ICU_CFLAGS="-I/usr/include/x86_64-linux-gnu"
-        export ICU_LIBS="-licui18n -licuuc -licudata"
-    fi
-    export CFLAGS="$CFLAGS --std=c99"
-  (cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/configure --enable-shared --prefix="${MIMIC_INSTALL_DIR}" && \
-    make -j ${NCORES} && \
-    make check ) || exit 1
+    PKG_CONFIG_PATH=`pkg-config --variable pc_path pkg-config`
+    PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+    (cd "$WORKDIR" && \
+      ${MIMIC_TOP_SRCDIR}/configure --enable-shared \
+     --prefix="${MIMIC_INSTALL_DIR}" \
+          CFLAGS="$CFLAGS --std=c99" \
+          PKG_CONFIG_PATH="${PKG_CONFIG_PATH}" && \
+      make -j ${NCORES} && \
+      make check ) || exit 1
     ;;
   gcc6)
     export CC="/usr/bin/gcc-6"
     export CXX="/usr/bin/g++-6"
-  MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
-  WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
-  mkdir -p "${MIMIC_INSTALL_DIR}"
-  mkdir -p "${WORKDIR}"
+    MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
+    WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
+    mkdir -p "${MIMIC_INSTALL_DIR}"
+    mkdir -p "${WORKDIR}"
+    (cd "${WORKDIR}" && ${MIMIC_TOP_SRCDIR}/dependencies.sh --prefix="${MIMIC_INSTALL_DIR}") || exit 1
     (cd "${MIMIC_TOP_SRCDIR}" && ./autogen.sh) || exit 1
-    # for ubuntu precise in travis, that does not provide pkg-config:
-    if [ `lsb_release -sc` = "precise" ]; then
-        export ICU_CFLAGS="-I/usr/include/x86_64-linux-gnu"
-        export ICU_LIBS="-licui18n -licuuc -licudata"
-    fi
     export CFLAGS="$CFLAGS --std=c99"
-  (cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/configure --enable-shared --prefix="${MIMIC_INSTALL_DIR}" && \
-    make -j ${NCORES} && \
-    make check ) || exit 1
+    PKG_CONFIG_PATH=`pkg-config --variable pc_path pkg-config`
+    PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+    (cd "$WORKDIR" && \
+      ${MIMIC_TOP_SRCDIR}/configure --enable-shared \
+     --prefix="${MIMIC_INSTALL_DIR}" \
+          CFLAGS="$CFLAGS --std=c99" \
+          PKG_CONFIG_PATH="${PKG_CONFIG_PATH}" && \
+      make -j ${NCORES} && \
+      make check ) || exit 1
     ;;
   arm-linux-gnueabihf-gcc)
-  MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
-  WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
-  mkdir -p "${MIMIC_INSTALL_DIR}"
-  mkdir -p "${WORKDIR}"
+    MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
+    WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
+    mkdir -p "${MIMIC_INSTALL_DIR}"
+    mkdir -p "${WORKDIR}"
     (cd "${MIMIC_TOP_SRCDIR}" && ./autogen.sh) || exit 1
     export BUILD_TRIPLET=`sh ./config/config.guess`
     export HOST_TRIPLET="arm-linux-gnueabihf"
-    crosscompile_icu
+  crosscompile_dependencies
     crosscompile_mimic --with-audio=none    
     ;;
   winbuild)
-  MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
-  WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
-  mkdir -p "${MIMIC_INSTALL_DIR}"
-  mkdir -p "${WORKDIR}"
+    MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
+    WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
+    mkdir -p "${MIMIC_INSTALL_DIR}"
+    mkdir -p "${WORKDIR}"
     (cd "${MIMIC_TOP_SRCDIR}" && ./autogen.sh) || exit 1
     export BUILD_TRIPLET=`sh ./config/config.guess`
     if [ `which i586-mingw32msvc-gcc` ]; then
@@ -229,7 +217,7 @@ case "${WHAT_TO_RUN}" in
         echo "No windows cross-compiler found"
         exit 1
     fi
-    crosscompile_icu --disable-shared --enable-static
+    crosscompile_dependencies
     crosscompile_portaudio --disable-shared --enable-static
     crosscompile_mimic  --disable-shared --enable-static --with-audio=portaudio
     put_dll_in_bindir
@@ -243,10 +231,10 @@ case "${WHAT_TO_RUN}" in
     echo "fbe80cc64ed244c0ee02c62a8489f182  hello_world_winbuild.wav" | md5sum -c || exit 1
     ;;
   winbuild_shared)
-  MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
-  WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
-  mkdir -p "${MIMIC_INSTALL_DIR}"
-  mkdir -p "${WORKDIR}"
+    MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
+    WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
+    mkdir -p "${MIMIC_INSTALL_DIR}"
+    mkdir -p "${WORKDIR}"
     (cd "${MIMIC_TOP_SRCDIR}" && ./autogen.sh) || exit 1
     export BUILD_TRIPLET=`sh ./config/config.guess`
     if [ `which i586-mingw32msvc-gcc` ]; then
@@ -257,8 +245,7 @@ case "${WHAT_TO_RUN}" in
         echo "No windows cross-compiler found"
         exit 1
     fi
-    crosscompile_icu --enable-shared
-    fix_icu_dll_filenames
+    crosscompile_dependencies
     crosscompile_portaudio --enable-shared
     fix_portaudio_pc_file
     crosscompile_mimic --enable-shared --with-audio=portaudio

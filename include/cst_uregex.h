@@ -28,21 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-#ifndef CST_ICU_H__
-#define CST_ICU_H__
+#ifndef CST_UREGEX_H__
+#define CST_UREGEX_H__
 
 #include "config.h"
 #include <stdint.h>
-#include <unicode/ustring.h>
-#include <unicode/ucasemap.h>
-#include <unicode/uregex.h>
-#include <unicode/utypes.h>
 #include <cst_string.h>
 
-cst_string *cst_tolower_l(const cst_string *in, const char *locale);
-cst_string *cst_toupper_l(const cst_string *in, const char *locale);
-URegularExpression *new_cst_uregex(cst_string *pattern, uint32_t flags);
-void delete_cst_uregex(URegularExpression * uregex);
-int cst_uregex_match(URegularExpression * uregex, const cst_string *str);
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h>
+
+typedef pcre2_code cst_uregex;
+cst_string *cst_toupper_utf8(const cst_string *in);
+cst_string *cst_tolower_utf8(const cst_string *in);
+cst_uregex *new_cst_uregex(cst_string *pattern, uint32_t options);
+void delete_cst_uregex(cst_uregex *uregex);
+int cst_uregex_match(cst_uregex *uregex, const cst_string *str);
 
 #endif

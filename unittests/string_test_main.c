@@ -31,7 +31,7 @@
  * 
  */
 #include <stdio.h>
-#include "cst_icu.h"
+#include "cst_uregex.h"
 #include "cst_alloc.h"
 
 #include "cutest.h"
@@ -39,8 +39,8 @@
 void test_uregex_match()
 {
     int match;
-    URegularExpression *uregex;
-    uregex = new_cst_uregex("^[àé]$", UREGEX_CASE_INSENSITIVE);
+    cst_uregex *uregex;
+    uregex = new_cst_uregex("^[àé]$", PCRE2_CASELESS);
     TEST_CHECK(uregex != NULL);
     match = cst_uregex_match(uregex, "a");
     TEST_CHECK(match == 0);
@@ -65,33 +65,23 @@ void test_uregex_match()
     return;
 }
 
-void test_change_case_l()
+void test_change_case_utf8()
 {
     cst_string in[] = "¡hola MUNDO!";
     cst_string *out;
-    out = cst_tolower_l(in, "es_ES");
+    out = cst_tolower_utf8(in);
     printf("\nin: '%s'\tout: '%s'\n", in, out);
     TEST_CHECK(cst_streq(out, "¡hola mundo!"));
     cst_free(out);
-    out = cst_toupper_l(in, "es_ES");
+    out = cst_toupper_utf8(in);
     printf("in: '%s'\tout: '%s'\n", in, out);
     TEST_CHECK(cst_streq(out, "¡HOLA MUNDO!"));
     cst_free(out);
-    // Test NULL locale
-    out = cst_tolower_l("TEST", NULL);
-    printf("in: '%s'\tout: '%s'\n", in, out);
-    TEST_CHECK(cst_streq(out, "test"));
-    cst_free(out);
-    // Test invalid locale
-    out = cst_tolower_l("TEST", "asdf_asdf");
-    TEST_CHECK(cst_streq(out, "test"));
-    cst_free(out);
     // Test NULL input
-    out = cst_tolower_l(NULL, "es_ES");
+    out = cst_tolower_utf8(NULL);
     TEST_CHECK(out == NULL);
     // Test empty input
-    out = cst_toupper_l("", "es_ES");
-    printf("in: '%s'\tout: '%s'\n", in, out);
+    out = cst_toupper_utf8("");
     TEST_CHECK(cst_streq(out, ""));
     cst_free(out);
     return;
@@ -99,12 +89,7 @@ void test_change_case_l()
 
 TEST_LIST =
 {
-    {
-    "uregex_match", test_uregex_match}
-    ,
-    {
-    "test_change_case_l", test_change_case_l}
-    ,
-    {
-    0}
+    {"uregex_match", test_uregex_match},
+    {"test_change_case_utf8", test_change_case_utf8},
+    {0}
 };

@@ -53,7 +53,8 @@ Copyright:
 License: BSD-3-clause
 
 Files:
- src/utils/cst_icu.c
+ include/cst_uregex.h
+ src/utils/cst_uregex.c
  lang/es_lang/es_init.c
  lang/es_lang/es_text_analysis.c
  lang/es_lang/es_tokenizer.c
@@ -72,6 +73,7 @@ Files:
  man/man1/mimic.1
  mimic.pc.in
  run_testsuite.sh
+ dependencies.sh
  .travis.yml
 Copyright:
  2016-2017 Sergio Oller
@@ -164,12 +166,6 @@ Copyright:
            of Science and Engineering 
 License: BSD-3-clause
 
-
-Files:
- include/cst_icu.h
-Copyright:
- 2016-2017 Sergio Oller
-License: BSD-3-clause
 
 Files:
  include/cst_audio.h

@@ -1,6 +1,7 @@
 coverage:
   ignore:          # files and folders that will be removed during processing
     - "testsuite/"
+    - "thirdparty/"
     - "unittests/"
     - "src/hts/hts_engine_API/"
 
