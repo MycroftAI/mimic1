@@ -41,6 +41,7 @@ void test_uregex_match()
     int match;
     URegularExpression *uregex;
     uregex = new_cst_uregex("^[àé]$", UREGEX_CASE_INSENSITIVE);
+    TEST_CHECK(uregex != NULL);
     match = cst_uregex_match(uregex, "a");
     TEST_CHECK(match == 0);
     match = cst_uregex_match(uregex, "à");
@@ -49,12 +50,17 @@ void test_uregex_match()
     TEST_CHECK(match == 1);
     delete_cst_uregex(uregex);
     uregex = new_cst_uregex("^🐨.*$", 0);
+    TEST_CHECK(uregex != NULL);
     match = cst_uregex_match(uregex, "🐨 is a koala");
     TEST_CHECK(match == 1);
     match = cst_uregex_match(uregex, "😀 is not a koala");
     TEST_CHECK(match == 0);
     delete_cst_uregex(uregex);
+    fprintf(stderr, "\n Test expected error message below:\n");
+    fflush(stderr);
     uregex = new_cst_uregex(NULL, 0);
+    fprintf(stderr, "Test expected error message above:\n");
+    fflush(stderr);
     TEST_CHECK(uregex == NULL);
     return;
 }
@@ -64,16 +70,16 @@ void test_change_case_l()
     cst_string in[] = "¡hola MUNDO!";
     cst_string *out;
     out = cst_tolower_l(in, "es_ES");
-    printf("in: %s\nout: %s\n", in, out);
+    printf("\nin: '%s'\tout: '%s'\n", in, out);
     TEST_CHECK(cst_streq(out, "¡hola mundo!"));
     cst_free(out);
     out = cst_toupper_l(in, "es_ES");
-    printf("in: %s\nout: %s\n", in, out);
+    printf("in: '%s'\tout: '%s'\n", in, out);
     TEST_CHECK(cst_streq(out, "¡HOLA MUNDO!"));
     cst_free(out);
     // Test NULL locale
     out = cst_tolower_l("TEST", NULL);
-    printf("in: %s\nout: %s\n", "TEST", out);
+    printf("in: '%s'\tout: '%s'\n", in, out);
     TEST_CHECK(cst_streq(out, "test"));
     cst_free(out);
     // Test invalid locale
@@ -85,7 +91,7 @@ void test_change_case_l()
     TEST_CHECK(out == NULL);
     // Test empty input
     out = cst_toupper_l("", "es_ES");
-    printf("in: %s\nout: %s\n", "", out);
+    printf("in: '%s'\tout: '%s'\n", in, out);
     TEST_CHECK(cst_streq(out, ""));
     cst_free(out);
     return;
