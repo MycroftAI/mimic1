@@ -582,6 +582,16 @@ Files:
 Copyright: 2008-2012, University of Illinois at Urbana-Champaign
 License: APACHE2
 
+Files:
+ thirdparty/pcre2.patch
+Copyright:
+ Copyright (c) 1997-2017 University of Cambridge
+ Copyright (c) 2010-2017 Zoltan Herczeg
+License: BSD-3-clause
+Comment: This patch can be safely removed for pcre2 versions larger than 10.23
+ not released when this comment was written.
+ See https://bugs.exim.org/show_bug.cgi?id=2067 for more info
+
 License: APACHE2
  Apache License
  Version 2.0, January 2004
