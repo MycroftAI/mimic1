@@ -1,5 +1,5 @@
 #include "es_lang.h"
-#include "cst_icu.h"
+#include "cst_uregex.h"
 #include "mimic.h"
 
 cst_utterance *es_textanalysis(cst_utterance *u);

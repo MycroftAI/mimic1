@@ -36,7 +36,7 @@ matrix:
 before_install:
   - if [ "x$TASK" = "xosx" ]; then rvm get stable; fi
 
-script: 
+script:
   - ./run_testsuite.sh "$TASK"
 
 after_success:
@@ -57,10 +57,8 @@ addons:
     - libtool
     - pkg-config
     - libasound2-dev
-    - libicu-dev
     - binutils-arm-linux-gnueabihf
     - gcc-arm-linux-gnueabihf
-    - g++-arm-linux-gnueabihf
     - libc6-dev-armhf-cross
     - pkg-config-arm-linux-gnueabihf
     - mingw32
@@ -68,7 +66,6 @@ addons:
     - wine
     - xvfb
     - gcc-6
-    - g++-6
     sources:
     - sourceline: 'ppa:ubuntu-toolchain-r/test'
   coverity_scan:

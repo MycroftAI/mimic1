@@ -32,7 +32,7 @@ popular distributions and supported OS.
   * Windows: _Recommended:_ GCC under [Cygwin](https://cygwin.com/) or [mingw32](http://www.mingw.org/)
 - GNU make, automake and libtool
 - pkg-config
-- ICU library and headers
+- Optionally, PCRE2 library and headers (they are compiled otherwise)
 - An audio engine:
   * Linux: ALSA/PortAudio/PulseAudio (_Recommended:_ ALSA)
   * Mac OSX: PortAudio
@@ -42,17 +42,17 @@ popular distributions and supported OS.
 
 ##### On Debian/Ubuntu
 ```
-$ sudo apt-get install gcc make pkg-config automake libtool libicu-dev libasound2-dev
+$ sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
 ```
 
 ##### On Fedora
 ```
-$ sudo dnf install gcc make pkgconfig automake libtool libicu-devel alsa-lib-devel
+$ sudo dnf install gcc make pkgconfig automake libtool alsa-lib-devel
 ```
 
 ##### On Arch
 ```
-$ sudo pacman -S --needed install gcc make pkg-config automake libtool icu alsa-lib
+$ sudo pacman -S --needed install gcc make pkg-config automake libtool alsa-lib
 ```
 
 
@@ -63,9 +63,9 @@ $ sudo pacman -S --needed install gcc make pkg-config automake libtool icu alsa-
   $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   ```
 
-- Install *pkg-config*, *automake*, *libtool*, *icu* and *PortAudio*
+- Install *pkg-config*, *automake*, *libtool*, *pcre2* and *PortAudio*
   ```
-  $ brew install pkg-config automake libtool portaudio icu4c
+  $ brew install pkg-config automake libtool portaudio pcre2
   ```
 
 ### Windows
@@ -78,14 +78,14 @@ installed.
 
 On Ubuntu 16.04 (xenial):
 ```
-sudo apt-get install gcc make pkg-config automake libtool libicu-dev wine binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686 g++-mingw-w64-i686
+sudo apt-get install gcc make pkg-config automake libtool libpcre2-dev wine binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686
 
 ```
 
 On Ubuntu 14.04 (trusty):
 
 ```
-sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 mingw32-runtime wine
+sudo apt-get install gcc make pkg-config automake libtool mingw32 mingw32-runtime wine
 ```
 
 
@@ -111,7 +111,12 @@ sudo apt-get install gcc make pkg-config automake libtool libicu-dev mingw32 min
   $ cd mimic
   ```
 
-- Generate build scripts
+- Build and install missing dependencies (pcre2)
+  ```
+  $ ./dependencies.sh --prefix="/usr/local"
+  ```
+
+- Generate mimic build scripts
   ```
   $ ./autogen.sh
   ```
