@@ -1,5 +1,6 @@
 #!/bin/sh
 
+#### Help message ####
 if [ "$#" -eq 0 ]; then
   echo "./run_testsuite.sh requires a task/build target to be done"
   echo "  - ./run_testsuite.sh osx (OSX install dependencies, build and test)"
@@ -12,10 +13,7 @@ if [ "$#" -eq 0 ]; then
   echo "  - ./run_testsuite.sh winbuild_shared (crosscompiling, with shared libraries)"
 fi 
 
-WHAT_TO_RUN="$1"
-
-
-# emulates readlink -f, not available on osx
+#### This function emulates readlink -f, not available on osx ####
 readlink2()
 {
 MYWD=`pwd`
@@ -41,15 +39,27 @@ cd "$MYWD"
 echo $RESULT
 }
 
-
-export MIMIC_TOP_SRCDIR=`dirname \`readlink2 "$0"\``
-
+# Cross-compilation in Windows looks for a "Manifest tool". autotools
+# mistakenly finds `/bin/mt` and assumes it is the manifest tool, even though
+# it is an unrelated program. This export makes sure that autotools does not
+# find the wrong manifest tool.
 export MANIFEST_TOOL=:
 
+
+# The task we want to run
+WHAT_TO_RUN="$1"
+
+# Set up an environment variable to increase compilation speed (and RAM usage) 
 if [ "x${NCORES}" = "x" ]; then
     NCORES=1
 fi
 
+# The directory where the mimic source code is.
+export MIMIC_TOP_SRCDIR=`dirname \`readlink2 "$0"\``
+
+
+# The following functions are used later on. They assume the following variables
+# will be set:
 # Assumes MIMIC_TOP_SRCDIR points to mimic sources directory (where configure is)
 # Assumes MIMIC_INSTALL_DIR points to where mimic will be installed
 # Assumes WORKDIR points to a directory where build items can be placed
@@ -65,10 +75,6 @@ crosscompile_dependencies()
     # in the future the ${HOST_TRIPLET}-pkg-config can be used with a simple
     # PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/"
     (cd "${WORKDIR}" && \
-      CC=${HOST_TRIPLET}-gcc \
-      LD=${HOST_TRIPLET}-ld \
-      RANLIB=${HOST_TRIPLET}-ranlib \
-      AR=${HOST_TRIPLET}-ar \
       PKG_CONFIG_LIBDIR="" \
       PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
       PKG_CONFIG=`which pkg-config` \
@@ -98,13 +104,8 @@ crosscompile_portaudio()
     ../portaudio/configure --build="${BUILD_TRIPLET}" \
                            --host="${HOST_TRIPLET}" \
                            --prefix="${MIMIC_INSTALL_DIR}" \
-                           CC=${HOST_TRIPLET}-gcc \
-                           CXX=${HOST_TRIPLET}-g++ \
-                           LD=${HOST_TRIPLET}-ld \
-                           RANLIB=${HOST_TRIPLET}-ranlib \
-                           AR=${HOST_TRIPLET}-ar \
                            "$@" && \
-    make -j ${NCORES} &&  make install) || exit 1
+    make -j ${NCORES} && make install) || exit 1
 }
 
 crosscompile_mimic() 
@@ -120,13 +121,10 @@ crosscompile_mimic()
     # pkg-config in Debian stretch and in Ubuntu xenial have this bug fixed so
     # in the future the ${HOST_TRIPLET}-pkg-config can be used with a simple
     # PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/"
-    ${MIMIC_TOP_SRCDIR}/configure --build="${BUILD_TRIPLET}" \
+    ${MIMIC_TOP_SRCDIR}/configure \
+                 --build="${BUILD_TRIPLET}" \
                  --host="${HOST_TRIPLET}" \
                  --prefix="${MIMIC_INSTALL_DIR}" \
-                 CC=${HOST_TRIPLET}-gcc \
-                 LD=${HOST_TRIPLET}-ld \
-                 RANLIB=${HOST_TRIPLET}-ranlib \
-                 AR=${HOST_TRIPLET}-ar \
                  PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig/:/usr/lib/${HOST_TRIPLET}/pkgconfig:/usr/${HOST_TRIPLET}/lib/pkgconfig" \
                  PKG_CONFIG_LIBDIR="" \
                  PKG_CONFIG=`which pkg-config` \
@@ -136,31 +134,17 @@ crosscompile_mimic()
 
 put_dll_in_bindir()
 {
-    # if mingw32, then copy a DLL: (not needed with mingw-w64)
-    if [ "x${HOST_TRIPLET}" = "xi586-mingw32msvc" ]; then
-      # This one is needed from the mingw32-runtime package
-      if [ -f /usr/share/doc/mingw32-runtime/mingwm10.dll.gz ]; then
-          cat /usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "${MIMIC_INSTALL_DIR}/bin/mingwm10.dll" || exit 1
-      else
-          # it seems travis does not find it, so we get it directly from the package
-          (  cd "${WORKDIR}" && \
-       apt-get download mingw32-runtime && \
-              ar p mingw32-runtime*.deb data.tar.gz | tar zx && \
-             cat usr/share/doc/mingw32-runtime/mingwm10.dll.gz | gunzip > "${MIMIC_INSTALL_DIR}/bin/mingwm10.dll" ) || exit 1
-      fi
-    fi
-    # ICU and portaudio libraries are installed into lib. wine can't find them.
+    # Portaudio libraries are installed into lib. wine can't find them.
     # Copy all libs to ${MIMIC_INSTALL_DIR}/bin
-    for file in `ls "${MIMIC_INSTALL_DIR}/lib/"*.dll`; do cp "$file" "${MIMIC_INSTALL_DIR}/bin/"; done
+    for file in `ls "${MIMIC_INSTALL_DIR}/lib/"*.dll`; do
+        cp "$file" "${MIMIC_INSTALL_DIR}/bin/"
+    done
 }
 
 fix_portaudio_pc_file()
 {
-    # this is a hack not needed with mingw-w64
-    if [ "x${HOST_TRIPLET}" = "xi586-mingw32msvc" ]; then
-      # uuid is not a dll in mingw. I just remove it and hope mimic still works.
-      sed -i -e 's:-luuid::g' "${MIMIC_INSTALL_DIR}/lib/pkgconfig/portaudio-2.0.pc"
-    fi
+  # can't find uuid in mingw. I just remove it and hope mimic still works.
+  sed -i -e 's:-luuid::g' "${MIMIC_INSTALL_DIR}/lib/pkgconfig/portaudio-2.0.pc"
 }
 
 run_mimic_autogen()
@@ -171,7 +155,7 @@ run_mimic_autogen()
 set_build_and_install_dir()
 {
     MIMIC_INSTALL_DIR=`pwd`"/install/${WHAT_TO_RUN}"
-    WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
+    export WORKDIR=`pwd`"/builds/${WHAT_TO_RUN}"
     mkdir -p "${MIMIC_INSTALL_DIR}"
     mkdir -p "${WORKDIR}"
 }
@@ -191,14 +175,7 @@ test_windows_build()
 set_windows_triplet()
 {
     export BUILD_TRIPLET=`sh ./config/config.guess`
-    if [ `which i586-mingw32msvc-gcc` ]; then
-        export HOST_TRIPLET="i586-mingw32msvc"
-    elif [ `which i686-w64-mingw32-gcc` ]; then
-        export HOST_TRIPLET="i686-w64-mingw32"
-    else
-        echo "No windows cross-compiler found"
-        exit 1
-    fi
+    export HOST_TRIPLET="i686-w64-mingw32"
 }
 
 compile_dependencies()
@@ -236,90 +213,134 @@ case "${WHAT_TO_RUN}" in
     compile_mimic
     ;;
   ios)
-    brew install pkg-config automake libtool
+    brew install pkg-config automake libtool md5sha1sum
     run_mimic_autogen
     # arm64
     MIMIC_INSTALL_DIR=`pwd`"/install/ios_arm64"
-    WORKDIR=`pwd`"/builds/ios_arm64"
+    export WORKDIR=`pwd`"/builds/ios_arm64"
     mkdir -p "${MIMIC_INSTALL_DIR}"
     mkdir -p "${WORKDIR}"
+    export CC="xcrun -sdk iphoneos clang -arch arm64"
+    export CFLAGS="-Ofast -mios-version-min=5.0"
+    export LDFLAGS="-flto"
+  (cd "$WORKDIR" && \
+    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+      PKG_CONFIG_LIBDIR="" \
+      --prefix="${MIMIC_INSTALL_DIR}" \
+       --host=arm ) || exit 1
   (cd "$WORKDIR" && \
     ${MIMIC_TOP_SRCDIR}/configure \
       PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
       PKG_CONFIG_LIBDIR="" \
       --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none \
-      CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphoneos clang -arch arm64" --host=arm && \
+      --with-audio=none --disable-voices-all \
+      --host=arm && \
     make -j ${NCORES} && \
     make install) || exit 1
 
     # armv7
     MIMIC_INSTALL_DIR=`pwd`"/install/ios_armv7"
-    WORKDIR=`pwd`"/builds/ios_armv7"
+    export WORKDIR=`pwd`"/builds/ios_armv7"
     mkdir -p "${MIMIC_INSTALL_DIR}"
     mkdir -p "${WORKDIR}"
+    export CC="xcrun -sdk iphoneos clang -arch armv7"
+    export CFLAGS="-Ofast -mios-version-min=5.0"
+    export LDFLAGS="-flto"
+(cd "$WORKDIR" && \
+    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+      PKG_CONFIG_LIBDIR="" \
+      --prefix="${MIMIC_INSTALL_DIR}" \
+      --host=arm ) || exit 1
   (cd "$WORKDIR" && \
     ${MIMIC_TOP_SRCDIR}/configure \
       PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
       PKG_CONFIG_LIBDIR="" \
       --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none \
+      --with-audio=none --disable-voices-all \
       CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphoneos clang -arch armv7" --host=arm && \
     make -j ${NCORES} && \
     make install) || exit 1
 
     # armv7s
     MIMIC_INSTALL_DIR=`pwd`"/install/ios_armv7s"
-    WORKDIR=`pwd`"/builds/ios_armv7s"
+    export WORKDIR=`pwd`"/builds/ios_armv7s"
     mkdir -p "${MIMIC_INSTALL_DIR}"
     mkdir -p "${WORKDIR}"
+    export CC="xcrun -sdk iphoneos clang -arch armv7s"
+    export CFLAGS="-Ofast -mios-version-min=5.0"
+    export LDFLAGS="-flto"
+(cd "$WORKDIR" && \
+    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+      PKG_CONFIG_LIBDIR="" \
+      --prefix="${MIMIC_INSTALL_DIR}" \
+      --host=arm ) || exit 1
   (cd "$WORKDIR" && \
     ${MIMIC_TOP_SRCDIR}/configure \
       PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
       PKG_CONFIG_LIBDIR="" \
       --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none \
-      CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphoneos clang -arch armv7s" --host=arm && \
+      --with-audio=none --disable-voices-all \
+      --host=arm && \
     make -j ${NCORES} && \
     make install) || exit 1
 
   # i386
     MIMIC_INSTALL_DIR=`pwd`"/install/ios_i386"
-    WORKDIR=`pwd`"/builds/ios_i386"
+    export WORKDIR=`pwd`"/builds/ios_i386"
     mkdir -p "${MIMIC_INSTALL_DIR}"
     mkdir -p "${WORKDIR}"
+    export CC="xcrun -sdk iphonesimulator clang -arch i386"
+    export CFLAGS="-Ofast -mios-version-min=5.0"
+    export LDFLAGS="-flto"
+(cd "$WORKDIR" && \
+    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+      PKG_CONFIG_LIBDIR="" \
+      --prefix="${MIMIC_INSTALL_DIR}"  ) || exit 1
   (cd "$WORKDIR" && \
     ${MIMIC_TOP_SRCDIR}/configure \
       PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
       PKG_CONFIG_LIBDIR="" \
       --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none \
-      CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphonesimulator clang -arch i386" && \
+      --with-audio=none --disable-voices-all && \
     make -j ${NCORES} && \
     make install) || exit 1
 
   # x86_64
     MIMIC_INSTALL_DIR=`pwd`"/install/ios_x86_64"
-    WORKDIR=`pwd`"/builds/ios_x86_64"
+    export WORKDIR=`pwd`"/builds/ios_x86_64"
     mkdir -p "${MIMIC_INSTALL_DIR}"
     mkdir -p "${WORKDIR}"
+    export CC="xcrun -sdk iphonesimulator clang -arch x86_64"
+    export CFLAGS="-Ofast -mios-version-min=5.0"
+    export LDFLAGS="-flto"
+(cd "$WORKDIR" && \
+    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+      PKG_CONFIG_LIBDIR="" \
+      --prefix="${MIMIC_INSTALL_DIR}"  ) || exit 1
   (cd "$WORKDIR" && \
     ${MIMIC_TOP_SRCDIR}/configure \
       PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
       PKG_CONFIG_LIBDIR="" \
       --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none \
-      CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphonesimulator clang -arch x86_64" && \
+      --with-audio=none --disable-voices-all && \
     make -j ${NCORES} && \
     make install) || exit 1
 
     echo "Building Universal Static Lib"
     mkdir -p "install/ios_universal"
     # run lipo to link binaries
-    xcrun lipo -create $(find install/*/lib -name "*.a") -o "install/ios_universal/mimic_bundle.a"
+    for mylib in `ls install/ios_armv7/lib/*.a`; do
+        libname=`basename "${mylib}"`
+        echo "Processing ${libname} using lipo..."
+    xcrun lipo -create `find install/*/lib -name "${libname}"` -o "install/ios_universal/${libname}.a" || exit 1
+    done
     cp -r "install/ios_armv7/include" "install/ios_universal/"
     echo "Universal lib found in install/ios_universal"
-    echo "If all voices have been linked then the resulting universal lib may be VERY large"
 
     ;;
   coverage)
