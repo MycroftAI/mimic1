@@ -18,9 +18,8 @@ Mimic is a fast, lightweight Text-to-speech engine developed by [Mycroft A.I.](h
 
 **Untested**
 - Android
+- iOS (Built as a static library)
 
-**Future**
-- iOS
 
 ## Requirements
 
@@ -76,18 +75,12 @@ The fastest and most straightforward way to build mimic for windows is by
 cross-compilation from linux. This requires some additional packages to be
 installed.
 
-On Ubuntu 16.04 (xenial):
-```
-sudo apt-get install gcc make pkg-config automake libtool libpcre2-dev wine binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686
+On Ubuntu:
 
 ```
-
-On Ubuntu 14.04 (trusty):
+sudo apt-get install gcc make pkg-config automake libtool wine binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686
 
 ```
-sudo apt-get install gcc make pkg-config automake libtool mingw32 mingw32-runtime wine
-```
-
 
 #### Native Windows building
 
@@ -121,7 +114,9 @@ sudo apt-get install gcc make pkg-config automake libtool mingw32 mingw32-runtim
   $ ./autogen.sh
   ```
   
-- Configure.
+- Configure. Choose the flags that suit you. For instance, for an embedded device
+  use of `--enable-speed-embedded` is recommended in order to reduce the CPU requirements.
+  While it reduces the speech quality, in practice the quality drop is not too large.
 
   ```
   $ ./configure --prefix="/usr/local"

@@ -167,6 +167,21 @@ AS_CASE([ ${host_os} ],
         [ android* ], [ AUDIODRIVER="none"],
         [ chrome* ], [AUDIODRIVER="none"])
 
+
+AC_ARG_ENABLE([speed-embedded],
+  [AS_HELP_STRING([--enable-speed-embedded],
+      [increase performance by reducing pade order in clustergen and hts voices])],
+  [],
+  [enable_speed_embedded=no]) dnl by default do not embed
+
+AS_IF([ test "x${enable_speed_embedded}" = "xyes" ],
+  [ AC_DEFINE([HTS_EMBEDDED], [1], [Use smaller pade order and shorter impulse response in HTS synthesis])
+    AC_DEFINE([SPEED_HACK], [1], [Use smaller pade order in clustergen voices])
+  ], 
+  [])
+
+AC_DEFINE([MMAP_TYPE_NONE], [0], [enum for mmap_types])
+
 dnl
 dnl allow the user to override the one detected above
 dnl
