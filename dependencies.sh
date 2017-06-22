@@ -64,6 +64,51 @@ SCRIPT=$(readlink2 "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 
+# Install system requirements if any of those are missing.
+# This needs testing on all the platforms
+if [ -f "/etc/arch-release" ]; then
+  pacman -Qs make >/dev/null && \
+   pacman -Qs pkg-config >/dev/null && \
+   pacman -Qs gcc >/dev/null && \
+   pacman -Qs autoconf >/dev/null && \
+   pacman -Qs automake >/dev/null && \
+   pacman -Qs libtool >/dev/null && \
+   pacman -Qs alsa-lib  >/dev/null || \
+      ( cat << EOF
+Some packages are needed and they need to be installed. You can either stop
+this script with Ctrl+C and manually run:
+  sudo pacman -S --needed make pkg-config  gcc autoconf automake libtool alsa-lib
+or give the sudo password now and let the script install those packages for you
+EOF
+      sudo pacman -S --needed make pkg-config  gcc autoconf automake libtool alsa-lib
+     )
+elif [ -f "/etc/debian_version" ]; then
+ dpkg -s gcc make pkg-config automake libtool libasound2-dev 2>/dev/null >/dev/null || \
+    ( cat << EOF
+Some packages are needed and they need to be installed. You can either stop
+this script with Ctrl+C and manually run:
+    sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
+or give the sudo password now and let the script install those packages for you
+EOF
+    sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
+    )
+elif [ -f "/etc/redhat-release" ]; then
+dnf list installed gcc 2>/dev/null >/dev/null && \
+ dnf list installed make 2>/dev/null >/dev/null && \
+ dnf list installed pkgconfig 2>/dev/null >/dev/null && \
+ dnf list installed automake 2>/dev/null >/dev/null && \
+ dnf list installed libtool 2>/dev/null >/dev/null && \
+ dnf list installed alsa-lib-devel 2>/dev/null >/dev/null || \
+  ( cat << EOF
+Some packages are needed and they need to be installed. You can either stop
+this script with Ctrl+C and manually run:
+    sudo dnf install gcc make pkgconfig automake libtool alsa-lib-devel
+or give the sudo password now and let the script install those packages for you
+EOF
+    sudo dnf install gcc make pkgconfig automake libtool alsa-lib-devel
+  )
+fi
+
 CURDIR="$PWD"
 
 if [ "x${WORKDIR}" = "x" ]; then
