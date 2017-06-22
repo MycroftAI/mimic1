@@ -101,6 +101,18 @@ dnl Check libpcre2-8
 PKG_CHECK_MODULES([PCRE2], [libpcre2-8])
 PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpcre2-8"
                                    
+dnl License switch:
+dnl mimic is distributed under permissive BSD-3 like licenses with some
+dnl specific mimic components (listed in the COPYING file)
+dnl under a GPLv3 license.
+dnl
+dnl This switch gives the option to disable all features that depend on
+dnl GPL software, so a BSD-like binary mimic version is available.
+AC_ARG_ENABLE([gpl],
+  [AS_HELP_STRING([--disable-gpl],
+       [disable all GPL related code])],
+  [],
+  [enable_gpl=yes])
 
 
 dnl
