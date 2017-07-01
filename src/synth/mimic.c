@@ -592,3 +592,13 @@ int mimic_munmap_clunit_voxdata(cst_voice *voice)
 
     return 0;
 }
+
+int mimic_gpl_enabled()
+{
+#if ENABLE_GPL == 1
+  return 1;
+#else
+  return 0;
+#endif
+}
+

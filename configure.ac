@@ -114,7 +114,10 @@ AC_ARG_ENABLE([gpl],
   [],
   [enable_gpl=yes])
 
-
+AS_IF([ test "x${enable_gpl}" = "xyes"],
+  [ AC_DEFINE([ENABLE_GPL], [1], [Enable GPL code]) ],
+  [ AC_DEFINE([ENABLE_GPL], [0], [Enable GPL code]) ])
+ 
 dnl
 dnl determine audio type or use none if none supported on this platform
 dnl
