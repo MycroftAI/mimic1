@@ -1,4 +1,37 @@
 #!/bin/sh
+#POSIX
+
+# Reset all variables that might be set
+enable_gpl="yes"
+
+show_help()
+{
+cat << EOF
+Usage: ${0##*/} [ --enable-gpl | --disable-gpl ] [ other flags passed to configure ]
+Install dependencies for mimic
+
+    -h          display this help and exit
+    --enable-gpl Builds and installs optional GPL-licensed dependencies
+    --disable-gpl Skips GPL dependencies.
+EOF
+}
+
+case $1 in
+  -h|-\?|--help)   # Call a "show_help" function to display a synopsis, then exit.
+    show_help
+    exit
+    ;;
+  --disable-gpl)
+    enable_gpl="no"
+    shift
+    ;;
+  --enable-gpl)
+    enable_gpl="yes"
+    shift
+    ;;
+  *)
+    ;;
+esac
 
 #### This function emulates readlink -f, not available on osx ####
 readlink2()

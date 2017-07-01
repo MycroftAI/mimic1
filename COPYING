@@ -2,7 +2,11 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Mimic
 Source: https://github.com/mycroftai/mimic
 Comment: Mimic is free software
- Mimic is available under permissive BSD-like licenses
+ Most of mimic is licensed under permissive BSD-like licenses.
+ Some optional mimic components will depend on GPLv3-licensed libraries, making
+ mimic redistributable only under the GPLv3.
+ Mimic offers a `--disable-gpl` switch at compile time to create BSD-3-like
+ licensed binaries that will disable the GPL-v3 mimic components.
  .
  This file lists all the copyrights and licenses of mimic files.
 
