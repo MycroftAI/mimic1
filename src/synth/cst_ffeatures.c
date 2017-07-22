@@ -326,12 +326,12 @@ const cst_val *syl_vowel(const cst_item *p)
     {
         if (cst_streq("+", val_string(ph_vc(s))))
         {
-            return string_val(item_name(s));
+            return item_feat(s, "name");
         }
     }
     if (cst_streq("+", val_string(ph_vc(s))))
     {
-        return string_val(item_name(s));
+        return item_feat(s, "name");
     }
     return (cst_val *) NULL;
 }
