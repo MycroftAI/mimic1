@@ -118,3 +118,19 @@ const cst_phoneset *item_phoneset(const cst_item *p)
 {
     return val_phoneset(feat_val(item_utt(p)->features, "phoneset"));
 }
+
+const char *map_phones(const char *phone, phoneset_map_t *convert_table)
+{
+   size_t i;
+    if (convert_table == NULL) {
+        return phone;
+    }
+    for (i = 0; convert_table[i].source; i++)
+    {
+        if (strcmp(phone, convert_table[i].source) == 0)
+        {
+            return convert_table[i].dest;
+        }
+    }
+    return phone;
+}

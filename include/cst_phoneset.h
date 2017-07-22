@@ -71,4 +71,15 @@ int phone_feat_id(const cst_phoneset *ps, const char *featname);
 const cst_phoneset *item_phoneset(const cst_item *i);
 
 CST_VAL_USER_TYPE_DCLS(phoneset, cst_phoneset);
+
+/* If a a voice model was trained with a different
+ * phoneset than the mimic language model, these
+ * functions can be used to map the phones between them */
+typedef struct phoneset_map_s {
+    const char *source;
+    const char *dest;
+} phoneset_map_t;
+
+const char *map_phones(const char *phone, phoneset_map_t convert_table[]);
+
 #endif
