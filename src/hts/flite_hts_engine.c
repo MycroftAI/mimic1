@@ -521,6 +521,7 @@ cst_utterance *hts_synth(cst_utterance *utt)
 void delete_flitehtsengine(Flite_HTS_Engine * f)
 {
     Flite_HTS_Engine_clear(f);
+    cst_free(f);
     return;
 }
 
