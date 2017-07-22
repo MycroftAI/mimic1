@@ -41,6 +41,10 @@
 #include "cst_wave.h"
 #include "cst_file.h"
 
+const char* cst_wave_fmt_riff = "riff";
+const char* cst_wave_fmt_raw = "raw";
+
+
 void cst_wave_resample(cst_wave *w, int sample_rate)
 {
     /* This is here so that it won't necessarily be linked in tight-space */
