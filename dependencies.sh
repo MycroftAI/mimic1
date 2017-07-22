@@ -169,11 +169,11 @@ if [ "x${enable_gpl}" = "xyes" ]; then
     # Prepare saga source:
     (mkdir -p "${WORKDIR}/thirdparty/" && \
       cd "${WORKDIR}/thirdparty" && \
-      wget "https://github.com/TALP-UPC/saga/archive/62bf63be95ae9a27bc22f32d8ee9884d6e9cce22.zip" && \
-      echo "bdf33c6825b38efdaef42f056cd31938  62bf63be95ae9a27bc22f32d8ee9884d6e9cce22.zip" | md5sum -c || exit 1
-      mv "62bf63be95ae9a27bc22f32d8ee9884d6e9cce22.zip" "saga.zip" || exit 1
+      wget "https://github.com/TALP-UPC/saga/archive/99c39898cc531cf1a0797a9cccb7dd124771fdd8.zip" && \
+      echo "051784d117f97b307c531452c5a667ed  99c39898cc531cf1a0797a9cccb7dd124771fdd8.zip" | md5sum -c || exit 1
+      mv "99c39898cc531cf1a0797a9cccb7dd124771fdd8.zip" "saga.zip" || exit 1
       unzip "saga.zip" &&  \
-      mv "saga-62bf63be95ae9a27bc22f32d8ee9884d6e9cce22" "saga" || exit 1
+      mv "saga-99c39898cc531cf1a0797a9cccb7dd124771fdd8" "saga" || exit 1
       cd "saga" && ./autogen.sh)  || exit 1
     # Build saga
     mkdir -p "${WORKDIR}/thirdparty/build_saga" || exit 1
