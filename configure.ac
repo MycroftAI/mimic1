@@ -102,15 +102,15 @@ PKG_CHECK_MODULES([PCRE2], [libpcre2-8])
 PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpcre2-8"
                                    
 dnl License switch:
-dnl mimic is distributed under permissive BSD-3 like licenses with some
-dnl specific mimic components (listed in the COPYING file)
-dnl under a GPLv3 license.
+dnl mimic is distributed under permissive BSD-3 like licenses, however
+dnl some of its functionalities depend on software usually available as GPL-3.
+dnl See the COPYING file for more information.
 dnl
 dnl This switch gives the option to disable all features that depend on
 dnl GPL software, so a BSD-like binary mimic version is available.
 AC_ARG_ENABLE([gpl],
   [AS_HELP_STRING([--disable-gpl],
-       [disable all GPL related code])],
+       [disable all functionalities that depend on GPL code])],
   [],
   [enable_gpl=yes])
 
@@ -120,10 +120,8 @@ AS_IF([ test "x${enable_gpl}" = "xyes"],
  
 dnl Check Saga
 PKG_CHECK_MODULES([SAGA], [saga],
-                  [found_saga=yes
-                                      AC_MSG_WARN([Saga is available and will be used. Mimic must be distributed as GPL-3 if you have a GPL-3 Saga license.])
-                                      break;],
-                  [AC_MSG_WARN([Saga not available. Spanish support disabled.])])
+                  [found_saga=yes],
+                  [found_saga=no])
 
 
 dnl
@@ -281,15 +279,15 @@ AC_ARG_ENABLE([lang-es],
       [disable Spanish language support])
   ],
   [
-        AS_IF([ test "${enable_lang_es}" = "yes" -a "${found_saga}" = "no" ],
+        AS_IF([ test "x${enable_lang_es}" = "xyes" -a "x${found_saga}" = "xno" ],
       [AC_MSG_FAILURE([Spanish language support disabled. Reason: Saga was not found.])])
+        AS_IF([ test "x${enable_lang_es}" = "xyes" -a "x${enable_gpl}" = "xno"  ],
+            [AC_MSG_FAILURE([--enable-lang-es requires Saga, that it usually is GPL-3 distributed])])
   ],
   [
-      enable_lang_es="${enable_lang_all}"
-      AS_IF([ test "${enable_lang_es}" = "yes" -a "${found_saga}" = "no" ],
-      [enable_lang_es="no"
-              AC_MSG_WARN([Spanish language support disabled. Reason: Saga was not found.])
-      ])
+      AS_IF([ test "x${enable_gpl}" = "xyes" -a "x${found_saga}" = "xyes" ],
+         [ enable_lang_es="${enable_lang_all}" ],
+         [ enable_lang_es="no" ])
    ])
 
 dnl -------------------- Language analysis ---------------------------
@@ -448,7 +446,7 @@ AC_ARG_ENABLE([cstr_upc_upm_spanish_hts],
   [],
   [enable_cstr_upc_upm_spanish_hts=${enable_voices_spanish}])
 
-AS_IF([test "x$enable_cstr_upc_upm_spanish_hts" != "xno" && test "x$with_hts" = "xno" -o "x$found_saga" = "xno" ],
+AS_IF([test "x$enable_cstr_upc_upm_spanish_hts" = "xyes" && test "x$with_hts" = "xno" -o "x$found_saga" = "xno" ],
     [enable_cstr_upc_upm_spanish_hts="no"
           AC_MSG_WARN([enable_cstr_upc_upm_spanish_hts disabled because hts support or saga support are not available])],
     [])
@@ -571,6 +569,14 @@ AC_SUBST(EXEEXT)
 
 AC_CONFIG_FILES([Makefile mimic.pc])
 AC_OUTPUT
+
+AC_MSG_NOTICE([""])
+AC_MSG_NOTICE(["=== SUMMARY ==="])
+AC_MSG_NOTICE(["Using audio driver: ${AUDIODRIVER}"])
+AC_MSG_NOTICE(["GPL enabled: ${enable_gpl}"])
+AC_MSG_NOTICE(["US English support: ${enable_usenglish}"])
+AC_MSG_NOTICE(["Spanish support: ${enable_lang_es}"])
+AC_MSG_NOTICE(["=== End of SUMMARY ==="])
 
 AS_IF( [ test "${AUDIODRIVER}" = "none" && test "$with_audio" != "none" ],
   [ AC_MSG_WARN([No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk.])
