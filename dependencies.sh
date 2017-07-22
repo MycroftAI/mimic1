@@ -50,7 +50,7 @@ do
     TARGET_FILE=`basename $TARGET_FILE`
 done
 
-# Compute the canonicalized name by finding the physical path 
+# Compute the canonicalized name by finding the physical path
 # for the directory we're in and appending the target file.
 PHYS_DIR=`pwd -P`
 RESULT=$PHYS_DIR/$TARGET_FILE
@@ -160,3 +160,41 @@ fi
 
 cd "${CURDIR}"
 
+if [ "x${enable_gpl}" = "xyes" ]; then
+
+  "$PKG_CONFIG" --exists saga && HAVE_SAGA="yes" || HAVE_SAGA="no"
+  echo "Have SAGA? [${HAVE_SAGA}]"
+
+  if [ "x${HAVE_SAGA}" = "xno" ]; then
+    # Prepare saga source:
+    (mkdir -p "${WORKDIR}/thirdparty/" && \
+      cd "${WORKDIR}/thirdparty" && \
+      wget "https://github.com/TALP-UPC/saga/archive/f0148f86b8bc2c4cf27bb186449c8d88082d0d62.zip" && \
+      echo "3a9b51e922b26397a040b356bafdbbc7  f0148f86b8bc2c4cf27bb186449c8d88082d0d62.zip" | md5sum -c || exit 1
+      mv "f0148f86b8bc2c4cf27bb186449c8d88082d0d62.zip" "saga.zip" || exit 1
+      unzip "saga.zip" &&  \
+      mv "saga-f0148f86b8bc2c4cf27bb186449c8d88082d0d62" "saga" || exit 1
+      cd "saga" && ./autogen.sh)  || exit 1
+    # Build saga
+    mkdir -p "${WORKDIR}/thirdparty/build_saga" || exit 1
+    cd "${WORKDIR}/thirdparty/build_saga" || exit 1
+    ${WORKDIR}/thirdparty/saga/configure --disable-option-checking $@ || exit 1
+    make || exit 1
+    make install && echo "saga installation succeeded" || (
+      cat << EOF
+Saga was successfully compiled. However, it could not be installed.
+The most likely cause is a lack of permissions. This script will try to run
+the installation with sudo, asking your password.
+EOF
+      sudo make install && echo "Saga installation succeeded" || (
+        cat << EOF
+The installation failed. Please run this or check other possible errors:
+  cd "${WORKDIR}/thirdparty/build_saga"
+  sudo make install
+In case you do not have admin permissions you can install everything to a custom
+directory by running dependencies.sh with --prefix="/a/writable/directory"
+EOF
+        exit 1)
+      exit 1 )
+  fi
+fi
