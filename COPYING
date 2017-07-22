@@ -16,9 +16,9 @@ Comment: Mimic is free software
  .
  As a convenience (and without any further legal implications), mimic provides the
  `--disable-gpl` switch at compile time to disable the functionality that requires
- GPL-3 mimic dependencies, as well as the mimic_is_gpl() function, that returns 1
- when mimic is GPL-3 compiled. If you want to avoid GPL-3 at all costs, you can use
- the mimic_is_gpl() function to check if the "virality" of GPL is being spread by
+ GPL-3 mimic dependencies, as well as the mimic_gpl_enabled() function, that returns 1
+ when mimic is GPL-3 compiled. If you want to avoid GPL-3, you can use
+ the mimic_gpl_enabled() function to check if the "virality" of GPL is being spread by
  mimic or not.
 
  https://www.gnu.org/licenses/gpl-faq.html#WhatDoesCompatMean
