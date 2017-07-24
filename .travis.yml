@@ -67,6 +67,6 @@ addons:
       description: "TTS for Mycroft AI"
     notification_email: sergioller@gmail.com
     # build_command_prepend: "<Your build preprocessing command here>"
-    build_command: ./run_testsuite.sh
+    build_command: ./run_testsuite.sh shared
     branch_pattern: coverity_scan
 
