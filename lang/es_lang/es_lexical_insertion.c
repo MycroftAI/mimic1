@@ -45,6 +45,7 @@ char *text_to_phones_sep_words(const char *text, SagaEngine *engine)
     }
     char *phonetrans = SagaEngine_GetFnmPalOutput(engine, 1);
     SagaEngine_Refresh(engine);
+    SagaEngine_ClearOutputs(engine);
     return phonetrans;
 }
 
