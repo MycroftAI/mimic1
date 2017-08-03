@@ -42,7 +42,9 @@
 #include "cst_file.h"
 #include "cst_error.h"
 
+#ifndef DIE_ON_ERROR
 jmp_buf *cst_errjmp = 0;
+#endif
 
 int cst_errmsg(const char *fmt, ...)
 {
@@ -52,6 +54,5 @@ int cst_errmsg(const char *fmt, ...)
     va_start(args, fmt);
     rv = vfprintf(stderr, fmt, args);
     va_end(args);
-
     return rv;
 }

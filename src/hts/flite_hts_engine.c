@@ -62,6 +62,7 @@
 #include "mimic.h"
 #include "cst_synth.h"
 #include "cst_utt_utils.h"
+#include "cst_wave.h"
 
 #include "flite_hts_engine.h"
 
@@ -428,7 +429,7 @@ cst_wave *wave_from_hts_engine(Flite_HTS_Engine * f)
     if (w == NULL)
         return NULL;
     w->samples = rawwave;
-    w->type = cst_strdup("riff");
+    w->type = cst_wave_fmt_riff;
     w->sample_rate = HTS_Engine_get_sampling_frequency(&f->engine);
     w->num_samples = HTS_Engine_get_nsamples(&f->engine);
     w->num_channels = 1;
@@ -521,6 +522,7 @@ cst_utterance *hts_synth(cst_utterance *utt)
 void delete_flitehtsengine(Flite_HTS_Engine * f)
 {
     Flite_HTS_Engine_clear(f);
+    cst_free(f);
     return;
 }
 

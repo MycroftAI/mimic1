@@ -101,6 +101,27 @@ dnl Check libpcre2-8
 PKG_CHECK_MODULES([PCRE2], [libpcre2-8])
 PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpcre2-8"
                                    
+dnl License switch:
+dnl mimic is distributed under permissive BSD-3 like licenses, however
+dnl some of its functionalities depend on software usually available as GPL-3.
+dnl See the COPYING file for more information.
+dnl
+dnl This switch gives the option to disable all features that depend on
+dnl GPL software, so a BSD-like binary mimic version is available.
+AC_ARG_ENABLE([gpl],
+  [AS_HELP_STRING([--disable-gpl],
+       [disable all functionalities that depend on GPL code])],
+  [],
+  [enable_gpl=yes])
+
+AS_IF([ test "x${enable_gpl}" = "xyes"],
+  [ AC_DEFINE([ENABLE_GPL], [1], [Enable GPL code]) ],
+  [ AC_DEFINE([ENABLE_GPL], [0], [Enable GPL code]) ])
+ 
+dnl Check Saga
+PKG_CHECK_MODULES([SAGA], [saga],
+                  [found_saga=yes],
+                  [found_saga=no])
 
 
 dnl
@@ -253,48 +274,41 @@ AC_ARG_ENABLE([lang-indic],
   [enable_lang_indic=${enable_lang_all}])
 
 AC_ARG_ENABLE([lang-es],
-  [AS_HELP_STRING([--enable-lang-es],
-      [(NOT WORKING YET) enable Spanish language support])],
-  [],
-  [enable_lang_es=no])
+  [AS_HELP_STRING([--disable-lang-es],
+      [disable Spanish language support])
+  ],
+  [
+        AS_IF([ test "x${enable_lang_es}" = "xyes" -a "x${found_saga}" = "xno" ],
+      [AC_MSG_FAILURE([Spanish language support disabled. Reason: Saga was not found.])])
+        AS_IF([ test "x${enable_lang_es}" = "xyes" -a "x${enable_gpl}" = "xno"  ],
+            [AC_MSG_FAILURE([--enable-lang-es requires Saga, that it usually is GPL-3 distributed])])
+  ],
+  [
+      AS_IF([ test "x${enable_gpl}" = "xyes" -a "x${found_saga}" = "xyes" ],
+         [ enable_lang_es="${enable_lang_all}" ],
+         [ enable_lang_es="no" ])
+   ])
+
+AS_IF([ test "x${enable_lang_es}" = "xyes" ],
+    [ PKGCONFIG_MIMIC_DEPS="$PKGCONFIG_MIMIC_DEPS saga" ]
+)
 
 dnl -------------------- Language analysis ---------------------------
 dnl For US English en-us:
-AC_ARG_ENABLE([usenglish],
-  [AS_HELP_STRING([--disable-usenglish],
-      [disable US English text analysis support])],
-  [],
-  [enable_usenglish=${enable_lang_english}])
+enable_usenglish="${enable_lang_english}"
 
 dnl For indic:
-AC_ARG_ENABLE([indic_analysis],
-  [AS_HELP_STRING([--disable-indic-analysis],
-      [disable indic text analysis support])],
-  [],
-  [enable_indic_analysis=${enable_lang_indic}])
+enable_indic_analysis="${enable_lang_indic}"
 
-AC_ARG_ENABLE([es_analysis],
-  [AS_HELP_STRING([--disable-es-analysis],
-      [disable Spanish text analysis support])],
-  [],
-  [enable_es_analysis=${enable_lang_es}])
-
+dnl For Spanish:
+enable_es_analysis="${enable_lang_es}"
 
 dnl ------------------- Lexicons ------------------------------
 dnl US Lexicon:
-AC_ARG_ENABLE([cmulex],
-  [AS_HELP_STRING([--disable-cmulex],
-      [disable US English CMU Lexicon support])],
-  [],
-  [enable_cmulex=${enable_lang_english}])
-
+enable_cmulex="${enable_lang_english}"
 
 dnl indic Lexicons:
-AC_ARG_ENABLE([indiclex],
-  [AS_HELP_STRING([--disable-indiclex],
-      [disable indic and grapheme Lexicon support])],
-  [],
-  [enable_indiclex=${enable_lang_indic}])
+enable_indiclex="${enable_lang_indic}"
 
 dnl ----------------- Voices -------------------------------
 
@@ -407,6 +421,27 @@ AS_IF([test "x$enable_vid_gb_ap" != xno],
   [enable_usenglish="yes"
    enable_cmulex="yes"])
 
+dnl Spanish voices:
+AC_ARG_ENABLE([voices-spanish],
+  [AS_HELP_STRING([--disable-voices-spanish],
+      [disable embedding all Spanish voices])],
+  [],
+  [enable_voices_spanish=${enable_voices_all}])
+
+
+dnl cstr_upc_upm_spanish_hts
+AC_ARG_ENABLE([cstr_upc_upm_spanish_hts],
+  [AS_HELP_STRING([--disable-cstr_upc_upm_spanish_hts],
+       [disable cstr_upc_upm_spanish_hts hts voice])],
+  [],
+  [enable_cstr_upc_upm_spanish_hts=${enable_voices_spanish}])
+
+AS_IF([test "x$enable_cstr_upc_upm_spanish_hts" = "xyes" && test "x$with_hts" = "xno" -o "x$found_saga" = "xno" ],
+    [enable_cstr_upc_upm_spanish_hts="no"
+          AC_MSG_WARN([enable_cstr_upc_upm_spanish_hts disabled because hts support or saga support are not available])],
+    [])
+
+
 dnl To generate the pkg-config file .pc we want the libraries in the order
 dnl the linker will need them. For that reason, we first list voices, then
 dnl lexicons then languages and we append the lib required on each case.
@@ -468,6 +503,13 @@ AS_IF([test "x$enable_vid_gb_ap" != xno ],
   ],
   [ AC_DEFINE([ENABLE_VID_GB_AP], [0], [Enable vid_gb_ap voice]) ])
 
+AM_CONDITIONAL([VOICE_CSTR_UPC_UPM_SPANISH_HTS], [test "x$enable_cstr_upc_upm_spanish_hts" != "xno"])
+AS_IF([test "x$enable_cstr_upc_upm_spanish_hts" != "xno" ],
+  [ AC_DEFINE([ENABLE_CSTR_UPC_UPM_SPANISH_HTS], [1], [Enable cstr_upc_upm_spanish_hts voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cstr_upc_upm_spanish_hts"
+  ],
+  [ AC_DEFINE([ENABLE_CSTR_UPC_UPM_SPANISH_HTS], [0], [Enable cstr_upc_upm_spanish_hts voice]) ])
+
 AM_CONDITIONAL([LEX_CMULEX], [test "x$enable_cmulex" != xno])
 AS_IF([test "x$enable_cmulex" != xno ],
   [ AC_DEFINE([ENABLE_CMULEX], [1], [Enable CMU US English lexicon])
@@ -515,6 +557,14 @@ AC_SUBST(EXEEXT)
 
 AC_CONFIG_FILES([Makefile mimic.pc])
 AC_OUTPUT
+
+AC_MSG_NOTICE([""])
+AC_MSG_NOTICE(["=== SUMMARY ==="])
+AC_MSG_NOTICE(["Using audio driver: ${AUDIODRIVER}"])
+AC_MSG_NOTICE(["GPL enabled: ${enable_gpl}"])
+AC_MSG_NOTICE(["US English support: ${enable_usenglish}"])
+AC_MSG_NOTICE(["Spanish support: ${enable_lang_es}"])
+AC_MSG_NOTICE(["=== End of SUMMARY ==="])
 
 AS_IF( [ test "${AUDIODRIVER}" = "none" && test "$with_audio" != "none" ],
   [ AC_MSG_WARN([No audio driver could be determined, and no sound output will be possible. Mimic will work but only be able to write output to disk.])

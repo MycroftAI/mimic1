@@ -1,4 +1,37 @@
 #!/bin/sh
+#POSIX
+
+# Reset all variables that might be set
+enable_gpl="yes"
+
+show_help()
+{
+cat << EOF
+Usage: ${0##*/} [ --enable-gpl | --disable-gpl ] [ other flags passed to configure ]
+Install dependencies for mimic
+
+    -h          display this help and exit
+    --enable-gpl Builds and installs optional GPL-licensed dependencies
+    --disable-gpl Skips GPL dependencies.
+EOF
+}
+
+case $1 in
+  -h|-\?|--help)   # Call a "show_help" function to display a synopsis, then exit.
+    show_help
+    exit
+    ;;
+  --disable-gpl)
+    enable_gpl="no"
+    shift
+    ;;
+  --enable-gpl)
+    enable_gpl="yes"
+    shift
+    ;;
+  *)
+    ;;
+esac
 
 #### This function emulates readlink -f, not available on osx ####
 readlink2()
@@ -17,7 +50,7 @@ do
     TARGET_FILE=`basename $TARGET_FILE`
 done
 
-# Compute the canonicalized name by finding the physical path 
+# Compute the canonicalized name by finding the physical path
 # for the directory we're in and appending the target file.
 PHYS_DIR=`pwd -P`
 RESULT=$PHYS_DIR/$TARGET_FILE
@@ -30,6 +63,51 @@ echo $RESULT
 SCRIPT=$(readlink2 "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
+
+# Install system requirements if any of those are missing.
+# This needs testing on all the platforms
+if [ -f "/etc/arch-release" ]; then
+  pacman -Qs make >/dev/null && \
+   pacman -Qs pkg-config >/dev/null && \
+   pacman -Qs gcc >/dev/null && \
+   pacman -Qs autoconf >/dev/null && \
+   pacman -Qs automake >/dev/null && \
+   pacman -Qs libtool >/dev/null && \
+   pacman -Qs alsa-lib  >/dev/null || \
+      ( cat << EOF
+Some packages are needed and they need to be installed. You can either stop
+this script with Ctrl+C and manually run:
+  sudo pacman -S --needed make pkg-config  gcc autoconf automake libtool alsa-lib
+or give the sudo password now and let the script install those packages for you
+EOF
+      sudo pacman -S --needed make pkg-config  gcc autoconf automake libtool alsa-lib
+     )
+elif [ -f "/etc/debian_version" ]; then
+ dpkg -s gcc make pkg-config automake libtool libasound2-dev 2>/dev/null >/dev/null || \
+    ( cat << EOF
+Some packages are needed and they need to be installed. You can either stop
+this script with Ctrl+C and manually run:
+    sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
+or give the sudo password now and let the script install those packages for you
+EOF
+    sudo apt-get install gcc make pkg-config automake libtool libasound2-dev
+    )
+elif [ -f "/etc/redhat-release" ]; then
+dnf list installed gcc 2>/dev/null >/dev/null && \
+ dnf list installed make 2>/dev/null >/dev/null && \
+ dnf list installed pkgconfig 2>/dev/null >/dev/null && \
+ dnf list installed automake 2>/dev/null >/dev/null && \
+ dnf list installed libtool 2>/dev/null >/dev/null && \
+ dnf list installed alsa-lib-devel 2>/dev/null >/dev/null || \
+  ( cat << EOF
+Some packages are needed and they need to be installed. You can either stop
+this script with Ctrl+C and manually run:
+    sudo dnf install gcc make pkgconfig automake libtool alsa-lib-devel
+or give the sudo password now and let the script install those packages for you
+EOF
+    sudo dnf install gcc make pkgconfig automake libtool alsa-lib-devel
+  )
+fi
 
 CURDIR="$PWD"
 
@@ -82,3 +160,41 @@ fi
 
 cd "${CURDIR}"
 
+if [ "x${enable_gpl}" = "xyes" ]; then
+
+  "$PKG_CONFIG" --exists saga && HAVE_SAGA="yes" || HAVE_SAGA="no"
+  echo "Have SAGA? [${HAVE_SAGA}]"
+
+  if [ "x${HAVE_SAGA}" = "xno" ]; then
+    # Prepare saga source:
+    (mkdir -p "${WORKDIR}/thirdparty/" && \
+      cd "${WORKDIR}/thirdparty" && \
+      wget "https://github.com/TALP-UPC/saga/archive/920a0ab4ef5f287f7521dee190a301b7f2feca37.zip" && \
+      echo "aeb9257c75d4ded6f7d92cc8a439686b  920a0ab4ef5f287f7521dee190a301b7f2feca37.zip" | md5sum -c || exit 1
+      mv "920a0ab4ef5f287f7521dee190a301b7f2feca37.zip" "saga.zip" || exit 1
+      unzip "saga.zip" &&  \
+      mv "saga-920a0ab4ef5f287f7521dee190a301b7f2feca37" "saga" || exit 1
+      cd "saga" && ./autogen.sh)  || exit 1
+    # Build saga
+    mkdir -p "${WORKDIR}/thirdparty/build_saga" || exit 1
+    cd "${WORKDIR}/thirdparty/build_saga" || exit 1
+    ${WORKDIR}/thirdparty/saga/configure --disable-option-checking $@ || exit 1
+    make || exit 1
+    make install && echo "saga installation succeeded" || (
+      cat << EOF
+Saga was successfully compiled. However, it could not be installed.
+The most likely cause is a lack of permissions. This script will try to run
+the installation with sudo, asking your password.
+EOF
+      sudo make install && echo "Saga installation succeeded" || (
+        cat << EOF
+The installation failed. Please run this or check other possible errors:
+  cd "${WORKDIR}/thirdparty/build_saga"
+  sudo make install
+In case you do not have admin permissions you can install everything to a custom
+directory by running dependencies.sh with --prefix="/a/writable/directory"
+EOF
+        exit 1)
+      exit 1 )
+  fi
+fi

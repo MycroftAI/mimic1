@@ -26,6 +26,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "mimic.h"
 
-void es_init(cst_voice *v);
+#include "cst_string.h"
+#include "cst_utterance.h"
+#include "es_lang.h"
+
+cst_utterance *es_intonation(cst_utterance *u)
+{
+    /* This function should visit the "Syllable" relation and assign "accent"
+    * and
+    * "tone" to each syllable.
+    * In Spanish a basic accent model can be to give accent to "content" words
+    * (nouns, verbs, etc)
+    * only on its stressed syllables
+    */
+    cst_item *s;
+    for (s = relation_head(utt_relation(u, "Syllable")); s; s = item_next(s))
+    {
+        if (cst_streq(ffeature_string(s, "R:SylStructure.parent.gpos"),
+                      "content") &&
+            cst_streq(ffeature_string(s, "stress"), "1"))
+        {
+            item_set_string(s, "accent", "accented");
+        }
+    }
+    return u;
+}
