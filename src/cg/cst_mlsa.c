@@ -63,14 +63,12 @@
 #include "cst_wave.h"
 #include "cst_audio.h"
 
-#ifdef ANDROID
-#define SPEED_HACK
-#endif
-
 #include "cst_vc.h"
 #include "cst_cg.h"
 #include "cst_mlsa.h"
 
+/* Bellbird optimized mlsa routines */
+#include "bb_mlsacore.c"
 
 static cst_wave *synthesis_body(const cst_track *params,
                                 const cst_track *str,
@@ -171,7 +169,9 @@ static cst_wave *synthesis_body(const cst_track *params,        /* f0 + mcep */
         return NULL;
     }
     else
+    {
         return wave;
+    }
 }
 
 static void init_vocoder(double fs, int framel, int m, VocoderSetup *vs,
@@ -181,52 +181,36 @@ static void init_vocoder(double fs, int framel, int m, VocoderSetup *vs,
     vs->fprd = framel;
     vs->iprd = 1;
     vs->seed = 1;
-#ifdef SPEED_HACK
-    /* This makes it about 25% faster and sounds basically the same */
-    vs->pd = 4;
-#else
-    vs->pd = 5;
-#endif
 
     vs->next = 1;
     vs->gauss = MTRUE;
 
     /* Pade' approximants */
     vs->pade[0] = 1.0;
-    vs->pade[1] = 1.0;
-    vs->pade[2] = 0.0;
-    vs->pade[3] = 1.0;
-    vs->pade[4] = 0.0;
-    vs->pade[5] = 0.0;
-    vs->pade[6] = 1.0;
-    vs->pade[7] = 0.0;
-    vs->pade[8] = 0.0;
-    vs->pade[9] = 0.0;
-    vs->pade[10] = 1.0;
-    vs->pade[11] = 0.4999273;
-    vs->pade[12] = 0.1067005;
-    vs->pade[13] = 0.01170221;
-    vs->pade[14] = 0.0005656279;
-    vs->pade[15] = 1.0;
-    vs->pade[16] = 0.4999391;
-    vs->pade[17] = 0.1107098;
-    vs->pade[18] = 0.01369984;
-    vs->pade[19] = 0.0009564853;
-    vs->pade[20] = 0.00003041721;
+    vs->pade[1]=0.4999391;
+    vs->pade[2]=0.1107098;
+    vs->pade[3]=0.01369984;
+    vs->pade[4]=0.0009564853;
+    vs->pade[5]=0.00003041721;
 
     vs->rate = fs;
     vs->c =
-        cst_alloc(double, 3 * (m + 1) + 3 * (vs->pd + 1) + vs->pd * (m + 2));
+        cst_alloc(double, 3 * (m + 1) + 3 * (BELL_PORDER + 1)
+                + BELL_PORDER * (m + 4));
+
+    vs->cc = vs->c + m + 1;
+    vs->cinc = vs->cc + m + 1;
+    vs->d1 = vs->cinc + m + 1;
 
     vs->p1 = -1;
     vs->sw = 0;
-    vs->x = 0x55555555;
 
     /* for postfiltering */
     vs->mc = NULL;
     vs->o = 0;
-    vs->d = NULL;
     vs->irleng = 64;
+
+    vs->d2offset = 1;
 
     // for MIXED EXCITATION
     vs->ME_order = cg_db->ME_order;
@@ -391,7 +375,8 @@ static void vocoder(double p, double *mc,
         else
             x *= exp(vs->c[0]) * gain;
 
-        x = mlsadf(x, vs->c, m, cg_db->mlsa_alpha, vs->pd, vs->d1, vs);
+        x = mlsadf(x, vs->c, m, cg_db->mlsa_alpha, vs->d1,
+                   &(vs->d2offset), vs->pade);
         if (x > SHRT_MAX) {
             wav->samples[*pos] = SHRT_MAX;
         }
@@ -399,8 +384,8 @@ static void vocoder(double p, double *mc,
             wav->samples[*pos] = SHRT_MIN;
         }
         else {
-            wav->samples[*pos] = (short) x;    
-        }        
+            wav->samples[*pos] = (short) x;
+        }
         *pos += 1;
 
         if (!--i)
@@ -418,90 +403,6 @@ static void vocoder(double p, double *mc,
     return;
 }
 
-static double mlsadf(double x, double *b, int m, double a, int pd, double *d,
-                     VocoderSetup *vs)
-{
-
-    vs->ppade = &(vs->pade[pd * (pd + 1) / 2]);
-
-    x = mlsadf1(x, b, m, a, pd, d, vs);
-    x = mlsadf2(x, b, m, a, pd, &d[2 * (pd + 1)], vs);
-
-    return (x);
-}
-
-static double mlsadf1(double x, double *b, int m, double a, int pd, double *d,
-                      VocoderSetup *vs)
-{
-    (void) m;
-    double v, out = 0.0, *pt, aa;
-    register int i;
-
-    aa = 1 - a * a;
-    pt = &d[pd + 1];
-
-    for (i = pd; i >= 1; i--)
-    {
-        d[i] = aa * pt[i - 1] + a * d[i];
-        pt[i] = d[i] * b[1];
-        v = pt[i] * vs->ppade[i];
-        x += (1 & i) ? v : -v;
-        out += v;
-    }
-
-    pt[0] = x;
-    out += x;
-
-    return (out);
-}
-
-static double mlsadf2(double x, double *b, int m, double a, int pd, double *d,
-                      VocoderSetup *vs)
-{
-    double v, out = 0.0, *pt;
-    //  double aa;
-    register int i;
-
-    //aa = 1 - a*a;
-    pt = &d[pd * (m + 2)];
-
-    for (i = pd; i >= 1; i--)
-    {
-        pt[i] = mlsafir(pt[i - 1], b, m, a, &d[(i - 1) * (m + 2)]);
-
-        v = pt[i] * vs->ppade[i];
-
-        x += (1 & i) ? v : -v;
-        out += v;
-    }
-
-    pt[0] = x;
-    out += x;
-
-    return (out);
-}
-
-static double mlsafir(double x, double *b, int m, double a, double *d)
-{
-    double y = 0.0;
-    double aa;
-    register int i;
-
-    aa = 1 - a * a;
-
-    d[0] = x;
-    d[1] = aa * d[0] + a * d[1];
-    for (i = 2; i <= m; i++)
-    {
-        d[i] = d[i] + a * (d[i + 1] - d[i - 1]);
-        y += d[i] * b[i];
-    }
-
-    for (i = m + 1; i > 1; i--)
-        d[i] = d[i - 1];
-
-    return (y);
-}
 
 static double nrandom(VocoderSetup *vs)
 {
@@ -528,32 +429,10 @@ static double nrandom(VocoderSetup *vs)
     }
 }
 
-static double rnd(unsigned long *next)
-{
-    double r;
-
-    *next = *next * 1103515245L + 12345;
-    r = (*next / 65536L) % 32768L;
-
-    return (r / RANDMAX);
-}
-
 static unsigned long srnd(unsigned long seed)
 {
     return (seed);
 }
-
-/* mc2b : transform mel-cepstrum to MLSA digital fillter coefficients */
-static void mc2b(double *mc, double *b, int m, double a)
-{
-    b[m] = mc[m];
-
-    for (m--; m >= 0; m--)
-        b[m] = mc[m] - a * b[m + 1];
-
-    return;
-}
-
 
 static double b2en(double *b, int m, double a, VocoderSetup *vs)
 {
@@ -571,8 +450,8 @@ static double b2en(double *b, int m, double a, VocoderSetup *vs)
     }
 
     b2mc(b, vs->mc, m, a);
-    freqt(vs->mc, m, vs->cep, vs->irleng - 1, -a, vs);
-    c2ir(vs->cep, vs->irleng, vs->ir, vs->irleng);
+    freqt(vs->mc, m, vs->cep, vs->irleng, -a);
+    c2ir(vs->cep, vs->irleng, vs->ir);
     en = 0.0;
 
     for (k = 0; k < vs->irleng; k++)
@@ -581,99 +460,16 @@ static double b2en(double *b, int m, double a, VocoderSetup *vs)
     return (en);
 }
 
-
-/* b2bc : transform MLSA digital filter coefficients to mel-cepstrum */
-static void b2mc(double *b, double *mc, int m, double a)
-{
-    double d, o;
-
-    d = mc[m] = b[m];
-    for (m--; m >= 0; m--)
-    {
-        o = b[m] + a * d;
-        d = b[m];
-        mc[m] = o;
-    }
-
-    return;
-}
-
-/* freqt : frequency transformation */
-static void freqt(double *c1, int m1, double *c2, int m2, double a,
-                  VocoderSetup *vs)
-{
-    register int i, j;
-    double b;
-
-    if (vs->d == NULL)
-    {
-        vs->size = m2;
-        vs->d = cst_alloc(double, vs->size + vs->size + 2);
-        vs->g = vs->d + vs->size + 1;
-    }
-
-    if (m2 > vs->size)
-    {
-        cst_free(vs->d);
-        vs->size = m2;
-        vs->d = cst_alloc(double, vs->size + vs->size + 2);
-        vs->g = vs->d + vs->size + 1;
-    }
-
-    b = 1 - a * a;
-    for (i = 0; i < m2 + 1; i++)
-        vs->g[i] = 0.0;
-
-    for (i = -m1; i <= 0; i++)
-    {
-        if (0 <= m2)
-            vs->g[0] = c1[-i] + a * (vs->d[0] = vs->g[0]);
-        if (1 <= m2)
-            vs->g[1] = b * vs->d[0] + a * (vs->d[1] = vs->g[1]);
-        for (j = 2; j <= m2; j++)
-            vs->g[j] =
-                vs->d[j - 1] + a * ((vs->d[j] = vs->g[j]) - vs->g[j - 1]);
-    }
-
-    memmove(c2, vs->g, sizeof(double) * (m2 + 1));
-
-    return;
-}
-
-/* c2ir : The minimum phase impulse response is evaluated from the minimum phase cepstrum */
-static void c2ir(double *c, int nc, double *h, int leng)
-{
-    register int n, k, upl;
-    double d;
-
-    h[0] = exp(c[0]);
-    for (n = 1; n < leng; n++)
-    {
-        d = 0;
-        upl = (n >= nc) ? nc - 1 : n;
-        for (k = 1; k <= upl; k++)
-            d += k * c[k] * h[n - k];
-        h[n] = d / n;
-    }
-
-    return;
-}
-
 static void free_vocoder(VocoderSetup *vs)
 {
-
     cst_free(vs->c);
     cst_free(vs->mc);
-    cst_free(vs->d);
 
     vs->c = NULL;
     vs->mc = NULL;
-    vs->d = NULL;
-    vs->ppade = NULL;
     vs->cc = NULL;
     vs->cinc = NULL;
     vs->d1 = NULL;
-    vs->g = NULL;
     vs->cep = NULL;
     vs->ir = NULL;
 
