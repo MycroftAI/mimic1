@@ -262,6 +262,7 @@ static double rnd(unsigned long *next)
    return(r/RANDMAX);
 }
 
+#ifndef HTS_IMP
 static void mc2b (double *mc, double *b, int m, const double a)
 {
 // transform mel-cepstrum to MLSA digital filter coefficients
@@ -272,7 +273,7 @@ static void mc2b (double *mc, double *b, int m, const double a)
 
    return;
 }
-
+#endif // HTS_IMP
 static void b2mc(const double *b, double *mc, int m, const double a)
 {
 // transform MLSA digital filter coefficients to mel-cepstrum
@@ -286,6 +287,7 @@ static void b2mc(const double *b, double *mc, int m, const double a)
    }
 }
 
+#ifndef HTS_IMP
 static void c2ir (const double * const cep, const int irleng, double *ir)
 {
 // minimum phase impulse response is evaluated from the minimum phase cepstrum
@@ -302,3 +304,4 @@ static void c2ir (const double * const cep, const int irleng, double *ir)
 
    return;
 }
+#endif

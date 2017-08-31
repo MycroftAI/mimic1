@@ -68,7 +68,7 @@
 #include "cst_mlsa.h"
 
 /* Bellbird optimized mlsa routines */
-#include "bb_mlsacore.c"
+#include "../filter/bb_mlsacore.c"
 
 static cst_wave *synthesis_body(const cst_track *params,
                                 const cst_track *str,
