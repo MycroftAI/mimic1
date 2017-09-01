@@ -224,6 +224,15 @@ AC_SUBST(AUDIODEFS)
 AC_SUBST(AUDIOLIBS)
 
 dnl
+dnl extra binaries parameter
+dnl
+AC_ARG_ENABLE([extra-bins],
+  [AS_HELP_STRING([--disable-extra-bins],
+      [only build mimic binary])],
+  [],
+  [enable_extra_bins=yes])
+
+dnl
 dnl language/lexicon/voice parameters 
 dnl
 dnl By default all languages, lexicons and voices are compiled
@@ -492,6 +501,7 @@ AS_IF([test "x$enable_indic_analysis" != xno ],
   ],
   [ AC_DEFINE([ENABLE_INDIC_ANALYSIS], [0], [Enable Indic text analysis]) ])
 
+AM_CONDITIONAL([EXTRA_BINS], [test "x$enable_extra_bins" = xyes])
 AM_CONDITIONAL([LANG_USENGLISH], [test "x$enable_usenglish" != xno])
 AS_IF([test "x$enable_usenglish" != xno ],
   [ AC_DEFINE([ENABLE_USENGLISH], [1], [Enable US English text analysis])

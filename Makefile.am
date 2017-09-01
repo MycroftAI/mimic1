@@ -617,10 +617,15 @@ libttsmimic_la_LIBADD += $(AUDIOLIBS) -lm
 
 ################# main ########################
 
-bin_PROGRAMS = mimic compile_regexes mimicvox_info
+bin_PROGRAMS = mimic
+if EXTRA_BINS
+  bin_PROGRAMS += compile_regexes mimicvox_info
+endif
 if LANG_USENGLISH
 if LEX_CMULEX
+if EXTRA_BINS
   bin_PROGRAMS += t2p mimic_time
+endif
 endif
 endif
 
