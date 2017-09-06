@@ -74,3 +74,4 @@ Richard Sproat and Kyoung-young Kim (UIUC)
    Unitran: unicode to sampa grapheme mapping tables
 Sun Microsystems
    g72x code
+Peter Drysdale: Hand optimized mlsa routine

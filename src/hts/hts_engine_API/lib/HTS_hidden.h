@@ -446,13 +446,13 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
 
 #ifdef HTS_EMBEDDED
 #define GAUSS     FALSE
-#define PADEORDER 4             /* pade order (for MLSA filter) */
 #define IRLENG    384           /* length of impulse response */
 #else
 #define GAUSS     TRUE
-#define PADEORDER 5
 #define IRLENG    576
 #endif                          /* HTS_EMBEDDED */
+
+#define PADEORDER 5
 
 #define CHECK_LSP_STABILITY_MIN 0.25
 #define CHECK_LSP_STABILITY_NUM 4
@@ -494,6 +494,7 @@ typedef struct _HTS_Vocoder {
    size_t lsp2lpc_size;         /* buffer size of lsp2lpc */
    double *gc2gc_buff;          /* used in gc2gc */
    size_t gc2gc_size;           /* buffer size for gc2gc */
+   int d2offset;
 } HTS_Vocoder;
 
 /* HTS_Vocoder_initialize: initialize vocoder */
