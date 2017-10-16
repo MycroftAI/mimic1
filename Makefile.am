@@ -1,7 +1,9 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(PCRE2_CFLAGS)
-
+AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include
+if LANG_ES_ANALYSIS
+AM_CPPFLAGS += $(PCRE2_CFLAGS)
+endif
 SUBDIRS = .
 
 # instead of pkgincludedir we will use $(includedir)/ttsmimic
@@ -18,8 +20,11 @@ lib_LTLIBRARIES += libttsmimic.la
 libttsmimic_la_SOURCES = 
 libttsmimic_la_CFLAGS =
 libttsmimic_la_LDFLAGS = -no-undefined
-libttsmimic_la_LIBADD = $(PCRE2_LIBS)
+libttsmimic_la_LIBADD =
 
+if LANG_ES_ANALYSIS
+libttsmimic_la_LIBADD += $(PCRE2_LIBS)
+endif
 libttsmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
 libttsmimic_lang_all_langs_la_LDFLAGS = -no-undefined
 libttsmimic_lang_all_langs_la_LIBADD = libttsmimic.la
@@ -617,15 +622,10 @@ libttsmimic_la_LIBADD += $(AUDIOLIBS) -lm
 
 ################# main ########################
 
-bin_PROGRAMS = mimic
-if EXTRA_BINS
-  bin_PROGRAMS += compile_regexes mimicvox_info
-endif
+bin_PROGRAMS = mimic compile_regexes mimicvox_info
 if LANG_USENGLISH
 if LEX_CMULEX
-if EXTRA_BINS
   bin_PROGRAMS += t2p mimic_time
-endif
 endif
 endif
 
@@ -659,10 +659,13 @@ noinst_HEADERS += unittests/cutest.h
 
 myunittests = unittests/hrg_test \
               unittests/regex_test \
-              unittests/string_test \
               unittests/token_test \
               unittests/voice_select \
               unittests/wave_test
+
+if LANG_ES_ANALYSIS
+myunittests += unittests/string_test
+endif
 
 unittests_hrg_test_SOURCES = unittests/hrg_test_main.c
 unittests_hrg_test_LDADD = libttsmimic.la
@@ -706,9 +709,11 @@ unittests_nums_test_LDADD = libttsmimic.la \
 unittests_regex_test_SOURCES = unittests/regex_test_main.c
 unittests_regex_test_LDADD = libttsmimic.la
 
+
+if LANG_ES_ANALYSIS
 unittests_string_test_SOURCES = unittests/string_test_main.c
 unittests_string_test_LDADD = libttsmimic.la $(PCRE2_LIBS)
-
+endif
 
 unittests_token_test_SOURCES = unittests/token_test_main.c
 unittests_token_test_CFLAGS = -DTEST_FILE=\"$(top_srcdir)/unittests/data.one\" \
