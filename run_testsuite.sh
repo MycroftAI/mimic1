@@ -207,12 +207,14 @@ do_gcov()
 
 case "${WHAT_TO_RUN}" in
   osx)
+    brew update
     brew install pkg-config automake libtool portaudio pcre2
     set_build_and_install_dir
     run_mimic_autogen
     compile_mimic
     ;;
   ios)
+    brew update
     brew install pkg-config automake libtool md5sha1sum
     run_mimic_autogen
     # arm64
