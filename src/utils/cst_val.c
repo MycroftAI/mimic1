@@ -494,7 +494,12 @@ cst_val *cst_utf8_explode(const cst_string *utf8string)
     while ((c0 = *str))
     {
         charlength = utf8_sequence_length(c0);
-        snprintf(utf8char, charlength + 1, "%s", str);
+        if (charlength > 0)
+        {
+            memcpy(utf8char, str, charlength);
+        }
+        utf8char[charlength] = 0;
+
         chars = cons_val(string_val(utf8char), chars);
         str += charlength;
     }

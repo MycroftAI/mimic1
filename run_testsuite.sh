@@ -207,12 +207,14 @@ do_gcov()
 
 case "${WHAT_TO_RUN}" in
   osx)
+    brew update
     brew install pkg-config automake libtool portaudio pcre2
     set_build_and_install_dir
     run_mimic_autogen
     compile_mimic
     ;;
   ios)
+    brew update
     brew install pkg-config automake libtool md5sha1sum
     run_mimic_autogen
     # arm64
@@ -382,7 +384,7 @@ case "${WHAT_TO_RUN}" in
     crosscompile_portaudio --disable-shared --enable-static
     crosscompile_mimic  --disable-shared --enable-static --with-audio=portaudio
     put_dll_in_bindir
-    test_windows_build
+    #test_windows_build
     ;;
   winbuild_shared)
     set_build_and_install_dir
@@ -393,7 +395,7 @@ case "${WHAT_TO_RUN}" in
     fix_portaudio_pc_file
     crosscompile_mimic --enable-shared --with-audio=portaudio
     put_dll_in_bindir
-    test_windows_build
+    #test_windows_build
     ;;
   *)
     echo "Unknown WHAT_TO_RUN: ${WHAT_TO_RUN}"

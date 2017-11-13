@@ -43,11 +43,11 @@ matrix:
       dist: trusty
       compiler: i686-w64-mingw32-gcc
       addons: {apt: {packages: [wine, xvfb, binutils-mingw-w64-i686, mingw-w64-i686-dev, gcc-mingw-w64-i686]}}
-    - env: TASK="winbuild_shared" # windows build shared libraries
-      os: linux
-      dist: trusty
-      compiler: i686-w64-mingw32-gcc
-      addons: {apt: {packages: [wine, xvfb, binutils-mingw-w64-i686, mingw-w64-i686-dev, gcc-mingw-w64-i686]}}
+      #    - env: TASK="winbuild_shared" # windows build shared libraries
+      #os: linux
+      #dist: trusty
+      #compiler: i686-w64-mingw32-gcc
+      #addons: {apt: {packages: [wine, xvfb, binutils-mingw-w64-i686, mingw-w64-i686-dev, gcc-mingw-w64-i686]}}
 
 
 script:
