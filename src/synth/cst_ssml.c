@@ -200,8 +200,23 @@ static cst_utterance *ssml_apply_tag(const char *tag,
         {
             /* Note SSML doesn't do stretch it does reciprical of stretch */
             if (cst_streq("rate", get_param_string(attributes, "_name0", "")))
-                feat_set_float(word_feats, "local_duration_stretch",
-                               1.0 / feat_float(attributes, "_val0"));
+            {
+                float val = feat_float(attributes, "_val0");
+                const char *str = feat_string(attributes, "_val0");
+                if (cst_streq(str, "x-slow"))
+                    val = 0.3;
+                if (cst_streq(str, "slow"))
+                    val = 0.5;
+                if (cst_streq(str, "fast"))
+                    val = 1.5;
+                if (cst_streq(str, "x-fast"))
+                    val = 2.0;
+                if (cst_streq(str, "medium"))
+                    val = 1.0;
+                if (val > 0)
+                    feat_set_float(word_feats, "local_duration_stretch",
+                                   1.0 / val);
+            }
             // volume is stored in _name1
             if (cst_streq
                 ("volume", get_param_string(attributes, "_name1", "")))
