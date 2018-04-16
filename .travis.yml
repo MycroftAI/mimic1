@@ -9,14 +9,18 @@ matrix:
 # workaround travis error:
 # /Users/travis/build.sh: line 159: shell_session_update: command not found
 # https://github.com/bizz84/SwiftyStoreKit/commit/68a67eef94670964e62ea473860b82780c386c77
-      before_install: rvm get stable
+      before_install:
+        - gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 || curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+        - rvm get stable
     - env: TASK="ios"
       os: osx
       compiler: clang
 # workaround travis error:
 # /Users/travis/build.sh: line 159: shell_session_update: command not found
 # https://github.com/bizz84/SwiftyStoreKit/commit/68a67eef94670964e62ea473860b82780c386c77
-      before_install: rvm get stable 
+      before_install:
+        - gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 || curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+        - rvm get stable
     - env: TASK="coverage" # code coverage
       os: linux
       dist: trusty

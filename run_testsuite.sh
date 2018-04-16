@@ -242,107 +242,107 @@ case "${WHAT_TO_RUN}" in
     make install) || exit 1
 
     # armv7
-    MIMIC_INSTALL_DIR=`pwd`"/install/ios_armv7"
-    export WORKDIR=`pwd`"/builds/ios_armv7"
-    mkdir -p "${MIMIC_INSTALL_DIR}"
-    mkdir -p "${WORKDIR}"
-    export CC="xcrun -sdk iphoneos clang -arch armv7"
-    export CFLAGS="-Ofast -mios-version-min=5.0"
-    export LDFLAGS="-flto"
-(cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}" \
-      --host=arm ) || exit 1
-  (cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/configure \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none --disable-voices-all \
-      CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphoneos clang -arch armv7" --host=arm && \
-    make -j ${NCORES} && \
-    make install) || exit 1
+#    MIMIC_INSTALL_DIR=`pwd`"/install/ios_armv7"
+#    export WORKDIR=`pwd`"/builds/ios_armv7"
+#    mkdir -p "${MIMIC_INSTALL_DIR}"
+#    mkdir -p "${WORKDIR}"
+#    export CC="xcrun -sdk iphoneos clang -arch armv7"
+#    export CFLAGS="-Ofast -mios-version-min=5.0"
+#    export LDFLAGS="-flto"
+#(cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}" \
+#      --host=arm ) || exit 1
+#  (cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/configure \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}" \
+#      --with-audio=none --disable-voices-all \
+#      CFLAGS="-Ofast -mios-version-min=5.0" LDFLAGS="-flto" CC="xcrun -sdk iphoneos clang -arch armv7" --host=arm && \
+#    make -j ${NCORES} && \
+#    make install) || exit 1
 
     # armv7s
-    MIMIC_INSTALL_DIR=`pwd`"/install/ios_armv7s"
-    export WORKDIR=`pwd`"/builds/ios_armv7s"
-    mkdir -p "${MIMIC_INSTALL_DIR}"
-    mkdir -p "${WORKDIR}"
-    export CC="xcrun -sdk iphoneos clang -arch armv7s"
-    export CFLAGS="-Ofast -mios-version-min=5.0"
-    export LDFLAGS="-flto"
-(cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}" \
-      --host=arm ) || exit 1
-  (cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/configure \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none --disable-voices-all \
-      --host=arm && \
-    make -j ${NCORES} && \
-    make install) || exit 1
+#    MIMIC_INSTALL_DIR=`pwd`"/install/ios_armv7s"
+#    export WORKDIR=`pwd`"/builds/ios_armv7s"
+#    mkdir -p "${MIMIC_INSTALL_DIR}"
+#    mkdir -p "${WORKDIR}"
+#    export CC="xcrun -sdk iphoneos clang -arch armv7s"
+#    export CFLAGS="-Ofast -mios-version-min=5.0"
+#    export LDFLAGS="-flto"
+#(cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}" \
+#      --host=arm ) || exit 1
+#  (cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/configure \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}" \
+#      --with-audio=none --disable-voices-all \
+#      --host=arm && \
+#    make -j ${NCORES} && \
+#    make install) || exit 1
 
   # i386
-    MIMIC_INSTALL_DIR=`pwd`"/install/ios_i386"
-    export WORKDIR=`pwd`"/builds/ios_i386"
-    mkdir -p "${MIMIC_INSTALL_DIR}"
-    mkdir -p "${WORKDIR}"
-    export CC="xcrun -sdk iphonesimulator clang -arch i386"
-    export CFLAGS="-Ofast -mios-version-min=5.0"
-    export LDFLAGS="-flto"
-(cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}"  ) || exit 1
-  (cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/configure \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none --disable-voices-all && \
-    make -j ${NCORES} && \
-    make install) || exit 1
+#    MIMIC_INSTALL_DIR=`pwd`"/install/ios_i386"
+#    export WORKDIR=`pwd`"/builds/ios_i386"
+#    mkdir -p "${MIMIC_INSTALL_DIR}"
+#    mkdir -p "${WORKDIR}"
+#    export CC="xcrun -sdk iphonesimulator clang -arch i386"
+#    export CFLAGS="-Ofast -mios-version-min=5.0"
+#    export LDFLAGS="-flto"
+#(cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}"  ) || exit 1
+#  (cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/configure \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}" \
+#      --with-audio=none --disable-voices-all && \
+#    make -j ${NCORES} && \
+#    make install) || exit 1
 
   # x86_64
-    MIMIC_INSTALL_DIR=`pwd`"/install/ios_x86_64"
-    export WORKDIR=`pwd`"/builds/ios_x86_64"
-    mkdir -p "${MIMIC_INSTALL_DIR}"
-    mkdir -p "${WORKDIR}"
-    export CC="xcrun -sdk iphonesimulator clang -arch x86_64"
-    export CFLAGS="-Ofast -mios-version-min=5.0"
-    export LDFLAGS="-flto"
-(cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}"  ) || exit 1
-  (cd "$WORKDIR" && \
-    ${MIMIC_TOP_SRCDIR}/configure \
-      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
-      PKG_CONFIG_LIBDIR="" \
-      --prefix="${MIMIC_INSTALL_DIR}" \
-      --with-audio=none --disable-voices-all && \
-    make -j ${NCORES} && \
-    make install) || exit 1
+#    MIMIC_INSTALL_DIR=`pwd`"/install/ios_x86_64"
+#    export WORKDIR=`pwd`"/builds/ios_x86_64"
+#    mkdir -p "${MIMIC_INSTALL_DIR}"
+#    mkdir -p "${WORKDIR}"
+#    export CC="xcrun -sdk iphonesimulator clang -arch x86_64"
+#    export CFLAGS="-Ofast -mios-version-min=5.0"
+#    export LDFLAGS="-flto"
+#(cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/dependencies.sh \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}"  ) || exit 1
+#  (cd "$WORKDIR" && \
+#    ${MIMIC_TOP_SRCDIR}/configure \
+#      PKG_CONFIG_PATH="${MIMIC_INSTALL_DIR}/lib/pkgconfig" \
+#      PKG_CONFIG_LIBDIR="" \
+#      --prefix="${MIMIC_INSTALL_DIR}" \
+#      --with-audio=none --disable-voices-all && \
+#    make -j ${NCORES} && \
+#    make install) || exit 1
 
-    echo "Building Universal Static Lib"
-    mkdir -p "install/ios_universal"
-    # run lipo to link binaries
-    for mylib in `ls install/ios_armv7/lib/*.a`; do
-        libname=`basename "${mylib}"`
-        echo "Processing ${libname} using lipo..."
-    xcrun lipo -create `find install/*/lib -name "${libname}"` -o "install/ios_universal/${libname}.a" || exit 1
-    done
-    cp -r "install/ios_armv7/include" "install/ios_universal/"
-    echo "Universal lib found in install/ios_universal"
+#    echo "Building Universal Static Lib"
+#    mkdir -p "install/ios_universal"
+#    # run lipo to link binaries
+#    for mylib in `ls install/ios_armv7/lib/*.a`; do
+#        libname=`basename "${mylib}"`
+#        echo "Processing ${libname} using lipo..."
+#    xcrun lipo -create `find install/*/lib -name "${libname}"` -o "install/ios_universal/${libname}.a" || exit 1
+#    done
+#    cp -r "install/ios_armv7/include" "install/ios_universal/"
+#    echo "Universal lib found in install/ios_universal"
 
     ;;
   coverage)
