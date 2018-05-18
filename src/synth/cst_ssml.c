@@ -96,6 +96,8 @@ static cst_features *ssml_get_attributes(cst_tokenstream *ts)
         /* I want names and values to be const */
         fnn = "_name0";
         vnn = "_val0";
+        // Tags with more than one attribute need to have additional
+        // attributes defined here.
         if (cst_streq("volume", name))
         {
             fnn = "_name1";
