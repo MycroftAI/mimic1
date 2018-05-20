@@ -108,7 +108,7 @@ static cst_features *ssml_get_attributes(cst_tokenstream *ts)
             fnn = "_name2";
             vnn = "_val2";
         }
-        else if (cst_streq("pitch_precision", name))
+        else if (cst_streq("range", name))
         {
             fnn = "_name3";
             vnn = "_val3";
@@ -222,10 +222,12 @@ static cst_utterance *ssml_apply_tag(const char *tag,
             {
                 feat_set_float(word_feats, "local_f0_mean", feat_float(attributes, "_val2"));
             }
-            // pitch_precision is stored in _name3
-            if (cst_streq("pitch_precision", get_param_string(attributes, "_name3", "")))
+            // range is stored in _name3
+            if (cst_streq("range", get_param_string(attributes, "_name3", "")))
             {
-                feat_set_float(word_feats, "local_f0_precision", feat_float(attributes, "_val3"));
+                feat_set_float(word_feats, "local_f0_range",
+                               // shift by + 1.0 to allow 0.0 to be passed.
+                               feat_float(attributes, "_val3") + 1.0);
             }
         }
         else if (cst_streq("end", feat_string(attributes, "_type")))
@@ -233,7 +235,7 @@ static cst_utterance *ssml_apply_tag(const char *tag,
             feat_remove(word_feats, "local_duration_stretch");
             feat_remove(word_feats, "local_gain");
             feat_remove(word_feats, "local_f0_mean");
-            feat_remove(word_feats, "local_f0_precision");
+            feat_remove(word_feats, "local_f0_range");
         }
 
     }

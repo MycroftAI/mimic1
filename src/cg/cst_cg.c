@@ -467,13 +467,14 @@ static void cg_smooth_F0(cst_utterance *utt, cst_cg_db *cg_db,
             {
                 mean = local_f0_mean;
             }
-            float local_f0_precision =
+            float local_f0_range =
             ffeature_float(mcep,
                 "R:mcep_link.parent.R:segstate.parent.R:SylStructure.parent.parent.R:Token.parent.local_f0_precision"
             );
-            if (local_f0_precision <= 1.0)
+            if (local_f0_range > 0.0)
             {
-                stddev = base_stddev * (1.0 - local_f0_precision);
+                /* feature_float returns 0 by default, shifted to allow 0 to be passed. */
+                stddev = local_f0_range - 1.0;
             }
             /* scale the F0 -- which normally wont change it at all */
             param_track->frames[i][0] =
