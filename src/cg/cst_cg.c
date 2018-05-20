@@ -457,6 +457,22 @@ static void cg_smooth_F0(cst_utterance *utt, cst_cg_db *cg_db,
     {
         if (voiced_frame(mcep))
         {
+            float local_f0_mean =
+            ffeature_float(mcep,
+                "R:mcep_link.parent.R:segstate.parent.R:SylStructure.parent.parent.R:Token.parent.local_f0_mean"
+            );
+            if (local_f0_mean != 0.0)
+            {
+                mean = local_f0_mean;
+            }
+            float local_f0_precision =
+            ffeature_float(mcep,
+                "R:mcep_link.parent.R:segstate.parent.R:SylStructure.parent.parent.R:Token.parent.local_f0_precision"
+            );
+            if (local_f0_precision <= 1.0)
+            {
+                stddev = stddev * (1.0 - local_f0_precision);
+            }
             /* scale the F0 -- which normally wont change it at all */
             param_track->frames[i][0] =
                 (((param_track->frames[i][0] -

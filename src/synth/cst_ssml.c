@@ -103,6 +103,16 @@ static cst_features *ssml_get_attributes(cst_tokenstream *ts)
             fnn = "_name1";
             vnn = "_val1";
         }
+        else if (cst_streq("pitch", name))
+        {
+            fnn = "_name2";
+            vnn = "_val2";
+        }
+        else if (cst_streq("pitch_precision", name))
+        {
+            fnn = "_name3";
+            vnn = "_val3";
+        }
         if (cst_streq(name, "/"))
             feat_set_string(a, "_type", "startend");
         else
@@ -207,6 +217,16 @@ static cst_utterance *ssml_apply_tag(const char *tag,
                 ("volume", get_param_string(attributes, "_name1", "")))
                 feat_set_float(word_feats, "local_gain",
                                feat_float(attributes, "_val1") / 100.0);
+            // pitch is stored in _name2
+            if (cst_streq("pitch", get_param_string(attributes, "_name2", "")))
+            {
+                feat_set_float(word_feats, "local_f0_mean", feat_float(attributes, "_val2"));
+            }
+            // pitch_precision is stored in _name3
+            if (cst_streq("pitch_precision", get_param_string(attributes, "_name3", "")))
+            {
+                feat_set_float(word_feats, "local_f0_precision", feat_float(attributes, "_val3"));
+            }
         }
         else if (cst_streq("end", feat_string(attributes, "_type")))
         {
