@@ -232,6 +232,8 @@ static cst_utterance *ssml_apply_tag(const char *tag,
         {
             feat_remove(word_feats, "local_duration_stretch");
             feat_remove(word_feats, "local_gain");
+            feat_remove(word_feats, "local_f0_mean");
+            feat_remove(word_feats, "local_f0_precision");
         }
 
     }
