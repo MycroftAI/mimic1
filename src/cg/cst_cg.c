@@ -469,7 +469,7 @@ static void cg_smooth_F0(cst_utterance *utt, cst_cg_db *cg_db,
             }
             float local_f0_range =
             ffeature_float(mcep,
-                "R:mcep_link.parent.R:segstate.parent.R:SylStructure.parent.parent.R:Token.parent.local_f0_precision"
+                "R:mcep_link.parent.R:segstate.parent.R:SylStructure.parent.parent.R:Token.parent.local_f0_range"
             );
             if (local_f0_range > 0.0)
             {
