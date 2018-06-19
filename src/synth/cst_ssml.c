@@ -94,12 +94,11 @@ static cst_features *ssml_get_attributes(cst_tokenstream *ts)
     while (!cst_streq(">", name))
     {
         /* I want names and values to be const */
-        if (i == 0)
-        {
-            fnn = "_name0";
-            vnn = "_val0";
-        }
-        else
+        fnn = "_name0";
+        vnn = "_val0";
+        // Tags with more than one attribute need to have additional
+        // attributes defined here.
+        if (cst_streq("volume", name))
         {
             fnn = "_name1";
             vnn = "_val1";
@@ -203,13 +202,7 @@ static cst_utterance *ssml_apply_tag(const char *tag,
             if (cst_streq("rate", get_param_string(attributes, "_name0", "")))
                 feat_set_float(word_feats, "local_duration_stretch",
                                1.0 / feat_float(attributes, "_val0"));
-            if (cst_streq("rate", get_param_string(attributes, "_name1", "")))
-                feat_set_float(word_feats, "local_duration_stretch",
-                               1.0 / feat_float(attributes, "_val1"));
-            if (cst_streq
-                ("volume", get_param_string(attributes, "_name0", "")))
-                feat_set_float(word_feats, "local_gain",
-                               feat_float(attributes, "_val0") / 100.0);
+            // volume is stored in _name1
             if (cst_streq
                 ("volume", get_param_string(attributes, "_name1", "")))
                 feat_set_float(word_feats, "local_gain",
