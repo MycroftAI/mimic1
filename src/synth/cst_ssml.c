@@ -576,12 +576,19 @@ int mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
     int err;
     cst_wave *w;
 
+    // Workaround for the case "hello: there" (colon before the last word)
+    // In above case the last word won't be generated.
+    // Below is a workaround adding a silent space at the end of the sentence
+    // TODO fix for real
+    char * new_text = malloc(strlen(text) + 2);
+    sprintf(new_text, "%s ", text);
+
     if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
     {
         return -EINVAL;
     }
 
-    if ((ts = ts_open_string(text,
+    if ((ts = ts_open_string(new_text,
                              get_param_string(voice->features,
                                               "text_whitespace", NULL),
                              get_param_string(voice->features,
