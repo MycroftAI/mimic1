@@ -108,7 +108,7 @@ sudo apt-get install gcc make pkg-config automake libtool mingw32 mingw32-runtim
   
 - Navigate to mimic directory
   ```
-  $ cd mimic
+  $ cd mimic1
   ```
 
 - Build and install missing dependencies (pcre2)
