@@ -1,6 +1,11 @@
 language: c
 sudo: false
 
+branches:
+  only:
+    - master
+    - development
+
 matrix:
   include:
     - env: TASK="osx"
