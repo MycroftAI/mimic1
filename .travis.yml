@@ -1,6 +1,11 @@
 language: c
 sudo: false
 
+branches:
+  only:
+    - master
+    - development
+
 matrix:
   include:
     - env: TASK="osx"
@@ -53,6 +58,9 @@ matrix:
       #compiler: i686-w64-mingw32-gcc
       #addons: {apt: {packages: [wine, xvfb, binutils-mingw-w64-i686, mingw-w64-i686-dev, gcc-mingw-w64-i686]}}
 
+jobs:
+    allow_failures:
+        - env: TASK="ios"
 
 script:
   - ./run_testsuite.sh "$TASK"
