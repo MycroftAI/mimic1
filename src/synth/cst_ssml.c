@@ -94,15 +94,24 @@ static cst_features *ssml_get_attributes(cst_tokenstream *ts)
     while (!cst_streq(">", name))
     {
         /* I want names and values to be const */
-        if (i == 0)
-        {
-            fnn = "_name0";
-            vnn = "_val0";
-        }
-        else
+        fnn = "_name0";
+        vnn = "_val0";
+        // Tags with more than one attribute need to have additional
+        // attributes defined here.
+        if (cst_streq("volume", name))
         {
             fnn = "_name1";
             vnn = "_val1";
+        }
+        else if (cst_streq("pitch", name))
+        {
+            fnn = "_name2";
+            vnn = "_val2";
+        }
+        else if (cst_streq("range", name))
+        {
+            fnn = "_name3";
+            vnn = "_val3";
         }
         if (cst_streq(name, "/"))
             feat_set_string(a, "_type", "startend");
@@ -201,24 +210,47 @@ static cst_utterance *ssml_apply_tag(const char *tag,
         {
             /* Note SSML doesn't do stretch it does reciprical of stretch */
             if (cst_streq("rate", get_param_string(attributes, "_name0", "")))
-                feat_set_float(word_feats, "local_duration_stretch",
-                               1.0 / feat_float(attributes, "_val0"));
-            if (cst_streq("rate", get_param_string(attributes, "_name1", "")))
-                feat_set_float(word_feats, "local_duration_stretch",
-                               1.0 / feat_float(attributes, "_val1"));
-            if (cst_streq
-                ("volume", get_param_string(attributes, "_name0", "")))
-                feat_set_float(word_feats, "local_gain",
-                               feat_float(attributes, "_val0") / 100.0);
+            {
+                float val = feat_float(attributes, "_val0");
+                const char *str = feat_string(attributes, "_val0");
+                if (cst_streq(str, "x-slow"))
+                    val = 0.3;
+                if (cst_streq(str, "slow"))
+                    val = 0.5;
+                if (cst_streq(str, "fast"))
+                    val = 1.5;
+                if (cst_streq(str, "x-fast"))
+                    val = 2.0;
+                if (cst_streq(str, "medium"))
+                    val = 1.0;
+                if (val > 0)
+                    feat_set_float(word_feats, "local_duration_stretch",
+                                   1.0 / val);
+            }
+            // volume is stored in _name1
             if (cst_streq
                 ("volume", get_param_string(attributes, "_name1", "")))
                 feat_set_float(word_feats, "local_gain",
                                feat_float(attributes, "_val1") / 100.0);
+            // pitch is stored in _name2
+            if (cst_streq("pitch", get_param_string(attributes, "_name2", "")))
+            {
+                feat_set_float(word_feats, "local_f0_mean", feat_float(attributes, "_val2"));
+            }
+            // range is stored in _name3
+            if (cst_streq("range", get_param_string(attributes, "_name3", "")))
+            {
+                feat_set_float(word_feats, "local_f0_range",
+                               // shift by + 1.0 to allow 0.0 to be passed.
+                               feat_float(attributes, "_val3") + 1.0);
+            }
         }
         else if (cst_streq("end", feat_string(attributes, "_type")))
         {
             feat_remove(word_feats, "local_duration_stretch");
             feat_remove(word_feats, "local_gain");
+            feat_remove(word_feats, "local_f0_mean");
+            feat_remove(word_feats, "local_f0_range");
         }
 
     }
@@ -503,7 +535,9 @@ int mimic_ssml_file_to_speech(const char *filename, cst_voice *voice,
                                        NULL),
                       get_param_string(voice->features,
                                        "text_postpunctuation",
-                                       NULL))) == NULL)
+                                       NULL),
+                      get_param_int(voice->features,
+                                       "text_emoji_as_singlecharsymbols", 0))) == NULL)
     {
         cst_errmsg("failed to open file \"%s\" for ssml reading\n", filename);
         return -ENOENT;
@@ -542,12 +576,19 @@ int mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
     int err;
     cst_wave *w;
 
+    // Workaround for the case "hello: there" (colon before the last word)
+    // In above case the last word won't be generated.
+    // Below is a workaround adding a silent space at the end of the sentence
+    // TODO fix for real
+    char * new_text = malloc(strlen(text) + 2);
+    sprintf(new_text, "%s ", text);
+
     if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
     {
         return -EINVAL;
     }
 
-    if ((ts = ts_open_string(text,
+    if ((ts = ts_open_string(new_text,
                              get_param_string(voice->features,
                                               "text_whitespace", NULL),
                              get_param_string(voice->features,
@@ -556,7 +597,9 @@ int mimic_ssml_text_to_speech(const char *text, cst_voice *voice,
                                               "text_prepunctuation", NULL),
                              get_param_string(voice->features,
                                               "text_postpunctuation",
-                                              NULL))) == NULL)
+                                              NULL),
+                            get_param_int(voice->features,
+                                       "text_emoji_as_singlecharsymbols", 0))) == NULL)
     {
         return -EINVAL;
     }

@@ -161,7 +161,7 @@ int cst_track_load_est(cst_track *t, const char *filename)
 
     num_frames = 0;
     num_channels = 0;
-    ts = ts_open(filename, NULL, NULL, NULL, NULL);
+    ts = ts_open(filename, NULL, NULL, NULL, NULL, 0);
     if (ts == NULL)
     {
         cst_errmsg("cst_track_load: can't open file \"%s\"\n", filename);

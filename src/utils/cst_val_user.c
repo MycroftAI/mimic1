@@ -66,6 +66,7 @@ CST_VAL_REG_TD_FUNCPTR(breakfunc, cst_breakfunc, 47);
 CST_VAL_REG_TD_TYPE(cg_db, cst_cg_db, 49);
 CST_VAL_REG_TD_TYPE(voice, cst_voice, 51);
 CST_VAL_REG_TD_TYPE(audio_streaming_info, cst_audio_streaming_info, 53);
+CST_VAL_REG_TD_TYPE(flitehtsengine, Flite_HTS_Engine, 55);
 const cst_val_def cst_val_defs[] = {
     /* These ones are never called */
     {"int", NULL},         /* 1 INT */
@@ -96,5 +97,6 @@ const cst_val_def cst_val_defs[] = {
     {"cg_db", val_delete_cg_db},   /* 49 cg_db */
     {"voice", val_delete_voice},   /* 51 cst_voice */
     {"audio_streaming_info", val_delete_audio_streaming_info},     /* 53 asi */
+    {"flitehtsengine", val_delete_flitehtsengine},     /* 55 flitehtsengine */
     {NULL, NULL}           /* NULLs at end of list */
 };

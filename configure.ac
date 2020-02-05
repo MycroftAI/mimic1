@@ -1,7 +1,7 @@
 dnl Use autogen.sh to regenerate the configure script
 AC_PREREQ([2.62])
 AC_INIT([mimic],
-        [1.2.0.2],
+        [1.3.0.0],
         [https://github.com/MycroftAI/mimic/issues])
 
 AC_CONFIG_AUX_DIR([config])
@@ -67,24 +67,40 @@ dnl Whether or not we have sockets (we don't in Windows)
 AC_CHECK_HEADERS([sys/socket.h])
 
 
+dnl: Look for htsengine_API headers and library
+AC_ARG_WITH([hts],
+  [AS_HELP_STRING([--without-hts],
+    [disable hts speech synthesis capabilities (for hts voices)])],
+  [],
+  [with_hts=yes])
+AM_CONDITIONAL([HTSEngine], [test "x$with_hts" != xno])
+  
+HTS_LIBS=
+with_hts_bundled="no"
+AS_IF([test "x$with_hts" != "xno"],
+  [AC_DEFINE([HAVE_HTSENGINE], [1], [Define if you have hts_engine])
+      AC_CHECK_LIB([HTSEngine],
+                [HTS_Engine_initialize],
+                [AC_SUBST([HTS_LIBS], ["-lHTSEngine"])
+                ],
+                [with_hts_bundled="yes"
+                                 AC_MSG_NOTICE([HTSEngine was not detected, using bundled HTSEngine])
+                ],
+                [])
+  ])
+AM_CONDITIONAL([HTSEngineBundled], [test "x$with_hts_bundled" != "xno"])
+
+
+
 dnl: pkg-config mimic.pc file:
 PKGCONFIG_MIMIC_CFLAGS="-I${includedir}/ttsmimic -I${includedir}/ttsmimic/lang"
 PKGCONFIG_MIMIC_LIBS="-L${libdir}"
 PKGCONFIG_MIMIC_DEPS=
 
-dnl Check ICU
-PKG_CHECK_MODULES([ICU], [icu-i18n],
-                  [found_icu=yes; break;], [m4_ignore])
-AC_CHECK_HEADER(unicode/ustring.h,
-                [found_ustring=yes; break;])
-AS_IF([test "x$found_ustring" != "xyes" && test "x$found_icu" != "xyes"],
-                [AC_MSG_ERROR([Unable to detect ICU installation])])
-AS_IF([test "x$found_icu" != "xyes"],
-                [AC_MSG_WARN([ICU was only partially detected and may be missing])])
-
-AC_DEFINE([U_CHARSET_IS_UTF8], [1], [mimic accepts UTF-8 only])
-
-PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} icu-i18n"
+dnl Check libpcre2-8
+PKG_CHECK_MODULES([PCRE2], [libpcre2-8])
+PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpcre2-8"
+                                   
 
 
 dnl
@@ -236,6 +252,11 @@ AC_ARG_ENABLE([lang-indic],
   [],
   [enable_lang_indic=${enable_lang_all}])
 
+AC_ARG_ENABLE([lang-es],
+  [AS_HELP_STRING([--enable-lang-es],
+      [(NOT WORKING YET) enable Spanish language support])],
+  [],
+  [enable_lang_es=no])
 
 dnl -------------------- Language analysis ---------------------------
 dnl For US English en-us:
@@ -251,6 +272,12 @@ AC_ARG_ENABLE([indic_analysis],
       [disable indic text analysis support])],
   [],
   [enable_indic_analysis=${enable_lang_indic}])
+
+AC_ARG_ENABLE([es_analysis],
+  [AS_HELP_STRING([--disable-es-analysis],
+      [disable Spanish text analysis support])],
+  [],
+  [enable_es_analysis=${enable_lang_es}])
 
 
 dnl ------------------- Lexicons ------------------------------
@@ -340,12 +367,30 @@ AS_IF([test "x$enable_cmu_us_rms" != xno],
 dnl cmu_us_slt
 AC_ARG_ENABLE([cmu_us_slt],
   [AS_HELP_STRING([--disable-cmu_us_slt],
-       [disable cmu_us_slt clustergem voice])],
+       [disable cmu_us_slt clustergen voice])],
   [],
   [enable_cmu_us_slt=${enable_voices_english}])
 
 dnl: Dependencies for cmu_us_slt
 AS_IF([test "x$enable_cmu_us_slt" != xno],
+  [enable_usenglish="yes"
+   enable_cmulex="yes"])
+
+
+dnl cmu_us_slt_hts
+AC_ARG_ENABLE([cmu_us_slt_hts],
+  [AS_HELP_STRING([--disable-cmu_us_slt_hts],
+       [disable cmu_us_slt_hts hts voice])],
+  [],
+  [enable_cmu_us_slt_hts=${enable_voices_english}])
+
+AS_IF([test "x$enable_cmu_us_slt_hts" != "xno" -a "x$with_hts" = "xno"],
+    [enable_cmu_us_slt_hts="no"
+          AC_MSG_WARN([cmu_us_slt_hts disabled because hts support is not available])],
+    [])
+
+dnl: Dependencies for cmu_us_slt_hts
+AS_IF([test "x$enable_cmu_us_slt_hts" != xno],
   [enable_usenglish="yes"
    enable_cmulex="yes"])
 
@@ -408,6 +453,14 @@ AS_IF([test "x$enable_cmu_us_slt" != xno ],
   ],
   [ AC_DEFINE([ENABLE_CMU_US_SLT], [0], [Enable cmu_us_slt voice]) ])
 
+AM_CONDITIONAL([VOICE_CMU_US_SLT_HTS], [test "x$enable_cmu_us_slt_hts" != xno])
+AS_IF([test "x$enable_cmu_us_slt_hts" != xno ],
+  [ AC_DEFINE([ENABLE_CMU_US_SLT_HTS], [1], [Enable cmu_us_slt_hts voice])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_cmu_us_slt_hts"
+  ],
+  [ AC_DEFINE([ENABLE_CMU_US_SLT_HTS], [0], [Enable cmu_us_slt_hts voice]) ])
+
+
 AM_CONDITIONAL([VOICE_VID_GB_AP], [test "x$enable_vid_gb_ap" != xno])
 AS_IF([test "x$enable_vid_gb_ap" != xno ],
   [ AC_DEFINE([ENABLE_VID_GB_AP], [1], [Enable vid_gb_ap voice])
@@ -444,6 +497,12 @@ AS_IF([test "x$enable_usenglish" != xno ],
   [ AC_DEFINE([ENABLE_USENGLISH], [1], [Enable US English text analysis])
     PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_usenglish" ],
   [ AC_DEFINE([ENABLE_USENGLISH], [0], [Enable US English text analysis]) ])
+
+AM_CONDITIONAL([LANG_ES_ANALYSIS], [test "x$enable_es_analysis" != xno])
+AS_IF([test "x$enable_es_analysis" != xno ],
+  [ AC_DEFINE([ENABLE_ES_ANALYSIS], [1], [Enable Spanish text analysis])
+    PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_es" ],
+  [ AC_DEFINE([ENABLE_ES_ANALYSIS], [0], [Enable Spanish text analysis]) ])
 
 
 PKGCONFIG_MIMIC_LIBS="${PKGCONFIG_MIMIC_LIBS} -lttsmimic_lang_all_langs -lttsmimic_lang_all_voices -lttsmimic"

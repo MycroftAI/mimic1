@@ -69,7 +69,11 @@ void test_concat(void)
    w2 = mimic_text_to_wave("There", v);
    
    w2->sample_rate *= 2; // create sample rate mismatch
+   fprintf(stderr, "\nExpect error message below:\n");
+   fflush(stderr);
    concat_wave(w1, w2);
+   fprintf(stderr, "Expect error message above:\n");
+   fflush(stderr);
    TEST_CHECK(w1->num_samples != w2->num_samples + original_len);
    delete_wave(w1);
    delete_wave(w2);
@@ -78,7 +82,11 @@ void test_concat(void)
    w2 = mimic_text_to_wave("There", v);
    
    w2->num_channels *= 2; // create channel number mismatch
+   fprintf(stderr, "Expect error message below:\n");
+   fflush(stderr);
    concat_wave(w1, w2);
+   fprintf(stderr, "Expect error message above:\n");
+   fflush(stderr);
    TEST_CHECK(w1->num_samples != w2->num_samples + original_len);
    delete_wave(w1);
    delete_wave(w2);

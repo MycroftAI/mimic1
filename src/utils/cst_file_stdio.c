@@ -45,9 +45,25 @@
 #include "cst_error.h"
 #include "cst_alloc.h"
 
+int cst_file_exists(const char *path)
+{
+    /* FIXME: There must be a better way to do this in a portable way... */
+    FILE *fp = fopen(path, "rb");
+    if (fp == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        fclose(fp);
+        return 1;
+    }
+}
+
 cst_file cst_fopen(const char *path, int mode)
 {
     char cmode[4];
+    cmode[0] = '\0';
 
     if (cst_urlp(path))
         return cst_url_open(path);

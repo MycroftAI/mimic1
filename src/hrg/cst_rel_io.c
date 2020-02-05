@@ -49,7 +49,7 @@ int relation_load(cst_relation *r, const char *filename)
     cst_item *item;
     const char *token = 0;
 
-    if ((fd = ts_open(filename, NULL, ";", "", "")) == 0)
+    if ((fd = ts_open(filename, NULL, ";", "", "", 0)) == 0)
     {
         cst_errmsg("relation_load: can't open file \"%s\" for reading\n",
                    filename);

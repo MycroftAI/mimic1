@@ -1,20 +1,964 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Mimic
+Source: https://github.com/mycroftai/mimic
+Comment: Mimic is free software
+ Mimic is available under permissive BSD-like licenses
+ .
+ This file lists all the copyrights and licenses of mimic files.
 
-Flite is free software.
+Files:
+ lang/vid_gb_ap/vid_gb_ap.c
+ lang/vid_gb_ap/vid_gb_ap_cg_01_mcep_trees.c
+ lang/vid_gb_ap/vid_gb_ap_cg_01_mcep_trees.h
+ lang/vid_gb_ap/vid_gb_ap_cg_01_params.c
+ lang/vid_gb_ap/vid_gb_ap_cg_08_durmodel.c
+ lang/vid_gb_ap/vid_gb_ap_cg_08_durmodel.h
+ lang/vid_gb_ap/vid_gb_ap_cg_10_durmodel.c
+ lang/vid_gb_ap/vid_gb_ap_cg_10_durmodel.h
+ lang/vid_gb_ap/vid_gb_ap_cg_12_mcep_trees.c
+ lang/vid_gb_ap/vid_gb_ap_cg_12_mcep_trees.h
+ lang/vid_gb_ap/vid_gb_ap_cg_12_params.c
+ lang/vid_gb_ap/vid_gb_ap_cg_17_durmodel.c
+ lang/vid_gb_ap/vid_gb_ap_cg_17_durmodel.h
+ lang/vid_gb_ap/vid_gb_ap_cg_17_mcep_trees.c
+ lang/vid_gb_ap/vid_gb_ap_cg_17_mcep_trees.h
+ lang/vid_gb_ap/vid_gb_ap_cg_17_params.c
+ lang/vid_gb_ap/vid_gb_ap_cg.c
+ lang/vid_gb_ap/vid_gb_ap_cg_f0_trees.c
+ lang/vid_gb_ap/vid_gb_ap_cg_f0_trees.h
+ lang/vid_gb_ap/vid_gb_ap_cg_phonestate.c
+ lang/vid_gb_ap/voxdefs.h
+ voices/mycroft_voice_4.0.flitevox
+Copyright: No copyright information
+License: No License Information
 
-We have kept the core code to BSD-like copyright, thus the system is
-free to use in commercial products, with commercial extensions.  GPL
-code is only included as part of the build process and does not
-taint any of the run-time code.  
+Files:
+ unittests/cutest.h
+Copyright: 2013-2017 Martin Mitáš
+License: MIT/X11 (BSD like)
 
-As a collection it is distributed under the following license.  Note
-a few files in this distribution have a different but equally free
-non-conflicting licence, see below.
+Files:
+ doc/alice
+Copyright: public domain
+License: public-domain
+Comment:
+ Is the first two chapters of Alice in Wonderland as distributed by the
+ Gutenburg project and is now in the public domain
 
-                  Language Technologies Institute                      
-                     Carnegie Mellon University                        
-                      Copyright (c) 1999-2014                          
+Files:
+ lang/cmulex/make_cmulex_helper.py
+Copyright:
+ 2016 Sergio Oller
+ 2010-2014 Peter Norvig
+License: BSD-3-clause
+
+Files:
+ include/cst_uregex.h
+ src/utils/cst_uregex.c
+ lang/es_lang/es_init.c
+ lang/es_lang/es_text_analysis.c
+ lang/es_lang/es_tokenizer.c
+ lang/es_lang/es_lang.h
+Copyright:
+ 2016 Sergio Oller
+License: BSD-3-clause
+
+Files:
+ autogen.sh
+ codecov.yml
+ configure.ac
+ COPYING
+ do_gcov.sh
+ Makefile.am
+ man/man1/mimic.1
+ mimic.pc.in
+ run_testsuite.sh
+ dependencies.sh
+ .travis.yml
+Copyright:
+ 2016-2017 Sergio Oller
+ 2016-2017 Åke Forslund
+License: flite
+
+
+Files:
+ gen_ctags.sh
+Copyright: 2016 Nicholas Peterson
+
+Files:
+ README.md
+Copyright:
+ 2016 Nicholas Peterson
+ 2016-2017 Sergio Oller
+ 2016-2017 Åke Forslund
+License: flite
+
+
+Files:
+ include/cst_alloc.h
+ include/cst_cart.h
+ include/cst_cg.h
+ include/cst_endian.h
+ include/cst_item.h
+ include/cst_string.h
+ include/cst_tokenstream.h
+ include/cst_wave.h
+ include/mimic.h
+ lang/cmulex/make_cmulex
+ main/mimic_lang_list.c
+ main/mimic_voice_list.c
+ src/audio/au_alsa.c
+ src/audio/auclient.c
+ src/audio/audio.c
+ src/audio/au_none.c
+ src/audio/au_oss.c
+ src/audio/au_portaudio.c
+ src/audio/au_pulseaudio.c
+ src/audio/auserver.c
+ src/audio/au_streaming.c
+ src/audio/au_sun.c
+ src/audio/native_audio.h
+ src/utils/cst_tokenstream.c
+ unittests/data.one
+ unittests/data_utf8.txt
+ unittests/es_text.txt
+ unittests/es_tokenstream_test_main.c
+ unittests/hrg_test_main.c
+ unittests/lex_test_main.c
+ unittests/lts_test_main.c
+ unittests/nums_test_main.c
+ unittests/regex_test_main.c
+ unittests/string_test_main.c
+ unittests/token_test_main.c
+ unittests/voice_select_test_main.c
+ unittests/wave_test_main.c
+Copyright:
+ 1999-2014 Language Technologies Institute, Carnegie Mellon University
+ 2016-2017 Sergio Oller
+ 2016-2017 Åke Forslund
+License: flite
+
+Files:
+ include/flite_hts_engine.h
+ src/hts/flite_hts_engine.c
+Copyright:
+ 2005-2016 Nagoya Institute of Technology, Department of Computer Science
+ 2005-2008 Tokyo Institute of Technology, Interdisciplinary Graduate School
+           of Science and Engineering 
+ 2017 Sergio Oller
+License: BSD-3-clause
+
+Files:
+ src/hts/hts_engine_API/include/HTS_engine.h
+ src/hts/hts_engine_API/lib/HTS_audio.c
+ src/hts/hts_engine_API/lib/HTS_engine.c
+ src/hts/hts_engine_API/lib/HTS_gstream.c
+ src/hts/hts_engine_API/lib/HTS_hidden.h
+ src/hts/hts_engine_API/lib/HTS_label.c
+ src/hts/hts_engine_API/lib/HTS_misc.c
+ src/hts/hts_engine_API/lib/HTS_model.c
+ src/hts/hts_engine_API/lib/HTS_pstream.c
+ src/hts/hts_engine_API/lib/HTS_sstream.c
+ src/hts/hts_engine_API/lib/HTS_vocoder.c
+Copyright:
+ 2005-2016 Nagoya Institute of Technology, Department of Computer Science
+ 2005-2008 Tokyo Institute of Technology, Interdisciplinary Graduate School
+           of Science and Engineering 
+License: BSD-3-clause
+
+
+Files:
+ include/cst_audio.h
+Copyright:
+ 1999-2014 Language Technologies Institute, Carnegie Mellon University
+ 2016 Markus Toman
+ 2016-2017 Sergio Oller
+ 2016-2017 Åke Forslund
+License: flite
+
+
+Files:
+ src/audio/au_wince.c
+ src/utils/cst_mmap_none.c
+ src/utils/cst_mmap_posix.c
+ src/utils/cst_mmap_win32.c
+ src/utils/cst_file_stdio.c
+Copyright:
+ 2001 Cepstral, LLC
+ 2016 Åke Forslund
+License: flite
+
+Files:
+ ACKNOWLEDGEMENTS
+ doc/intro.txt
+ include/cst_args.h
+ include/cst_clunits.h
+ include/cst_diphone.h
+ include/cst_error.h
+ include/cst_features.h
+ include/cst_ffeatures.h
+ include/cst_file.h
+ include/cst_hrg.h
+ include/cst_lexicon.h
+ include/cst_lts.h
+ include/cst_lts_rewrites.h
+ include/cst_phoneset.h
+ include/cst_regex.h
+ include/cst_relation.h
+ include/cst_sigpr.h
+ include/cst_socket.h
+ include/cst_ss.h
+ include/cst_sts.h
+ include/cst_synth.h
+ include/cst_track.h
+ include/cst_units.h
+ include/cst_utterance.h
+ include/cst_utt_utils.h
+ include/cst_val.h
+ include/cst_val_const.h
+ include/cst_val_defs.h
+ include/cst_viterbi.h
+ include/cst_voice.h
+ include/cst_wchar.h
+ lang/cmu_grapheme_lang/cmu_grapheme_lang.c
+ lang/cmu_grapheme_lang/cmu_grapheme_lang.h
+ lang/cmu_grapheme_lang/cmu_grapheme_phoneset.c
+ lang/cmu_grapheme_lang/cmu_grapheme_phrasing_cart.c
+ lang/cmu_grapheme_lang/cmu_grapheme_phrasing_cart.h
+ lang/cmu_grapheme_lang/make_grapheme_phoneset
+ lang/cmu_grapheme_lex/cmu_grapheme_lex.c
+ lang/cmu_grapheme_lex/cmu_grapheme_lex.h
+ lang/cmu_grapheme_lex/grapheme_unitran_tables.c
+ lang/cmu_indic_lang/cmu_indic_lang.c
+ lang/cmu_indic_lang/cmu_indic_lang.h
+ lang/cmu_indic_lang/cmu_indic_phoneset.c
+ lang/cmu_indic_lang/cmu_indic_phrasing_cart.c
+ lang/cmu_indic_lang/cmu_indic_phrasing_cart.h
+ lang/cmu_indic_lex/cmu_indic_lex.c
+ lang/cmu_indic_lex/cmu_indic_lex.h
+ lang/cmulex/cmu_lex.c
+ lang/cmulex/cmu_lex.h
+ lang/cmulex/cmu_lex_data.c
+ lang/cmu_time_awb/cmu_time_awb.c
+ lang/cmu_time_awb/cmu_time_awb_cart.c
+ lang/cmu_time_awb/cmu_time_awb_clunits.c
+ lang/cmu_time_awb/cmu_time_awb_lex_entry.c
+ lang/cmu_time_awb/cmu_time_awb_lpc.c
+ lang/cmu_time_awb/cmu_time_awb_mcep.c
+ lang/cmu_time_awb/voxdefs.h
+ lang/cmu_us_awb/cmu_us_awb.c
+ lang/cmu_us_awb/cmu_us_awb_cg.c
+ lang/cmu_us_awb/cmu_us_awb_cg_durmodel.c
+ lang/cmu_us_awb/cmu_us_awb_cg_durmodel.h
+ lang/cmu_us_awb/cmu_us_awb_cg_f0_trees.c
+ lang/cmu_us_awb/cmu_us_awb_cg_f0_trees.h
+ lang/cmu_us_awb/cmu_us_awb_cg_phonestate.c
+ lang/cmu_us_awb/cmu_us_awb_cg_single_mcep_trees.c
+ lang/cmu_us_awb/cmu_us_awb_cg_single_mcep_trees.h
+ lang/cmu_us_awb/cmu_us_awb_cg_single_params.c
+ lang/cmu_us_awb/cmu_us_awb_spamf0_accent.c
+ lang/cmu_us_awb/cmu_us_awb_spamf0_accent.h
+ lang/cmu_us_awb/cmu_us_awb_spamf0_accent_params.c
+ lang/cmu_us_awb/cmu_us_awb_spamf0_phrase.c
+ lang/cmu_us_awb/cmu_us_awb_spamf0_phrase.h
+ lang/cmu_us_awb/voxdefs.h
+ lang/cmu_us_kal16/cmu_us_kal16.c
+ lang/cmu_us_kal16/cmu_us_kal16_diphone.c
+ lang/cmu_us_kal16/cmu_us_kal16_lpc.c
+ lang/cmu_us_kal16/cmu_us_kal16_res.c
+ lang/cmu_us_kal16/cmu_us_kal16_residx.c
+ lang/cmu_us_kal16/voxdefs.h
+ lang/cmu_us_kal/cmu_us_kal.c
+ lang/cmu_us_kal/cmu_us_kal_diphone.c
+ lang/cmu_us_kal/cmu_us_kal_lpc.c
+ lang/cmu_us_kal/cmu_us_kal_res.c
+ lang/cmu_us_kal/cmu_us_kal_residx.c
+ lang/cmu_us_kal/cmu_us_kal_ressize.c
+ lang/cmu_us_kal/voxdefs.h
+ lang/cmu_us_rms/cmu_us_rms.c
+ lang/cmu_us_rms/cmu_us_rms_cg.c
+ lang/cmu_us_rms/cmu_us_rms_cg_durmodel.c
+ lang/cmu_us_rms/cmu_us_rms_cg_durmodel.h
+ lang/cmu_us_rms/cmu_us_rms_cg_f0_trees.c
+ lang/cmu_us_rms/cmu_us_rms_cg_f0_trees.h
+ lang/cmu_us_rms/cmu_us_rms_cg_phonestate.c
+ lang/cmu_us_rms/cmu_us_rms_cg_single_mcep_trees.c
+ lang/cmu_us_rms/cmu_us_rms_cg_single_mcep_trees.h
+ lang/cmu_us_rms/cmu_us_rms_cg_single_params.c
+ lang/cmu_us_rms/cmu_us_rms_spamf0_accent.c
+ lang/cmu_us_rms/cmu_us_rms_spamf0_accent.h
+ lang/cmu_us_rms/cmu_us_rms_spamf0_accent_params.c
+ lang/cmu_us_rms/cmu_us_rms_spamf0_phrase.c
+ lang/cmu_us_rms/cmu_us_rms_spamf0_phrase.h
+ lang/cmu_us_rms/voxdefs.h
+ lang/cmu_us_slt/cmu_us_slt.c
+ lang/cmu_us_slt/cmu_us_slt_cg.c
+ lang/cmu_us_slt/cmu_us_slt_cg_durmodel.c
+ lang/cmu_us_slt/cmu_us_slt_cg_durmodel.h
+ lang/cmu_us_slt/cmu_us_slt_cg_f0_trees.c
+ lang/cmu_us_slt/cmu_us_slt_cg_f0_trees.h
+ lang/cmu_us_slt/cmu_us_slt_cg_phonestate.c
+ lang/cmu_us_slt/cmu_us_slt_cg_single_mcep_trees.c
+ lang/cmu_us_slt/cmu_us_slt_cg_single_mcep_trees.h
+ lang/cmu_us_slt/cmu_us_slt_cg_single_params.c
+ lang/cmu_us_slt/cmu_us_slt_spamf0_accent.c
+ lang/cmu_us_slt/cmu_us_slt_spamf0_accent.h
+ lang/cmu_us_slt/cmu_us_slt_spamf0_accent_params.c
+ lang/cmu_us_slt/cmu_us_slt_spamf0_phrase.c
+ lang/cmu_us_slt/cmu_us_slt_spamf0_phrase.h
+ lang/cmu_us_slt_hts/cmu_us_slt_hts.c
+ lang/cmu_us_slt/voxdefs.h
+ lang/usenglish/make_us_regexes
+ lang/usenglish/us_aswd.c
+ lang/usenglish/us_dur_stats.c
+ lang/usenglish/usenglish.c
+ lang/usenglish/usenglish.h
+ lang/usenglish/us_expand.c
+ lang/usenglish/us_f0.h
+ lang/usenglish/us_f0_model.c
+ lang/usenglish/us_gpos.c
+ lang/usenglish/us_nums_cart.c
+ lang/usenglish/us_nums_cart.h
+ lang/usenglish/us_phrasing_cart.c
+ lang/usenglish/us_phrasing_cart.h
+ lang/usenglish/us_pos_cart.c
+ lang/usenglish/us_pos_cart.h
+ lang/usenglish/us_pos.tree
+ lang/usenglish/us_regexes.h
+ lang/usenglish/us_text.c
+ lang/usenglish/us_text.h
+ main/compile_regexes.c
+ main/mimic_main.c
+ main/mimic_time_main.c
+ main/mimicvox_info_main.c
+ main/t2p_main.c
+ src/audio/au_command.c
+ src/cg/cst_cg.c
+ src/cg/cst_cg_dump_voice.c
+ src/cg/cst_cg_load_voice.c
+ src/cg/cst_cg_map.c
+ src/cg/cst_cg_map.h
+ src/cg/cst_spamf0.c
+ src/cg/cst_spamf0.h
+ src/hrg/cst_ffeature.c
+ src/hrg/cst_item.c
+ src/hrg/cst_relation.c
+ src/hrg/cst_rel_io.c
+ src/hrg/cst_utterance.c
+ src/lexicon/cst_lexicon.c
+ src/lexicon/cst_lts.c
+ src/lexicon/cst_lts_rewrites.c
+ src/regex/cst_regex.c
+ src/regex/cst_regex_defs.h
+ src/speech/cst_lpcres.c
+ src/speech/cst_track.c
+ src/speech/cst_track_io.c
+ src/speech/cst_wave.c
+ src/speech/cst_wave_io.c
+ src/speech/cst_wave_utils.c
+ src/stats/cst_cart.c
+ src/stats/cst_ss.c
+ src/stats/cst_viterbi.c
+ src/synth/cst_phoneset.c
+ src/synth/cst_ssml.c
+ src/synth/cst_synth.c
+ src/synth/cst_utt_utils.c
+ src/synth/cst_voice.c
+ src/synth/mimic.c
+ src/utils/cst_alloc.c
+ src/utils/cst_args.c
+ src/utils/cst_endian.c
+ src/utils/cst_error.c
+ src/utils/cst_features.c
+ src/utils/cst_socket.c
+ src/utils/cst_string.c
+ src/utils/cst_url.c
+ src/utils/cst_val.c
+ src/utils/cst_val_const.c
+ src/utils/cst_val_user.c
+ src/utils/cst_wchar.c
+ src/wavesynth/cst_clunits.c
+ src/wavesynth/cst_diphone.c
+ src/wavesynth/cst_reflpc.c
+ src/wavesynth/cst_sigpr.c
+ src/wavesynth/cst_sts.c
+ src/wavesynth/cst_units.c
+ testsuite/asciiS2U_main.c
+ testsuite/asciiU2S_main.c
+ testsuite/bin2ascii_main.c
+ testsuite/by_word_main.c
+ testsuite/combine_waves_main.c
+ testsuite/compare_wave_main.c
+ testsuite/kal_test_main.c
+ testsuite/lex_lookup_main.c
+ testsuite/lpc_resynth_main.c
+ testsuite/lpc_test2_main.c
+ testsuite/lpc_test_main.c
+ testsuite/Makefile
+ testsuite/multi_thread_main.c
+ testsuite/multi_thread_run.sh
+ testsuite/play_client_main.c
+ testsuite/play_server_main.c
+ testsuite/play_sync_main.c
+ testsuite/play_wave_main.c
+ testsuite/rfc_main.c
+ testsuite/utt_test_main.c
+ tools/a2byte.pl
+ tools/a2int.pl
+ tools/a2short.pl
+ tools/build_lex
+ tools/build_mimic
+ tools/clunit_prune
+ tools/example.lex
+ tools/example.ssml
+ tools/find_cmimax
+ tools/find_sts_main.c
+ tools/huff_table
+ tools/LANGNAME_lang.c
+ tools/LANGNAME_lang.h
+ tools/LANGNAME_lex.c
+ tools/LANGNAME_lex.h
+ tools/make_cart.scm
+ tools/make_cg.scm
+ tools/make_clunits.scm
+ tools/make_didb2.scm
+ tools/make_didb.scm
+ tools/make_f0lr.scm
+ tools/Makefile
+ tools/Makefile.lang
+ tools/Makefile.lex
+ tools/Makefile.mimic
+ tools/make_lex.scm
+ tools/make_lts_rewrite.scm
+ tools/make_lts.scm
+ tools/make_lts_wfst.scm
+ tools/make_new_lang_lex
+ tools/make_phoneset.scm
+ tools/make_ug.scm
+ tools/make_vallist.scm
+ tools/mimic_rename_voice
+ tools/mimic_sort_main.c
+ tools/mimic_test
+ tools/play_sync.scm
+ tools/setup_mimic
+ tools/VOICE_cg.c
+ tools/VOICE_clunits.c
+ tools/VOICE_diphone.c
+ tools/VOICE_ldom.c
+ tools/wfst2c
+ voices/cmu_us_aew.flitevox
+ voices/cmu_us_ahw.flitevox
+ voices/cmu_us_aup.flitevox
+ voices/cmu_us_awb.flitevox
+ voices/cmu_us_axb.flitevox
+ voices/cmu_us_bdl.flitevox
+ voices/cmu_us_clb.flitevox
+ voices/cmu_us_eey.flitevox
+ voices/cmu_us_fem.flitevox
+ voices/cmu_us_gka.flitevox
+ voices/cmu_us_jmk.flitevox
+ voices/cmu_us_ksp.flitevox
+ voices/cmu_us_ljm.flitevox
+ voices/cmu_us_rms.flitevox
+ voices/cmu_us_rxr.flitevox
+ voices/cmu_us_slt.flitevox
+ voices/cmu_us_slt_hts.htsvoice
+Copyright: 1999-2014 Language Technologies Institute, Carnegie Mellon University
+License: flite
+
+Files:
+ src/regex/regexp.c
+ src/regex/regsub.c
+Copyright:
+ Copyright (c) 1986 by University of Toronto.
+License: regex_henry_spencer
+ Written by Henry Spencer.  Not derived from licensed software.
+ .
+ Permission is granted to anyone to use this software for any
+ purpose on any computer system, and to redistribute it freely,
+ subject to the following restrictions:
+ .
+ 1. The author is not responsible for the consequences of use of
+         this software, no matter how awful, even if they arise
+         from defects in it.
+ .
+ 2. The origin of this software must not be misrepresented, either
+         by explicit claim or by omission.
+ .
+ 3. Altered versions must be plainly marked as such, and must not
+         be misrepresented as being the original software.
+
+
+Files:
+ src/cg/cst_mlpg.h
+ src/cg/cst_mlpg.c
+ src/cg/cst_mlsa.h
+ src/cg/cst_mlsa.c
+ src/cg/cst_vc.h
+ src/cg/cst_vc.c
+Copyright:
+ 2003-2004 Nagoya Institute of Technology, Aichi, Japan
+ 2003-2004 Nara Institute of Science and Technology, Nara, Japan
+ 2003-2004 Carnegie Mellon University, Pittsburgh, PA
+License: flite
+
+Files:
+ src/filter/bb_mlsacore.c
+
+Copyright:
+ Peter Drysdale and the authors of Bellbird
+ 2003-2004 Nagoya Institute of Technology, Aichi, Japan
+ 2003-2004 Nara Institute of Science and Technology, Nara, Japan
+ 2003-2004 Carnegie Mellon University, Pittsburgh, PA
+Licence BellBird
+Files:
+ lang/usenglish/us_durz_cart.c
+ lang/usenglish/us_durz_cart.h
+ lang/usenglish/us_int_accent_cart.c
+ lang/usenglish/us_int_accent_cart.h
+ lang/usenglish/us_int_tone_cart.c
+ lang/usenglish/us_int_tone_cart.h
+ lang/usenglish/us_phoneset.c
+ lang/usenglish/us_f0lr.c
+Copyright:
+ 1998-2001 Centre for Speech Technology Research, University of Edinburgh, UK
+ 1999-2014 Language Technologies Institute, Carnegie Mellon University
+License: flite
+Comment:
+ These are directly (or indirectly) compiled/derived from files that are
+ part of the Festival Speech Synthesis System (1.4.1).  Hence they have
+ a joint copyright CMU/Edinburgh but with the same free licence
+
+Files:
+ src/speech/g72x.h
+ src/speech/g721.c
+ src/speech/g72x.c
+ src/speech/g723_24.c
+ src/speech/g723_40.c
+Copyright:
+ 2010  Language Technologies Institute, Carnegie Mellon University
+  Sun Microsystems
+License: flite and sun
+
+Files:
+ lang/usenglish/us_ffeatures.c
+ lang/usenglish/us_ffeatures.h
+ src/synth/cst_ffeatures.c
+Copyright:
+ 1999-2014 Language Technologies Institute, Carnegie Mellon University
+ 2005-2016 Nagoya Institute of Technology, Department of Computer Science
+ 2005-2008 Tokyo Institute of Technology, Interdisciplinary Graduate School of Science and Engineering
+License: flite and BSD-3-clause
+
+Files:
+ lang/cmulex/cmu_lex_data_raw.c
+ lang/cmulex/cmu_lex_entries.c
+ lang/cmulex/cmu_lex_entries_huff_table.c
+ lang/cmulex/cmu_lex_num_bytes.c
+ lang/cmulex/cmu_lex_phones_huff_table.c
+ lang/cmulex/cmu_lts_model.c
+ lang/cmulex/cmu_lts_model.h
+ lang/cmulex/cmu_lts_rules.c
+ lang/cmulex/cmu_postlex.c
+Copyright:
+ 1993-2008 Carnegie Mellon University. All rights reserved.
+ 2016-2017 Reece H. Dunn (Cainteoir Technologies). All rights reserved.
+License: BSD2
+
+Files:
+ lang/cmulex/cmu_postlex.c
+Copyright:
+ 1993-2008 Carnegie Mellon University. All rights reserved.
+ 2016-2017 Reece H. Dunn (Cainteoir Technologies). All rights reserved.
+License: flite
+
+Files:
+ src/speech/rateconv.c
+Copyright: (c) 1992, 1995 by Markus Mummert
+License: BSD
+ Redistribution and use of this software, modifcation and inclusion
+ into other forms of software are permitted provided that the following
+ conditions are met:
+ .
+ 1. Redistributions of this software must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. If this software is redistributed in a modified condition
+    it must reveal clearly that it has been modified.
+
+
+Files:
+ lang/cmu_grapheme_lex/grapheme_unitran_tables.c
+Copyright: 2008-2012, University of Illinois at Urbana-Champaign
+License: APACHE2
+
+Files:
+ thirdparty/pcre2.patch
+Copyright:
+ Copyright (c) 1997-2017 University of Cambridge
+ Copyright (c) 2010-2017 Zoltan Herczeg
+License: BSD-3-clause
+Comment: This patch can be safely removed for pcre2 versions larger than 10.23
+ not released when this comment was written.
+ See https://bugs.exim.org/show_bug.cgi?id=2067 for more info
+
+License: APACHE2
+ Apache License
+ Version 2.0, January 2004
+ http://www.apache.org/licenses/
+ .
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ .
+   1. Definitions.
+ .
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+ .
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+ .
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+ .
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+ .
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+ .
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+ .
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+ .
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+ .
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+ .
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+ .
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+ .
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+ .
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+ .
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+ .
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+ .
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+ .
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+ .
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+ .
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+ .
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+ .
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+ .
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+ .
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+ .
+   END OF TERMS AND CONDITIONS
+ .
+   APPENDIX: How to apply the Apache License to your work.
+ .
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+ .
+   Copyright [yyyy] [name of copyright owner]
+ .
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+ .
+       http://www.apache.org/licenses/LICENSE-2.0
+ .
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+License: flite
                         All Rights Reserved.                           
-                                                                       
+ .
+  Permission is hereby granted, free of charge, to use and distribute  
+  this software and its documentation without restriction, including   
+  without limitation the rights to use, copy, modify, merge, publish,  
+  distribute, sublicense, and/or sell copies of this work, and to      
+  permit persons to whom this work is furnished to do so, subject to   
+  the following conditions:                                            
+   1. The code must retain the above copyright notice, this list of    
+      conditions and the following disclaimer.                         
+   2. Any modifications must be clearly marked as such.                
+   3. Original authors' names are not deleted.                         
+   4. The authors' names are not used to endorse or promote products   
+      derived from this software without specific prior written        
+      permission.                                                      
+ .
+  CARNEGIE MELLON UNIVERSITY AND THE CONTRIBUTORS TO THIS WORK         
+  DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING      
+  ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT   
+  SHALL CARNEGIE MELLON UNIVERSITY NOR THE CONTRIBUTORS BE LIABLE      
+  FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN   
+  AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,          
+  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF       
+  THIS SOFTWARE.                                                       
+
+
+Files:
+ doc/mimic.texi
+ doc/stuff.ed
+ doc/Makefile
+Copyright: Copyright (C) 2001-2014 Carnegie Mellon University
+License: permissive1
+ Permission is granted to make and distribute verbatim copies of
+ this manual provided the copyright notice and this permission notice
+ are preserved on all copies.
+ .
+ @ignore
+ Permission is granted to process this file through TeX, or otherwise and
+ print the results, provided the printed document carries copying
+ permission notice identical to this one except for the removal of this
+ paragraph (this paragraph not being relevant to the printed manual).
+ .
+ @end ignore
+ Permission is granted to copy and distribute modified versions of this
+ manual under the conditions for verbatim copying, provided that the entire
+ resulting derived work is distributed under the terms of a permission
+ notice identical to this one.
+ .
+ Permission is granted to copy and distribute translations of this manual
+ into another language, under the above conditions for modified versions,
+ except that this permission notice may be stated in a translation approved
+ by the authors.
+
+
+License: BSD-3-clause
+ All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the copyright owners nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
+
+License: BSD2
+ All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
+
+License: sun
+ This source code is a product of Sun Microsystems, Inc. and is provided
+ for unrestricted use.  Users may copy or modify this source code without
+ charge.
+ .
+ SUN SOURCE CODE IS PROVIDED AS IS WITH NO WARRANTIES OF ANY KIND INCLUDING
+ THE WARRANTIES OF DESIGN, MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE, OR ARISING FROM A COURSE OF DEALING, USAGE OR TRADE PRACTICE.
+ .
+ Sun source code is provided with no support and without any obligation on
+ the part of Sun Microsystems, Inc. to assist in its use, correction,
+ modification or enhancement.
+ .
+ SUN MICROSYSTEMS, INC. SHALL HAVE NO LIABILITY WITH RESPECT TO THE
+ INFRINGEMENT OF COPYRIGHTS, TRADE SECRETS OR ANY PATENTS BY THIS SOFTWARE
+ OR ANY PART THEREOF.
+ .
+ In no event will Sun Microsystems, Inc. be liable for any lost revenue
+ or profits or other special, indirect and consequential damages, even if
+ Sun has been advised of the possibility of such damages.
+ .
+ Sun Microsystems, Inc.
+ 2550 Garcia Avenue
+ Mountain View, California  94043
+
+License: MIT/X11 (BSD like)
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the “Software”),
+ to deal in the Software without restriction, including without limitation
+ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ IN THE SOFTWARE.
+
+Licence: BellBird
+  (c) Copyright the authors of Bellbird. All rights reserved.
+
   Permission is hereby granted, free of charge, to use and distribute  
   this software and its documentation without restriction, including   
   without limitation the rights to use, copy, modify, merge, publish,  
@@ -29,178 +973,13 @@ non-conflicting licence, see below.
       derived from this software without specific prior written        
       permission.                                                      
                                                                        
-  CARNEGIE MELLON UNIVERSITY AND THE CONTRIBUTORS TO THIS WORK         
+  THE CONTRIBUTORS TO THIS WORK         
   DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING      
   ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT   
-  SHALL CARNEGIE MELLON UNIVERSITY NOR THE CONTRIBUTORS BE LIABLE      
+  SHALL THE CONTRIBUTORS BE LIABLE      
   FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    
   WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN   
   AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,          
   ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF       
-  THIS SOFTWARE.                                                       
-                                                                       
-All files within this distribution have the above license except
-the following
+  THIS SOFTWARE.  
 
-src/cg/cst_mlpg.h
-src/cg/cst_mlpg.c
-src/cg/cst_mlsa.h
-src/cg/cst_mlsa.c
-src/cg/cst_vc.h
-src/cg/cst_vc.c
-/*********************************************************************/
-/*                                                                   */
-/*            Nagoya Institute of Technology, Aichi, Japan,          */
-/*       Nara Institute of Science and Technology, Nara, Japan       */
-/*                                and                                */
-/*             Carnegie Mellon University, Pittsburgh, PA            */
-/*                      Copyright (c) 2003-2004                      */
-/*                        All Rights Reserved.                       */
-/*                                                                   */
-/*  Permission is hereby granted, free of charge, to use and         */
-/*  distribute this software and its documentation without           */
-/*  restriction, including without limitation the rights to use,     */
-/*  copy, modify, merge, publish, distribute, sublicense, and/or     */
-/*  sell copies of this work, and to permit persons to whom this     */
-/*  work is furnished to do so, subject to the following conditions: */
-/*                                                                   */
-/*    1. The code must retain the above copyright notice, this list  */
-/*       of conditions and the following disclaimer.                 */
-/*    2. Any modifications must be clearly marked as such.           */
-/*    3. Original authors' names are not deleted.                    */
-/*                                                                   */    
-/*  NAGOYA INSTITUTE OF TECHNOLOGY, NARA INSTITUTE OF SCIENCE AND    */
-/*  TECHNOLOGY, CARNEGIE MELLON UNIVERSITY, AND THE CONTRIBUTORS TO  */
-/*  THIS WORK DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,  */
-/*  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, */
-/*  IN NO EVENT SHALL NAGOYA INSTITUTE OF TECHNOLOGY, NARA           */
-/*  INSTITUTE OF SCIENCE AND TECHNOLOGY, CARNEGIE MELLON UNIVERSITY, */
-/*  NOR THE CONTRIBUTORS BE LIABLE FOR ANY SPECIAL, INDIRECT OR      */
-/*  CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM   */
-/*  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,  */
-/*  NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN        */
-/*  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.         */
-/*                                                                   */
-/*********************************************************************/
-
-These functions are derived from the versions in festvox/src/vc/ as
-modified by Tomoki Toda which in turn contain code derived from
-NITECH's HTS system.  Their copyright has the same freedoms as 
-as Flite's but under NAIST, NITECH and/or CMU.
-
-src/audio/au_wince.c
-src/utils/cst_file_stdio.c
-src/utils/cst_mmap_posix.c
-src/utils/cst_mmap_win32.c
-src/utils/cst_mmap_none.c
-src/utils/cst_file_wince.c
-sapi/
-      are copyright Cepstral, LLC rather than CMU but fall under the same
-      free licence as the above, except for the owner. (Note the SAPI stuff
-      probably doesn't work any more)
-
-doc/alice
-   Is the first two chapters of Alice in Wonderland as distributed by the
-   Gutenburg project and is now in the public domain
-
-src/regex/regexp.c
-src/regex/regsub.c
-
- *      Copyright (c) 1986 by University of Toronto.
- *      Written by Henry Spencer.  Not derived from licensed software.
- *
- *      Permission is granted to anyone to use this software for any
- *      purpose on any computer system, and to redistribute it freely,
- *      subject to the following restrictions:
- *
- *      1. The author is not responsible for the consequences of use of
- *              this software, no matter how awful, even if they arise
- *              from defects in it.
- *
- *      2. The origin of this software must not be misrepresented, either
- *              by explicit claim or by omission.
- *
- *      3. Altered versions must be plainly marked as such, and must not
- *              be misrepresented as being the original software.
-
-src/speech/rateconv.c
-
- *	Copyright (c) 1992, 1995 by Markus Mummert
- *
- *	Redistribution and use of this software, modifcation and inclusion
- *	into other forms of software are permitted provided that the following
- *	conditions are met:
- *
- *	1. Redistributions of this software must retain the above copyright
- *	   notice, this list of conditions and the following disclaimer.
- *	2. If this software is redistributed in a modified condition
- *	   it must reveal clearly that it has been modified.
-
-lang/usenglish/us_durz_cart.c
-lang/usenglish/us_durz_cart.h
-lang/usenglish/us_int_accent_cart.c
-lang/usenglish/us_int_accent_cart.h
-lang/usenglish/us_int_tone_cart.c
-lang/usenglish/us_int_tone_cart.h
-lang/usenglish/us_phoneset.c
-lang/usenglish/us_f0lr.c
-   These are directly (or indirectly) compiled/derived from files that are
-   part of the Festival Speech Synthesis System (1.4.1).  Hence they have
-   a joint copyright CMU/Edinburgh but with the same free licence
-
-configure
-   # Copyright (C) 1992, 93, 94, 95, 96 Free Software Foundation, Inc.
-   #
-   # This configure script is free software; the Free Software Foundation
-   # gives unlimited permission to copy, distribute and modify it.
-
-configure.sub
-config.guess
-missing
-install-sh
-mkinstalldirs
-   Copyright FSF, and under the GPL, these files are only used for
-   convenient configuration and are not part of the generated binary,
-   and therefore do not impose any GPL restrctions on the rest of the
-   system.  But as they are standard methods for configuration they 
-   are included.
-
-src/speech/g72x.h
-src/speech/g721.c
-src/speech/g72x.c
-src/speech/g723_24.c
-src/speech/g723_40.c
-
-/*
- * This source code is a product of Sun Microsystems, Inc. and is provided
- * for unrestricted use.  Users may copy or modify this source code without
- * charge.
- *
- * SUN SOURCE CODE IS PROVIDED AS IS WITH NO WARRANTIES OF ANY KIND INCLUDING
- * THE WARRANTIES OF DESIGN, MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE, OR ARISING FROM A COURSE OF DEALING, USAGE OR TRADE PRACTICE.
- *
- * Sun source code is provided with no support and without any obligation on
- * the part of Sun Microsystems, Inc. to assist in its use, correction,
- * modification or enhancement.
- *
- * SUN MICROSYSTEMS, INC. SHALL HAVE NO LIABILITY WITH RESPECT TO THE
- * INFRINGEMENT OF COPYRIGHTS, TRADE SECRETS OR ANY PATENTS BY THIS SOFTWARE
- * OR ANY PART THEREOF.
- *
- * In no event will Sun Microsystems, Inc. be liable for any lost revenue
- * or profits or other special, indirect and consequential damages, even if
- * Sun has been advised of the possibility of such damages.
- *
- * Sun Microsystems, Inc.
- * 2550 Garcia Avenue
- * Mountain View, California  94043
- */
-
-lang/cmu_grapheme_lex/grapheme_unitran_tables.c
-/* Copyright 2008-2012, University of Illinois at Urbana-Champaign          */
-/* distributed under the Apache License, Version (2.0)                      */
-/* http://www.apache.org/licenses/LICENSE-2.0                               */
-/* Original table developed by Richard Sproat and Kyoung-young Kim          */
-/* Ported for Festvox by Gopala Anumachipalli gopalakr@cs.cmu.edu Sep 2012  */
-/* Then converted to C for CMU Flite (cmuflite.org)                         */

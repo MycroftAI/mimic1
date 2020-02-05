@@ -19,7 +19,7 @@ void test_token(void)
     cst_tokenstream *fd;
     const char *token;
 
-    fd = ts_open(TEST_FILE, " \n\t", NULL, "\"!", NULL);
+    fd = ts_open(TEST_FILE, " \r\n\t", NULL, "\"!", NULL, 0);
     TEST_CHECK(fd != NULL);
 
     token = ts_get(fd);
@@ -52,10 +52,11 @@ void test_token_utf8(void)
 {
     cst_tokenstream *fd;
     const char *token;
-    const char *singl = "€(){}[]😊";    /* EURO SIGN + defaults + emoji */
+    const char *singl = "€(){}[]";    /* EURO SIGN + defaults */
     const char *prepunc = "¿¡\"!";    /* INVERTED QUESTION MARK, INV. EXCL. MARK, ", ! */
     const char *postpunc = "\"'`.,:;!?(){}[]";
-    fd = ts_open(TEST_FILE_UTF8, " \n\t", singl, prepunc, postpunc);
+    int emoji_as_singlecharsymbols = 1;
+    fd = ts_open(TEST_FILE_UTF8, " \r\n\t", singl, prepunc, postpunc, emoji_as_singlecharsymbols);
     TEST_CHECK(fd != NULL);
 
     token = ts_get(fd);

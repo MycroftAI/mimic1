@@ -84,7 +84,7 @@ cst_file cst_url_open(const char *url)
     int state, n;
     char c;
 
-    urlts = ts_open_string(url, "", ":/", "", "");
+    urlts = ts_open_string(url, "", ":/", "", "", 0);
 
     protocol = ts_get(urlts);
     if (cst_streq(protocol, "http"))

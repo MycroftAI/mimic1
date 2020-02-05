@@ -82,9 +82,13 @@ void test_url_voice(void)
 void test_invalid_url(void)
 {
     common_init();
+    fprintf(stderr, "\nExpect error messages below:\n");
+    fflush(stderr);
     TEST_CHECK(mimic_voice_select
                ("http://www.example.com/invalid.flitevox")
                == NULL);
+    fprintf(stderr, "Expect error messages above:\n");
+    fflush(stderr);
 }
 
 void test_file_voice(void)

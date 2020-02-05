@@ -39,6 +39,50 @@
 /*  semantics follow them                                                */
 /*************************************************************************/
 
+/* ----------------------------------------------------------------- */
+/*           The English TTS System "Flite+hts_engine"               */
+/*           developed by HTS Working Group                          */
+/*           http://hts-engine.sourceforge.net/                      */
+/* ----------------------------------------------------------------- */
+/*                                                                   */
+/*  Copyright (c) 2005-2016  Nagoya Institute of Technology          */
+/*                           Department of Computer Science          */
+/*                                                                   */
+/*                2005-2008  Tokyo Institute of Technology           */
+/*                           Interdisciplinary Graduate School of    */
+/*                           Science and Engineering                 */
+/*                                                                   */
+/* All rights reserved.                                              */
+/*                                                                   */
+/* Redistribution and use in source and binary forms, with or        */
+/* without modification, are permitted provided that the following   */
+/* conditions are met:                                               */
+/*                                                                   */
+/* - Redistributions of source code must retain the above copyright  */
+/*   notice, this list of conditions and the following disclaimer.   */
+/* - Redistributions in binary form must reproduce the above         */
+/*   copyright notice, this list of conditions and the following     */
+/*   disclaimer in the documentation and/or other materials provided */
+/*   with the distribution.                                          */
+/* - Neither the name of the HTS working group nor the names of its  */
+/*   contributors may be used to endorse or promote products derived */
+/*   from this software without specific prior written permission.   */
+/*                                                                   */
+/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND            */
+/* CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,       */
+/* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF          */
+/* MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE          */
+/* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS */
+/* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,          */
+/* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED   */
+/* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     */
+/* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON */
+/* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,   */
+/* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    */
+/* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
+/* POSSIBILITY OF SUCH DAMAGE.                                       */
+/* ----------------------------------------------------------------- */
+
 #include "cst_hrg.h"
 #include "cst_phoneset.h"
 #include "cst_regex.h"
@@ -56,24 +100,10 @@ DEF_STATIC_CONST_VAL_STRING(val_string_a,"a");
 DEF_STATIC_CONST_VAL_STRING(val_string_flight,"flight");
 DEF_STATIC_CONST_VAL_STRING(val_string_to,"to");
 
-DEF_STATIC_CONST_VAL_STRING(val_string_content,"content");
-
 static const cst_val *gpos(const cst_item *word)
 {
     /* Guess at part of speech (function/content) */
-    const char *w;
-    int s,t;
-
-    w = item_feat_string(word,"name");
-
-    for (s=0; us_gpos[s]; s++)
-    {
-	for (t=1; us_gpos[s][t]; t++)
-	    if (cst_streq(w,val_string(us_gpos[s][t])))
-		return us_gpos[s][0];
-    }
-
-    return (cst_val *)&val_string_content;
+    return generic_gpos(word, us_gpos);
 }
 
 static const cst_val *num_digits(const cst_item *token)
@@ -159,53 +189,9 @@ static const cst_val *token_pos_guess(const cst_item *token)
     return r;
 }
 
-const cst_val *content_words_in(const cst_item *p)
-{
-    const cst_item *s;
-    int i=0;
-    p=item_as(p,"Word");
-    s=item_as(path_to_item(p,"R:SylStructure.R:Phrase.parent.daughter1"),"Word");
-    for (;s && !item_equal(p,s);s=item_next(s))
-    {
-        if (!strcmp(ffeature_string(s,"gpos"),"content"))
-        {i++;}
-    }
-    //	if(!strcmp(ffeature_string(p,"gpos"), "content")){i++;}
-    return val_string_n(i);
-}
-
-const cst_val *content_words_out(const cst_item *p)
-{
-    const cst_item *s;
-    int i=0;
-    p=item_as(p,"Word");
-    s=item_as(path_to_item(p,"R:SylStructure.R:Phrase.parent.daughtern"),"Word");
-#if 1 /* fix by uratec */
-  for (;s && !item_equal(p,s);s=item_prev(s))
-    {
-      if (!strcmp(ffeature_string(s,"gpos"),"content"))
-        {i++;}
-    }
-#else
-    for (;s && !item_equal(p,s);p=item_next(p))
-    {
-        if (!strcmp(ffeature_string(p,"gpos"),"content"))
-        {i++;}
-    }
-    if(!strcmp(ffeature_string(s,"gpos"), "content")){i++;}
-#endif
-    return val_string_n(i);
-}
-
-const cst_val *cg_content_words_in_phrase(const cst_item *p)
-{
-	return float_val(ffeature_float(p,"R:SylStructure.parent.parent.R:Word.content_words_in") + ffeature_float(p,"R:SylStructure.parent.parent.R:Word.content_words_out")) ;//- (strcmp(ffeature_string(p,"R:SylStructure.parent.parent.R:Word.gpos"),"content")==0?1:0));
-}
-
 
 void us_ff_register(cst_features *ffunctions)
 {
-
     /* The language independent ones */
     basic_ff_register(ffunctions);
 
@@ -213,8 +199,5 @@ void us_ff_register(cst_features *ffunctions)
     ff_register(ffunctions, "num_digits",num_digits);
     ff_register(ffunctions, "month_range",month_range);
     ff_register(ffunctions, "token_pos_guess",token_pos_guess);
-    ff_register(ffunctions, "content_words_in",content_words_in);
-    ff_register(ffunctions, "content_words_out",content_words_out);
-    ff_register(ffunctions, "lisp_cg_content_words_in_phrase",cg_content_words_in_phrase);
 
 }

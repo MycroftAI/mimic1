@@ -211,7 +211,7 @@ static cst_val *add_break(cst_val *l)
 
 static int contains_unicode_single_quote(const char *name)
 {
-    static const char *unicode_single_quote = "’";
+    static const char *unicode_single_quote = "\xe2\x80\x99";
     int i;
 
     for (i=0; name[i]; i++)
@@ -227,7 +227,7 @@ static int contains_unicode_single_quote(const char *name)
 
 static char *map_unicode_single_quote(const char *name)
 {
-    static const char *unicode_single_quote = "’";
+    static const char *unicode_single_quote = "\xe2\x80\x99";
     int i,j;
     char *aaa = cst_strdup(name);  /* it'll always get shorter */
 

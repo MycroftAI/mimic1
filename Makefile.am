@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(ICU_CFLAGS)
+AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(PCRE2_CFLAGS)
 
 SUBDIRS = .
 
@@ -18,7 +18,7 @@ lib_LTLIBRARIES += libttsmimic.la
 libttsmimic_la_SOURCES = 
 libttsmimic_la_CFLAGS =
 libttsmimic_la_LDFLAGS = -no-undefined
-libttsmimic_la_LIBADD = $(ICU_LIBS)
+libttsmimic_la_LIBADD = $(PCRE2_LIBS)
 
 libttsmimic_lang_all_langs_la_SOURCES = main/mimic_lang_list.c
 libttsmimic_lang_all_langs_la_LDFLAGS = -no-undefined
@@ -31,6 +31,9 @@ TESTS =
 
 pkgconfiginstalldir = $(libdir)/pkgconfig
 pkgconfiginstall_DATA = mimic.pc
+
+voicesinstalldir = $(pkgdatadir)/voices
+voicesinstall_DATA = 
 
 ################## START: LANG_USENGLISH #################################
 if LANG_USENGLISH
@@ -124,6 +127,25 @@ libttsmimic_lang_cmu_indic_lang_la_SOURCES = \
 
 
 ################# END: LANG_INDIC ########################################
+
+############## START: LANG_ES_ANALYSIS #################################
+if LANG_ES_ANALYSIS
+    lib_LTLIBRARIES += libttsmimic_lang_es.la
+    libttsmimic_lang_all_langs_la_LIBADD += libttsmimic_lang_es.la
+endif
+
+libttsmimic_lang_es_la_LDFLAGS = -no-undefined
+libttsmimic_lang_es_la_LIBADD = libttsmimic.la
+libttsmimic_lang_es_la_SOURCES = \
+  lang/es_lang/es_init.c \
+  lang/es_lang/es_lang.h \
+  lang/es_lang/es_text_analysis.c \
+  lang/es_lang/es_tokenizer.c
+
+langheader_HEADERS += \
+  lang/es_lang/es_lang.h
+
+############## END: LANG_ES_ANALYSIS  ##################################
 
 ############## START: LEX_CMULEX #########################################
 if LEX_CMULEX
@@ -373,6 +395,30 @@ libttsmimic_lang_cmu_us_slt_la_LIBADD = \
   libttsmimic_lang_cmulex.la \
   libttsmimic_lang_usenglish.la
 
+###############
+
+if VOICE_CMU_US_SLT_HTS
+    lib_LTLIBRARIES += libttsmimic_lang_cmu_us_slt_hts.la
+    libttsmimic_lang_all_voices_la_LIBADD += libttsmimic_lang_cmu_us_slt_hts.la
+    voicesinstall_DATA += voices/cmu_us_slt_hts.htsvoice
+else
+    EXTRA_DIST += voices/cmu_us_slt_hts.htsvoice
+endif
+
+libttsmimic_lang_cmu_us_slt_hts_la_LDFLAGS = -no-undefined
+libttsmimic_lang_cmu_us_slt_hts_la_SOURCES = \
+  lang/cmu_us_slt_hts/cmu_us_slt_hts.c \
+  lang/cmu_us_slt_hts/voxdefs.h
+
+libttsmimic_lang_cmu_us_slt_hts_la_CFLAGS = \
+  -I$(top_srcdir)/lang/usenglish \
+  -I$(top_srcdir)/lang/cmulex
+
+libttsmimic_lang_cmu_us_slt_hts_la_LIBADD = \
+  libttsmimic.la \
+  libttsmimic_lang_cmulex.la \
+  libttsmimic_lang_usenglish.la
+
 
 ###########
 
@@ -434,10 +480,10 @@ src_audio_SOURCES = \
   src/audio/au_wince.c \
   src/audio/native_audio.h
 
-libttsmimic_la_CFLAGS += $(AUDIODEFS)
+libttsmimic_la_CFLAGS += $(AUDIODEFS) -DPKGDATADIR='"$(pkgdatadir)"'
 libttsmimic_la_SOURCES += $(src_audio_SOURCES)
 
-libttsmimic_la_LIBADD += $(AUDIOLIBS)
+libttsmimic_la_LIBADD += $(AUDIOLIBS) $(HTS_LIBS)
 
 ###### src/cg ##################
 libttsmimic_la_SOURCES += \
@@ -462,6 +508,28 @@ libttsmimic_la_SOURCES += \
   src/hrg/cst_item.c \
   src/hrg/cst_ffeature.c \
   src/hrg/cst_rel_io.c
+
+####### src/hts ###############
+libttsmimic_la_SOURCES += \
+  src/hts/flite_hts_engine.c
+
+if HTSEngineBundled
+  AM_CPPFLAGS += -I$(top_srcdir)/src/hts/hts_engine_API/include
+  headers_HEADERS +=src/hts/hts_engine_API/include/HTS_engine.h
+  libttsmimic_la_SOURCES += \
+    src/hts/hts_engine_API/lib/HTS_audio.c \
+    src/hts/hts_engine_API/lib/HTS_engine.c \
+    src/hts/hts_engine_API/lib/HTS_hidden.h \
+    src/hts/hts_engine_API/lib/HTS_misc.c  \
+    src/hts/hts_engine_API/lib/HTS_pstream.c \
+    src/hts/hts_engine_API/lib/HTS_sstream.c \
+    src/hts/hts_engine_API/lib/HTS_model.c \
+    src/hts/hts_engine_API/lib/HTS_vocoder.c \
+    src/hts/hts_engine_API/lib/HTS_gstream.c \
+    src/hts/hts_engine_API/lib/HTS_label.c
+else
+  libttsmimic_la_LIBADD += $(HTS_LIBS)
+endif
 
 ###### src/lexicon #########
 
@@ -526,8 +594,8 @@ libttsmimic_la_SOURCES += \
   src/utils/cst_socket.c \
   src/utils/cst_string.c \
   src/utils/cst_tokenstream.c \
+  src/utils/cst_uregex.c \
   src/utils/cst_url.c \
-  src/utils/cst_icu.c \
   src/utils/cst_val.c \
   src/utils/cst_val_const.c \
   src/utils/cst_val_user.c \
@@ -600,6 +668,17 @@ if LANG_USENGLISH
 endif
 endif
 
+if LANG_ES_ANALYSIS
+  myunittests += unittests/es_tokenstream_test
+  unittests_es_tokenstream_test_SOURCES = unittests/es_tokenstream_test_main.c
+  unittests_es_tokenstream_test_CFLAGS = \
+    -DTEST_FILE=\"$(top_srcdir)/unittests/es_text.txt\" \
+    -I$(top_srcdir)/lang/es_lang
+  unittests_es_tokenstream_test_LDADD = libttsmimic.la \
+                                        libttsmimic_lang_es.la
+endif
+
+
 check_PROGRAMS = $(myunittests)
 
 unittests_lex_test_SOURCES = unittests/lex_test_main.c
@@ -623,7 +702,7 @@ unittests_regex_test_SOURCES = unittests/regex_test_main.c
 unittests_regex_test_LDADD = libttsmimic.la
 
 unittests_string_test_SOURCES = unittests/string_test_main.c
-unittests_string_test_LDADD = libttsmimic.la $(ICU_LIBS)
+unittests_string_test_LDADD = libttsmimic.la $(PCRE2_LIBS)
 
 
 unittests_token_test_SOURCES = unittests/token_test_main.c
@@ -687,7 +766,8 @@ check_PROGRAMS += \
   testsuite/play_server \
   testsuite/play_sync \
   testsuite/play_wave \
-  testsuite/rfc
+  testsuite/rfc \
+  testsuite/time_voice_load
 
 if LEX_CMULEX
   check_PROGRAMS += testsuite/utt_test
@@ -758,6 +838,9 @@ testsuite_rfc_LDADD = libttsmimic.la
 testsuite_utt_test_SOURCES = testsuite/utt_test_main.c
 testsuite_utt_test_LDADD = libttsmimic.la libttsmimic_lang_all_langs.la libttsmimic_lang_cmulex.la
 
+testsuite_time_voice_load_SOURCES = testsuite/time_voice_load.c
+testsuite_time_voice_load_LDADD = libttsmimic_lang_all_langs.la libttsmimic_lang_all_voices.la libttsmimic.la -lm
+
 TESTS += $(myunittests)
 # "testsuite/multi_thread_run.sh"
 
@@ -776,7 +859,6 @@ headers_HEADERS += \
   include/cst_ffeatures.h \
   include/cst_file.h \
   include/cst_hrg.h \
-  include/cst_icu.h \
   include/cst_item.h \
   include/cst_lexicon.h \
   include/cst_lts.h \
@@ -793,6 +875,7 @@ headers_HEADERS += \
   include/cst_tokenstream.h \
   include/cst_track.h \
   include/cst_units.h \
+  include/cst_uregex.h \
   include/cst_utterance.h \
   include/cst_utt_utils.h \
   include/cst_val_const.h \
@@ -802,5 +885,14 @@ headers_HEADERS += \
   include/cst_voice.h \
   include/cst_wave.h \
   include/cst_wchar.h \
+  include/flite_hts_engine.h \
   include/mimic.h
+
+# Documentation
+dist_man1_MANS = man/man1/mimic.1
+
+clean-local:
+	find . -name '*.gcno' -exec rm {} \;
+	find . -name '*.gcda' -exec rm {} \;
+	find . -name '*.gcov' -exec rm {} \;
 
