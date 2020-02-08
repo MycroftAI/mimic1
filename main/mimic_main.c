@@ -78,7 +78,7 @@ void sigint_handler(int signum)
 static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
-    printf("  mimic developers, Copyright (c) 2016, all rights reserved\n");
+    printf("  mimic developers, Copyright (c) 2016-2020, all rights reserved\n");
     printf("  version: %s-%s (%s)\n",
            PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_URL);
 }
