@@ -87,6 +87,7 @@ static void mimic_usage()
 {
     printf("mimic: a small simple speech synthesizer\n");
     mimic_version();
+    printf("Report bugs to %s.\n", PACKAGE_BUGREPORT);
     printf("usage: mimic TEXT/FILE [WAVEFILE]\n"
            "  Converts text in TEXTFILE to a waveform in WAVEFILE\n"
            "  If text contains a space the it is treated as a literal\n"
