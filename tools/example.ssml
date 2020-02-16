@@ -16,4 +16,12 @@ This <break /> is <break /> a pen.
 You say <phoneme ph="t ax m ey1 t ow">tomato </phoneme> while I
 say <phoneme ph="t ax m ae1 t ow">tomato</phoneme>.
 
+<break />
+
+<prosody rate=".25" pitch="131" range="6"><phoneme ph="ax"  >A</phoneme></prosody>
+<prosody rate=".25" pitch="174" range="6"><phoneme ph="m ey">ma</phoneme></prosody>
+<prosody rate=".5" pitch="220" range="6"><phoneme ph="z ih" >zi</phoneme></prosody>
+<prosody rate=".5" pitch="174" range="6"><phoneme ph="ih ng">ng</phoneme></prosody>
+<prosody rate=".5" pitch="220" range="6">grace,</prosody>
+
 </ssml>
