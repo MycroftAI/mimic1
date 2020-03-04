@@ -705,7 +705,7 @@ static void get_token_sub_part_2(cst_tokenstream *ts,
 
 static void get_token_postpunctuation(cst_tokenstream *ts)
 {
-    int p, t, plast;
+    int p, t, plast = 0;
     const cst_string *one_cp;
 
     t = cst_strlen(ts->token);
