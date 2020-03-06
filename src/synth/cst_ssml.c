@@ -47,7 +47,7 @@
 /*  <audio ...> </audio>                                                 */
 /*  <!-- ... -->                                                         */
 /*  <break .../>                                                         */
-/*  <prosody ...> </prosody>  rate volume (no pitch yet)                 */
+/*  <prosody ...> </prosody>  pitch range rate volume                    */
 /*  <emphasis ...> </emphasis>                                           */
 /*  <sub alias="World Wide Web Consortium">W3C</sub>                     */
 /*  <phoneme ph="x x x"> </phoneme>                                      */

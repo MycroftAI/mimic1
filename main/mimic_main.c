@@ -78,15 +78,16 @@ void sigint_handler(int signum)
 static void mimic_version()
 {
     printf("  Carnegie Mellon University, Copyright (c) 1999-2011, all rights reserved\n");
-    printf("  mimic developers, Copyright (c) 2016, all rights reserved\n");
-    printf("  version: %s-%s (%s)\n",
-           PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_URL);
+    printf("  mimic developers, Copyright (c) 2016-2020, all rights reserved\n");
+    printf("  version: %s-%s\n",
+           PACKAGE_NAME, PACKAGE_VERSION);
 }
 
 static void mimic_usage()
 {
     printf("mimic: a small simple speech synthesizer\n");
     mimic_version();
+    printf("Report bugs to %s.\n", PACKAGE_BUGREPORT);
     printf("usage: mimic TEXT/FILE [WAVEFILE]\n"
            "  Converts text in TEXTFILE to a waveform in WAVEFILE\n"
            "  If text contains a space the it is treated as a literal\n"
