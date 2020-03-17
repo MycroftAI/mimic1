@@ -1,0 +1,65 @@
+name: mimic
+summary: A fast, lightweight Text-to-speech engine from Mycroft AI and VocaliD.
+description: 'Mimic is a fast, lightweight Text-to-speech engine developed by
+  Mycroft A.I. and VocaliD, based on Carnegie Mellon University’s Flite
+  (Festival-Lite) software. Mimic takes in text and reads it out loud.
+  '
+
+apps:
+  mimic:
+    command: mimic
+    command-chain:
+    - snap/command-chain/alsa-launch
+    plugs:
+    - audio-playback
+
+base: core18
+confinement: strict
+version: git
+grade: stable
+layout:
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
+  /var/tmp:
+    bind: $SNAP_COMMON/vartmp
+
+parts:
+  alsa-mixin:
+    after: []
+    build-packages:
+    - libasound2-dev
+    plugin: dump
+    source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    source-subdir: snapcraft-assets
+    stage-packages:
+    - libasound2
+    - libasound2-plugins
+  mimic:
+    after:
+    - alsa-mixin
+    build-packages:
+    - libpcre2-dev
+    - portaudio19-dev
+    configflags:
+    - --prefix=/usr
+    - --disable-static
+    - --with-audio=alsa
+    plugin: autotools
+    prime:
+    - usr/bin
+    - usr/include
+    - usr/lib
+    - -usr/lib/*.a
+    - -usr/lib/*.la
+    - -usr/lib/pkgconfig
+    - usr/share/mimic
+    source: https://github.com/MycroftAI/mimic1.git
+    source-branch: master
+    source-depth: 1
+    stage:
+    - -usr/share/alsa
+    - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
+    - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libasound*
+    stage-packages:
+    - libpcre2-8-0
+    - libportaudio2
