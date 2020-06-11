@@ -1,7 +1,7 @@
 dnl Use autogen.sh to regenerate the configure script
 AC_PREREQ([2.62])
 AC_INIT([mimic],
-        [1.3.0.1],
+        [1.3.0.2],
         [https://github.com/MycroftAI/mimic/issues])
 
 AC_CONFIG_AUX_DIR([config])
