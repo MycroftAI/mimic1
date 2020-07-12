@@ -75,6 +75,13 @@ The fastest and most straightforward way to build mimic for windows is by
 cross-compilation from linux. This requires some additional packages to be
 installed.
 
+On Ubuntu 18.04 (bionic):
+```
+sudo apt-get install gcc make pkg-config automake libtool libpcre2-dev wine-stable binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686
+
+```
+
+
 On Ubuntu 16.04 (xenial):
 ```
 sudo apt-get install gcc make pkg-config automake libtool libpcre2-dev wine binutils-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686
