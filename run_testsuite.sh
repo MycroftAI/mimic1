@@ -136,7 +136,7 @@ put_dll_in_bindir()
 {
     # Portaudio libraries are installed into lib. wine can't find them.
     # Copy all libs to ${MIMIC_INSTALL_DIR}/bin
-    for file in `ls "${MIMIC_INSTALL_DIR}/lib/"*.dll`; do
+    for file in `ls "${MIMIC_INSTALL_DIR}/lib/"*.dll 2>/dev/null`; do
         cp "$file" "${MIMIC_INSTALL_DIR}/bin/"
     done
 }
