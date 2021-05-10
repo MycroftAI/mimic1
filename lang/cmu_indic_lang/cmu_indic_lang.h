@@ -51,7 +51,7 @@ void cmu_indic_lang_init(cst_voice *v);
 extern const cst_phoneset cmu_indic_phoneset;
 extern const cst_cart cmu_indic_phrasing_cart; 
 
-const cst_regex * const cst_rx_not_indic;
+extern const cst_regex * const cst_rx_not_indic;
 
 #ifdef __cplusplus
 } /* extern "C" */
