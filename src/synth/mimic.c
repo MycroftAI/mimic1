@@ -38,6 +38,7 @@
 /*                                                                       */
 /*************************************************************************/
 #include <errno.h>
+#include <string.h>
 #include "cst_tokenstream.h"
 #include "mimic.h"
 #include "cst_alloc.h"
@@ -381,7 +382,8 @@ int mimic_phones_to_speech(const char *text, cst_voice *voice,
                            const char *outtype, float *dur)
 {
     int ret;
-    if ((dur == NULL) || (voice == NULL) || (text == NULL) || (outtype == NULL))
+    if ((dur == NULL) || (voice == NULL) || (text == NULL)
+        || !strcmp(text, "") || (outtype == NULL))
     {
         ret = -EINVAL;
     }

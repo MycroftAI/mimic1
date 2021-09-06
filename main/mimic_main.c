@@ -213,7 +213,7 @@ int main(int argc, char **argv)
     cst_voice *desired_voice = 0;
     const char *voicedir = NULL;
     int i;
-	int err;
+    int err;
     float durs;
     double time_start, time_end;
     int mimic_verbose, mimic_loop, mimic_bench;
