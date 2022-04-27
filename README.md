@@ -381,12 +381,12 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
   **_Example_**
 
   ```c
-  if(condition)
+  if (condition)
   {                             /*always use curly braces even if the 'if' only has one statement*/
       DoJustThisOneThing();        
   }
   
-  if(argv[i][2] == 'h' &&      /*split 'if' conditions to multiple lines if the conditions are long */
+  if (argv[i][2] == 'h' &&      /*split 'if' conditions to multiple lines if the conditions are long */
      argv[i][3] == 'e' &&      /*or if it makes things more readable. */
      argv[i][4] == 'l' && 
      argv[i][5] == 'p')
@@ -394,7 +394,7 @@ To keep the code in mimic coherent a simple coding style/guide is used. It shoul
         /*example taken from args parsing code*/
         /* code */
   }
-  else if(condition)
+  else if (condition)
   {
         /* code */
   }
