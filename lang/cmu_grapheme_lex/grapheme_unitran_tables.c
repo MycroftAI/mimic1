@@ -5,8 +5,10 @@
 /* Ported for Festvox by Gopala Anumachipalli gopalakr@cs.cmu.edu Sep 2012  */
 /* Then converted to C for CMU Mimic (cmuflite.org)                         */
 #include <mimic.h>
-const int num_unicode_sampa_mapping = 16673;
-const char * const unicode_sampa_mapping[16674][5] =
+#include "cmu_grapheme_lex.h"
+
+const int num_unicode_sampa_mapping = UNICODE_SAMPA_MAPPING_SIZE - 1;
+const char * const unicode_sampa_mapping[UNICODE_SAMPA_MAPPING_SIZE][5] =
 {
    {"let_a", "A", NULL, NULL, NULL},
    {"let_b", "b", NULL, NULL, NULL},
