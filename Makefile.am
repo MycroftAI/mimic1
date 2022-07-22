@@ -1,5 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
+AM_CFLAGS =  -Werror=odr -Werror=lto-type-mismatch -Werror=strict-aliasing
 AM_CPPFLAGS = -Wall -Werror -I$(top_srcdir)/include $(PCRE2_CFLAGS)
 
 SUBDIRS = .
