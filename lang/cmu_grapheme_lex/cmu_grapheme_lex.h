@@ -43,8 +43,9 @@ extern "C" {
 #include "cst_lexicon.h"
 cst_lexicon *cmu_grapheme_lex_init(void);
 
+#define UNICODE_SAMPA_MAPPING_SIZE 16674
 extern const int num_unicode_sampa_mapping;
-extern const char * const unicode_sampa_mapping[16663][5];
+extern const char * const unicode_sampa_mapping[UNICODE_SAMPA_MAPPING_SIZE][5];
 
 #ifdef __cplusplus
 } /* extern "C" */
