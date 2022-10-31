@@ -698,7 +698,7 @@ static HTS_Boolean HTS_Model_load_pdf(HTS_Model * model, HTS_File * fp, size_t v
    }
    if (result == FALSE) {
       model->npdf += 2;
-      free(model->npdf);
+      HTS_free(model->npdf);
       HTS_Model_initialize(model);
       return FALSE;
    }
