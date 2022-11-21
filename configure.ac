@@ -186,7 +186,7 @@ AS_CASE( [ ${AUDIODRIVER} ],
            [ AUDIODEFS="${AUDIODEFS_PULSEAUDIO}"
              AUDIOLIBS="${AUDIOLIBS_PULSEAUDIO}"
              AUDIODETECTED="${AUDIODETECTED_PULSEAUDIO}"
-             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpulse"
+             PKGCONFIG_MIMIC_DEPS="${PKGCONFIG_MIMIC_DEPS} libpulse-simple"
            ],
          [ portaudio ],
            [ AUDIODEFS="${AUDIODEFS_PORTAUDIO}"
